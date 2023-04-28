@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class UserController extends Controller
 {
@@ -48,10 +52,7 @@ class UserController extends Controller
         return redirect('/')->with('success', 'Ο νέος σας κωδικός αποθηκεύτηκε επιτυχώς');
     }
 
-    public function passwordReset(Request $request){
-        $incomingFields = $request->all();
-        $user_id=$incomingFields['user_id'];
-        $user = User::find($user_id);
+    public function passwordReset(Request $request, User $user){
         $user->password = bcrypt('123456');
         $user->save();
         
@@ -160,26 +161,21 @@ class UserController extends Controller
         return redirect('/users')->with('success', "Η εισαγωγή $imported χρηστών ολοκληρώθηκε");
     }
 
-    public function actions(Request $request, $action){
-        if($action=="add"){
-            $this->insertUser($request->all());
-        }
-    }
-    protected function insertUser($request){
+    public function insertUser(Request $request){
         
         //VALIDATION
-        $incomingFields = $request;
+        $incomingFields = $request->all();
         $given_name = $incomingFields['user_name3'];
         $given_email = $incomingFields['user_email3'];
 
         if(User::where('username', $given_name)->count()){
             $existing_user = User::where('username', $given_name)->first();
-            return view('users',['dberror3'=>"Υπάρχει ήδη μαθητής με όνομα χρήστη $given_name: $existing_user->name, $existing_user->display_name, $existing_user->email", 'old_data'=>$request,'active_tab'=>'insert']);
+            return view('users',['dberror3'=>"Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->name, $existing_user->display_name, $existing_user->email", 'old_data'=>$request]);
         }
         else{
             if(User::where('email', $given_email)->count()){
                 $existing_user = User::where('email', $given_email)->first();
-                return view('users',['dberror3'=>"Υπάρχει ήδη μαθητής με email $given_email: $existing_user->name, $existing_user->display_name, $existing_user->email", 'old_data'=>$request,'active_tab'=>'insert']);
+                return view('users',['dberror3'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->name, $existing_user->display_name, $existing_user->email", 'old_data'=>$request]);
             }
         }
         //VALIDATION PASSED
@@ -192,11 +188,10 @@ class UserController extends Controller
             ]);
         } 
         catch(QueryException $e){
-            return view('users',['dberror'=>"Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.", 'old_data'=>$request,'active_tab'=>'insert']);
+            return view('users',['dberror'=>"Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.", 'old_data'=>$request]);
         }
-        session(['active_tab'=>'insert']);
-        return redirect('/users')->with('success', 'Ο χρήστης προστέθηκε με επιτυχία');
-        // return view('users',['record'=>$record,'active_tab'=>'insert']);
+
+        return view('users',['record'=>$record]);
     }
 
     public function save_profile(User $user, Request $request){

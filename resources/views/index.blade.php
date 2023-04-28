@@ -17,6 +17,14 @@
                 <p class="card-text"></p>
                 </div> 
             </a>
+
+            <a class="col-lg-3 card w-3 text-bg-danger mb-3" style="max-width: 20rem; opacity: 0.4; text-decoration:none;" href="/manage_roles">
+                <div class="card-body" style="text-align: center; padding: 5rem">
+                <div class="h5 card-title bi bi-person-rolodex"></div>
+                <div>Διαχείριση Ρόλων</div>
+                <p class="card-text"></p>
+                </div> 
+            </a>
         
         @else
             @push('title')

@@ -31,9 +31,6 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link @isset($active_tab) @if($active_tab=='import') {{'active'}} @endif @endisset" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Μαζική Εισαγωγή Χρηστών</button>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link @isset($active_tab) @if($active_tab=='insert') {{'active'}} @endif @endisset" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Εισαγωγή χρήστη</button>
-        </li>
     </ul>
 <!--tab content-->
     <div class="tab-content" id="myTabContent">
@@ -65,9 +62,8 @@
                                 <td>{{$user->email}}</td>
                                 <td>{{$user->created_at}}</td>
                                 <td>{{$user->updated_at}}</td>
-                                <form action="/password_reset" method="post">
+                                <form action="/reset_password/{{$user->id}}" method="post">
                                 @csrf
-                                    <input type="hidden" name="user_id" value={{$user->id}}>
                                     <td><button class="bi bi-key-fill bg-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
                                 </form>
                             </tr>
@@ -75,6 +71,50 @@
                     </tbody>
                 </table>
             </div>
+            @isset($dberror3)
+                <div class="alert alert-danger" role="alert">{{$dberror3}}</div>
+            @else
+                @isset($record)
+                    <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
+                    <div class="m-2 col-sm-2 btn btn-primary text-wrap">
+                        <a href="/user_profile/{{$record->id}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->display_name}}, {{$record->name}}</a>
+                    </div>
+                @endisset
+            @endisset
+            <div class="container py-5">
+            <div class="container px-5">
+            <nav class="navbar navbar-light bg-light">
+                <form action="/insert_user" method="post" class="container-fluid">
+                    @csrf
+                    <input type="hidden" name="asks_to" value="insert">
+                    <div class="input-group">
+                        <span class="input-group-text w-25"></span>
+                        <span class="input-group-text w-75"><strong>Εισαγωγή νέου Χρήστη</strong></span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon2">Username</span>
+                        <input name="user_name3" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required value="@isset($dberror3){{$old_data['user_name3']}}@endisset"><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon3">DisplayName</span>
+                        <input name="user_display_name3" type="text" class="form-control" placeholder="DisplayName" aria-label="DisplayName" aria-describedby="basic-addon3" required value="@isset($dberror3){{$old_data['user_display_name3']}}@endisset"><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon4">email</span>
+                        <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@isset($dberror3){{$old_data['user_email3']}}@endisset" ><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon5">Password</span>
+                        <input name="user_password3" type="text" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon5" required><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="w-25"></span>
+                        <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>
+                        <a href="/manage_users" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                    
+                </form>
+            </nav>
+            </div></div>
         </div>
 
         <div class="tab-pane fade @isset($active_tab) @if($active_tab=='import') {{'show active'}} @endif @endisset" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
@@ -112,67 +152,23 @@
                 @if($asks_to=='save')
                 Να προχωρήσει η εισαγωγή αυτών των στοιχείων;
                 <div class="row">
-                    <form action="/users_insertion" method="post" class="col container-fluid" enctype="multipart/form-data">
+                    <form action="/insert_users" method="post" class="col container-fluid" enctype="multipart/form-data">
                     @csrf
                         <button type="submit" class="btn btn-primary bi bi-file-arrow-up"> Εισαγωγή</button>
                     </form>
-                    <a href="/users" class="col">Ακύρωση</a>
+                    <a href="/manage_users" class="col">Ακύρωση</a>
                 </div>
                 @else
                 <div class="row">
                     <div>
                         Διορθώστε τα σημειωμένα σφάλματα και υποβάλετε εκ νέου το αρχείο.
                     </div>
-                    <a href="/users" class="col">Ακύρωση</a>
+                    <a href="/manage_users" class="col">Ακύρωση</a>
                 </div>
                 @endif
             @endif
             @isset($dberror2)
                 <div class="alert alert-danger" role="alert">{{$dberror2}}</div>
-            @endisset
-        </div>
-
-        <div class="tab-pane fade @isset($active_tab) @if($active_tab=='insert') {{'show active'}} @endif @endisset" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-            <nav class="navbar navbar-light bg-light">
-                <form action="/manage_users/add" method="post" class="container-fluid">
-                    @csrf
-                    <input type="hidden" name="asks_to" value="insert">
-                    <div class="input-group">
-                        <span class="input-group-text w-25"></span>
-                        <span class="input-group-text w-75"><strong>Εισαγωγή νέου Χρήστη</strong></span>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">Username</span>
-                        <input name="user_name3" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required value=@isset($dberror3) {{$old_data['user_name3']}} @endisset><br>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon3">DisplayName</span>
-                        <input name="user_display_name3" type="text" class="form-control" placeholder="DisplayName" aria-label="DisplayName" aria-describedby="basic-addon3" required value=@isset($dberror3) {{$old_data['user_display_name3']}} @endisset><br>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon4">email</span>
-                        <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value=@isset($dberror3) {{$old_data['user_email3']}} @endisset ><br>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon5">Password</span>
-                        <input name="user_password3" type="text" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon5" required><br>
-                    </div>
-                    <div class="input-group">
-                        <span class="w-25"></span>
-                        <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>
-                        <a href="/users" class="btn btn-outline-secondary m-2">Ακύρωση</a>
-                    
-                </form>
-            </nav>
-            @isset($dberror3)
-                <div class="alert alert-danger" role="alert">{{$dberror3}}</div>
-            @else
-                @isset($record)
-                    <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
-                    <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                        <a href="/user_profile/{{$record->id}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->display_name}}, {{$record->name}}</a>
-                    </div>
-                @endisset
             @endisset
         </div>
     </div>

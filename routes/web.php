@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -14,28 +15,26 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-})->name('index');
+Route::view('/', 'index')->name('index');
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
 Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
-Route::get('/password_change', function(){
-    return view('password_change_form');
-})->middleware('auth');
+Route::view('/change_password', 'password_change_form')->middleware('auth');
 
-Route::post('/password_change', [UserController::class, 'passwordChange'])->middleware('auth');
+Route::post('/change_password', [UserController::class, 'passwordChange'])->middleware('auth');
 
-Route::get('/manage_users', function(){
-    return view('users');
-});
+Route::post('/upload_user_template', [UserController::class, 'importUsers'])->name('user_template_upload');
 
-Route::post('/user_template_upload', [UserController::class, 'importUsers'])->name('user_template_upload');
+Route::view('/manage_users', 'users');
 
-Route::post('/users_insertion', [UserController::class, 'insertUsers'])->name('insert_users_from_template');
+Route::post('/insert_users', [UserController::class, 'insertUsers'])->name('insert_users_from_template');
 
-Route::post('/manage_users/{action}', [UserController::class,'actions']);
+Route::post('/insert_user', [UserController::class,'insertUser']);
 
-Route::post('/password_reset', [UserController::class, 'passwordReset']);
+Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
+
+Route::view('/manage_roles', 'roles');
+
+Route::post('/insert_role', [RoleController::class,'insertRole']);

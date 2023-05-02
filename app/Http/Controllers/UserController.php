@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UsersRoles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -179,6 +180,7 @@ class UserController extends Controller
             }
         }
         //VALIDATION PASSED
+
         try{
             $record = User::create([
                 'username' => $incomingFields['user_name3'],
@@ -189,6 +191,15 @@ class UserController extends Controller
         } 
         catch(QueryException $e){
             return view('users',['dberror'=>"Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.", 'old_data'=>$request]);
+        }
+
+        foreach($request->all() as $key=>$value){
+            if(substr($key,0,4)=='role'){
+                UsersRoles::create([
+                    'user_id'=>$record->id,
+                    'role_id'=>$value
+                ]); 
+            }
         }
 
         return view('users',['record'=>$record]);

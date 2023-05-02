@@ -13,13 +13,11 @@ class RoleController extends Controller
         
         //VALIDATION
         $incomingFields = $request->all();
-        $given_name = $incomingFields['role_name3'];
-        $given_parent = $incomingFields['role_parent_id3'];
-
+        // print_r($incomingFields);exit;
         try{
             $record = Role::create([
                 'name' => $incomingFields['role_name3'],
-                'parent_id' => $incomingFields['role_parent_id3'],
+                'parent_id' => $incomingFields['reports_to3'],
             ]);
         } 
         catch(QueryException $e){

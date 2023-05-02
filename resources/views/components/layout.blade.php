@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
     <link rel="manifest" href="/favicon/site.webmanifest">
     <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#b91d47">
+    <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
     @stack('links')
@@ -32,7 +32,7 @@
   <div class="container">
     <div class="row justify-content-md-center">
       <div class="col p-4">
-        {{-- <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="65" alt="books"></div> --}}
+        <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
         <div class=" d-flex justify-content-center"><a href='/change_password' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{Auth::user()->display_name}}</a></div>
       </div>
     </div>

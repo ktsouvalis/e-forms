@@ -34,9 +34,9 @@
             <div class="col">
                     
             </div>
-            {{-- <div class="col p-3">
-                    <img src="/favicon/index.png" width="200" height="131" alt="books">
-            </div> --}}
+            <div class="col p-3">
+                    <img src="/favicon/index.png" width="200" height="200" alt="books">
+            </div>
             <div class="col p-3">
                 <form action="/login" method="post">
                     @csrf

@@ -48,6 +48,7 @@
                         <th id="search">Username</th>
                         <th id="search">DisplayName</th>
                         <th id="search">email</th>
+                        <th id="search">Ρόλοι</th>
                         <th id="search">CreatedAt</th>
                         <th id="search">UpdatedAt</th>
                         <th id="">Password Reset</th>
@@ -60,6 +61,15 @@
                                 <td>{{$user->username}}</td>
                                 <td><div class="badge bg-primary text-wrap"><a href="/user_profile/{{$user->id}}" style="color:white; text-decoration:none;">{{$user->display_name}}</a></div></td>
                                 <td>{{$user->email}}</td>
+                                <td>
+                                    <table class="table table-sm">
+                                        @foreach ($user->roles as $one_role)
+                                            <tr>
+                                            <td>{{$one_role->role->name}}</td>  
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </td>
                                 <td>{{$user->created_at}}</td>
                                 <td>{{$user->updated_at}}</td>
                                 <form action="/reset_password/{{$user->id}}" method="post">
@@ -102,6 +112,20 @@
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">email</span>
                         <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@isset($dberror3){{$old_data['user_email3']}}@endisset" ><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon5">Ρόλοι</span>
+                        @php
+                            $roles = App\Models\Role::all();   
+                        @endphp
+                        <table>
+                        @foreach($roles as $role)
+                        <tr>
+                            <td><input type="checkbox" name="role{{$role->id}}" value="{{$role->id}}" id="{{$role->id}}">
+                            <label for="{{$role->id}}"> {{$role->name}} </label></td>
+                        </tr>
+                        @endforeach
+                        </table>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Password</span>

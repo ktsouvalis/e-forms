@@ -27,7 +27,7 @@ Route::post('/change_password', [UserController::class, 'passwordChange'])->midd
 
 Route::post('/upload_user_template', [UserController::class, 'importUsers'])->name('user_template_upload');
 
-Route::view('/manage_users', 'users');
+Route::view('/manage_users', 'users')->middleware('boss');
 
 Route::post('/insert_users', [UserController::class, 'insertUsers'])->name('insert_users_from_template');
 
@@ -35,6 +35,6 @@ Route::post('/insert_user', [UserController::class,'insertUser']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
 
-Route::view('/manage_roles', 'roles');
+Route::view('/manage_roles', 'roles')->middleware('boss');
 
 Route::post('/insert_role', [RoleController::class,'insertRole']);

@@ -22,4 +22,8 @@ class Role extends Model
     public function role(){
         return $this->belongsTo(Role::class, 'parent_id');
     }
+
+    public function menus(){
+        return $this->hasMany(RolesMenus::class);
+    }
 }

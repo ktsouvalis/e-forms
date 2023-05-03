@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UsersRoles;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class UserSeeder extends Seeder
+class SuperUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -25,6 +27,20 @@ class UserSeeder extends Seeder
             'display_name' => 'Κωνσταντίνος Στεφανόπουλος',
             'email' => 'konstantinostef@yahoo.gr',
             'password' => bcrypt('123456'),
+        ]);
+
+        Role::create([
+            'name' => 'superuser'
+        ]);
+
+        UsersRoles::create([
+            'user_id'=>1,
+            'role_id'=>1
+        ]);
+
+        UsersRoles::create([
+            'user_id'=>2,
+            'role_id'=>1
         ]);
     }
 }

@@ -67,8 +67,8 @@
                 </tbody>
             </table>
         </div>
-        @isset($dberror3)
-            <div class="alert alert-danger" role="alert">{{$dberror3}}</div>
+        @isset($dberror)
+            <div class="alert alert-danger" role="alert">{{$dberror}}</div>
         @else
             @isset($record)
                 <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
@@ -94,6 +94,7 @@
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Αναφέρεται στον: </span>
                     <select name="reports_to3">
+                        <option value=""></option>
                     @foreach($all_roles as $one_role)
                         <option value="{{$one_role->id}}">{{$one_role->name}}</option>
                     @endforeach

@@ -9,19 +9,25 @@
             @push('title')
                 <title>Αρχική</title>
             @endpush
-            
-           <a class="col-lg-3 card w-3 text-bg-primary mb-3" style="max-width: 20rem; opacity: 0.4; text-decoration:none;" href="/manage_users">
-                <div class="card-body" style="text-align: center; padding: 5rem">
-                <div class="h5 card-title fa-solid fa-users"></div>
-                <div>Διαχείριση Χρηστών</div>
-                <p class="card-text"></p>
-                </div> 
-            </a>
+            @php
+                $user = App\Models\User::where('id', Illuminate\Support\Facades\Auth::id())->first();
+            @endphp
+            @foreach ($user->roles as $one_role)
+                @foreach ($one_role->role->menus as $one_menu)
+                    <a class="col-lg-3 card w-3 {{$one_menu->menu->color}} mb-3" style="max-width: 20rem; {{$one_menu->menu->opacity}}; text-decoration:none;" href="{{$one_menu->menu->url}}">
+                    <div class="card-body" style="text-align: center; padding: 5rem">
+                    <div class="h5 card-title {{$one_menu->menu->icon}}"></div>
+                    <div>{{$one_menu->menu->name}}</div>
+                    <p class="card-text"></p>
+                    </div> 
+                    </a>   
+                @endforeach    
+            @endforeach
 
-            <a class="col-lg-3 card w-3 text-bg-danger mb-3" style="max-width: 20rem; opacity: 0.4; text-decoration:none;" href="/manage_roles">
+            <a class="col-lg-3 card w-3 text-bg-dark mb-3" style="max-width: 20rem; opacity: 0.5; text-decoration:none;" href="/logout">
                 <div class="card-body" style="text-align: center; padding: 5rem">
-                <div class="h5 card-title bi bi-person-rolodex"></div>
-                <div>Διαχείριση Ρόλων</div>
+                <div class="h5 card-title fa-solid fa-arrow-right-from-bracket"></div>
+                <div>Αποσύνδεση</div>
                 <p class="card-text"></p>
                 </div> 
             </a>

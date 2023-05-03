@@ -11,9 +11,7 @@ class RoleController extends Controller
     //
     public function insertRole(Request $request){
         
-        //VALIDATION
         $incomingFields = $request->all();
-        // print_r($incomingFields);exit;
         try{
             $record = Role::create([
                 'name' => $incomingFields['role_name3'],

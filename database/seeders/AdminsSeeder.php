@@ -34,16 +34,14 @@ class AdminsSeeder extends Seeder
         Menu::create([
             'name' => 'Διαχείριση Χρηστών',
             'url' => '/manage_users',
-            'color' => 'text-bg-primary',
-            'opacity' => 'opacity: 0.4',
+            'color' => 'skyblue',
             'icon' => 'fa-solid fa-users'
         ]);
 
         Menu::create([
             'name' => 'Διαχείριση Menu',
             'url' => '/manage_menus',
-            'color' => 'text-bg-danger',
-            'opacity' => 'opacity: 0.4',
+            'color' => 'PaleTurquoise',
             'icon' => 'bi bi-menu-button-wide'
         ]);
 

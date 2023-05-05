@@ -1,8 +1,8 @@
 
 
 <x-layout>
-    <body class="bg-light"></body>
-    <br><br><br><br><br><br>
+    <body class="bg-light">
+    
     <div class="container">
         <div class="row p-2 justify-content-evenly">
         @auth
@@ -12,23 +12,34 @@
             @php
                 $user = App\Models\User::where('id', Illuminate\Support\Facades\Auth::id())->first();
             @endphp
-            @foreach ($user->menus as $one_menu)
-                <a class="col-lg-3 card w-3 {{$one_menu->menu->color}} mb-3" style="max-width: 20rem; {{$one_menu->menu->opacity}}; text-decoration:none;" href="{{$one_menu->menu->url}}">
-                <div class="card-body" style="text-align: center; padding: 5rem">
-                <div class="h5 card-title {{$one_menu->menu->icon}}"></div>
-                <div>{{$one_menu->menu->name}}</div>
-                <p class="card-text"></p>
-                </div> 
-                </a>   
-            @endforeach
-
-            <a class="col-lg-3 card w-3 text-bg-dark mb-3" style="max-width: 20rem; opacity: 0.5; text-decoration:none;" href="/logout">
-                <div class="card-body" style="text-align: center; padding: 5rem">
-                <div class="h5 card-title fa-solid fa-arrow-right-from-bracket"></div>
-                <div>Αποσύνδεση</div>
-                <p class="card-text"></p>
-                </div> 
-            </a>
+            
+            <div class="py-5">
+                <div class="container">
+                    <div class="row hidden-md-up justify-content-center">
+        
+                    @foreach ($user->menus as $one_menu)
+                        <div class="col-md-4 py-2" style="max-width:15rem">
+                            <div class="card py-5" style="background-color:{{$one_menu->menu->color}}; text-align:center;">
+                                <a  class="text-dark" style="text-decoration:none;" href="{{$one_menu->menu->url}}">
+                                <div class="h5 card-title {{$one_menu->menu->icon}}"></div>
+                                <div >{{$one_menu->menu->name}}</div>
+                                </a> 
+                            </div>
+                        </div>  
+                    @endforeach
+                        <div class="col-md-4 py-2" style="max-width:15rem">
+                            <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
+                                <a class="text-dark" href="/logout">
+                                <div class="h5 card-title fa-solid fa-arrow-right-from-bracket"></div>
+                                <div>Αποσύνδεση</div>
+                                </a> 
+                            </div>
+                        </div>  
+                        
+                    </div>
+                </div>
+            </div>
+            
         
         @else
             @push('title')
@@ -65,9 +76,8 @@
                     <button type="submit" class="btn btn-primary">Είσοδος</button>
                 </form>
             </div>
-            <div class="col">
-                    
-            </div>
-            </div>
+            
+            
         @endauth
+        </div>
 </x-layout>

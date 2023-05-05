@@ -17,7 +17,6 @@ class MenuController extends Controller
                 'name' => $incomingFields['menu_name'],
                 'url' => $incomingFields['menu_url'],
                 'color' => $incomingFields['menu_color'],
-                'opacity' => $incomingFields['menu_opacity'],
                 'icon' => $incomingFields['menu_icon'],
             ]);
         } 

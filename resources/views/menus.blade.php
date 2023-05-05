@@ -96,11 +96,7 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">color</span>
-                    <input name="menu_color" type="text" class="form-control" placeholder="π.χ. text-bg-primary " aria-label="menucolor" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['menu_color']}}@endisset"><br>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">opacity</span>
-                    <input name="menu_opacity" type="text" class="form-control" placeholder="π.χ. opacity: 0.4" aria-label="menuopacity" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['menu_opacity']}}@endisset"><br>
+                    <input name="menu_color" type="text" class="form-control" placeholder="π.χ. skyblue ή #f0f0f0 " aria-label="menucolor" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['menu_color']}}@endisset"><br>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">icon</span>

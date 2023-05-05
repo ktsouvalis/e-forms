@@ -14,7 +14,6 @@ class Menu extends Model
         'url',
         'color',
         'icon',
-        'opacity'
     ];
 
     public function users(){

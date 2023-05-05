@@ -48,7 +48,7 @@
                         <th id="search">Username</th>
                         <th id="search">DisplayName</th>
                         <th id="search">email</th>
-                        <th id="search">Ρόλοι</th>
+                        <th id="search">Έχει πρόσβαση</th>
                         <th id="search">CreatedAt</th>
                         <th id="search">UpdatedAt</th>
                         <th id="">Password Reset</th>
@@ -63,9 +63,9 @@
                                 <td>{{$user->email}}</td>
                                 <td>
                                     <table class="table table-sm">
-                                        @foreach ($user->roles as $one_role)
+                                        @foreach ($user->menus as $one_menu)
                                             <tr>
-                                            <td>{{$one_role->role->name}}</td>  
+                                            <td>{{$one_menu->menu->name}}</td>  
                                             </tr>
                                         @endforeach
                                     </table>
@@ -116,13 +116,13 @@
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Ρόλοι</span>
                         @php
-                            $roles = App\Models\Role::all();   
+                            $menus = App\Models\Menu::all();   
                         @endphp
                         <table>
-                        @foreach($roles as $role)
+                        @foreach($menus as $menu)
                         <tr>
-                            <td><input type="checkbox" name="role{{$role->id}}" value="{{$role->id}}" id="{{$role->id}}">
-                            <label for="{{$role->id}}"> {{$role->name}} </label></td>
+                            <td><input type="checkbox" name="menu{{$menu->id}}" value="{{$menu->id}}" id="{{$menu->id}}">
+                            <label for="{{$menu->id}}"> {{$menu->name}} </label></td>
                         </tr>
                         @endforeach
                         </table>

@@ -17,7 +17,7 @@ class Menu extends Model
         'opacity'
     ];
 
-    public function roles(){
-        return $this->hasMany(RolesMenus::class);
+    public function users(){
+        return $this->hasMany(UsersMenus::class);
     }
 }

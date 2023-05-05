@@ -12,16 +12,14 @@
             @php
                 $user = App\Models\User::where('id', Illuminate\Support\Facades\Auth::id())->first();
             @endphp
-            @foreach ($user->roles as $one_role)
-                @foreach ($one_role->role->menus as $one_menu)
-                    <a class="col-lg-3 card w-3 {{$one_menu->menu->color}} mb-3" style="max-width: 20rem; {{$one_menu->menu->opacity}}; text-decoration:none;" href="{{$one_menu->menu->url}}">
-                    <div class="card-body" style="text-align: center; padding: 5rem">
-                    <div class="h5 card-title {{$one_menu->menu->icon}}"></div>
-                    <div>{{$one_menu->menu->name}}</div>
-                    <p class="card-text"></p>
-                    </div> 
-                    </a>   
-                @endforeach    
+            @foreach ($user->menus as $one_menu)
+                <a class="col-lg-3 card w-3 {{$one_menu->menu->color}} mb-3" style="max-width: 20rem; {{$one_menu->menu->opacity}}; text-decoration:none;" href="{{$one_menu->menu->url}}">
+                <div class="card-body" style="text-align: center; padding: 5rem">
+                <div class="h5 card-title {{$one_menu->menu->icon}}"></div>
+                <div>{{$one_menu->menu->name}}</div>
+                <p class="card-text"></p>
+                </div> 
+                </a>     
             @endforeach
 
             <a class="col-lg-3 card w-3 text-bg-dark mb-3" style="max-width: 20rem; opacity: 0.5; text-decoration:none;" href="/logout">

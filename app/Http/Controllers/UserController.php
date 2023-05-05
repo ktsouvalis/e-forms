@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\UsersRoles;
+use App\Models\UsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -194,10 +194,10 @@ class UserController extends Controller
         }
 
         foreach($request->all() as $key=>$value){
-            if(substr($key,0,4)=='role'){
-                UsersRoles::create([
+            if(substr($key,0,4)=='menu'){
+                UsersMenus::create([
                     'user_id'=>$record->id,
-                    'role_id'=>$value
+                    'menu_id'=>$value
                 ]); 
             }
         }

@@ -33,6 +33,7 @@
                     <th id="search">ID</th>
                     <th id="search">Name</th>
                     <th id="search">URL</th>
+                    <th id="search">Method</th>
                     <th id="search">Color</th>
                     <th id="search">Opacity</th>
                     <th id="search">Icon</th>
@@ -45,11 +46,12 @@
                             <td>{{$one_menu->id}}</td>
                             <td>{{$one_menu->name}}</td>
                             <td>{{$one_menu->url}}</td>
+                            <td>{{$one_menu->method}}</td>
                             <td>{{$one_menu->color}}</td>
                             <td>{{$one_menu->opacity}}</td>
                             <td>{{$one_menu->icon}}</td>
                             <td>
-                                <table>
+                                <table class="table table-sm table-striped table-hover">
                                     @foreach($one_menu->users as $one_user)
                                         <tr>
                                             <td>
@@ -111,10 +113,12 @@
                     @endphp
                     <table>
                     @foreach($users as $user)
-                    <tr>
-                        <td><input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="{{$user->id}}">
-                        <label for="{{$user->id}}"> {{$user->display_name}} </label></td>
-                    </tr>
+                    @if($user->id<>1 and $user->id <> 2)
+                        <tr>
+                            <td><input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="{{$user->id}}">
+                            <label for="{{$user->id}}"> {{$user->display_name}} </label></td>
+                        </tr>
+                    @endif
                     @endforeach
                     </table>
                 </div>

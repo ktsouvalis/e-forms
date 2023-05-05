@@ -19,7 +19,7 @@
                 <div>{{$one_menu->menu->name}}</div>
                 <p class="card-text"></p>
                 </div> 
-                </a>     
+                </a>   
             @endforeach
 
             <a class="col-lg-3 card w-3 text-bg-dark mb-3" style="max-width: 20rem; opacity: 0.5; text-decoration:none;" href="/logout">

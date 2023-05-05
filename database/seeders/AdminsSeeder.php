@@ -15,7 +15,7 @@ class AdminsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        //CREATE ADMINS
         User::create([
             'username' => 'ktsouvalis',
             'display_name' => 'Κωνσταντίνος Τσούβαλης',
@@ -30,6 +30,7 @@ class AdminsSeeder extends Seeder
             'password' => bcrypt('123456'),
         ]);
 
+        //CREATE OPERATIONS
         Menu::create([
             'name' => 'Διαχείριση Χρηστών',
             'url' => '/manage_users',
@@ -46,6 +47,9 @@ class AdminsSeeder extends Seeder
             'icon' => 'bi bi-menu-button-wide'
         ]);
 
+        
+
+        // ASSIGN OPERATIONS TO USERS
         UsersMenus::create([
             'user_id'=>1,
             'menu_id'=>1

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -163,7 +164,6 @@ class UserController extends Controller
     }
 
     public function insertUser(Request $request){
-        
         //VALIDATION
         $incomingFields = $request->all();
         $given_name = $incomingFields['user_name3'];

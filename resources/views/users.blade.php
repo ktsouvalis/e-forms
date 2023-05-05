@@ -62,7 +62,7 @@
                                 <td><div class="badge bg-primary text-wrap"><a href="/user_profile/{{$user->id}}" style="color:white; text-decoration:none;">{{$user->display_name}}</a></div></td>
                                 <td>{{$user->email}}</td>
                                 <td>
-                                    <table class="table table-sm">
+                                    <table class="table table-sm table-striped table-hover">
                                         @foreach ($user->menus as $one_menu)
                                             <tr>
                                             <td>{{$one_menu->menu->name}}</td>  
@@ -114,7 +114,7 @@
                         <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@isset($dberror3){{$old_data['user_email3']}}@endisset" ><br>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon5">Ρόλοι</span>
+                        <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>
                         @php
                             $menus = App\Models\Menu::all();   
                         @endphp
@@ -145,7 +145,7 @@
             @if(empty($asks_to))
             <nav class="navbar navbar-light bg-light">
                 <a href="/users_template.xlsx" class="link-info">Πρότυπο αρχείο για συμπλήρωση</a>
-                <form action="{{route('user_template_upload')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                <form action="{{route('upload_user_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
                     
                     <input type="file" name="import_users" > 

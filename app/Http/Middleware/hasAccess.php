@@ -7,8 +7,8 @@ use App\Models\User;
 use App\Models\UsersMenus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Request as twin;
 
 class hasAccess
 {
@@ -19,10 +19,11 @@ class hasAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $current_url = twin::path();
         $user = User::where('id', Auth::id())->first();
         $menus = UsersMenus::where('user_id', $user->id)->get();
         foreach($menus as $one_menu){
-            if($one_menu->menu->url == '/'.Route::currentRouteName()){
+            if($one_menu->menu->url == '/'.$current_url){
                 return $next($request);
             }
         }

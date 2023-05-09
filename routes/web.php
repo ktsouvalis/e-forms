@@ -26,22 +26,22 @@ Route::view('/change_password', 'password_change_form')->middleware('auth');
 
 Route::post('/change_password', [UserController::class, 'passwordChange'])->middleware('auth');
 
-Route::view('/manage_users', 'users')->name('manage_users')->middleware('hasAccess');
+Route::view('/manage_users', 'users')->middleware('hasAccess');
 
 Route::post('/upload_user_template', [UserController::class, 'importUsers'])->name('upload_user_template');
 
-Route::post('/insert_users', [UserController::class, 'insertUsers'])->name('insert_users');
+Route::post('/insert_users', [UserController::class, 'insertUsers']);
 
-Route::post('/insert_user', [UserController::class,'insertUser'])->name('insert_user');
+Route::post('/insert_user', [UserController::class,'insertUser']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
 
+Route::view('/manage_menus', 'menus')->middleware('hasAccess');
 
+Route::post('/insert_menu', [MenuController::class,'insertMenu']);
 
-Route::view('/manage_menus', 'menus')->name('manage_menus')->middleware('hasAccess');
-
-Route::post('/insert_menu', [MenuController::class,'insertMenu'])->name('insert_menu');
+Route::post('/change_menu_status', [MenuController::class,'changeMenuStatus']);
 
 Route::get('/manage_test', function(){
     return view('welcome');
-})->name('manage_test')->middleware('hasAccess');
+})->middleware('hasAccess');

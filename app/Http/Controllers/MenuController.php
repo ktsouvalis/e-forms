@@ -18,6 +18,8 @@ class MenuController extends Controller
                 'url' => $incomingFields['menu_url'],
                 'color' => $incomingFields['menu_color'],
                 'icon' => $incomingFields['menu_icon'],
+                'accepts' => 0,
+                'viewable' => 0
             ]);
         } 
         catch(QueryException $e){
@@ -43,5 +45,20 @@ class MenuController extends Controller
             'user_id'=>2
         ]); 
         return view('menus',['record'=>$record]);
+    }
+
+    public function changeMenuStatus(Request $request){
+        if($request->all()['asks_to'] == 'ch_vis_status'){
+            $menu = Menu::find($request->all()['menu_id']);
+            $menu->visible = $menu->visible==1?0:1;
+            $menu->accepts = 0;
+            $menu->save();
+        }
+        if($request->all()['asks_to'] == 'ch_acc_status'){
+            $menu = Menu::find($request->all()['menu_id']);
+            $menu->accepts = $menu->accepts==1?0:1;
+            $menu->save();
+        }
+        return redirect('/manage_menus');
     }
 }   

@@ -2,8 +2,8 @@
 
 <x-layout>
     <body class="bg-light">
-    
-    <div class="container">
+    <div class="container ">
+        
         <div class="row p-2 justify-content-evenly">
         @auth
             @push('title')
@@ -12,7 +12,7 @@
             @php
                 $user = App\Models\User::where('id', Illuminate\Support\Facades\Auth::id())->first();
             @endphp
-            
+
             <div class="py-5">
                 <div class="container">
                     <div class="row hidden-md-up justify-content-center">
@@ -76,8 +76,8 @@
                     <button type="submit" class="btn btn-primary">Είσοδος</button>
                 </form>
             </div>
-            
-            
+            <div class="col"></div>
         @endauth
+        </div>
         </div>
 </x-layout>

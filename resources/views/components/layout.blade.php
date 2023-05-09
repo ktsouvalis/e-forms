@@ -26,13 +26,58 @@
   
   @php
     $user = App\Models\User::find(Auth::id());
-    $link = $user->public_link;
-  @endphp     
-   
-  <div class="container">
+    // $link = $user->public_link;
+  @endphp
+  <div class="row">
+  
+    
+    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+      @auth
+      @if(Illuminate\Support\Facades\Request::path()!='/')
+      {{-- <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        <span class="fs-4">Λειτουργίες</span>
+      </a> --}}
+      <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+      <hr>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <p>
+        <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
+          <a href="/" style="text-decoration:none;" class="text-dark bi bi-house">Αρχική</a>
+        </div>
+        </li>
+        </p>
+        @foreach ($user->menus as $one_menu)
+            <li class="nav-item">
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_menu->menu->color}}; text-align:center;">
+                <a href="{{$one_menu->menu->url}}" style="color:white; text-decoration:none;" class="text-dark {{$one_menu->menu->icon}}"> {{$one_menu->menu->name}}</a>
+            </div>
+            </li> 
+        @endforeach
+        <p>
+        <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
+            <a href="/logout" style="text-decoration:none;" class="text-dark fa-solid fa-arrow-right-from-bracket">Αποσύνδεση</a>
+        </div>
+        </li>
+        </p>
+      </ul>
+      <hr>
+    
+    
+    @else
+    @push('app-icon')
+      <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+    @endpush
+    @endif
+  @endauth 
+  </div>
+  <div class="col-8">
+  <div class="container ">
     <div class="row justify-content-md-center">
       <div class="col p-4">
-        <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+        @stack('app-icon')
         <div class=" d-flex justify-content-center"><a href='/change_password' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{Auth::user()->display_name}}</a></div>
       </div>
     </div>
@@ -57,6 +102,9 @@
         
 
        <!-- footer begins -->
+</div>
+
+</div>
        <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="/" class="text-muted">library</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>

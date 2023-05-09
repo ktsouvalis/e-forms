@@ -19,10 +19,6 @@
     
 <body>
     <div class="container">
-    {{-- @include('menu') --}}
-    {{-- <div class="d-flex justify-content-end">
-        <a href="/users_dl" class="btn btn-primary bi bi-download"> Λήψη αρχείου χρηστών </a>
-    </div> --}}
             @php      
                 $all_menus = App\Models\Menu::all();
             @endphp
@@ -33,11 +29,12 @@
                     <th id="search">ID</th>
                     <th id="search">Name</th>
                     <th id="search">URL</th>
-                    <th id="search">Method</th>
                     <th id="search">Color</th>
                     <th id="search">Opacity</th>
                     <th id="search">Icon</th>
                     <th id="search">WhoHasAccess</th>
+                    <th id="">Ορατότητα</th>
+                    <th id="">Δυνατότητα Υποβολής</th>
                 </tr>
             </thead>
                 <tbody>
@@ -46,7 +43,6 @@
                             <td>{{$one_menu->id}}</td>
                             <td>{{$one_menu->name}}</td>
                             <td>{{$one_menu->url}}</td>
-                            <td>{{$one_menu->method}}</td>
                             <td>{{$one_menu->color}}</td>
                             <td>{{$one_menu->opacity}}</td>
                             <td>{{$one_menu->icon}}</td>
@@ -61,6 +57,47 @@
                                     @endforeach
                                 </table>
                             </td>
+                    
+                            @php
+                                if($one_menu->visible){
+                                    $opacity_vis = "";
+                                    $hidden_acc = "";
+                                    $tooltip_vis = "Κλείσιμο ορατότητας";  
+                                    if($one_menu->accepts){
+                                        $opacity_acc="";
+                                        $tooltip_acc="Κλείσιμο υποβολών";
+                                    }
+                                    else{
+                                        $opacity_acc = "opacity: 0.4";
+                                        $tooltip_acc="Άνοιγμα Υποβολών";
+                                    }
+                                }
+                                else{
+                                    $opacity_vis = "opacity: 0.4";
+                                    $hidden_acc="hidden";
+                                    $opacity_acc="";
+                                    $tooltip_acc="";
+                                    $tooltip_vis = "Άνοιγμα ορατότητας";
+                                }
+                            @endphp
+
+                            <td style="text-align: center">
+                                <form action="/change_menu_status" method="post">
+                                @csrf
+                                <input name="asks_to" type="hidden" value="ch_vis_status">
+                                <input name="menu_id" type="hidden" value="{{$one_menu->id}}">
+                                <button type="submit" class="btn btn-success bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα θα εμφανίζεται αλλά δε θα δέχεται υποβολές\n')"> </button>
+                                </form>
+                            </td>
+                            <td style="text-align: center">
+                                <form action="/change_menu_status" method="post">
+                                @csrf
+                                <input name="asks_to" type="hidden" value="ch_acc_status">
+                                <input name="menu_id" type="hidden" value="{{$one_menu->id}}">
+                                <button type="submit" class="btn btn-success bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
+                                </form>
+                            </td>
+                               
                         </tr>
                     @endforeach
                 </tbody>

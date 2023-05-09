@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('url');
             $table->string('color')->nullable();
             $table->string('icon')->nullable();
+            $table->boolean('accepts');
+            $table->boolean('visible');
             $table->timestamps();
         });
     }

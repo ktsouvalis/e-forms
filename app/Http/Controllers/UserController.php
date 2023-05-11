@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\UsersMenus;
+use App\Models\UsersOperations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -194,10 +194,10 @@ class UserController extends Controller
         }
 
         foreach($request->all() as $key=>$value){
-            if(substr($key,0,4)=='menu'){
-                UsersMenus::create([
+            if(substr($key,0,9)=='operation'){
+                UsersOperations::create([
                     'user_id'=>$record->id,
-                    'menu_id'=>$value
+                    'operation_id'=>$value
                 ]); 
             }
         }

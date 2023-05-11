@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Menu extends Model
+class Operation extends Model
 {
     use HasFactory;
 
@@ -16,10 +16,10 @@ class Menu extends Model
         'icon',
         'active',
         'accepts',
-        'viewable'
+        'visible'
     ];
 
     public function users(){
-        return $this->hasMany(UsersMenus::class);
+        return $this->hasMany(UsersOperations::class);
     }
 }

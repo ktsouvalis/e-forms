@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Models\User;
-use App\Models\UsersMenus;
+use App\Models\UsersOperations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,9 +21,9 @@ class hasAccess
     {
         $current_url = twin::path();
         $user = User::where('id', Auth::id())->first();
-        $menus = UsersMenus::where('user_id', $user->id)->get();
-        foreach($menus as $one_menu){
-            if($one_menu->menu->url == '/'.$current_url){
+        $operations = UsersOperations::where('user_id', $user->id)->get();
+        foreach($operations as $one_operation){
+            if($one_operation->operation->url == '/'.$current_url){
                 return $next($request);
             }
         }

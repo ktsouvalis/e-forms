@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OperationController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 
@@ -36,11 +36,11 @@ Route::post('/insert_user', [UserController::class,'insertUser']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
 
-Route::view('/manage_menus', 'menus')->middleware('hasAccess');
+Route::view('/manage_operations', 'operations')->middleware('hasAccess');
 
-Route::post('/insert_menu', [MenuController::class,'insertMenu']);
+Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
-Route::post('/change_menu_status', [MenuController::class,'changeMenuStatus']);
+Route::post('/change_operation_status', [OperationController::class,'changeOperationStatus']);
 
 Route::get('/manage_test', function(){
     return view('welcome');

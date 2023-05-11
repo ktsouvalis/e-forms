@@ -63,9 +63,9 @@
                                 <td>{{$user->email}}</td>
                                 <td>
                                     <table class="table table-sm table-striped table-hover">
-                                        @foreach ($user->menus as $one_menu)
+                                        @foreach ($user->operations as $one_operation)
                                             <tr>
-                                            <td>{{$one_menu->menu->name}}</td>  
+                                            <td>{{$one_operation->operation->name}}</td>  
                                             </tr>
                                         @endforeach
                                     </table>
@@ -116,13 +116,13 @@
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>
                         @php
-                            $menus = App\Models\Menu::all();   
+                            $operations = App\Models\Operation::all();   
                         @endphp
                         <table>
-                        @foreach($menus as $menu)
+                        @foreach($operations as $operation)
                         <tr>
-                            <td><input type="checkbox" name="menu{{$menu->id}}" value="{{$menu->id}}" id="{{$menu->id}}">
-                            <label for="{{$menu->id}}"> {{$menu->name}} </label></td>
+                            <td><input type="checkbox" name="operation{{$operation->id}}" value="{{$operation->id}}" id="{{$operation->id}}">
+                            <label for="{{$operation->id}}"> {{$operation->name}} </label></td>
                         </tr>
                         @endforeach
                         </table>

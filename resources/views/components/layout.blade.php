@@ -48,10 +48,10 @@
         </div>
         </li>
         </p>
-        @foreach ($user->menus as $one_menu)
+        @foreach ($user->operations as $one_operation)
             <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_menu->menu->color}}; text-align:center;">
-                <a href="{{$one_menu->menu->url}}" style="color:white; text-decoration:none;" class="text-dark {{$one_menu->menu->icon}}"> {{$one_menu->menu->name}}</a>
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
+                <a href="{{$one_operation->operation->url}}" style="color:white; text-decoration:none;" class="text-dark {{$one_operation->operation->icon}}"> {{$one_operation->operation->name}}</a>
             </div>
             </li> 
         @endforeach

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Menu;
+use App\Models\Operation;
 use App\Models\User;
-use App\Models\UsersMenus;
+use App\Models\UsersOperations;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -31,7 +31,7 @@ class AdminsSeeder extends Seeder
         ]);
 
         //CREATE OPERATIONS
-        Menu::create([
+        Operation::create([
             'name' => 'Διαχείριση Χρηστών',
             'url' => '/manage_users',
             'color' => 'skyblue',
@@ -40,9 +40,9 @@ class AdminsSeeder extends Seeder
             'visible'=> 0
         ]);
 
-        Menu::create([
-            'name' => 'Διαχείριση Menu',
-            'url' => '/manage_menus',
+        Operation::create([
+            'name' => 'Διαχείριση Λειτουργιών',
+            'url' => '/manage_operations',
             'color' => 'PaleTurquoise',
             'icon' => 'bi bi-menu-button-wide',
             'accepts'=> 0,
@@ -52,24 +52,24 @@ class AdminsSeeder extends Seeder
         
 
         // ASSIGN OPERATIONS TO USERS
-        UsersMenus::create([
+        UsersOperations::create([
             'user_id'=>1,
-            'menu_id'=>1
+            'operation_id'=>1
         ]);
 
-        UsersMenus::create([
+        UsersOperations::create([
             'user_id'=>2,
-            'menu_id'=>1
+            'operation_id'=>1
         ]);
 
-        UsersMenus::create([
+        UsersOperations::create([
             'user_id'=>1,
-            'menu_id'=>2
+            'operation_id'=>2
         ]);
 
-        UsersMenus::create([
+        UsersOperations::create([
             'user_id'=>2,
-            'menu_id'=>2
+            'operation_id'=>2
         ]);
     }
 }

@@ -58,7 +58,7 @@ class UserController extends Controller
         $user->password = bcrypt('123456');
         $user->save();
         
-        return back()->with('success',"Ο κωδικός του χρήστη $user->name άλλαξε επιτυχώς");
+        return back()->with('success',"Ο κωδικός του χρήστη $user->username άλλαξε επιτυχώς");
     }
 
     public function importUsers(Request $request){
@@ -205,7 +205,7 @@ class UserController extends Controller
         return view('users',['record'=>$record]);
     }
 
-    public function save_profile(User $user, Request $request){
+    public function saveProfile(User $user, Request $request){
 
         $incomingFields = $request->all();
        
@@ -213,14 +213,15 @@ class UserController extends Controller
         $user->display_name = $incomingFields['user_display_name'];
         $user->email = $incomingFields['user_email'];
 
+        $edited=false;
+        // check if changes happened to user table
         if($user->isDirty()){
             if($user->isDirty('username')){
                 $given_name = $incomingFields['user_name'];
 
                 if(User::where('username', $given_name)->count()){
                     $existing_user =User::where('username',$given_name)->first();
-                    return view('edit-user',['dberror'=>"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->name, $existing_user->display_name, $existing_user->email", 'user' => $user]);
-
+                    return view('user-profile',['dberror'=>"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email", 'user' => $user]);
                 }
             }
             else{
@@ -229,15 +230,48 @@ class UserController extends Controller
 
                     if(User::where('email', $given_email)->count()){
                         $existing_user =User::where('email',$given_email)->first();
-                        return view('edit-user',['dberror'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->name, $existing_user->display_name, $existing_user->email", 'user' => $user]);
+                        return view('user-profile',['dberror'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name", 'user' => $user]);
 
                     }
                 }
             }
             $user->save();
+            $edited = true;
         }
-        else{
-            return view('edit-user',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
+        
+        // check if an operation has been removed from user
+        $user_operations = $user->operations->all();
+        
+        foreach($user_operations as $one_operation){
+            $found=false;
+            foreach($request->all() as $key => $value){
+                if(substr($key,0,9)=='operation'){
+                    if($value == $one_operation->operation_id){
+                        $found = true;
+                    }
+                }
+            }
+            if(!$found){
+                UsersOperations::where('operation_id', $one_operation->operation_id)->where('user_id', $user->id)->first()->delete();
+                $edited=true;
+            }
+        }
+
+        // check if an operation has been added to user
+        foreach($request->all() as $key => $value){
+            if(substr($key,0,9)=='operation'){
+                if(!$user->operations->where('operation_id', $value)->count()){
+                    UsersOperations::create([
+                        'user_id' => $user->id,
+                        'operation_id' => $value
+                    ]);
+                    $edited = true;
+                } 
+            }
+        }
+        
+        if(!$edited){
+            return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
         }
         return redirect("/user_profile/$user->id")->with('success','Επιτυχής αποθήκευση');
     }

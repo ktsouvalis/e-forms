@@ -1,9 +1,10 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OperationController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OperationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,12 @@ Route::post('/upload_user_template', [UserController::class, 'importUsers'])->na
 Route::post('/insert_users', [UserController::class, 'insertUsers']);
 
 Route::post('/insert_user', [UserController::class,'insertUser']);
+
+Route::get('/user_profile/{user}', function(User $user){
+    return view('user-profile',['user'=>$user]);
+})->middleware('boss');
+
+Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
 

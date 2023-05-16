@@ -62,4 +62,75 @@ class OperationController extends Controller
         }
         return redirect('/manage_operations');
     }
+
+    public function saveProfile(Operation $operation, Request $request){
+
+        $incomingFields = $request->all();
+       
+        $operation->name = $incomingFields['name'];
+        $operation->url = $incomingFields['url'];
+        $operation->color = $incomingFields['color'];
+        $operation->icon = $incomingFields['icon'];
+        $edited=false;
+        // check if changes happened to operation table
+        if($operation->isDirty()){
+            if($operation->isDirty('name')){
+                $given_name = $incomingFields['name'];
+
+                if(Operation::where('name', $given_name)->count()){
+                    $existing_operation =Operation::where('name',$given_name)->first();
+                    return view('operation-profile',['dberror'=>"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email", 'user' => $operation]);
+                }
+            }
+            else{
+                if($operation->isDirty('email')){
+                    $given_email = $incomingFields['user_email'];
+
+                    if(User::where('email', $given_email)->count()){
+                        $existing_user =User::where('email',$given_email)->first();
+                        return view('user-profile',['dberror'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name", 'user' => $operation]);
+
+                    }
+                }
+            }
+            $operation->save();
+            $edited = true;
+        }
+        
+        // check if an operation has been removed from user
+        $user_operations = $user->operations->all();
+        
+        foreach($user_operations as $one_operation){
+            $found=false;
+            foreach($request->all() as $key => $value){
+                if(substr($key,0,9)=='operation'){
+                    if($value == $one_operation->operation_id){
+                        $found = true;
+                    }
+                }
+            }
+            if(!$found){
+                UsersOperations::where('operation_id', $one_operation->operation_id)->where('user_id', $user->id)->first()->delete();
+                $edited=true;
+            }
+        }
+
+        // check if an operation has been added to user
+        foreach($request->all() as $key => $value){
+            if(substr($key,0,9)=='operation'){
+                if(!$user->operations->where('operation_id', $value)->count()){
+                    UsersOperations::create([
+                        'user_id' => $user->id,
+                        'operation_id' => $value
+                    ]);
+                    $edited = true;
+                } 
+            }
+        }
+        
+        if(!$edited){
+            return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
+        }
+        return redirect("/user_profile/$user->id")->with('success','Επιτυχής αποθήκευση');
+    }
 }

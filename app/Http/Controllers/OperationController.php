@@ -78,18 +78,16 @@ class OperationController extends Controller
                 $given_name = $incomingFields['name'];
 
                 if(Operation::where('name', $given_name)->count()){
-                    $existing_operation =Operation::where('name',$given_name)->first();
-                    return view('operation-profile',['dberror'=>"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email", 'user' => $operation]);
+                    return redirect("/operation_profile/$operation->id")->with('failure',"Υπάρχει ήδη λειτουργία με name $given_name.");
                 }
             }
             else{
-                if($operation->isDirty('email')){
-                    $given_email = $incomingFields['user_email'];
+                if($operation->isDirty('url')){
+                    $given_url = $incomingFields['url'];
 
-                    if(User::where('email', $given_email)->count()){
-                        $existing_user =User::where('email',$given_email)->first();
-                        return view('user-profile',['dberror'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name", 'user' => $operation]);
-
+                    if(Operation::where('url', $given_url)->count()){
+                        $existing_operation =Operation::where('url',$given_url)->first();
+                        return redirect("/operation_profile/$operation->id")->with('failure',"Υπάρχει ήδη λειτουργία με url $given_url: $existing_operation->name");
                     }
                 }
             }
@@ -97,31 +95,31 @@ class OperationController extends Controller
             $edited = true;
         }
         
-        // check if an operation has been removed from user
-        $user_operations = $user->operations->all();
+        // check if a user has been removed from operation
+        $operation_users = $operation->users->all();
         
-        foreach($user_operations as $one_operation){
+        foreach($operation_users as $one_user){
             $found=false;
             foreach($request->all() as $key => $value){
-                if(substr($key,0,9)=='operation'){
-                    if($value == $one_operation->operation_id){
+                if(substr($key,0,4)=='user'){
+                    if($value == $one_user->user_id){
                         $found = true;
                     }
                 }
             }
             if(!$found){
-                UsersOperations::where('operation_id', $one_operation->operation_id)->where('user_id', $user->id)->first()->delete();
+                UsersOperations::where('user_id', $one_user->user_id)->where('operation_id', $operation->id)->first()->delete();
                 $edited=true;
             }
         }
 
-        // check if an operation has been added to user
+        // check if a user has been added to operation
         foreach($request->all() as $key => $value){
-            if(substr($key,0,9)=='operation'){
-                if(!$user->operations->where('operation_id', $value)->count()){
+            if(substr($key,0,4)=='user'){
+                if(!$operation->users->where('user_id', $value)->count()){
                     UsersOperations::create([
-                        'user_id' => $user->id,
-                        'operation_id' => $value
+                        'operation_id' => $operation->id,
+                        'user_id' => $value
                     ]);
                     $edited = true;
                 } 
@@ -129,8 +127,8 @@ class OperationController extends Controller
         }
         
         if(!$edited){
-            return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
+            return redirect("/operation_profile/$operation->id")->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
         }
-        return redirect("/user_profile/$user->id")->with('success','Επιτυχής αποθήκευση');
+        return redirect("/operation_profile/$operation->id")->with('success','Επιτυχής αποθήκευση');
     }
 }

@@ -44,11 +44,15 @@ Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
 
+//////// OPERATIONS ////////////////////////////////////////////////////
+
 Route::view('/manage_operations', 'operations')->middleware('hasAccess');
 
 Route::get('/operation_profile/{operation}', function(Operation $operation){
     return view('operation-profile',['operation'=>$operation]);
 })->middleware('boss');
+
+Route::post('/save_operation/{operation}', [OperationController::class,'saveProfile']);
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 

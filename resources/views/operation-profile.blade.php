@@ -27,7 +27,7 @@
                     </div>
                     <input type="hidden" name="operation_id" value="{{$operation->id}}">
                     <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>
+                        <span class="input-group-text w-25" id="basic-addon5">Χρήστες</span>
                         @php
                             $all_users = App\Models\User::all();
                         @endphp

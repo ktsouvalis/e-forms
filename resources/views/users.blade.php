@@ -81,16 +81,13 @@
                     </tbody>
                 </table>
             </div>
-            @isset($dberror3)
-                <div class="alert alert-danger" role="alert">{{$dberror3}}</div>
-            @else
-                @isset($record)
-                    <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
-                    <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                        <a href="/user_profile/{{$record->id}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->display_name}}, {{$record->name}}</a>
-                    </div>
-                @endisset
-            @endisset
+            
+            @if(session()->has('record'))
+                <div class="m-2 col-sm-2 btn btn-primary text-wrap">
+                    <a href="/user_profile/{{session('record')->id}}" style="color:white; text-decoration:none;">{{session('record')->id}}, {{session('record')->display_name}}, {{session('record')->username}}</a>
+                </div>
+            @endif
+            
             <div class="container py-5">
             <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
@@ -103,15 +100,15 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon2">Username</span>
-                        <input name="user_name3" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required value="@isset($dberror3){{$old_data['user_name3']}}@endisset"><br>
+                        <input name="user_name3" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon2" required value="@if(session()->has('old_data')){{session('old_data')['user_name3']}}@endif"><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon3">DisplayName</span>
-                        <input name="user_display_name3" type="text" class="form-control" placeholder="DisplayName" aria-label="DisplayName" aria-describedby="basic-addon3" required value="@isset($dberror3){{$old_data['user_display_name3']}}@endisset"><br>
+                        <input name="user_display_name3" type="text" class="form-control" placeholder="DisplayName" aria-label="DisplayName" aria-describedby="basic-addon3" required value="@if(session()->has('old_data')){{session('old_data')['user_display_name3']}}@endif"><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">email</span>
-                        <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@isset($dberror3){{$old_data['user_email3']}}@endisset" ><br>
+                        <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@if(session()->has('old_data')){{session('old_data')['user_email3']}}@endif" ><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>

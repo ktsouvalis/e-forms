@@ -171,12 +171,16 @@ class UserController extends Controller
 
         if(User::where('username', $given_name)->count()){
             $existing_user = User::where('username', $given_name)->first();
-            return view('users',['dberror3'=>"Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->name, $existing_user->display_name, $existing_user->email", 'old_data'=>$request]);
+            return redirect('/manage_users')
+                ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->display_name, $existing_user->email")
+                ->with('old_data', $incomingFields);
         }
         else{
             if(User::where('email', $given_email)->count()){
                 $existing_user = User::where('email', $given_email)->first();
-                return view('users',['dberror3'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->name, $existing_user->display_name, $existing_user->email", 'old_data'=>$request]);
+                return redirect('/manage_users')
+                    ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_email: $existing_user->username, $existing_user->display_name")
+                    ->with('old_data', $incomingFields);
             }
         }
         //VALIDATION PASSED
@@ -190,7 +194,9 @@ class UserController extends Controller
             ]);
         } 
         catch(QueryException $e){
-            return view('users',['dberror'=>"Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.", 'old_data'=>$request]);
+            return redirect('/manage_users')
+                ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
+                ->with('old_data', $incomingFields);
         }
 
         foreach($request->all() as $key=>$value){
@@ -202,7 +208,9 @@ class UserController extends Controller
             }
         }
 
-        return view('users',['record'=>$record]);
+        return redirect('/manage_users')
+            ->with('success','Επιτυχής καταχώρηση νέου χρήστη')
+            ->with('record', $record);
     }
 
     public function saveProfile(User $user, Request $request){
@@ -221,7 +229,7 @@ class UserController extends Controller
 
                 if(User::where('username', $given_name)->count()){
                     $existing_user =User::where('username',$given_name)->first();
-                    return view('user-profile',['dberror'=>"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email", 'user' => $user]);
+                    return redirect("/user_profile/$user->id")->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
                 }
             }
             else{
@@ -230,7 +238,7 @@ class UserController extends Controller
 
                     if(User::where('email', $given_email)->count()){
                         $existing_user =User::where('email',$given_email)->first();
-                        return view('user-profile',['dberror'=>"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name", 'user' => $user]);
+                        return redirect("/user_profile/$user->id")->with('failure',"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name");
 
                     }
                 }
@@ -271,13 +279,10 @@ class UserController extends Controller
         }
         
         if(!$edited){
-            return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
+            // return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
+            return redirect("/user_profile/$user->id")->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
         }
         return redirect("/user_profile/$user->id")->with('success','Επιτυχής αποθήκευση');
-    }
-
-    public function show_profile(User $user){
-            return view('user-profile',['user'=>$user]);
     }
 
     public function usersDl(){

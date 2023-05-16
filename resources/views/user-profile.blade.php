@@ -4,7 +4,6 @@
             <nav class="navbar navbar-light bg-light">
                 <form action="/save_user/{{$user->id}}" method="post" class="container-fluid">
                     @csrf
-                    <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>
                         <span class="input-group-text w-75"><strong>Επεξεργασία Χρήστη</strong></span>

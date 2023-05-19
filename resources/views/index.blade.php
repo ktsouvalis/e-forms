@@ -1,5 +1,3 @@
-
-
 <x-layout>
     <body class="bg-light">
     <div class="container ">
@@ -42,6 +40,7 @@
             
         
         @else
+            
             @push('title')
                     <title>Σύνδεση</title>
             @endpush

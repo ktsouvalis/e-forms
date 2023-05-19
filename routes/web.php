@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\Operation;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Md5Controller;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OperationController;
@@ -18,7 +19,12 @@ use App\Http\Controllers\OperationController;
 |
 */
 
+///// LOGIN ////////////////////////////////////
 Route::view('/', 'index')->name('index');
+
+Route::get('/school/{md5}', [Md5Controller::class, 'login']);
+
+//// USER ///////////////////////////////////////
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
@@ -44,6 +50,10 @@ Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
 
+//////// SCHOOL ////////////////////////////////////////////////////////////
+
+Route::view('/school', 'index_school');
+
 //////// OPERATIONS ////////////////////////////////////////////////////
 
 Route::view('/manage_operations', 'operations')->middleware('hasAccess');
@@ -61,3 +71,4 @@ Route::post('/change_operation_status', [OperationController::class,'changeOpera
 Route::get('/manage_test', function(){
     return view('welcome');
 })->middleware('hasAccess');
+

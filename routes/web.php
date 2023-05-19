@@ -1,11 +1,12 @@
 <?php
 
 use App\Models\User;
+use App\Models\School;
 use App\Models\Operation;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Md5Controller;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\OperationController;
 
 /*
@@ -19,10 +20,9 @@ use App\Http\Controllers\OperationController;
 |
 */
 
-///// LOGIN ////////////////////////////////////
-Route::view('/', 'index')->name('index');
+///// INDEX ////////////////////////////////////
 
-Route::get('/school/{md5}', [Md5Controller::class, 'login']);
+Route::view('/', 'index')->name('index');
 
 //// USER ///////////////////////////////////////
 
@@ -52,7 +52,9 @@ Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])-
 
 //////// SCHOOL ////////////////////////////////////////////////////////////
 
-Route::view('/school', 'index_school');
+Route::get('/school/{md5}', [SchoolController::class, 'login']);
+
+Route::view('/school', 'index_school')->middleware('auth');
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 

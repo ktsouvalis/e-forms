@@ -19,8 +19,26 @@
     <!-- fontawesome -->
     <script src="https://kit.fontawesome.com/5083d79d45.js" crossorigin="anonymous"></script>
   
-  </head> 
-  
+  </head>
+
+  @auth('school')
+    @if(Illuminate\Support\Facades\Request::path()!='school')
+      Menu code
+    @else
+      @push('app-icon')
+        <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+      @endpush
+    @endif
+      <div class="container ">
+        <div class="row justify-content-md-center">
+          <div class="col p-4">
+            @stack('app-icon')
+            <div class="d-flex justify-content-center"><a href='/school' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title=""> {{Auth::guard('school')->user()->name}}</a></div>
+          </div>
+        </div>
+      </div>
+  @endauth
+
   {{$slot}}
 
         @if (session()->has('success'))

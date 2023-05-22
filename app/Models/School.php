@@ -15,6 +15,8 @@ class School extends Authenticatable
 {
     use HasFactory;
 
+    protected $guard = "school";
+
      /**
      * The attributes that are mass assignable.
      *

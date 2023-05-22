@@ -54,7 +54,9 @@ Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])-
 
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
-Route::view('/school', 'index_school')->middleware('auth');
+Route::view('/school', 'index_school');
+
+Route::get('/slogout', [SchoolController::class, 'logout']);
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 

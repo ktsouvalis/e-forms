@@ -32,7 +32,7 @@
   
     
     <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
-      @auth
+      {{-- @auth --}}
       @if(Illuminate\Support\Facades\Request::path()!='/')
       {{-- <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
         <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
@@ -71,7 +71,7 @@
       <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
     @endpush
     @endif
-  @endauth 
+  {{-- @endauth  --}}
   </div>
   <div class="col-8">
   <div class="container ">

@@ -9,18 +9,23 @@ use Illuminate\Support\Facades\Auth;
 class SchoolController extends Controller
 {
     //
-    public function login(Request $request){
-        // $incomingFields=$request->validate([//the html names of the fields
-        //     'md5'=>'required',
-        // ]);
-        
-        if(School::where('md5', $request->md5)->count()){
-            $school = School::where('md5', $request->md5)->first();
-            Auth::login($school);
-            $request->session()->regenerate();
-            return redirect('/school')->with('success','Συνδεθήκατε επιτυχώς');
-        }else{
-            return redirect('/')->with('failure', 'Δεν έχετε δικαίωμα πρόσβασης. Ζητήστε link ή κωδικό.');
+    public function login($md5){ 
+        $msg = "Δε βρέθηκε η σελίδα που ζητήσατε";
+        $state="failure";
+        $school = School::where('md5', $md5)->first();
+        if($school){
+            auth()->guard('school')->logout();
+            Auth::guard('school')->login($school);
+            session()->regenerate();
+            $msg=$school->name." καλωσήρθατε";
+            $state = 'success';
         }
+        return redirect('/school')->with($state,$msg);
+    }
+
+    public function logout(){
+        
+        auth()->guard('school')->logout();
+        return redirect('/school')->with('success', 'Αποσυνδεθήκατε');
     }
 }

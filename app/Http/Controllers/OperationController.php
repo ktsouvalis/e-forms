@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Models\UsersOperations;
-use Illuminate\Database\QueryException;
+
 
 class OperationController extends Controller
 {
@@ -23,7 +24,7 @@ class OperationController extends Controller
                 'visible' => 0
             ]);
         } 
-        catch(QueryException $e){
+        catch(Throwable $e){
             return view('operations',['dberror'=>"Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.", 'old_data'=>$request]);
         }
 

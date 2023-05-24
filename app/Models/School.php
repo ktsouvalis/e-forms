@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +31,16 @@ class School extends Authenticatable
         'special_needs',
         'international'
     ];
+
+    public function organikis()
+    {
+        return $this->morphMany(Teacher::class, 'organiki');
+    }
+
+    public function ypiretisis()
+    {
+        return $this->morphMany(Teacher::class, 'ypiretisi');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

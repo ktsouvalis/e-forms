@@ -22,13 +22,16 @@ class OperationPolicy
      */
     public function view(User $user, Operation $operation): bool
     {
-        //.
-        $useroperations = UsersOperations::where('user_id', $user->id)->get();
-        foreach($useroperations as $one_operation){
-            if($one_operation->operation_id == $operation->id){
-                return true;
-            }
+        //
+        if($user->operations->where('operation_id', $operation->id)->count()){
+            return true;
         }
+        // $useroperations = UsersOperations::where('user_id', $user->id)->get();
+        // foreach($useroperations as $one_operation){
+        //     if($one_operation->operation_id == $operation->id){
+        //         return true;
+        //     }
+        // }
         return false;
     }
 

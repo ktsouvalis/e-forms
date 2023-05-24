@@ -14,7 +14,7 @@ class SchoolController extends Controller
         $state="failure";
         $school = School::where('md5', $md5)->first();
         if($school){
-            auth()->guard('school')->logout();
+            // auth()->guard('school')->logout();
             Auth::guard('school')->login($school);
             session()->regenerate();
             $msg=$school->name." καλωσήρθατε";

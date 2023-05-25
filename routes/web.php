@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\OperationController;
 
 /*
@@ -75,4 +76,7 @@ Route::post('/change_operation_status', [OperationController::class,'changeOpera
 Route::get('/manage_test', function(){
     return view('welcome');
 })->middleware('hasAccess');
+
+//// TESTING ////////
+Route::get('/test/{teacher}', [TeacherController::class, 'test']);
 

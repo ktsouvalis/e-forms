@@ -10,6 +10,8 @@ class Teacher extends Authenticatable
 {
     use HasFactory;
 
+    protected $guard = "teacher";
+    
     protected $guarded = [
         'id'
     ];

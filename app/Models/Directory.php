@@ -11,6 +11,10 @@ class Directory extends Model
 
     protected $table='directories';
 
+    protected $guarded = [
+        'id'
+    ];
+    
     protected $fillable = [
         'code',
         'name',

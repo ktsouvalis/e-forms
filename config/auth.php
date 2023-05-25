@@ -80,7 +80,7 @@ return [
             'model' => App\Models\School::class,
         ],
 
-        'schools' => [
+        'teachers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Teacher::class,
         ],

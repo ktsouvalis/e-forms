@@ -59,6 +59,12 @@ Route::view('/school', 'index_school');
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
 
+//////// TEACHER //////////////////////////////////////////////////////////
+
+Route::view('/teachers','teachers');
+
+Route::post('/upload_teacher_template', [TeacherController::class, 'imporTeachersOrganiki']);
+
 //////// OPERATIONS ////////////////////////////////////////////////////
 
 Route::view('/manage_operations', 'operations')->middleware('hasAccess');

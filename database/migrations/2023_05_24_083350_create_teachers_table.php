@@ -19,10 +19,11 @@ return new class extends Migration
             
             //personal
             $table->string('name');
-            $table->string('surnname');
+            $table->string('surname');
             $table->string('fname');
             $table->string('mname');
             $table->string('afm');
+            $table->string('gender');
             
             //contact
             $table->string('telephone')->nullable();
@@ -32,14 +33,14 @@ return new class extends Migration
             // work
             $table->string('klados');
             $table->string('am')->nullable();
-            $table->boolean('monimos');
+            $table->foreignId('sxesi_ergasias_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->boolean('org_eae');
             
             //connections
             $table->unsignedBigInteger('organiki_id'); // οργανική τοποθέτηση: id απο τον πίνακα schools ή από τον πίνακα directories
             $table->string('organiki_type'); // όνομα  Model (School ή Directory)
-            $table->unsignedBigInteger('ypiretisi_id'); // υπηρέτηση: id απο τον πίνακα schools ή από τον πίνακα no_schools
-            $table->string('ypiretisi_type'); // όνομα  Model (School ή NoSchool)
+            $table->unsignedBigInteger('ypiretisi_id')->nullable(); // υπηρέτηση: id απο τον πίνακα schools ή από τον πίνακα no_schools
+            $table->string('ypiretisi_type')->nullable(); // όνομα  Model (School ή NoSchool)
            
         });
     }

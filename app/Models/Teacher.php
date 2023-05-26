@@ -23,4 +23,8 @@ class Teacher extends Authenticatable
     public function ypiretisi(){
         return $this->morphTo('ypiretisi', 'ypiretisi_type', 'ypiretisi_id');
     }
+
+    public function sxesi_ergasias(){
+        return $this->hasOne(SxesiErgasias::class);
+    }
 }

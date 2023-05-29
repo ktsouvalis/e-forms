@@ -33,13 +33,12 @@ class TeacherController extends Controller
         $mime = Storage::mimeType($path);
         $spreadsheet = IOFactory::load("../storage/app/$path");
         $teachers_array=array();
-        $update=array();
         $row=2;
         $error=0;
         $rowSumValue="1";
         while ($rowSumValue != "" && $row<10000){
             $check=array();
-            $update=0;
+    
             $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
             $check['surname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
             $check['fname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
@@ -58,10 +57,11 @@ class TeacherController extends Controller
             $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
             $check['organiki'] = substr($organiki, 2, -1);
             
-            
+            $check['action']="";
             if(Teacher::where('afm', $check['afm'])->count()){
-                $update[Teacher::where('afm', $check['afm'])->first()->id]=1;
+                $check['action']=Teacher::where('afm', $check['afm'])->first()->id;
             }
+            
 
             $check['org_eae']=1;
             if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(54, $row)->getValue()=="ΟΧΙ"){
@@ -77,14 +77,13 @@ class TeacherController extends Controller
                 $check['sxesi_ergasias'] = "Κενό πεδίο";
             }
 
-            $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
-            if(School::where('code', $organiki)->count()){
-                $check['organiki'] = School::where('code', $organiki)->get()->id;
-                $check['organiki_type'] = "App\Model\School";
+            if(School::where('code', $check['organiki'])->count()){
+                $check['organiki'] = School::where('code', $check['organiki'])->first()->id;
+                $check['organiki_type'] = "App\Models\School";
             }
-            else if(Directory::where('code', $organiki)->count()){
-                $check['organiki'] = Directory::where('code', $organiki)->get()->id;
-                $check['organiki_type'] = "App\Model\Directory";    
+            else if(Directory::where('code', $check['organiki'])->count()){
+                $check['organiki'] = Directory::where('code', $check['organiki'])->first()->id;
+                $check['organiki_type'] = "App\Models\Directory";    
             }
             else{
                 $error=1;
@@ -101,7 +100,6 @@ class TeacherController extends Controller
 
         session(['teachers_array' => $teachers_array]);
         session(['active_tab' =>'import']);
-        session(['update' => $update]);
 
         if($error){
             return redirect(url('/teachers'))
@@ -110,5 +108,64 @@ class TeacherController extends Controller
             return redirect(url('/teachers'))
                 ->with('asks_to','save');
         }
+    }
+
+    public function insertTeachersOrganiki(){
+        $teachers_array = session('teachers_array');
+        session()->forget('teachers_array');
+        session()->forget('active_tab');
+
+        // DELETE TEACHERS FROM DATABASE THAT ARE NOT IN XLSX
+        $afms = array_column($teachers_array, 'afm');
+        $recordsToDelete = Teacher::whereNotIn('afm', $afms)->get();
+        foreach($recordsToDelete as $record){
+            $record->delete();
+        }
+        foreach($teachers_array as $teacher){
+            if($teacher['action']==''){
+        // CREATE TEACHER WHO IS IN XLSX BUT NOT IN DATABASE
+                Teacher::create([
+                    'md5' => bcrypt($teacher['afm']),
+                    'name'=> $teacher['name'],
+                    'surname'=> $teacher['surname'],
+                    'fname' => $teacher['fname'],
+                    'mname' => $teacher['mname'],
+                    'afm' => $teacher['afm'],
+                    'gender' => $teacher['gender'],
+                    'telephone' => $teacher['telephone'],
+                    'mail' => $teacher['mail'],
+                    'sch_mail' => $teacher['sch_mail'],
+                    'klados' => $teacher['klados'],
+                    'am' => $teacher['am'],
+                    'sxesi_ergasias_id' => $teacher['sxesi_ergasias'],
+                    'org_eae' => $teacher['org_eae'],
+                    'organiki_id' => $teacher['organiki'],
+                    'organiki_type' => $teacher['organiki_type']
+                ]);
+            }
+            else{
+        // UPDATE TEACHER WHO IS IN XLSX AND IN DATABSE
+                $teacher_update = Teacher::find($teacher['action']);
+                $teacher_update->name = $teacher['name'];
+                $teacher_update->surname = $teacher['surname'];
+                $teacher_update->fname = $teacher['fname'];
+                $teacher_update->mname = $teacher['mname'];
+                $teacher_update->telephone = $teacher['telephone'];
+                $teacher_update->mail = $teacher['mail'];
+                $teacher_update->sch_mail = $teacher['sch_mail'];
+                $teacher_update->klados = $teacher['klados'];
+                $teacher_update->am = $teacher['am'];
+                $teacher_update->sxesi_ergasias_id = $teacher['sxesi_ergasias'];
+                $teacher_update->org_eae = $teacher['org_eae'];
+                $teacher_update->organiki_id = $teacher['organiki'];
+                $teacher_update->organiki_type = $teacher['organiki_type'];
+
+                if($teacher_update->isDirty()){
+                    $teacher_update->save();
+                }
+            }
+        }
+        return redirect(url('/teachers'))
+        ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
     }
 }

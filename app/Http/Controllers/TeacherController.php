@@ -125,7 +125,7 @@ class TeacherController extends Controller
             if($teacher['action']==''){
         // CREATE TEACHER WHO IS IN XLSX BUT NOT IN DATABASE
                 Teacher::create([
-                    'md5' => bcrypt($teacher['afm']),
+                    'md5' => md5($teacher['afm']),
                     'name'=> $teacher['name'],
                     'surname'=> $teacher['surname'],
                     'fname' => $teacher['fname'],

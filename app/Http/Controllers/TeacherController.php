@@ -19,7 +19,7 @@ class TeacherController extends Controller
         return view('test',['teacher'=>$teacher]);
     }
 
-    public function imporTeachersOrganiki(Request $request){
+    public function importTeachersOrganiki(Request $request){
         $rule = [
             'import_teachers_organiki' => 'required|mimes:xlsx'
         ];
@@ -45,7 +45,7 @@ class TeacherController extends Controller
             $check['mname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
 
             $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-            $check['afm']= substr($afm, 2, -1);
+            $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
 
             $check['gender']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
             $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
@@ -55,7 +55,7 @@ class TeacherController extends Controller
             $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
 
             $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
-            $check['organiki'] = substr($organiki, 2, -1);
+            $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
             
             $check['action']="";
             if(Teacher::where('afm', $check['afm'])->count()){
@@ -71,18 +71,21 @@ class TeacherController extends Controller
             $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
             if(SxesiErgasias::where('name',$sxesi)->count()){
                 $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
+                $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
             }
             else{
                 $error= 1;
                 $check['sxesi_ergasias'] = "Κενό πεδίο";
             }
 
-            if(School::where('code', $check['organiki'])->count()){
-                $check['organiki'] = School::where('code', $check['organiki'])->first()->id;
+            if(School::where('code', $sanitized_organiki)->count()){
+                $check['organiki'] = School::where('code', $sanitized_organiki)->first()->id;
+                $check['organiki_name'] = School::where('code', $sanitized_organiki)->first()->name;
                 $check['organiki_type'] = "App\Models\School";
             }
-            else if(Directory::where('code', $check['organiki'])->count()){
-                $check['organiki'] = Directory::where('code', $check['organiki'])->first()->id;
+            else if(Directory::where('code', $sanitized_organiki)->count()){
+                $check['organiki'] = Directory::where('code', $sanitized_organiki)->first()->id;
+                $check['organiki_name'] = Directory::where('code', $sanitized_organiki)->first()->name;
                 $check['organiki_type'] = "App\Models\Directory";    
             }
             else{

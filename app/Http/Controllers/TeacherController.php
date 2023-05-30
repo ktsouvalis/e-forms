@@ -102,13 +102,12 @@ class TeacherController extends Controller
         }
 
         session(['teachers_array' => $teachers_array]);
-        session(['active_tab' =>'import']);
 
         if($error){
-            return redirect(url('/teachers'))
+            return redirect(url('/import_teachers'))
                 ->with('asks_to','error');
         }else{
-            return redirect(url('/teachers'))
+            return redirect(url('/import_teachers'))
                 ->with('asks_to','save');
         }
     }
@@ -116,7 +115,7 @@ class TeacherController extends Controller
     public function insertTeachersOrganiki(){
         $teachers_array = session('teachers_array');
         session()->forget('teachers_array');
-        session()->forget('active_tab');
+
 
         // DELETE TEACHERS FROM DATABASE THAT ARE NOT IN XLSX
         $afms = array_column($teachers_array, 'afm');

@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\School;
+use App\Models\Teacher;
 use App\Models\Operation;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
@@ -35,7 +36,7 @@ Route::view('/change_password', 'password_change_form')->middleware('auth');
 
 Route::post('/change_password', [UserController::class, 'passwordChange'])->middleware('auth');
 
-Route::view('/manage_users', 'users')->middleware('hasAccess');
+Route::view('/manage_users', 'users')->middleware('boss');
 
 Route::post('/upload_user_template', [UserController::class, 'importUsers'])->name('upload_user_template');
 
@@ -65,7 +66,9 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
-Route::view('/teachers','teachers');
+Route::view('/teachers','teachers')->middleware('hasAccess');
+
+Route::view('/import_teachers', 'import-teachers')->middleware("can:create, ".Teacher::class);
 
 Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'importTeachersOrganiki']);
 
@@ -75,7 +78,7 @@ Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeach
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 
-Route::view('/manage_operations', 'operations')->middleware('hasAccess');
+Route::view('/manage_operations', 'operations')->middleware('boss');
 
 Route::get('/operation_profile/{operation}', function(Operation $operation){
     return view('operation-profile',['operation'=>$operation]);
@@ -85,12 +88,11 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
-Route::post('/change_operation_status', [OperationController::class,'changeOperationStatus']);
-
-Route::get('/manage_test', function(){
-    return view('welcome');
-})->middleware('hasAccess');
+// Route::post('/change_operation_status', [OperationController::class,'changeOperationStatus']);
 
 //// TESTING ////////
 Route::get('/test/{teacher}', [TeacherController::class, 'test']);
 
+Route::get('/manage_test', function(){
+    return view('welcome');
+})->middleware('hasAccess');

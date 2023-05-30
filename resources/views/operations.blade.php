@@ -33,8 +33,8 @@
                     <th id="search">Opacity</th>
                     <th id="search">Icon</th>
                     <th id="search">WhoHasAccess</th>
-                    <th id="">Ορατότητα</th>
-                    <th id="">Δυνατότητα Υποβολής</th>
+                    {{-- <th id="">Ορατότητα</th> --}}
+                    {{-- <th id="">Δυνατότητα Υποβολής</th> --}}
                 </tr>
             </thead>
                 <tbody>
@@ -58,7 +58,7 @@
                                             </tr>
                                         @endforeach
                                     </table>
-                                </td>
+                                {{-- </td>
                                 @can('update', $one_operation)
                                 @php
                                     if($one_operation->visible){
@@ -101,7 +101,7 @@
                                 </td>
                                 @else
                                 <td> - </td><td> - </td>
-                                @endcan
+                                @endcan --}}
                             </tr>
                         @endcan
                     @endforeach

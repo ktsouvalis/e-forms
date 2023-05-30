@@ -32,24 +32,13 @@ class AdminsSeeder extends Seeder
 
         //CREATE OPERATIONS
         Operation::create([
-            'name' => 'Διαχείριση Χρηστών',
+            'name' => 'Διαχείριση Χρηστών Διεύθυνσης',
             'url' => '/manage_users',
             'color' => 'skyblue',
             'icon' => 'fa-solid fa-users',
             'accepts'=> 0,
             'visible'=> 0
-        ]);
-
-        Operation::create([
-            'name' => 'Διαχείριση Λειτουργιών',
-            'url' => '/manage_operations',
-            'color' => 'PaleTurquoise',
-            'icon' => 'bi bi-menu-button-wide',
-            'accepts'=> 0,
-            'visible'=> 0
-        ]);
-
-        
+        ]);        
 
         // ASSIGN OPERATIONS TO USERS
         UsersOperations::create([
@@ -60,16 +49,6 @@ class AdminsSeeder extends Seeder
         UsersOperations::create([
             'user_id'=>2,
             'operation_id'=>1
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>1,
-            'operation_id'=>2
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>2,
-            'operation_id'=>2
         ]);
     }
 }

@@ -123,7 +123,7 @@
              @csrf
             <button type="submit" class="btn btn-primary bi bi-file-arrow-up p-2"> Αποστολή</button>
         </form>
-        <a href="{{url('/teachers')}}" class="col">Ακύρωση</a>
+        <a href="{{url('/teachers')}}" class="col"> Ακύρωση</a>
         </div>
     </div>
 </x-layout>

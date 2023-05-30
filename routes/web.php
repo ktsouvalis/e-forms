@@ -63,7 +63,9 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 Route::view('/teachers','teachers');
 
-Route::post('/upload_teacher_template', [TeacherController::class, 'imporTeachersOrganiki']);
+Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'imporTeachersOrganiki']);
+
+Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachersOrganiki']);
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 

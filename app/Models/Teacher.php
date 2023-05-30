@@ -25,6 +25,6 @@ class Teacher extends Authenticatable
     }
 
     public function sxesi_ergasias(){
-        return $this->hasOne(SxesiErgasias::class);
+        return $this->belongsTo(SxesiErgasias::class,'sxesi_ergasias_id');
     }
 }

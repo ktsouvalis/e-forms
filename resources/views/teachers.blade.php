@@ -86,7 +86,7 @@
             <div class="tab-pane fade @if(session()->has('active_tab')) @if(session('active_tab')=='import') {{'show active'}} @endif @endif" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
             @if(!session()->has('asks_to'))
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url('/upload_teacher_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                <form action="{{url('/upload_teachers_organiki_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="import_teachers_organiki" >    
                     <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
@@ -157,7 +157,7 @@
                 @if(session('asks_to')=='save')
                     Να προχωρήσει η εισαγωγή αυτών των στοιχείων;
                     <div class="row">
-                        <form action="{{url('/insert_teachers')}}" method="post" class="col container-fluid" enctype="multipart/form-data">
+                        <form action="{{url('/insert_teachers_organiki')}}" method="post" class="col container-fluid" enctype="multipart/form-data">
                         @csrf
                             <button type="submit" class="btn btn-primary bi bi-file-arrow-up"> Εισαγωγή</button>
                         </form>

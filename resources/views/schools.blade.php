@@ -21,10 +21,10 @@
     <!--tabs-->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link @if(!session()->has('active_tab'))  {{'active'}} @endif" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Αναζήτηση Εκπαιδευτικού </button>
+          <button class="nav-link @if(!session()->has('active_tab'))  {{'active'}} @endif" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Αναζήτηση Σχολείου </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link @if(session()->has('active_tab'))  @if(session('active_tab')=='import') {{'active'}} @endif @endif" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Μαζική Εισαγωγή Εκπαιδευτικών</button>
+          <button class="nav-link @if(session()->has('active_tab'))  @if(session('active_tab')=='import') {{'active'}} @endif @endif" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Μαζική Εισαγωγή Σχολείων</button>
         </li>
     </ul>
     <!--tab content-->
@@ -52,7 +52,7 @@
                             <td>{{$school->name}}</td>
                             <td>{{$school->mail}}</td>
                             <td>{{$school->md5}}</td>
-                            <td>{{$school->dim}}</td>
+                            <td>{{$school->primary}}</td>
                             <td>{{$school->special_needs}}</td>
                             <td>{{$school->international}}</td>
                         </tr>
@@ -66,7 +66,7 @@
             <div class="tab-pane fade @if(session()->has('active_tab')) @if(session('active_tab')=='import') {{'show active'}} @endif @endif" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
             @if(!session()->has('asks_to'))
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url('/upload_school_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                <form action="{{url('/upload_schools_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="import_schools" >    
                     <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
@@ -84,6 +84,7 @@
                     <th id="search">email</th>
                     <th id="search">link</th>
                     <th id="search">Δημ/Νηπ</th>
+                    <th id="search">Δήμος</th>
                     <th id="search">Ειδικό</th>
                     <th id="search">Δημόσιο</th>
                 </tr>
@@ -97,7 +98,8 @@
                         <td>{{$school['name']}}</td>
                         <td>{{$school['mail']}}</td>
                         <td>{{$school['md5']}}</td>
-                        <td>{{$school['dim']}}</td>
+                        <td>{{$school['primary']}}</td>
+                        <td>{{$school['municipality']}}</td>
                         <td>{{$school['special_needs']}}</td>
                         <td>{{$school['international']}}</td>
                         

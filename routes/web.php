@@ -53,6 +53,10 @@ Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])-
 
 //////// SCHOOL ////////////////////////////////////////////////////////////
 
+Route::view('/schools', 'schools');
+
+Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
+
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
 Route::view('/school', 'index_school');

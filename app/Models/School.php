@@ -25,12 +25,17 @@ class School extends Authenticatable
     protected $fillable = [
         'name',
         'code',
+        'municipality',
+        'primary',
+        'leitourgikotita',
+        'organikotita',
+        'telephone',
+        'is_active',
+        'has_all_day',
         'md5',
-        'email',
-        'dim',
-        'active',
+        'mail',
         'special_needs',
-        'international'
+        'international',
     ];
 
     public function organikis()
@@ -41,6 +46,11 @@ class School extends Authenticatable
     public function ypiretisis()
     {
         return $this->morphMany(Teacher::class, 'ypiretisi');
+    }
+
+    public function municipality()
+    {
+        return $this->belongsTo(School::class, 'municipality_id');
     }
 
     /**

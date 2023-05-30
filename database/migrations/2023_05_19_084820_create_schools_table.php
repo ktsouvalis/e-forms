@@ -11,17 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-       
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
+            
+            //properties start
             $table->string('name');
             $table->string('code');
+            $table->string('municipality');
+            $table->boolean('primary');
+            $table->boolean('leitourgikotita');
+            $table->boolean('organikotita');
+            $table->boolean('telephone');
+            $table->boolean('is_active');
+            $table->boolean('has_all_day');
             $table->string('md5');
-            $table->string('email')->unique();
-            //properties start
-            $table->boolean('dim');
-            $table->boolean('active');
+            $table->string('mail')->unique();
             $table->boolean('special_needs');
+            $table->boolean('experimental');
             $table->boolean('international');
             
             //properties end

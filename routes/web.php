@@ -61,11 +61,11 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
-Route::view('/teachers','teachers');
+Route::view('/teachers','teachers')->middleware('hasAccess');
 
 Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'importTeachersOrganiki']);
 
-Route::view('/preview_teachers_organiki', 'preview-teachers-organiki');
+Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware('hasAccess');
 
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachersOrganiki']);
 

@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('code');
             $table->string('municipality');
             $table->boolean('primary');
-            $table->boolean('leitourgikotita');
-            $table->boolean('organikotita');
-            $table->boolean('telephone');
+            $table->integer('leitourgikotita');
+            $table->integer('organikotita');
+            $table->string('telephone');
             $table->boolean('is_active');
             $table->boolean('has_all_day');
             $table->string('md5');

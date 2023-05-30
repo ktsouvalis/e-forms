@@ -58,6 +58,12 @@ Route::view('/schools', 'schools');
 
 Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
 
+Route::view('/import_schools', "import-schools");
+
+Route::view('/preview_schools', "preview-schools");
+
+Route::post('/insert_schools', [SchoolController::class, 'insertSchools']);
+
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
 Route::view('/school', 'index_school');

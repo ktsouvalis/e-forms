@@ -63,7 +63,7 @@
                             <td>{{$teacher->fname}}</td>
                             <td>{{$teacher->mname}}</td>
                             <td>{{$teacher->klados}}</td>
-                            <td>{{$teacher->email}}</td>
+                            <td>{{$teacher->mail}}</td>
                             <td>{{$teacher->sch_mail}}</td>
                             <td>{{$teacher->telephone}}</td>
                             <td>{{$teacher->sxesi_ergasias->name}}</td>
@@ -72,7 +72,7 @@
                             @if($teacher->org_eae)
                                 <td>ΝΑΙ</td>
                             @else
-                                <td> </td>
+                                <td> - </td>
                             @endif
                             <td>{{$teacher->md5}}</td>
                         </tr>
@@ -94,7 +94,7 @@
             </nav>
             @else
             <div style="p-3 mb-2 bg-info text-dark">
-                Διαβάστηκαν τα ακόλουθα λάθη από το αρχείο:
+                Διαβάστηκαν:
             </div>
             
             <table class="table table-striped table-hover table-light">
@@ -155,11 +155,11 @@
                 @endforeach
             </table>
                 @if(session('asks_to')=='save')
-                    Να προχωρήσει η εισαγωγή αυτών των στοιχείων;
+                    
                     <div class="row">
-                        <form action="{{url('/insert_teachers_organiki')}}" method="post" class="col container-fluid" enctype="multipart/form-data">
+                        <form action="{{url('/preview_teachers_organiki')}}" method="get" class="col container-fluid" enctype="multipart/form-data">
                         @csrf
-                            <button type="submit" class="btn btn-primary bi bi-file-arrow-up"> Εισαγωγή</button>
+                            <button type="submit" class="btn btn-primary bi bi-search"> Προεπισκόπηση</button>
                         </form>
                         <a href="{{url('/teachers')}}" class="col">Ακύρωση</a>
                     </div>

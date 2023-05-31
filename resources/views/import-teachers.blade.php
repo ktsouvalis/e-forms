@@ -13,7 +13,7 @@
         <div style="p-3 mb-2 bg-info text-dark">
             Διαβάστηκαν:
         </div>
-        
+        <div class="table-responsive">
         <table class="table table-striped table-hover table-light">
             <tr>
                 <th id="search">AΜ</th>
@@ -66,7 +66,7 @@
                 {{-- @endif --}}
             @endforeach
         </table>
-        
+        </div>
         @if(session('asks_to')=='save')
             <div class="row">
                 <form action="{{url('/preview_teachers_organiki')}}" method="get" class="col container-fluid" enctype="multipart/form-data">

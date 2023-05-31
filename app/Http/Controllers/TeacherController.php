@@ -61,7 +61,6 @@ class TeacherController extends Controller
             if(Teacher::where('afm', $check['afm'])->count()){
                 $check['action']=Teacher::where('afm', $check['afm'])->first()->id;
             }
-            
 
             $check['org_eae']=1;
             if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(54, $row)->getValue()=="ΟΧΙ"){

@@ -44,28 +44,31 @@
         <p>
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
-          <a href="/" style="text-decoration:none;" class="text-dark bi bi-house">Αρχική</a>
+          <a href="/" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
         </div>
         </li>
         </p>
         <li class="nav-item">
         @if(Auth::id()==1 or Auth::id()==2)
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gold; text-align:center;">
-          <a href="/manage_operations" style="text-decoration:none;" class="text-dark bi bi-menu-button-wide"> Διαχείριση Λειτουργιών</a>
+          <div class="text-dark fa-solid fa-toolbox"></div>
+          <a href="/manage_operations" style="text-decoration:none;" class="text-dark"> Λειτουργίες</a>
         </div>
         </li>
         @endif
         @foreach ($user->operations as $one_operation)
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
-                <a href="{{$one_operation->operation->url}}" style="color:white; text-decoration:none;" class="text-dark {{$one_operation->operation->icon}}"> {{$one_operation->operation->name}}</a>
+              <div class="text-dark {{$one_operation->operation->icon}}"></div> 
+              <a href="{{$one_operation->operation->url}}" style=" text-decoration:none;" class="text-dark"> {{$one_operation->operation->name}}</a>
             </div>
             </li> 
         @endforeach
         <p>
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
-            <a href="/logout" style="text-decoration:none;" class="text-dark fa-solid fa-arrow-right-from-bracket">Αποσύνδεση</a>
+            <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
+            <a href="/logout" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
         </div>
         </li>
         </p>

@@ -58,7 +58,7 @@ Route::view('/schools', 'schools');
 
 Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
 
-Route::view('/import_schools', "import-schools");
+Route::view('/import_schools', "import-schools")->middleware('can:upload, '.School::class);
 
 Route::view('/preview_schools', "preview-schools");
 

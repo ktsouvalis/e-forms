@@ -52,9 +52,9 @@
                 </table>
             </div>
            
-            {{-- @can('create', App\Models\Teacher::class) --}}
-            <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Σχολείων</a>
-        {{--@endcan --}}
+            @can('upload', App\Models\School::class)
+                <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Σχολείων</a>
+            @endcan
 </div>
 </x-layout>
         

@@ -53,7 +53,7 @@
             </div>
            
             {{-- @can('create', App\Models\Teacher::class) --}}
-            <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-person-lines-fill"> Μαζική Εισαγωγή Σχολείων</a>
+            <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Σχολείων</a>
         {{--@endcan --}}
 </div>
 </x-layout>

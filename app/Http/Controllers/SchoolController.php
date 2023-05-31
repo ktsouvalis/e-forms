@@ -30,6 +30,7 @@ class SchoolController extends Controller
         $error=0;
         $rowSumValue="1";
         while ($rowSumValue != "" && $row<10000){
+            echo $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue().'<br>';
             $check=array();
             $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
             $check['code']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
@@ -49,12 +50,15 @@ class SchoolController extends Controller
             $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(26, $row)->getValue()=="Ναί")?0:1;
             $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue()=="Όχι")?1:0;
             $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue();
+
             $check['special_needs']=0;
             if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Ειδικής Αγωγής"))
                 $check['special_needs']= 1;
+
             $check['experimental']=0;
             if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Πειραματικό"))
                 $check['experimental']= 1;
+
             $check['international']=0;
             if(!str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue(), "Ιδιωτικά Σχολεία"))
                 $check['international']= 1;
@@ -63,9 +67,9 @@ class SchoolController extends Controller
             if(School::where('code', $check['code'])->count()){
                 $check['action']=School::where('code', $check['code'])->first()->id;
             }
+
             $check['md5']="";
 
-           
             array_push($schools_array, $check);
             $row++;
             $rowSumValue="";
@@ -73,9 +77,7 @@ class SchoolController extends Controller
                 $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
             }
         }
-
         session(['schools_array' => $schools_array]);
-        session(['active_tab' =>'import']);
 
         if($error){
             return redirect(url('/import_schools'))
@@ -99,23 +101,23 @@ class SchoolController extends Controller
         }
         foreach($schools_array as $school){
             if($school['action']==''){
-        // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE
+            // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE
     
-        School::create([
-                    'name' => $school['name'], 
-                    'code' => $school['code'],
-                    'municipality' => $school['municipality'],
-                    'primary' => $school['primary'],
-                    'leitourgikotita' => $school['leitourgikotita'],
-                    'organikotita' => $school['organikotita'],
-                    'telephone' => $school['telephone'],
-                    'is_active' => $school['is_active'],
-                    'has_all_day' => $school['has_all_day'],
-                    'md5' => md5($school['code']),
-                    'mail' => $school['mail'],
-                    'special_needs' => $school['special_needs'],
-                    'experimental' => $school['experimental'],
-                    'international' => $school['international']
+                School::create([
+                            'name' => $school['name'], 
+                            'code' => $school['code'],
+                            'municipality' => $school['municipality'],
+                            'primary' => $school['primary'],
+                            'leitourgikotita' => $school['leitourgikotita'],
+                            'organikotita' => $school['organikotita'],
+                            'telephone' => $school['telephone'],
+                            'is_active' => $school['is_active'],
+                            'has_all_day' => $school['has_all_day'],
+                            'md5' => md5($school['code']),
+                            'mail' => $school['mail'],
+                            'experimental' => $school['experimental'],
+                            'special_needs' => $school['special_needs'],
+                            'international' => $school['international']
                 ]);
             }
             else{
@@ -136,7 +138,7 @@ class SchoolController extends Controller
             }
         }
         return redirect(url('/schools'))
-        ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+            ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
     }
 
     //

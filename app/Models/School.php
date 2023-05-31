@@ -22,20 +22,8 @@ class School extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'code',
-        'municipality',
-        'primary',
-        'leitourgikotita',
-        'organikotita',
-        'telephone',
-        'is_active',
-        'has_all_day',
-        'md5',
-        'mail',
-        'special_needs',
-        'international',
+    protected $guarded = [
+        'id'
     ];
 
     public function organikis()

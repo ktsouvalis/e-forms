@@ -19,9 +19,9 @@
         $recordsToDelete = App\Models\School::whereNotIn('code', $codes)->get();
     @endphp
     <div class="container">
-        Σχολεία που θα εισαχθούν εκ νέου
+        <div class="p-3 mb-2 bg-success text-white">Σχολεία που θα εισαχθούν εκ νέου</div>
         <div class="table-responsive">
-            <table  id="" class="table table-sm table-striped table-bordered table-hover">
+            <table  id="" class="table table-sm table-success table-striped table-bordered table-hover">
                 <thead>
                     <tr>
                         <th id="search">Κωδικός</th>
@@ -51,9 +51,9 @@
                 </tbody>
             </table>
         </div><p></p>
-        Σχολεία που θα διαγραφούν
+        <div class="p-3 mb-2 bg-warning">Σχολεία που θα διαγραφούν</div>
         <div class="table-responsive">
-            <table  id="" class=" table table-sm table-striped table-bordered table-hover">
+            <table  id="" class=" table table-sm table-warning table-striped table-bordered table-hover">
                 <thead>
                     <tr>
                         <th id="search">Κωδικός</th>

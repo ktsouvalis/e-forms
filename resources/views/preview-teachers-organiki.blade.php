@@ -19,9 +19,9 @@
         $recordsToDelete = App\Models\Teacher::whereNotIn('afm', $afms)->get();
     @endphp
     <div class="container">
-        Εκπαιδευτικοί που θα εισαχθούν εκ νέου
+        <div class="p-3 mb-2 bg-success text-white">Εκπαιδευτικοί που θα εισαχθούν εκ νέου</div>
         <div class="table-responsive">
-            <table  id="" class="table table-sm table-striped table-bordered table-hover">
+            <table  id="" class="table table-sm table-success table-striped table-bordered table-hover">
                 <thead>
                     <tr>
                         <th id="search">AΜ</th>
@@ -69,9 +69,9 @@
                 </tbody>
             </table>
         </div><p></p>
-        Εκπαιδευτικοί που θα διαγραφούν
+        <div class="p-3 mb-2 bg-warning">Εκπαιδευτικοί που θα διαγραφούν</div>
         <div class="table-responsive">
-            <table  id="" class=" table table-sm table-striped table-bordered table-hover">
+            <table  id="" class=" table table-sm table-warning table-striped table-bordered table-hover">
                 <thead>
                     <tr>
                         <th id="search">AΜ</th>

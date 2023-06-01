@@ -14,9 +14,6 @@ class Operation extends Model
         'url',
         'color',
         'icon',
-        'active',
-        'accepts',
-        'visible'
     ];
 
     public function users(){

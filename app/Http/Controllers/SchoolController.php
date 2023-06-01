@@ -152,12 +152,12 @@ class SchoolController extends Controller
             $msg=$school->name." καλωσήρθατε";
             $state = 'success';
         }
-        return redirect('/school')->with($state,$msg);
+        return redirect(url('/index_school'))->with($state,$msg);
     }
 
     public function logout(){
         
         auth()->guard('school')->logout();
-        return redirect('/school')->with('success', 'Αποσυνδεθήκατε');
+        return redirect(url('/index_school'))->with('success', 'Αποσυνδεθήκατε');
     }
 }

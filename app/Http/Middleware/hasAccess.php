@@ -27,6 +27,6 @@ class hasAccess
                 return $next($request);
             }
         }
-        return redirect('/')->with('failure','Δεν έχετε δικαίωμα πρόσβασης σε αυτό τον πόρο');
+        return redirect(url('/'))->with('failure','Δεν έχετε δικαίωμα πρόσβασης σε αυτό τον πόρο');
     }
 }

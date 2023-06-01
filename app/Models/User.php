@@ -47,4 +47,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(UsersOperations::class);
     }
+
+    public function forms(){
+        return $this->hasMany(FormUser::class);
+    }
 }

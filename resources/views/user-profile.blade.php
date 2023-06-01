@@ -2,7 +2,7 @@
     <div class="container py-5">
         <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
-                <form action="/save_user/{{$user->id}}" method="post" class="container-fluid">
+                <form action="{{url("/save_user/$user->id")}}" method="post" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>
@@ -44,7 +44,7 @@
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
-                        <a href="/user_profile/{{$user->id}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
+                        <a href="{{url("/user_profile/$user->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
             </nav>

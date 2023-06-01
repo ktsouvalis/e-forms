@@ -19,9 +19,7 @@ class OperationController extends Controller
                 'name' => $incomingFields['operation_name'],
                 'url' => $incomingFields['operation_url'],
                 'color' => $incomingFields['operation_color'],
-                'icon' => $incomingFields['operation_icon'],
-                'accepts' => 0,
-                'visible' => 0
+                'icon' => $incomingFields['operation_icon']
             ]);
         } 
         catch(Throwable $e){
@@ -39,30 +37,32 @@ class OperationController extends Controller
 
         UsersOperations::create([
             'operation_id'=>$record->id,
-            'user_id'=>1
+            'user_id'=>1,
+            'can_edit' => 1
         ]);
         
          UsersOperations::create([
             'operation_id'=>$record->id,
-            'user_id'=>2
+            'user_id'=>2,
+            'can_edit' => 1
         ]); 
         return view('operations',['record'=>$record]);
     }
 
-    public function changeOperationStatus(Request $request){
-        if($request->all()['asks_to'] == 'ch_vis_status'){
-            $operation = Operation::find($request->all()['operation_id']);
-            $operation->visible = $operation->visible==1?0:1;
-            $operation->accepts = 0;
-            $operation->save();
-        }
-        if($request->all()['asks_to'] == 'ch_acc_status'){
-            $operation = Operation::find($request->all()['operation_id']);
-            $operation->accepts = $operation->accepts==1?0:1;
-            $operation->save();
-        }
-        return redirect('/manage_operations');
-    }
+    // public function changeOperationStatus(Request $request){
+    //     if($request->all()['asks_to'] == 'ch_vis_status'){
+    //         $operation = Operation::find($request->all()['operation_id']);
+    //         $operation->visible = $operation->visible==1?0:1;
+    //         $operation->accepts = 0;
+    //         $operation->save();
+    //     }
+    //     if($request->all()['asks_to'] == 'ch_acc_status'){
+    //         $operation = Operation::find($request->all()['operation_id']);
+    //         $operation->accepts = $operation->accepts==1?0:1;
+    //         $operation->save();
+    //     }
+    //     return redirect(url('/manage_operations'));
+    // }
 
     public function saveProfile(Operation $operation, Request $request){
 
@@ -79,7 +79,7 @@ class OperationController extends Controller
                 $given_name = $incomingFields['name'];
 
                 if(Operation::where('name', $given_name)->count()){
-                    return redirect("/operation_profile/$operation->id")->with('failure',"Υπάρχει ήδη λειτουργία με name $given_name.");
+                    return redirect(url("/operation_profile/$operation->id"))->with('failure',"Υπάρχει ήδη λειτουργία με name $given_name.");
                 }
             }
             else{
@@ -88,7 +88,7 @@ class OperationController extends Controller
 
                     if(Operation::where('url', $given_url)->count()){
                         $existing_operation =Operation::where('url',$given_url)->first();
-                        return redirect("/operation_profile/$operation->id")->with('failure',"Υπάρχει ήδη λειτουργία με url $given_url: $existing_operation->name");
+                        return redirect(url("/operation_profile/$operation->id"))->with('failure',"Υπάρχει ήδη λειτουργία με url $given_url: $existing_operation->name");
                     }
                 }
             }
@@ -128,8 +128,8 @@ class OperationController extends Controller
         }
         
         if(!$edited){
-            return redirect("/operation_profile/$operation->id")->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
+            return redirect(url("/operation_profile/$operation->id"))->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
         }
-        return redirect("/operation_profile/$operation->id")->with('success','Επιτυχής αποθήκευση');
+        return redirect(url("/operation_profile/$operation->id"))->with('success','Επιτυχής αποθήκευση');
     }
 }

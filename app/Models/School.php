@@ -41,6 +41,10 @@ class School extends Authenticatable
         return $this->belongsTo(School::class, 'municipality_id');
     }
 
+    public function forms(){
+        return $this->morphMany(FormStakeholder::class, 'stakeholder');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

@@ -33,8 +33,6 @@
                     <th id="search">Opacity</th>
                     <th id="search">Icon</th>
                     <th id="search">WhoHasAccess</th>
-                    {{-- <th id="">Ορατότητα</th> --}}
-                    {{-- <th id="">Δυνατότητα Υποβολής</th> --}}
                 </tr>
             </thead>
                 <tbody>
@@ -58,50 +56,6 @@
                                             </tr>
                                         @endforeach
                                     </table>
-                                {{-- </td>
-                                @can('update', $one_operation)
-                                @php
-                                    if($one_operation->visible){
-                                        $opacity_vis = "";
-                                        $hidden_acc = "";
-                                        $tooltip_vis = "Κλείσιμο ορατότητας";  
-                                        if($one_operation->accepts){
-                                            $opacity_acc="";
-                                            $tooltip_acc="Κλείσιμο υποβολών";
-                                        }
-                                        else{
-                                            $opacity_acc = "opacity: 0.4";
-                                            $tooltip_acc="Άνοιγμα Υποβολών";
-                                        }
-                                    }
-                                    else{
-                                        $opacity_vis = "opacity: 0.4";
-                                        $hidden_acc="hidden";
-                                        $opacity_acc="";
-                                        $tooltip_acc="";
-                                        $tooltip_vis = "Άνοιγμα ορατότητας";
-                                    }
-                                @endphp
-
-                                <td style="text-align: center">
-                                    <form action="/change_operation_status" method="post">
-                                    @csrf
-                                    <input name="asks_to" type="hidden" value="ch_vis_status">
-                                    <input name="operation_id" type="hidden" value="{{$one_operation->id}}">
-                                    <button type="submit" class="btn btn-success bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα θα εμφανίζεται αλλά δε θα δέχεται υποβολές\n')"> </button>
-                                    </form>
-                                </td>
-                                <td style="text-align: center">
-                                    <form action="/change_operation_status" method="post">
-                                    @csrf
-                                    <input name="asks_to" type="hidden" value="ch_acc_status">
-                                    <input name="operation_id" type="hidden" value="{{$one_operation->id}}">
-                                    <button type="submit" class="btn btn-success bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
-                                    </form>
-                                </td>
-                                @else
-                                <td> - </td><td> - </td>
-                                @endcan --}}
                             </tr>
                         @endcan
                     @endforeach
@@ -114,7 +68,7 @@
             @isset($record)
                 <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
                 <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                    <a href="/user_profile/{{$record->id}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a>
+                    <a href="{{url("/user_profile/$record->id")}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a>
                 </div>
             @endisset
         @endisset
@@ -123,7 +77,7 @@
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
-            <form action="/insert_operation" method="post" class="container-fluid">
+            <form action="{{url("/insert_operation")}}" method="post" class="container-fluid">
                 @csrf
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
@@ -165,7 +119,7 @@
                 <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>
-                    <a href="/manage_operations" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                    <a href="{{url("/manage_operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                 </div>
             </form>
         </nav>

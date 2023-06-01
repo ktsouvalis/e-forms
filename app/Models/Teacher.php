@@ -27,4 +27,8 @@ class Teacher extends Authenticatable
     public function sxesi_ergasias(){
         return $this->belongsTo(SxesiErgasias::class,'sxesi_ergasias_id');
     }
+
+    public function forms(){
+        return $this->morphMany(FormStakeholder::class, 'stakeholder');
+    }
 }

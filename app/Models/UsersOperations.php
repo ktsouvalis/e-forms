@@ -13,7 +13,8 @@ class UsersOperations extends Model
 
     protected $fillable = [
         'user_id',
-        'operation_id'
+        'operation_id',
+        'can_edit'
     ];
 
     public function user(){

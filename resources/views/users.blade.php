@@ -72,7 +72,7 @@
                                 </td>
                                 <td>{{$user->created_at}}</td>
                                 <td>{{$user->updated_at}}</td>
-                                <form action="/reset_password/{{$user->id}}" method="post">
+                                <form action="{{url("/reset_password/$user->id")}}" method="post">
                                 @csrf
                                     <td><button class="bi bi-key-fill bg-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
                                 </form>
@@ -83,15 +83,18 @@
             </div>
             
             @if(session()->has('record'))
+                @php
+                    $sri = session('record')->id;   
+                @endphp
                 <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                    <a href="/user_profile/{{session('record')->id}}" style="color:white; text-decoration:none;">{{session('record')->id}}, {{session('record')->display_name}}, {{session('record')->username}}</a>
+                    <a href="{{url("/user_profile/$sri")}}" style="color:white; text-decoration:none;">{{session('record')->id}}, {{session('record')->display_name}}, {{session('record')->username}}</a>
                 </div>
             @endif
             
             <div class="container py-5">
             <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
-                <form action="/insert_user" method="post" class="container-fluid">
+                <form action="{{url("/insert_user")}}" method="post" class="container-fluid">
                     @csrf
                     <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
@@ -131,7 +134,7 @@
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>
-                        <a href="/manage_users" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        <a href="{{url("/manage_users")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     
                 </form>
             </nav>
@@ -141,8 +144,8 @@
         <div class="tab-pane fade @isset($active_tab) @if($active_tab=='import') {{'show active'}} @endif @endisset" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
             @if(empty($asks_to))
             <nav class="navbar navbar-light bg-light">
-                <a href="/users_template.xlsx" class="link-info">Πρότυπο αρχείο για συμπλήρωση</a>
-                <form action="{{route('upload_user_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                <a href="{{url("/users_template.xlsx")}}" class="link-info">Πρότυπο αρχείο για συμπλήρωση</a>
+                <form action="{{url('/upload_user_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
                     
                     <input type="file" name="import_users" > 
@@ -173,18 +176,18 @@
                 @if($asks_to=='save')
                 Να προχωρήσει η εισαγωγή αυτών των στοιχείων;
                 <div class="row">
-                    <form action="/insert_users" method="post" class="col container-fluid" enctype="multipart/form-data">
+                    <form action="{{url("/insert_users")}}" method="post" class="col container-fluid" enctype="multipart/form-data">
                     @csrf
                         <button type="submit" class="btn btn-primary bi bi-file-arrow-up"> Εισαγωγή</button>
                     </form>
-                    <a href="/manage_users" class="col">Ακύρωση</a>
+                    <a href="{{url("/manage_users")}}" class="col">Ακύρωση</a>
                 </div>
                 @else
                 <div class="row">
                     <div>
                         Διορθώστε τα σημειωμένα σφάλματα και υποβάλετε εκ νέου το αρχείο.
                     </div>
-                    <a href="/manage_users" class="col">Ακύρωση</a>
+                    <a href="{{url("/manage_users")}}" class="col">Ακύρωση</a>
                 </div>
                 @endif
             @endif

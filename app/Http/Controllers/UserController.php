@@ -23,17 +23,17 @@ class UserController extends Controller
         ]);
         if(auth()->attempt(['username'=>$incomingFields['username'], 'password'=>$incomingFields['password']])){
             $request->session()->regenerate();
-            return redirect('/')->with('success','Συνδεθήκατε επιτυχώς');
+            return redirect(url('/'))->with('success','Συνδεθήκατε επιτυχώς');
         }
         else{
-            return redirect('/')->with('failure', 'Λάθος όνομα χρήστη ή κωδικός πρόσβασης');
+            return redirect(url('/'))->with('failure', 'Λάθος όνομα χρήστη ή κωδικός πρόσβασης');
         }
     }
 
     public function logout(Request $request){
         // $request->session()->flush(); OR
         auth()->logout();
-        return redirect('/')->with('success','Αποσυνδεθήκατε...');
+        return redirect(url('/'))->with('success','Αποσυνδεθήκατε...');
     }
 
     public function passwordChange(Request $request){
@@ -44,14 +44,14 @@ class UserController extends Controller
         ];
         $validator = Validator::make($incomingFields, $rules);
         if($validator->fails()){
-            return redirect('/password_reset')->with('failure', 'Οι κωδικοί πρέπει να ταιριάζουν και να είναι 6+ χαρακτήρες');
+            return redirect(url('/password_reset'))->with('failure', 'Οι κωδικοί πρέπει να ταιριάζουν και να είναι 6+ χαρακτήρες');
         }
         $user = User::find(Auth::id());
 
         $user->password = bcrypt($incomingFields['pass1']);
         $user->save();
 
-        return redirect('/')->with('success', 'Ο νέος σας κωδικός αποθηκεύτηκε επιτυχώς');
+        return redirect(url('/'))->with('success', 'Ο νέος σας κωδικός αποθηκεύτηκε επιτυχώς');
     }
 
     public function passwordReset(Request $request, User $user){
@@ -67,7 +67,7 @@ class UserController extends Controller
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect('/')->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             
         }
         $filename = "users_file_".Auth::id().".xlsx"; 
@@ -160,7 +160,7 @@ class UserController extends Controller
             }
         }
         session()->forget('ysers');
-        return redirect('/users')->with('success', "Η εισαγωγή $imported χρηστών ολοκληρώθηκε");
+        return redirect(url('/users'))->with('success', "Η εισαγωγή $imported χρηστών ολοκληρώθηκε");
     }
 
     public function insertUser(Request $request){
@@ -171,14 +171,14 @@ class UserController extends Controller
 
         if(User::where('username', $given_name)->count()){
             $existing_user = User::where('username', $given_name)->first();
-            return redirect('/manage_users')
+            return redirect(url('/manage_users'))
                 ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->display_name, $existing_user->email")
                 ->with('old_data', $incomingFields);
         }
         else{
             if(User::where('email', $given_email)->count()){
                 $existing_user = User::where('email', $given_email)->first();
-                return redirect('/manage_users')
+                return redirect(url('/manage_users'))
                     ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_email: $existing_user->username, $existing_user->display_name")
                     ->with('old_data', $incomingFields);
             }
@@ -194,7 +194,7 @@ class UserController extends Controller
             ]);
         } 
         catch(QueryException $e){
-            return redirect('/manage_users')
+            return redirect(url('/manage_users'))
                 ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
                 ->with('old_data', $incomingFields);
         }
@@ -208,7 +208,7 @@ class UserController extends Controller
             }
         }
 
-        return redirect('/manage_users')
+        return redirect(url('/manage_users'))
             ->with('success','Επιτυχής καταχώρηση νέου χρήστη')
             ->with('record', $record);
     }
@@ -229,7 +229,7 @@ class UserController extends Controller
 
                 if(User::where('username', $given_name)->count()){
                     $existing_user =User::where('username',$given_name)->first();
-                    return redirect("/user_profile/$user->id")->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
+                    return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
                 }
             }
             else{
@@ -238,7 +238,7 @@ class UserController extends Controller
 
                     if(User::where('email', $given_email)->count()){
                         $existing_user =User::where('email',$given_email)->first();
-                        return redirect("/user_profile/$user->id")->with('failure',"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name");
+                        return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name");
 
                     }
                 }
@@ -280,9 +280,9 @@ class UserController extends Controller
         
         if(!$edited){
             // return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
-            return redirect("/user_profile/$user->id")->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
+            return redirect(url("/user_profile/$user->id"))->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
         }
-        return redirect("/user_profile/$user->id")->with('success','Επιτυχής αποθήκευση');
+        return redirect(url("/user_profile/$user->id"))->with('success','Επιτυχής αποθήκευση');
     }
 
     public function usersDl(){

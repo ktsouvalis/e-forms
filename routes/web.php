@@ -66,9 +66,10 @@ Route::post('/insert_schools', [SchoolController::class, 'insertSchools']);
 
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
-Route::view('/school', 'index_school');
+Route::view('/index_school', 'index_school');
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
+
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
@@ -81,6 +82,14 @@ Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'im
 Route::view('/preview_teachers_organiki', 'preview-teachers-organiki');
 
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachersOrganiki']);
+
+Route::view('/index_teacher', 'index_teacher');
+
+Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
+
+Route::get('/tlogout', [TeacherController::class, 'logout']);
+
+Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm']); // !!! middleware NEEDED!!!
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 

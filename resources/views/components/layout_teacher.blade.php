@@ -21,22 +21,60 @@
   
   </head>
 
-  @auth('school')
-    @if(Illuminate\Support\Facades\Request::path()!='index_school')
-      Menu code
+  @auth('teacher')
+    @php
+        $user = Auth::guard('teacher')->user();
+    @endphp
+    <div class="row">
+    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+    @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
+      <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+      <hr>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <p>
+        <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
+          <a href="{{url('/index_teacher')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
+        </div>
+        </li>
+        </p>
+        @foreach ($user->forms as $one_form)
+            <li class="nav-item">
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_form->form->color}}; text-align:center;">
+              <div class="text-dark {{$one_form->form->icon}}"></div> 
+              @php
+                  $ofi = $one_form->form->id;
+              @endphp
+              <a href="{{url("/teacher_view/$ofi")}}" style=" text-decoration:none;" class="text-dark"> {{$one_form->form->name}}</a>
+            </div>
+            </li> 
+        @endforeach
+        <p>
+        <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
+            <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
+            <a href="{{url('/tlogout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
+        </div>
+        </li>
+        </p>
+      </ul>
+      <hr>
     @else
       @push('app-icon')
         <div class="d-flex justify-content-center"><img src="{{url("/favicon/index.png")}}" width="100" height="100" alt="services"></div>
       @endpush
     @endif
+    </div>
+    <div class="col">
       <div class="container ">
         <div class="row justify-content-md-center">
           <div class="col p-4">
             @stack('app-icon')
-            <div class="d-flex justify-content-center"><a href="{{url('/index_school')}}" class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title=""> {{Auth::guard('school')->user()->name}}</a></div>
+            <div class="d-flex justify-content-center"><a href="{{url('/index_teacher')}}" class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title=""> {{$user->name}} {{$user->surname}}</a></div>
           </div>
         </div>
       </div>
+    </div>
   @endauth
 
   {{$slot}}
@@ -69,6 +107,7 @@
        <!-- footer begins -->
        <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="/" class="text-muted">library</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
+       </div>
     </footer>
     <script src="/bootstrap/js/bootstrap.js"></script>
     <script

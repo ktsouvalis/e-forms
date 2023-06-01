@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Form;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Directory;
@@ -17,6 +18,30 @@ class TeacherController extends Controller
     //
     public function test(Teacher $teacher){
         return view('test',['teacher'=>$teacher]);
+    }
+
+    public function makeForm(Form $form){
+    
+        return view('teacher_view', ['form' => $form]);
+    }
+
+    public function login($md5){ 
+        $msg = "Δε βρέθηκε η σελίδα που ζητήσατε";
+        $state="failure";
+        $teacher = Teacher::where('md5', $md5)->first();
+        if($teacher){
+            Auth::guard('teacher')->login($teacher);
+            session()->regenerate();
+            $msg=$teacher->name." καλωσήρθατε";
+            $state = 'success';
+        }
+        return redirect(url('/index_teacher'))->with($state,$msg);
+    }
+
+    public function logout(){
+        
+        auth()->guard('teacher')->logout();
+        return redirect(url('/index_teacher'))->with('success', 'Αποσυνδεθήκατε');
     }
 
     public function importTeachersOrganiki(Request $request){

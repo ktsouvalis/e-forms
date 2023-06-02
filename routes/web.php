@@ -89,7 +89,7 @@ Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
 
 Route::get('/tlogout', [TeacherController::class, 'logout']);
 
-Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm']); // !!! middleware NEEDED!!!
+Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('whocan');
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 
@@ -106,7 +106,9 @@ Route::post('/insert_operation', [OperationController::class,'insertOperation'])
 // Route::post('/change_operation_status', [OperationController::class,'changeOperationStatus']);
 
 //// TESTING ////////
-Route::get('/test/{teacher}', [TeacherController::class, 'test']);
+// Route::get('/test/{teacher}', [TeacherController::class, 'test']);
+
+Route::view('/test','test');
 
 Route::get('/manage_test', function(){
     return view('welcome');

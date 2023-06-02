@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <strong>{{$teacher->surnname}} {{$teacher->name}}</strong><br>
+    {{-- <strong>{{$teacher->surnname}} {{$teacher->name}}</strong><br>
     Οργανική Τοποθέτηση: {{$teacher->organiki->name}} <br> 
     Υπηρέτηση: {{$teacher->ypiretisi->name}} <br> <br>
     <strong>Υπηρετούντες εκπαιδευτικοί στο {{$teacher->organiki->name}}</strong><br>
@@ -15,7 +15,18 @@
         Επίθετο: {{$school_teacher->surnname}} <br>
         Όνομα: {{$school_teacher->name}} <br>
         Οργανική: {{$school_teacher->organiki->name}} <br><br>
-    @endforeach
+    @endforeach --}}
+
+    @php
+        $user = Auth::user();
+        foreach($user->operations as $one_operation){
+            // echo $one_operation->operation->url=='/teachers' and $one_operation->can_edit; exit;
+            if($one_operation->operation->url=='/teachers' and $one_operation->can_edit){
+                return true;
+            } 
+        }
+        return false;
+    @endphp
 </body>
 </html>
 

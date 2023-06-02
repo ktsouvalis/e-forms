@@ -29,8 +29,12 @@ class TeacherPolicy
      */
     public function create(User $user): bool
     {
-        //
-        return in_array($user->id, [1, 2]);
+        foreach($user->operations->where('can_edit', 1) as $one_operation){
+            if($one_operation->operation->url=='/teachers'){
+                return true;
+            }  
+        }
+        return false;
     }
 
     /**

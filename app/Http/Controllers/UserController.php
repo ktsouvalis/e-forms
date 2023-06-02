@@ -271,7 +271,8 @@ class UserController extends Controller
                 if(!$user->operations->where('operation_id', $value)->count()){
                     UsersOperations::create([
                         'user_id' => $user->id,
-                        'operation_id' => $value
+                        'operation_id' => $value,
+                        'can_edit' => 1 // !!!must be checked from the ui!!!!
                     ]);
                     $edited = true;
                 } 

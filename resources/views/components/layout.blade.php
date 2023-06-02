@@ -7,12 +7,12 @@
     @stack('title')
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="icon" href="{!! asset('/favicon/favicon.ico') !!}"/>
+    <link rel="icon" href="{!! asset(url('/favicon/favicon.ico')) !!}"/>
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/favicon/site.webmanifest">
-    <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{url("/favicon/favicon-32x32.png")}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{url("/favicon/favicon-16x16.png")}}">
+    <link rel="manifest" href="{{url('/favicon/site.webmanifest')}}">
+    <link rel="mask-icon" href="{{url('/favicon/safari-pinned-tab.svg')}}" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
@@ -26,7 +26,6 @@
   
   @php
     $user = Auth::user();
-    // $link = $user->public_link;
   @endphp
   <div class="row">
   
@@ -38,13 +37,13 @@
         <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
         <span class="fs-4">Λειτουργίες</span>
       </a> --}}
-      <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+      <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
         <p>
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
-          <a href="/" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
+          <a href="{{url('/')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
         </div>
         </li>
         </p>
@@ -52,7 +51,7 @@
         @if(Auth::id()==1 or Auth::id()==2)
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gold; text-align:center;">
           <div class="text-dark fa-solid fa-toolbox"></div>
-          <a href="/manage_operations" style="text-decoration:none;" class="text-dark"> Λειτουργίες</a>
+          <a href="{{url('/manage_operations')}}" style="text-decoration:none;" class="text-dark"> Λειτουργίες</a>
         </div>
         </li>
         @endif
@@ -60,7 +59,7 @@
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
               <div class="text-dark {{$one_operation->operation->icon}}"></div> 
-              <a href="{{$one_operation->operation->url}}" style=" text-decoration:none;" class="text-dark"> {{$one_operation->operation->name}}</a>
+              <a href="{{url($one_operation->operation->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_operation->operation->name}}</a>
             </div>
             </li> 
         @endforeach
@@ -68,7 +67,7 @@
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
             <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-            <a href="/logout" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
+            <a href="{{url('/logout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
         </div>
         </li>
         </p>
@@ -78,7 +77,7 @@
     
     @else
     @push('app-icon')
-      <div class="d-flex justify-content-center"><img src="/favicon/index.png" width="100" height="100" alt="services"></div>
+      <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
     @endpush
     @endif
   {{-- @endauth  --}}
@@ -126,7 +125,7 @@
        <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="/" class="text-muted">library</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
-    <script src="/bootstrap/js/bootstrap.js"></script>
+    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
     <script
                 src="https://code.jquery.com/jquery-3.6.4.min.js"
                 integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="

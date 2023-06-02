@@ -120,7 +120,8 @@ class OperationController extends Controller
                 if(!$operation->users->where('user_id', $value)->count()){
                     UsersOperations::create([
                         'operation_id' => $operation->id,
-                        'user_id' => $value
+                        'user_id' => $value,
+                        'can_edit' => 1 // !!!must be checked from the ui!!!!
                     ]);
                     $edited = true;
                 } 

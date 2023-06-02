@@ -20,8 +20,8 @@ class hasAccess
     public function handle(Request $request, Closure $next): Response
     {
         $current_url = twin::path();
-        $user = User::where('id', Auth::id())->first();
-        $operations = UsersOperations::where('user_id', $user->id)->get();
+        $user = Auth::user();
+        $operations = $user->operations;
         foreach($operations as $one_operation){
             if($one_operation->operation->url == '/'.$current_url){
                 return $next($request);

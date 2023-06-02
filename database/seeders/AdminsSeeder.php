@@ -30,12 +30,34 @@ class AdminsSeeder extends Seeder
             'password' => bcrypt('123456'),
         ]);
 
+        User::create([
+            'username' => 'test',
+            'display_name' => 'Δοκιμαστικός Χρήστης',
+            'email' => 'it@dipe.ach.sch.gr',
+            'password' => bcrypt('123456'),
+        ]);
+
+
         //CREATE OPERATIONS
         Operation::create([
             'name' => 'Χρήστες Διεύθυνσης',
             'url' => '/manage_users',
             'color' => 'skyblue',
             'icon' => 'fa-solid fa-users'
+        ]);
+
+        Operation::create([
+            'name' => 'Σχολεία',
+            'url' => '/schools',
+            'color' => 'MediumAquamarine',
+            'icon' => 'fa-solid fa-school'
+        ]);
+
+        Operation::create([
+            'name' => 'Εκπαιδευτικοί',
+            'url' => '/teachers',
+            'color' => 'LightSalmon',
+            'icon' => 'fa-solid fa-chalkboard-user'
         ]);
 
         // ASSIGN OPERATIONS TO USERS
@@ -49,6 +71,42 @@ class AdminsSeeder extends Seeder
             'user_id'=>2,
             'operation_id'=>1,
             'can_edit'=>1
+        ]);
+
+        UsersOperations::create([
+            'user_id'=>1,
+            'operation_id'=>2,
+            'can_edit'=>1
+        ]);
+
+        UsersOperations::create([
+            'user_id'=>2,
+            'operation_id'=>2,
+            'can_edit'=>1
+        ]);
+
+        UsersOperations::create([
+            'user_id'=>1,
+            'operation_id'=>3,
+            'can_edit'=>1
+        ]);
+
+        UsersOperations::create([
+            'user_id'=>2,
+            'operation_id'=>3,
+            'can_edit'=>1
+        ]);
+
+        UsersOperations::create([
+            'user_id'=>3,
+            'operation_id'=>3,
+            'can_edit'=>0
+        ]);
+
+        UsersOperations::create([
+            'user_id'=>3,
+            'operation_id'=>2,
+            'can_edit'=>0
         ]);
     }
 }

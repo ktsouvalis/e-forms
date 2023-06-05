@@ -20,9 +20,9 @@ class TeacherController extends Controller
         return view('test',['teacher'=>$teacher]);
     }
 
-    public function makeForm(Form $form){
+    public function viewForm(Form $form){
     
-        return view('teacher_view', ['form' => $form]);
+        return view('teacher_view_form', ['form' => $form]);
     }
 
     public function login($md5){ 

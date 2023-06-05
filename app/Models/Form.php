@@ -21,4 +21,8 @@ class Form extends Model
         return $this->hasMany(FormStakeholder::class);
     }
 
+    public function formElement(){
+        return $this->hasMany(FormElements::class);
+    }
+
 }

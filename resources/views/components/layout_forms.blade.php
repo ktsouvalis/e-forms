@@ -49,7 +49,7 @@
         </p>
         <li class="nav-item">
         @if(Auth::id()==1 or Auth::id()==2)
-        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gold; text-align:center;">
+        <div class="badge text-wrap py-2 m-1" style="width: 12rem; background-color:Gold; text-align:center;">
           <div class="text-dark fa-solid fa-toolbox"></div>
           <a href="{{url('/manage_operations')}}" style="text-decoration:none;" class="text-dark"> Λειτουργίες</a>
         </div>
@@ -57,7 +57,7 @@
         @endif
         @foreach ($user->operations as $one_operation)
             <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
+            <div class="badge text-wrap py-2 m-1" style="width: 12rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
               <div class="text-dark {{$one_operation->operation->icon}}"></div> 
               <a href="{{url($one_operation->operation->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_operation->operation->name}}</a>
             </div>
@@ -71,7 +71,16 @@
           </div>
           </li>
           </p>
+          <p>
+            <li class="nav-item">
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Lime; text-align:center;">
+                <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
+                <a href="{{url('/form_edit1_settings')}}" style="text-decoration:none;" class="text-dark "> Νέα Φόρμα</a>
+            </div>
+            </li>
+            </p>
         <p>
+
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
             <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>

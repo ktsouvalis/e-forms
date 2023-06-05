@@ -5,6 +5,7 @@ use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Operation;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SchoolController;
@@ -27,6 +28,14 @@ use App\Http\Controllers\OperationController;
 Route::view('/', 'index')->name('index');
 
 //// USER ///////////////////////////////////////
+
+Route::view('/forms', 'forms'); //// missing auth...
+
+Route::view('/form_edit1_settings', 'form_edit1_settings'); //// missing auth...
+
+Route::get('/form_edit1_settings/raw', [FormController::class, 'getFormElementAttributes']); //// returns json data for inputs ////// missing auth...
+
+Route::post('/form_edit2_stakeholders', [FormController::class, 'insertForm']); //// missing auth...
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
@@ -89,7 +98,7 @@ Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
 
 Route::get('/tlogout', [TeacherController::class, 'logout']);
 
-Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('whocan');
+Route::get('/teacher_view_form/{form}',[TeacherController::class,'viewForm'])->middleware('whocan');
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 

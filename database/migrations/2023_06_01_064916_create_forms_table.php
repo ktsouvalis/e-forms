@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            // $table->string('url');
+            $table->string('description');
             $table->string('color')->nullable();
             $table->string('icon')->nullable();
-            $table->boolean('active'); // inactive for users and stakeholders
-            $table->boolean('visible'); // visible for stakeholders
-            $table->boolean('accepts'); // accepts submissions from stakeholders
+            $table->boolean('active')->default(1); // inactive for users and stakeholders
+            $table->boolean('visible')->default(0); // visible for stakeholders
+            $table->boolean('accepts')->default(0); // accepts submissions from stakeholders
             $table->json('elements');
             $table->dateTime('opens_at')->nullable(); // opens acceptability
             $table->dateTime('closes_at')->nullable(); // closes acceptability

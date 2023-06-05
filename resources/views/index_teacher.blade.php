@@ -9,7 +9,7 @@
                 <title>Υποβολή Στοιχείων</title>
             @endpush
             @php
-             
+            
             @endphp
 
             <div class="py-5">
@@ -21,7 +21,7 @@
                                 @php
                                     $ofi = $one_form->form->id; 
                                 @endphp
-                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/teacher_view/$ofi")}}">
+                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/teacher_view_form/$ofi")}}">
                                 <div class="h5 card-title {{$one_form->form->icon}}"></div>
                                 <div>{{$one_form->form->name}}</div>
                                 </a> 

@@ -50,12 +50,12 @@ class OperationPolicy
     public function update(User $user, Operation $operation): bool
     {
         //
-        if($operation->id == 2 or $operation->name == 'Εκπαιδευτικοί'){
-            if($user->id != 1 and $user->id != 2){
-                return false;
-            }
-        }
-        return true;
+        // if($operation->id == 2 or $operation->name == 'Εκπαιδευτικοί'){
+        //     if($user->id != 1 and $user->id != 2){
+        //         return false;
+        //     }
+        // }
+        // return true;
     }
 
     /**

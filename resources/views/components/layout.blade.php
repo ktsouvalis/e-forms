@@ -53,6 +53,10 @@
           <div class="text-dark fa-solid fa-toolbox"></div>
           <a href="{{url('/manage_operations')}}" style="text-decoration:none;" class="text-dark"> Λειτουργίες</a>
         </div>
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Thistle; text-align:center;">
+          <div class="text-dark fa-solid fa-microchip"></div>
+          <a href="{{url('/microapps')}}" style="text-decoration:none;" class="text-dark"> Μικροεφαρμογές</a>
+        </div>
         </li>
         @endif
         @foreach ($user->operations as $one_operation)

@@ -4,11 +4,13 @@ use App\Models\User;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Operation;
+use App\Policies\FormPolicy;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\OperationController;
 
 /*
@@ -89,7 +91,7 @@ Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
 
 Route::get('/tlogout', [TeacherController::class, 'logout']);
 
-Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('whocan');
+Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('can:view,form,' . FormPolicy::class);
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 
@@ -104,6 +106,12 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
 // Route::post('/change_operation_status', [OperationController::class,'changeOperationStatus']);
+
+//////// MICROAPPS ////////////////////
+
+Route::view('/microapps', 'microapps');
+
+Route::post('/insert_microapp', [MicroappController::class,'insertMicroapp']);
 
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);

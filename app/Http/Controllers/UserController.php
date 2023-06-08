@@ -203,7 +203,8 @@ class UserController extends Controller
             if(substr($key,0,9)=='operation'){
                 UsersOperations::create([
                     'user_id'=>$record->id,
-                    'operation_id'=>$value
+                    'operation_id'=>$value,
+                    'can_edit' =>0
                 ]); 
             }
         }
@@ -272,7 +273,7 @@ class UserController extends Controller
                     UsersOperations::create([
                         'user_id' => $user->id,
                         'operation_id' => $value,
-                        'can_edit' => 1 // !!!must be checked from the ui!!!!
+                        'can_edit' => 0 // !!!must be checked from the ui!!!!
                     ]);
                     $edited = true;
                 } 

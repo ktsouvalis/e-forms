@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\School;
 use App\Models\Teacher;
+use App\Models\Microapp;
 use App\Models\Operation;
 use App\Policies\FormPolicy;
 use Illuminate\Support\Facades\Route;
@@ -112,6 +113,20 @@ Route::post('/insert_operation', [OperationController::class,'insertOperation'])
 Route::view('/microapps', 'microapps');
 
 Route::post('/insert_microapp', [MicroappController::class,'insertMicroapp']);
+
+Route::get('/microapp_profile/{microapp}', function(Microapp $microapp){
+    return view('microapp-profile',['microapp'=>$microapp]);
+})->middleware('boss');
+
+Route::post('/save_microapp/{microapp}', [MicroappController::class,'saveProfile']);
+
+Route::get('/import_whocan/{microapp}', function(Microapp $microapp){
+    return view('import-whocan',['microapp'=> $microapp]);
+});
+
+Route::post('/upload_whocan/{microapp}', [MicroappController::class, 'importStakeholdersWhoCan']);
+
+Route::post('/insert_whocan/{microapp}', [MicroappController::class, 'insertWhocans']);
 
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);

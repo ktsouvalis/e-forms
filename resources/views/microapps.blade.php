@@ -58,7 +58,7 @@
                     }
 
                     // Append the main container div to the "space" div
-                    var spaceDiv = document.getElementById("space");
+                    var spaceDiv = document.getElementById("space"+id);
                     spaceDiv.appendChild(mainDiv);
                 } 
                 else{
@@ -174,7 +174,7 @@
                                 <input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}})">
                                 <label for="user{{$user->id}}"> {{$user->display_name}} </label>
                             
-                                <div id="space">
+                                <div id="space{{$user->id}}">
 
                                 </div>
                             </div>

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('microapp_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             
-            $table->unsignedBigInteger('microstakeholder_id'); // Που απευθύνεται: id απο τον πίνακα schools ή από τον πίνακα teachers
-            $table->string('microstakeholder_type'); // όνομα  Model (School ή Teacher)
+            $table->unsignedBigInteger('stakeholder_id'); // Που απευθύνεται: id απο τον πίνακα schools ή από τον πίνακα teachers
+            $table->string('stakeholder_type'); // όνομα  Model (School ή Teacher)
 
             $table->timestamps();
         });

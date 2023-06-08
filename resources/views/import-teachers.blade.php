@@ -47,7 +47,7 @@
                     <td>{{$teacher['telephone']}}</td>
 
                     @php
-                        $sxesi = $teacher['sxesi_ergasias']!="Κενό πεδίο" ? App\Models\SxesiErgasias::find($teacher['sxesi_ergasias'])->name : $teacher['sxesi_ergasias'] ;
+                        $sxesi = $teacher['sxesi_ergasias']!="Error: Κενό πεδίο" ? App\Models\SxesiErgasias::find($teacher['sxesi_ergasias'])->name : $teacher['sxesi_ergasias'] ;
                     @endphp
                     <td @if($sxesi=="Κενό πεδίο") style='color: red' @endif>{{$sxesi}}</td>
 
@@ -57,7 +57,7 @@
                         @endphp
                         <td >{{$organiki->name}}</td>
                     @else
-                        <td @if($teacher['organiki']=="Άγνωστος κωδικός οργανικής") style='color: red' @endif> {{$teacher['organiki']}} </td>
+                        <td @if($teacher['organiki']=="Error: Άγνωστος κωδικός οργανικής") style='color: red' @endif> {{$teacher['organiki']}} </td>
                     @endisset
                     
                     {{-- <td>{{$teacher['ypiretisi']}}</td> --}}

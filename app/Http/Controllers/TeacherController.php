@@ -99,7 +99,7 @@ class TeacherController extends Controller
             }
             else{
                 $error= 1;
-                $check['sxesi_ergasias'] = "Κενό πεδίο";
+                $check['sxesi_ergasias'] = "Error: Κενό πεδίο";
             }
 
             if(School::where('code', $sanitized_organiki)->count()){
@@ -114,7 +114,7 @@ class TeacherController extends Controller
             }
             else{
                 $error=1;
-                $check['organiki'] = "Άγνωστος κωδικός οργανικής";
+                $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
             }
 
             array_push($teachers_array, $check);

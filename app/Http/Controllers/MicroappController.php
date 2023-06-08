@@ -116,17 +116,18 @@ class MicroappController extends Controller
             $edited = true;
         }
         
+        // everything is going to be deleted from the microapps_users table and rewriten
         $old_records = $microapp->users;
         $microapp->users()->delete();
 
         foreach($request->all() as $key=>$value){
             if(substr($key,0,4)=='user'){ //checks if some user's checkbox is checked
                 $user_id=$value;
-                if(isset($incomingFields['edit'.$user_id])){ //checks if the radio buttons comes correct and their values
-                    $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1;
+                if(isset($incomingFields['edit'.$user_id])){ //checks if the radio buttons and their values come as excpected 
+                    $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1; //for a new user in microapp checks radiobuttons
                 }
                 else{
-                    $can_edit = $old_records->where('user_id', $user_id)->first()->can_edit;
+                    $can_edit = $old_records->where('user_id', $user_id)->first()->can_edit; // for an existing user with no changes in radios
                 }
                 MicroappUser::create([
                     'microapp_id' => $microapp->id,
@@ -174,7 +175,9 @@ class MicroappController extends Controller
             session(['who' => 'teachers']);   
             while ($rowSumValue != "" && $row<10000){
                 $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-                $afm = substr($afm, 2, -1); // remove from start =" and remove from end "
+                if(strlen($afm)>9){
+                    $afm = substr($afm, 2, -1); // remove from start =" and remove from end "
+                }
                 if(!Teacher::where('afm', $afm)->count()){
                     $error=1;
                     $afm="Error: Άγνωστος ΑΦΜ εκπαιδευτικού";

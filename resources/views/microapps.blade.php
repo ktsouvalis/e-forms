@@ -29,7 +29,7 @@
                     radio1.checked = "checked";
 
                     var label1 = document.createElement("label");
-                    label1.htmlFor = "edit_yes";
+                    label1.htmlFor = "edit_yes" + id;
                     label1.textContent = "Can Edit";
 
                     // Create the second radio button and label
@@ -40,7 +40,7 @@
                     radio2.name = "edit" + id;
 
                     var label2 = document.createElement("label");
-                    label2.htmlFor = "edit_no";
+                    label2.htmlFor = "edit_no" + id;
                     label2.textContent = "Can't Edit";
 
                     // Append the radio buttons and labels to the main container div

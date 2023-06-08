@@ -47,18 +47,30 @@
         </div>
         </li>
         </p>
-        <li class="nav-item">
+        
         @if(Auth::id()==1 or Auth::id()==2)
-        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gold; text-align:center;">
+        <p>
+        <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
           <div class="text-dark fa-solid fa-toolbox"></div>
           <a href="{{url('/manage_operations')}}" style="text-decoration:none;" class="text-dark"> Λειτουργίες</a>
         </div>
-        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Thistle; text-align:center;">
+        </li>
+        <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
           <div class="text-dark fa-solid fa-microchip"></div>
           <a href="{{url('/microapps')}}" style="text-decoration:none;" class="text-dark"> Μικροεφαρμογές</a>
         </div>
         </li>
+        <li class="nav-item">
+          <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
+            <div class="text-dark fa-solid fa-users"></div>
+            <a href="{{url('/manage_users')}}" style="text-decoration:none;" class="text-dark"> Χρήστες Διεύθυνσης</a>
+          </div>
+        </li>
+        </p>
         @endif
+
         @foreach ($user->operations as $one_operation)
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
@@ -67,6 +79,16 @@
             </div>
             </li> 
         @endforeach
+        
+        @foreach ($user->microapps as $one_microapp)
+            <li class="nav-item">
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
+              <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
+              <a href="{{url("/admin".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
+            </div>
+            </li> 
+        @endforeach
+
         <p>
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">

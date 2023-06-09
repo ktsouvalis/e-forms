@@ -94,7 +94,8 @@
                     <th id="search">Icon</th>
                     <th id="search">WhoHasAccess</th>
                     <th id="search">Ενεργή/Ανενεργή</th>
-                    <th id="search">Ορατή/ΔέχεταιΑπαντήσεις </th>
+                    <th id="search">Ορατή</th>
+                    <th id="search">ΔέχεταιΑπαντήσεις </th>
                 </tr>
             </thead>
                 <tbody>
@@ -117,8 +118,44 @@
                                         @endforeach
                                     </table>
                                 </td>
-                                <td>tata</td>
-                                <td>tata</td>
+                                <td> tata </td>
+                                @php
+                                if($one_microapp->visible){
+                                    $opacity_vis = "";
+                                    $hidden_acc = "";
+                                    $tooltip_vis = "Κλείσιμο ορατότητας";  
+                                    if($one_microapp->accepts){
+                                        $opacity_acc="";
+                                        $tooltip_acc="Κλείσιμο υποβολών";
+                                    }
+                                    else{
+                                        $opacity_acc = "opacity: 0.4";
+                                        $tooltip_acc="Άνοιγμα Υποβολών";
+                                    }
+                                }
+                                else{
+                                    $opacity_vis = "opacity: 0.4";
+                                    $hidden_acc="hidden";
+                                    $opacity_acc="";
+                                    $tooltip_acc="";
+                                    $tooltip_vis = "Άνοιγμα ορατότητας";
+                                }
+                            @endphp
+
+                            <td style="text-align: center">
+                                <form action="{{url("/change_microapp_status/$one_microapp->id")}}" method="post">
+                                @csrf
+                                <input name="asks_to" type="hidden" value="ch_vis_status">
+                                <button type="submit" class="btn btn-success bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> </button>
+                                </form>
+                            </td>
+                            <td style="text-align: center">
+                                <form action="{{url("/change_microapp_status/$one_microapp->id")}}" method="post">
+                                @csrf
+                                <input name="asks_to" type="hidden" value="ch_acc_status">
+                                <button type="submit" class="btn btn-success bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
+                                </form>
+                            </td>
                             </tr>
                         {{-- @endcan --}}
                     @endforeach

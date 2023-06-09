@@ -73,6 +73,9 @@ Route::view('/index_school', 'index_school');
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
 
+Route::get('/school_app/all_day', function(){
+    return view('welcome');
+})->middleware('canViewMicroapp');
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
@@ -128,10 +131,14 @@ Route::post('/upload_whocan/{microapp}', [MicroappController::class, 'importStak
 
 Route::post('/insert_whocan/{microapp}', [MicroappController::class, 'insertWhocans']);
 
+Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
+
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);
 
 Route::view('/test','test');
+
+Route::get('/skata_test', [MicroappController::class, 'test']);
 
 Route::get('/manage_test', function(){
     return view('welcome');

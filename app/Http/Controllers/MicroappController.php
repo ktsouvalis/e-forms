@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\Validator;
 class MicroappController extends Controller
 {
     //
+    public function test(){
+        $url = Request::url();
+        $segments = explode('/', $url);
+        $app = end($segments);
+
+        return view('test', ['app'=>$app]);
+    }
     public function insertMicroapp(Request $request){
         $incomingFields = $request->all();
         // foreach($incomingFields as $key=>$value){
@@ -69,15 +76,13 @@ class MicroappController extends Controller
         return redirect(url('/microapps'))->with('success', 'Τα στοιχεία της εφαρμογής καταχωρήθηκαν επιτυχώς');
     }
 
-    public function changeMicroappStatus(Request $request){
+    public function changeMicroappStatus(Request $request, Microapp $microapp){
         if($request->all()['asks_to'] == 'ch_vis_status'){
-            $microapp = Microapp::find($request->all()['microapp_id']);
             $microapp->visible = $microapp->visible==1?0:1;
             $microapp->accepts = 0;
             $microapp->save();
         }
         if($request->all()['asks_to'] == 'ch_acc_status'){
-            $microapp = Microapp::find($request->all()['microapp_id']);
             $microapp->accepts = $microapp->accepts==1?0:1;
             $microapp->save();
         }

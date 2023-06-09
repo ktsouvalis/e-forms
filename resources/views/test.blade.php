@@ -17,7 +17,7 @@
         Οργανική: {{$school_teacher->organiki->name}} <br><br>
     @endforeach --}}
 
-    @php
+    {{-- @php
         $user = Auth::user();
         foreach($user->operations as $one_operation){
             // echo $one_operation->operation->url=='/teachers' and $one_operation->can_edit; exit;
@@ -26,7 +26,9 @@
             } 
         }
         return false;
-    @endphp
+    @endphp --}}
+
+    {{$app}}
 </body>
 </html>
 

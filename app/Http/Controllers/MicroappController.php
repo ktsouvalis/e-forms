@@ -161,12 +161,18 @@ class MicroappController extends Controller
         if($request->all()['template_file']=='schools'){
             session(['who' => 'schools']);   
             while ($rowSumValue != "" && $row<10000){
-                $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-                if(!School::where('code', $code)->count()){
+                $check=array();
+                $check['code'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+                if(!School::where('code', $check['code'])->count()){
                     $error=1;
-                    $code="Error: Άγνωστος κωδικός σχολείου";
+                    $check['code']="Error: Άγνωστος κωδικός σχολείου";
+                    $check['id'] = "Error";
+                }
+                else{
+                    $check['id'] = School::where('code', $check['code'])->first()->id;
                 }  
-                array_push($whocan_array, $code); 
+                array_push($whocan_array, $check);
+                
                 $row++;
                 $rowSumValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();   
             }
@@ -174,15 +180,21 @@ class MicroappController extends Controller
         else{
             session(['who' => 'teachers']);   
             while ($rowSumValue != "" && $row<10000){
-                $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-                if(strlen($afm)>9){
-                    $afm = substr($afm, 2, -1); // remove from start =" and remove from end "
+                $check=array();
+                $check['afm'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+                if(strlen($check['afm'])>9){
+                    $check['afm'] = substr($check['afm'], 2, -1); // remove from start =" and remove from end "
                 }
-                if(!Teacher::where('afm', $afm)->count()){
+                if(!Teacher::where('afm', $check['afm'])->count()){
                     $error=1;
-                    $afm="Error: Άγνωστος ΑΦΜ εκπαιδευτικού";
+                    $check['afm']="Error: Άγνωστος ΑΦΜ εκπαιδευτικού";
+                    $check['id'] = "Error";
+                }
+                else{
+                    $check['id'] = Teacher::where('afm',$check['afm'])->first()->id;
                 }  
-                array_push($whocan_array, $afm);
+                array_push($whocan_array, $check);
+                
                 $row++;
                 $rowSumValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();      
             }  
@@ -207,10 +219,10 @@ class MicroappController extends Controller
         else{
             $type = 'App\Models\Teacher';
         }
-        foreach($whocan_array as $code){
+        foreach($whocan_array as $one_stakeholder){
             MicroappStakeholder::create([
                 'microapp_id' => $microapp->id,
-                'stakeholder_id' => $code,
+                'stakeholder_id' => $one_stakeholder['id'],
                 'stakeholder_type' => $type
             ]);
         }

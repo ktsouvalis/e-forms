@@ -58,7 +58,8 @@
                             </div>
                         </div>  
                     @endforeach
-
+                    </div>
+                    <div class="row hidden-md-up justify-content-center">
                     {{-- Μενού με βάση τα δικαιωματα πρόσβασης που έρχονται από τον πίνακα microapps --}}
                     @foreach ($user->microapps as $one_microapp)
                         <div class="col-md-4 py-2" style="max-width:15rem">

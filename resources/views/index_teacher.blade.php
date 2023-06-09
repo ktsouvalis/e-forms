@@ -28,6 +28,18 @@
                             </div>
                         </div>  
                         @endforeach
+
+                        @foreach ($teacher->microapps as $one_microapp)
+                        <div class="col-md-4 py-2" style="max-width:15rem">
+                            <div class="card py-5" style="background-color:{{$one_microapp->microapp->color}}; text-align:center;">
+                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/teacher_app".$one_microapp->microapp->url)}}">
+                                <div class="h5 card-title {{$one_microapp->microapp->icon}}"></div>
+                                <div>{{$one_microapp->microapp->name}}</div>
+                                </a> 
+                            </div>
+                        </div>  
+                        @endforeach
+                        
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
                                 <a class="text-dark" href="{{url('/tlogout')}}">

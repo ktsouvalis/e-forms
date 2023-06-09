@@ -55,6 +55,16 @@
                 </div>
                 </li> 
             @endforeach
+            
+            @foreach ($user->microapps as $one_microapp)
+                <li class="nav-item">
+                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
+                  <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
+                  <a href="{{url("/school_app".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
+                </div>
+                </li> 
+            @endforeach
+
             <p>
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">

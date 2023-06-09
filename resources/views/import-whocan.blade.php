@@ -34,14 +34,14 @@
                 <th id="search">Ονομασία</th> 
             </tr>
 
-            @foreach($whocan_array as $code)
+            @foreach($whocan_array as $whocan_school)
                 <tr>
-                    @if($code=="Error: Άγνωστος κωδικός σχολείου")
-                        <td style='color: red'>{{$code}}</td>
+                    @if($whocan_school['code']=="Error: Άγνωστος κωδικός σχολείου")
+                        <td style='color: red'>{{$whocan_school['code']}}</td>
                         <td> - </td>
                     @else
                         @php    
-                            $school=App\Models\School::where('code', $code)->first();
+                            $school=App\Models\School::find($whocan_school['id']);
                         @endphp
                         <td>{{$school->code}}</td>
                         <td>{{$school->name}}</td>
@@ -57,15 +57,15 @@
                 <th id="search">Όνομα</th>
             </tr>
 
-            @foreach($whocan_array as $afm)
+            @foreach($whocan_array as $whocan_teacher)
                 <tr>
-                    @if($afm=="Error: Άγνωστος ΑΦΜ εκπαιδευτικού")
-                        <td style='color: red'>{{$afm}}</td>
+                    @if($whocan_teacher['afm']=="Error: Άγνωστος ΑΦΜ εκπαιδευτικού")
+                        <td style='color: red'>{{$whocan_teacher['afm']}}</td>
                         <td> - </td>
                         <td> - </td>
                     @else
                         @php    
-                            $teacher=App\Models\Teacher::where('afm', $afm)->first();
+                            $teacher=App\Models\Teacher::find($whocan_teacher['id']);
                         @endphp
                         <td>{{$teacher->afm}}</td>
                         <td>{{$teacher->surname}}</td>

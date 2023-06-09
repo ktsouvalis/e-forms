@@ -54,7 +54,6 @@ class Kernel extends HttpKernel
      */
     protected $middlewareAliases = [
         'canViewMicroapp' => \App\Http\Middleware\CanViewMicroapp::class,
-        'hasAccess' => \App\Http\Middleware\hasAccess::class,
         'boss' => \App\Http\Middleware\isBoss::class,
         'whocan' => \App\Http\Middleware\whocan::class,
         'auth' => \App\Http\Middleware\Authenticate::class,

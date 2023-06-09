@@ -26,9 +26,10 @@
             } 
         }
         return false;
+        ->microapps->where('microapp_id', $microapp->id)->first()->can_edit
     @endphp --}}
 
-    {{$app}}
+    {{Auth::user()->microapps->where('microapp_id', 4)->first()->can_edit}}
 </body>
 </html>
 

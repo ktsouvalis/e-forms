@@ -17,7 +17,8 @@ class AuthServiceProvider extends ServiceProvider
         Operation::class => OperationPolicy::class,
         Teacher::class => TeacherPolicy::class,
         School::class => SchoolPolicy::class,
-        Form::class => FormPolicy::class
+        Form::class => FormPolicy::class,
+        Microapp::class => MicroappPolicy::class
     ];
 
     /**

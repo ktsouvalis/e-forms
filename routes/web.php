@@ -79,7 +79,7 @@ Route::get('/school_app/all_day', function(){
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
-Route::view('/teachers','teachers')->middleware('hasAccess');
+Route::view('/teachers','teachers');
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:create, ".Teacher::class);
 
@@ -142,4 +142,4 @@ Route::get('/skata_test', [MicroappController::class, 'test']);
 
 Route::get('/manage_test', function(){
     return view('welcome');
-})->middleware('hasAccess');
+});

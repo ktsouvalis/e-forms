@@ -100,7 +100,7 @@
             </thead>
                 <tbody>
                     @foreach($all_microapps as $one_microapp)
-                        {{-- @can('view', $one_microapp) --}}
+                        @can('view', $one_microapp)
                             <tr>  
                                 <td>{{$one_microapp->id}}</td>
                                 <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="/microapp_profile/{{$one_microapp->id}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
@@ -141,7 +141,7 @@
                                     $tooltip_vis = "Άνοιγμα ορατότητας";
                                 }
                             @endphp
-
+                            @can('update', $one_microapp)
                             <td style="text-align: center">
                                 <form action="{{url("/change_microapp_status/$one_microapp->id")}}" method="post">
                                 @csrf
@@ -156,13 +156,17 @@
                                 <button type="submit" class="btn btn-success bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
                                 </form>
                             </td>
+                            @else
+                            <td> Δεν έχετε δικαίωμα αλλαγής ορατότητας της εφαρμογής</td>
+                            <td> Δεν έχετε δικαίωμα να ανοίξετε ή να κλείσετε την εφαρμογή </td>
                             </tr>
-                        {{-- @endcan --}}
+                            @endcan
+                        @endcan
                     @endforeach
                 </tbody>
             </table>
         </div>
-        
+        @can('create', App\Models\Microapp::class)
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
@@ -229,4 +233,5 @@
             </form>
         </nav>
         </div></div>
+        @endcan
 </x-layout>

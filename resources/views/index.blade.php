@@ -14,7 +14,15 @@
             <div class="py-5">
                 <div class="container">
                     <div class="row hidden-md-up justify-content-center">
-
+                    <div class="col-md-4 py-2" style="max-width:15rem">
+                        <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
+                            <a class="text-dark" style="text-decoration:none;" href="{{url("/microapps")}}">
+                            <div class="h5 card-title fa-solid fa-microchip"></div>
+                            <div>Μικροεφαρμογές</div>
+                            </a> 
+                        </div>
+                    </div>
+                    
                     {{-- Μενού μόνο για τους σούπερ δαχειριστές --}}
                     @if(Illuminate\Support\Facades\Auth::id()==1 or Illuminate\Support\Facades\Auth::id()==2)
                         <div class="col-md-4 py-2" style="max-width:15rem">
@@ -22,15 +30,6 @@
                                 <a class="text-dark" style="text-decoration:none;" href="{{url("/manage_operations")}}">
                                 <div class="h5 card-title fa-solid fa-toolbox"></div>
                                 <div>Διαχείριση Λειτουργιών</div>
-                                </a> 
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/microapps")}}">
-                                <div class="h5 card-title fa-solid fa-microchip"></div>
-                                <div>Μικροεφαρμογές</div>
                                 </a> 
                             </div>
                         </div>
@@ -75,6 +74,7 @@
 
                     <div class="row hidden-md-up justify-content-center">
                     {{-- Μενού για όλους --}}
+                    
                     <div class="col-md-4 py-2" style="max-width:15rem">
                         <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
                             <a class="text-dark" href="{{url("/logout")}}">

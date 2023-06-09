@@ -23,27 +23,34 @@ class CanViewMicroapp
         $segments = explode('/', $url);
         $app = end($segments);
         $microapp = Microapp::where('url', "/".$app)->first();
-
-        if(MicroappUser::where('user_id',Auth::id())
-            ->where('microapp_id', $microapp->id)
-            ->exists()){
-                return $next($request);
+        $guard = Auth::guard();
+        echo $guard->getName(); exit;
+        if($guard->getName()==='web'){
+            echo 'web'; exit;
+            if(MicroappUser::where('user_id',Auth::id())
+                ->where('microapp_id', $microapp->id)
+                ->exists()){
+                    return $next($request);
+            }
         }
-
-        if(MicroappStakeholder::where('stakeholder_id',Auth::guard('teacher')->id())
-            ->where('stakeholder_type', 'App\Models\Teacher')
-            ->where('microapp_id', $microapp->id)
-            ->exists()){
-                return $next($request);
+        if($guard->getName()==='teacher'){
+            echo 'teacher'; exit;
+            if(MicroappStakeholder::where('stakeholder_id',Auth::guard('teacher')->id())
+                ->where('stakeholder_type', 'App\Models\Teacher')
+                ->where('microapp_id', $microapp->id)
+                ->exists()){
+                    return $next($request);
+            }
         }
-
-        if(MicroappStakeholder::where('stakeholder_id',Auth::guard('school')->id())
-            ->where('microapp_id', $microapp->id)
-            ->where('stakeholder_type', 'App\Models\School')
-            ->exists()){
-                return $next($request);
+        if($guard->getName()==='school'){
+            echo 'school'; exit;
+            if(MicroappStakeholder::where('stakeholder_id',Auth::guard('school')->id())
+                ->where('microapp_id', $microapp->id)
+                ->where('stakeholder_type', 'App\Models\School')
+                ->exists()){
+                    return $next($request);
+            }
         }
-
         abort(403, 'Unauthorized action.');
     }
 }

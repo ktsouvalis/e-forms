@@ -99,20 +99,23 @@
                         @endphp
                         <table>
                         @foreach($all_users as $user)
-                            @php
-                                $checked_checkbox="";
-                                $checked_radio_can="";
-                                $checked_radio_cant="";
-                                if($microapp->users->where('user_id', $user->id)->count()){
-                                    $checked_checkbox="checked";
-                                    if($microapp->users->where('user_id', $user->id)->first()->can_edit){
-                                        $checked_radio_can = "checked";  
-                                    }
-                                    else{
-                                        $checked_radio_cant = "checked";    
-                                    }
-                                }   
-                            @endphp
+                            @if($user->id <>1 and $user->id <>2)
+                                @php
+                                
+                                    $checked_checkbox="";
+                                    $checked_radio_can="";
+                                    $checked_radio_cant="";
+                                    
+                                    if($microapp->users->where('user_id', $user->id)->count()){
+                                        $checked_checkbox="checked";
+                                        if($microapp->users->where('user_id', $user->id)->first()->can_edit){
+                                            $checked_radio_can = "checked";  
+                                        }
+                                        else{
+                                            $checked_radio_cant = "checked";    
+                                        }
+                                    }  
+                                @endphp
                             <tr>
                                 <td>
                                 {{-- can:{{$checked_radio_can}} cant:{{$checked_radio_cant}} --}}
@@ -128,6 +131,7 @@
                                 </div>
                                 </td>
                             </tr>
+                            @endif
                         @endforeach
                         </table>
                     </div>

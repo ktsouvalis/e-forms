@@ -142,6 +142,19 @@ class MicroappController extends Controller
             }
         }
 
+        // add admins again in microapp 
+        MicroappUser::create([
+            'microapp_id'=>$microapp->id,
+            'user_id'=>1,
+            'can_edit' => 1
+        ]);
+        
+         MicroappUser::create([
+            'microapp_id'=>$microapp->id,
+            'user_id'=>2,
+            'can_edit' => 1
+        ]); 
+
         return redirect(url("/microapp_profile/$microapp->id"))->with('success',"Επιτυχής αποθήκευση των στοιχείων και των χρηστών της μικροεφαρμογής $microapp->name");
     }
 

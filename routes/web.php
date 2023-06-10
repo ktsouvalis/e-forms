@@ -75,8 +75,7 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 Route::get('/school_app/all_day', function(){
     return view('welcome');
-});
-// ->middleware('canViewMicroapp');
+})->middleware('canViewMicroapp');
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
@@ -100,8 +99,7 @@ Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middle
 
 Route::get('/teacher_app/outings', function(){
     return view('welcome');
-});
-// ->middleware('canViewMicroapp');
+})->middleware('canViewMicroapp');
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 

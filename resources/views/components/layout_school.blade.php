@@ -45,6 +45,7 @@
             <li class="nav-item">
             
             @foreach ($user->forms as $one_form)
+            @if($one_form->form->active)
                 <li class="nav-item">
                 <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_form->form->color}}; text-align:center;">
                   <div class="text-dark {{$one_form->form->icon}}"></div> 
@@ -53,16 +54,19 @@
                   @endphp
                   <a href="{{url("/school_view/$ofi")}}" style=" text-decoration:none;" class="text-dark"> {{$one_form->form->name}}</a>
                 </div>
-                </li> 
+                </li>
+            @endif 
             @endforeach
             
             @foreach ($user->microapps as $one_microapp)
+            {{-- @if($one_microapp->microapp->active) --}}
                 <li class="nav-item">
                 <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
                   <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
                   <a href="{{url("/school_app".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
                 </div>
                 </li> 
+            {{-- @endif --}}
             @endforeach
 
             <p>

@@ -71,4 +71,15 @@ class MicroappPolicy
     {
         //
     }
+
+    public function deactivate(User $user): bool {
+        return in_array($user->id,[1,2]);
+    }
+
+    public function beViewed(User $user, Microapp $microapp): bool{
+        if($microapp->active) return true;
+        if(in_array($user->id,[1,2])) return true;
+        return false;
+            
+    }
 }

@@ -101,6 +101,7 @@
                 <tbody>
                     @foreach($all_microapps as $one_microapp)
                         @can('view', $one_microapp)
+                        {{-- @can('beViewed', $one_microapp) --}}
                             <tr>  
                                 <td>{{$one_microapp->id}}</td>
                                 <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="/microapp_profile/{{$one_microapp->id}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
@@ -118,7 +119,29 @@
                                         @endforeach
                                     </table>
                                 </td>
-                                <td> tata </td>
+                                @php
+                                    
+                                @endphp
+                                <td style="text-align: center">
+                                    @can('deactivate', App\Models\Microapp::class)
+                                        <form action="{{url("/microapp_onoff/$one_microapp->id")}}" method="post">
+                                        @csrf
+                                        @if($one_microapp->active) 
+                                            ΕΝΕΡΓΗ<br>
+                                            <button type="submit" class="btn btn-dark bi bi-x-circle text-white"  data-toggle="tooltip" title="Απενεργοποίηση"></button>
+                                        @else   
+                                            ΑΝΕΝΕΡΓΗ<br>
+                                            <button type="submit" class="btn bi bi-activity text-dark bg-white"  data-toggle="tooltip" title="Ενεργοποίηση"></button>
+                                        @endif 
+                                        </form>  
+                                    @else
+                                        @if($one_microapp->active)
+                                            Ενεργή
+                                        @else
+                                            Ανενεργή
+                                        @endif
+                                    @endcan
+                                </td>
                                 @php
                                 if($one_microapp->visible){
                                     $opacity_vis = "";
@@ -161,6 +184,7 @@
                             <td> Δεν έχετε δικαίωμα να ανοίξετε ή να κλείσετε την εφαρμογή </td>
                             </tr>
                             @endcan
+                        {{-- @endcan --}}
                         @endcan
                     @endforeach
                 </tbody>

@@ -76,6 +76,23 @@ class MicroappController extends Controller
         return redirect(url('/microapps'))->with('success', 'Τα στοιχεία της εφαρμογής καταχωρήθηκαν επιτυχώς');
     }
 
+    public function onOff(Request $request, Microapp $microapp){
+        if($microapp->active){ 
+            $microapp->active=0;
+            $microapp->stakeholders()->delete();
+            $microapp->users()->where('user_id', '<>', 1)->where('user_id', '<>', 2)->delete();
+            $text="Η μικροεφαρμογή απενεργοποιήθηκε";
+            // to_do: delete users and stakeholders
+        }
+        else{
+            $microapp->active=1;
+            $text="Η μικροεφαρμογή ενεργοποιήθηκε. Πρέπει να προσθέσετε χρήστες και stakeholders";
+        }
+        $microapp->save();
+
+        return redirect(url('/microapps'))->with('success', $text);
+    }
+
     public function changeMicroappStatus(Request $request, Microapp $microapp){
         if($request->all()['asks_to'] == 'ch_vis_status'){
             $microapp->visible = $microapp->visible==1?0:1;
@@ -86,7 +103,7 @@ class MicroappController extends Controller
             $microapp->accepts = $microapp->accepts==1?0:1;
             $microapp->save();
         }
-        return redirect(url('/microapps'));
+        return redirect(url('/microapps'))->with('success', 'H κατάσταση της εφαρμογής άλλαξε επιτυχώς');
     }
 
     public function saveProfile(Microapp $microapp, Request $request){

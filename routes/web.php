@@ -73,9 +73,15 @@ Route::view('/index_school', 'index_school');
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
 
-Route::get('/school_app/all_day', function(){
-    return view('welcome');
-})->middleware('canViewMicroapp');
+Route::get('/school_app/{appname}', function($appname){
+    $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
+    if($microapp->active){
+        return view($appname,['appname'=>$appname]);
+    }
+    else{
+        return redirect(url('/index_school'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
+    }
+})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if school is not in the stakeholders of this microapp
 
 //////// TEACHER //////////////////////////////////////////////////////////
 
@@ -97,9 +103,15 @@ Route::get('/tlogout', [TeacherController::class, 'logout']);
 
 Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('can:view,form,' . FormPolicy::class);
 
-Route::get('/teacher_app/outings', function(){
-    return view('welcome');
-})->middleware('canViewMicroapp');
+Route::get('/teacher_app/{appname}', function($appname){
+    $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
+    if($microapp->active){
+        return view($appname,['appname'=>$appname]);
+    }
+    else{
+        return redirect(url('/index_teacher'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
+    }
+})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
 //////// OPERATIONS ////////////////////////////////////////////////////
 
@@ -136,6 +148,8 @@ Route::post('/upload_whocan/{microapp}', [MicroappController::class, 'importStak
 Route::post('/insert_whocan/{microapp}', [MicroappController::class, 'insertWhocans']);
 
 Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
+
+Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);

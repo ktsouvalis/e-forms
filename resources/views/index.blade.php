@@ -61,14 +61,16 @@
                     <div class="row hidden-md-up justify-content-center">
                     {{-- Μενού με βάση τα δικαιωματα πρόσβασης που έρχονται από τον πίνακα microapps --}}
                     @foreach ($user->microapps as $one_microapp)
+                    {{-- @can('beViewed', $one_microapp->microapp) --}}
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:{{$one_microapp->microapp->color}}; text-align:center;">
                                 <a  class="text-dark" style="text-decoration:none;" href="{{url("/admin".$one_microapp->microapp->url)}}">
                                 <div class="h5 card-title {{$one_microapp->microapp->icon}}"></div>
-                                <div >{{$one_microapp->microapp->name}}</div>
+                                <div @if(!$one_microapp->microapp->active) style="color:red" @endif>@if(!$one_microapp->microapp->active) <strong> @endif{{$one_microapp->microapp->name}}</strong></div>
                                 </a> 
                             </div>
                         </div>  
+                    {{-- @endcan --}}
                     @endforeach
                     </div>
 

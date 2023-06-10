@@ -79,6 +79,8 @@ class MicroappController extends Controller
     public function onOff(Request $request, Microapp $microapp){
         if($microapp->active){ 
             $microapp->active=0;
+            $microapp->visible=0;
+            $microapp->accepts=0;
             $microapp->stakeholders()->delete();
             $microapp->users()->where('user_id', '<>', 1)->where('user_id', '<>', 2)->delete();
             $text="Η μικροεφαρμογή απενεργοποιήθηκε";

@@ -51,4 +51,8 @@ class User extends Authenticatable
     public function forms(){
         return $this->hasMany(FormUser::class);
     }
+
+    public function microapps(){
+        return $this->hasMany(MicroappUser::class);
+    }
 }

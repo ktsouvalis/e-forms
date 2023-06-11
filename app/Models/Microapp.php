@@ -5,27 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Form extends Model
+class Microapp extends Model
 {
     use HasFactory;
-    
+
+    protected $table="microapps";
     protected $guarded=[
         'id'
     ];
 
     public function users(){
-        return $this->hasMany(FormUser::class);
+        return $this->hasMany(MicroappUser::class);
     }
 
     public function stakeholders(){
-        return $this->hasMany(FormStakeholder::class);
+        return $this->hasMany(MicroappStakeholder::class);
     }
-<<<<<<< HEAD
-
-    public function formElement(){
-        return $this->hasMany(FormElements::class);
-    }
-
-=======
->>>>>>> master
 }

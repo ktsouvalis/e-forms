@@ -45,6 +45,9 @@ class School extends Authenticatable
         return $this->morphMany(FormStakeholder::class, 'stakeholder');
     }
 
+    public function microapps(){
+        return $this->morphMany(MicroAppStakeholder::class, 'stakeholder');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

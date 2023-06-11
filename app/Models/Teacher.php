@@ -31,4 +31,8 @@ class Teacher extends Authenticatable
     public function forms(){
         return $this->morphMany(FormStakeholder::class, 'stakeholder');
     }
+
+    public function microapps(){
+        return $this->morphMany(MicroappStakeholder::class, 'stakeholder');
+    }
 }

@@ -4,9 +4,12 @@ namespace App\Policies;
 
 use App\Models\Form;
 use App\Models\User;
+use App\Models\FormUser;
+use App\Models\FormStakeholder;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
-class formPolicy
+class FormPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,10 +22,30 @@ class formPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Form $form): bool
+    public function view(Form $form): bool
     {
         //
-        return $user->forms->where('form_id', $form->id)->count();
+        if(FormUser::where('user_id',Auth::id())
+            ->where('form_id', $form->id)
+            ->exists()){
+                return true;
+        }
+
+        if(FormStakeholder::where('stakeholder_id',Auth::guard('teacher')->id())
+            ->where('stakeholder_type', 'App\Models\Teacher')
+            ->where('form_id', $form->id)
+            ->exists()){
+                return true;
+        }
+
+        if(FormStakeholder::where('stakeholder',Auth::guard('school')->id())
+            ->where('form_id', $form->id)
+            ->where('stakeholder_type', 'App\Models\School')
+            ->exists()){
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -31,7 +54,6 @@ class formPolicy
     public function create(User $user): bool
     {
         //
-        return in_array($user->id,[1,2]);
     }
 
     /**
@@ -40,12 +62,6 @@ class formPolicy
     public function update(User $user, Form $form): bool
     {
         //
-        // if($user->forms->where('form_id', $form->id)->first()->can_edit){
-        //     return true;
-        // }
-        // return false;
-
-        return $user->forms->where('form_id', $form->id)->first()->can_edit;
     }
 
     /**

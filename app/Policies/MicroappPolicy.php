@@ -45,7 +45,7 @@ class MicroappPolicy
         // }
         // return false;
 
-        return $user->microapps->where('microapp_id', $microapp->id)->first()->can_edit;
+        return ($microapp->active and $user->microapps->where('microapp_id', $microapp->id)->first()->can_edit);
     }
 
     /**
@@ -76,7 +76,7 @@ class MicroappPolicy
         return in_array($user->id,[1,2]);
     }
 
-    public function beViewed(User $user, Microapp $microapp): bool{
+    public function beViewedByAdmins(User $user, Microapp $microapp): bool{
         if($microapp->active) return true;
         //if(in_array($user->id,[1,2])) return true;
         return false;

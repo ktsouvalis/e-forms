@@ -59,14 +59,14 @@
             @endforeach
 
             @foreach ($user->microapps as $one_microapp)
-            {{-- @if($one_microapp->microapp->active) --}}
+              @if($one_microapp->microapp->visible)
                 <li class="nav-item">
                 <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
                   <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
                   <a href="{{url("/teacher_app".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
                 </div>
-                </li> 
-            {{-- @endif --}}
+                </li>
+              @endif 
             @endforeach
             
             <p>

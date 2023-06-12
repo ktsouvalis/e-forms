@@ -131,11 +131,9 @@
                                         <form action="{{url("/microapp_onoff/$one_microapp->id")}}" method="post">
                                         @csrf
                                         @if($one_microapp->active) 
-                                            ΕΝΕΡΓΗ<br>
-                                            <button type="submit" class="btn btn-dark bi bi-x-circle text-white"  data-toggle="tooltip" title="Απενεργοποίηση"></button>
+                                            <button type="submit" class="btn btn-dark bi bi-x-circle text-white bg-dark"  data-toggle="tooltip" title="Απενεργοποίηση"></button>
                                         @else   
-                                            ΑΝΕΝΕΡΓΗ<br>
-                                            <button type="submit" class="btn bi bi-activity text-dark bg-white"  data-toggle="tooltip" title="Ενεργοποίηση"></button>
+                                            <button type="submit" class="btn btn-dark bi bi-activity text-dark bg-white"  data-toggle="tooltip" title="Ενεργοποίηση"></button>
                                         @endif 
                                         </form>  
                                     @else

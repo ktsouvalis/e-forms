@@ -84,7 +84,7 @@
 
         <p>
         @foreach ($user->microapps as $one_microapp)
-        @can('beViewed', $one_microapp->microapp)
+        @can('beViewedByAdmins', $one_microapp->microapp)
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
               <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 

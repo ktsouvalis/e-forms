@@ -135,7 +135,7 @@ Route::post('/insert_microapp', [MicroappController::class,'insertMicroapp']);
 
 Route::get('/microapp_profile/{microapp}', function(Microapp $microapp){
     return view('microapp-profile',['microapp'=>$microapp]);
-})->middleware('can:update,microapp' );
+})->middleware('can:beViewed, microapp')->middleware('can:update,microapp' );
 
 Route::post('/save_microapp/{microapp}', [MicroappController::class,'saveProfile']);
 

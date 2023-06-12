@@ -1,4 +1,15 @@
 <x-layout>
+    @push('links')
+        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
+        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+    @endpush
+
+    @push('scripts')
+        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
+        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
+        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
+        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+    @endpush
     @push('scripts')
         <script>
             function show_edit_option(id, canedit) {
@@ -146,6 +157,38 @@
             <div>
                 <a href="{{url("/import_whocan/$microapp->id")}}" class="btn btn-primary bi bi-person-lines-fill"> Εισαγωγή Stakeholders</a>
             </div>
+        
+        <div class="container">
+            {{-- @php
+                $type = $microapp->stakeholders->first()->stakeholder_type;
+                $field = 'afm';
+                if($type=="App\Models\School"){
+                    $field = 
+                }
+            @endphp --}}
+            <div class="table-responsive">
+                <table  id="dataTable" class="display table table-sm table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th id="search">Αναγνωριστικό</th>
+                        <th id="search">name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach($microapp->stakeholders as $one_stakeholder)
+                <tr>
+                    @if($one_stakeholder->stakeholder_type=="App\Models\School")
+                        <td>{{$one_stakeholder->stakeholder->code}}</td>
+                    @else
+                        <td>{{$one_stakeholder->stakeholder->afm}}</td>
+                    @endif
+                    <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
+                </tr>
+                @endforeach
+                </tbody>
+                </table>
+            </div>          
+        </div>
         </div>
     </div>    
 </x-layout>

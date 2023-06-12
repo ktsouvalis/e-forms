@@ -84,12 +84,14 @@
 
         <p>
         @foreach ($user->microapps as $one_microapp)
+        @can('beViewed', $one_microapp->microapp)
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
               <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
               <a href="{{url("/admin".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}} @if(!$one_microapp->microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
             </div>
             </li> 
+        @endcan
         @endforeach
         </p>
         

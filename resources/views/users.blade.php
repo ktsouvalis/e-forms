@@ -62,7 +62,7 @@
                                 <td><div class="badge bg-primary text-wrap"><a href="/user_profile/{{$user->id}}" style="color:white; text-decoration:none;">{{$user->display_name}}</a></div></td>
                                 <td>{{$user->email}}</td>
                                 <td>
-                                    <table class="table table-sm table-striped table-hover">
+                                    <table class="table table-sm table-striped table-hover table-bordered">
                                         @foreach ($user->operations as $one_operation)
                                             <tr>
                                             <td>{{$one_operation->operation->name}}</td>  

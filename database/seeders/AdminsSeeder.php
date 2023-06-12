@@ -70,19 +70,19 @@ class AdminsSeeder extends Seeder
 
         UsersOperations::create([
             'user_id'=>1,
-            'operation_id'=>3,
+            'operation_id'=>1,
             'can_edit'=>1
         ]);
 
         UsersOperations::create([
             'user_id'=>2,
-            'operation_id'=>3,
+            'operation_id'=>1,
             'can_edit'=>1
         ]);
 
         UsersOperations::create([
             'user_id'=>3,
-            'operation_id'=>3,
+            'operation_id'=>1,
             'can_edit'=>0
         ]);
 

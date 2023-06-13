@@ -35,4 +35,8 @@ class Teacher extends Authenticatable
     public function microapps(){
         return $this->morphMany(MicroappStakeholder::class, 'stakeholder');
     }
+
+    public function end_document(){
+        return $this->hasOne(mEndDocument::class);
+    }
 }

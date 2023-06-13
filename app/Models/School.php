@@ -48,6 +48,10 @@ class School extends Authenticatable
     public function microapps(){
         return $this->morphMany(MicroAppStakeholder::class, 'stakeholder');
     }
+
+    public function all_day(){
+        return $this->hasOne(mAllDay::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

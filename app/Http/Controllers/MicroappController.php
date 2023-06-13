@@ -130,7 +130,7 @@ class MicroappController extends Controller
                 if($microapp->isDirty('url')){
                     $given_url = $incomingFields['url'];
 
-                    if(Μicroapp::where('url', $given_url)->count()){
+                    if(Microapp::where('url', $given_url)->count()){
                         $existing_microapp =Μicroapp::where('url',$given_url)->first();
                         return redirect(url("/microapp_profile/$microapp->id"))->with('failure',"Υπάρχει ήδη μικροεφαρμογή με url $given_url: $existing_microapp->name");
                     }

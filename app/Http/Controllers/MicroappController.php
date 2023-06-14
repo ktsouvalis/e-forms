@@ -23,6 +23,7 @@ class MicroappController extends Controller
 
         return view('test', ['app'=>$app]);
     }
+    
     public function insertMicroapp(Request $request){
         $incomingFields = $request->all();
         // foreach($incomingFields as $key=>$value){

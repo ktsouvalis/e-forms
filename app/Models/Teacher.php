@@ -36,6 +36,10 @@ class Teacher extends Authenticatable
         return $this->morphMany(MicroappStakeholder::class, 'stakeholder');
     }
 
+    public function fileshares(){
+        return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
+    }
+
     public function end_document(){
         return $this->hasOne(mEndDocument::class);
     }

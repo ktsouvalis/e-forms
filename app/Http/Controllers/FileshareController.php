@@ -26,12 +26,10 @@ class FileshareController extends Controller
         $directory_common = 'file_shares/fileshares'.$newFileshare->id;
         $directory_personal = $directory_common.'/personal_files';
         
-        //dd($request);
         $common_files = $request->file('fileshare_common_files');
         if ($common_files) {
             foreach ($common_files as $file) {
                 $path = $file->storeAs($directory_common, $file->getClientOriginalName());
-                echo $path;
             }
         }
 
@@ -39,8 +37,69 @@ class FileshareController extends Controller
         if ($personal_files) {
             foreach ($personal_files as $file) {
                 $path = $file->storeAs($directory_personal, $file->getClientOriginalName());
-                echo $path;
             }
         }
+
+        return redirect(url('/fileshares'))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε και άλλα αρχεία στη συνέχεια.');
     }
+
+    public function update_fileshare(Request $request){
+        //update or add files
+        
+        $directory_common = 'file_shares/fileshares'.$request->fileshare_id;
+        $directory_personal = $directory_common.'/personal_files';
+        
+        $common_files = $request->file('fileshare_common_files');
+    
+        if ($common_files) { echo "yes";
+            foreach ($common_files as $file) {
+                $path = $file->storeAs($directory_common, $file->getClientOriginalName());
+            }
+        }
+
+        $personal_files = $request->file('fileshare_personal_files');
+        if ($personal_files) {
+            foreach ($personal_files as $file) {
+                $path = $file->storeAs($directory_personal, $file->getClientOriginalName());
+            }
+        }
+        return redirect(url("/fileshare_profile/$request->fileshare_id"))->with('success', 'Προστέθηκαν τα αρχεία που ανεβάσατε.');
+    }
+
+    public function getGlobalFilesToShow($id){
+    $globalPath = dirname(dirname(dirname(__DIR__)))."/storage/app/file_shares/fileshares".$id;
+       $filecounter = 0;
+        $globalFilesToShow = array();
+        $scandir = scandir($globalPath);
+        foreach($scandir as $file){
+            if($file!='.' && $file!='..' && $file!= 'personal'){
+                $filesToShow[$filecounter] = $globalPath."/".$file;
+                $filecounter++;
+            }
+        }
+        return $filesToShow;
+    }
+    public function getPersonalFilesToShow($id, $afm){
+        $globalPath = "files/fileshare".$id;
+        $personalPath=$globalPath."/personal";
+        $filecounter=0;
+        $personalFilesToShow = array();
+        $scanPersdir = scandir($personalPath);
+        foreach($scanPersdir as $file){
+            if($file!='.' && $file!='..' && $this->persFilesExist($file, $afm)){
+            $personalFilesToShow[$filecounter] = "$personalPath/".$file;
+                    $filecounter++;
+                }
+            }
+            return $personalFilesToShow;
+        }
+
+        private function persFilesExist($filename, $afm){
+            for($i=0;$i<strlen($filename);$i++){
+                if(substr($filename, $i, 9) == $afm){
+                    return 1;
+                }
+            }
+            return 0;
+        }
 }

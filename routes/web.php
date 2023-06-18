@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Microapp;
+use App\Models\Fileshare;
 use App\Models\Operation;
 use App\Policies\FormPolicy;
 use Illuminate\Support\Facades\Route;
@@ -157,6 +158,12 @@ Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 Route::view('/fileshares', 'fileshares')->middleware('auth');
 
 Route::post('/insert_fileshare', [FileshareController::class, 'insert_fileshare']);
+
+Route::post('/fileshare_save/{fileshare}', [FileshareController::class, 'update_fileshare']);
+
+Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
+    return view('fileshare-profile', ['fileshare'=> $fileshare]);
+});
 
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);

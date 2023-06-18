@@ -127,8 +127,6 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
-// Route::post('/change_operation_status', [OperationController::class,'changeOperationStatus']);
-
 //////// MICROAPPS ////////////////////
 
 Route::view('/microapps', 'microapps')->middleware('auth');
@@ -153,18 +151,24 @@ Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'ch
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
+// FILESHARES
+
+Route::view('/fileshares', 'fileshares')->middleware('auth');
+
+Route::post('/insert_fileshare', [FileshareController::class, 'insert_fileshare']);
+
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);
 
-Route::view('/test','test');
+// Route::view('/test','test');
 
-Route::get('/skata_test', [MicroappController::class, 'test']);
+// Route::get('/skata_test', [MicroappController::class, 'test']);
 
-Route::get('/manage_test', function(){
-    return view('welcome');
-});
+// Route::get('/manage_test', function(){
+//     return view('welcome');
+// });
 
-Route::post("/save_all_day/{school}", [AllDayController::class, 'saveData']);
+// Route::post("/save_all_day/{school}", [AllDayController::class, 'saveData']);
 
 Route::get('/admin/{appname}', function($appname){
     $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
@@ -176,6 +180,6 @@ Route::get('/admin/{appname}', function($appname){
     }
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
-// END_DOCUMENTS ROUTES
+// // END_DOCUMENTS ROUTES
 
-Route::post("/inform_end_documents/{teacher}", [EndDocumentsController::class,'inform_end_documents']);
+// Route::post("/inform_end_documents/{teacher}", [EndDocumentsController::class,'inform_end_documents']);

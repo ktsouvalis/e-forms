@@ -24,17 +24,17 @@ class CanViewMicroapp
         $app = end($segments);
         $microapp = Microapp::where('url', "/".$app)->first();
         if($microapp){
-            if($microapp->visible){
-                $user = Auth::guard('web')->user();
-                if($user){
-                    // echo 'web'; exit;
-                    if(MicroappUser::where('user_id',$user->id)
-                        ->where('microapp_id', $microapp->id)
-                        ->exists()){
-                            return $next($request);
-                    }
+            
+            $user = Auth::guard('web')->user();
+            if($user){
+                // echo 'web'; exit;
+                if(MicroappUser::where('user_id',$user->id)
+                    ->where('microapp_id', $microapp->id)
+                    ->exists()){
+                        return $next($request);
                 }
-
+            }
+            if($microapp->visible){
                 $teacher = Auth::guard('teacher')->user();
                 if($teacher){
                     // echo 'teacher'; exit;

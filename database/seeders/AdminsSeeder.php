@@ -21,6 +21,7 @@ class AdminsSeeder extends Seeder
             'display_name' => 'Κωνσταντίνος Τσούβαλης',
             'email' => 'ktsouvalis@sch.gr',
             'password' => bcrypt('123456'),
+            'department_id' => 5
         ]);
         
         User::create([
@@ -28,6 +29,7 @@ class AdminsSeeder extends Seeder
             'display_name' => 'Κωνσταντίνος Στεφανόπουλος',
             'email' => 'konstantinostef@yahoo.gr',
             'password' => bcrypt('123456'),
+            'department_id' => 5
         ]);
 
         User::create([
@@ -35,6 +37,7 @@ class AdminsSeeder extends Seeder
             'display_name' => 'Δοκιμαστικός Χρήστης',
             'email' => 'it@dipe.ach.sch.gr',
             'password' => bcrypt('123456'),
+            'department_id' => 3
         ]);
 
 

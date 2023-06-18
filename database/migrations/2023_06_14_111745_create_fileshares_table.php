@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('fileshares', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->json('files');
+            $table->foreignId('department_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

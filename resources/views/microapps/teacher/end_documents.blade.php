@@ -32,7 +32,7 @@
                 @csrf
                 <div class="input-group">
                     <input type="checkbox" id="inform" name="inform" onChange="change_btn_state()">
-                    <label for="inform" class="px-2"> Ενημερώνω τη Δι.Π.Ε. Αχαΐας ότι παρέλαβα τα αρχεία μου</label>
+                    <label for="inform" class="px-2"> Ενημερώνω τη Δι.Π.Ε. Αχαΐας ότι παρέλαβα τα αρχεία μου </label>
                 </div>
                 <div class="input-group py-2">
                     <button class="btn btn-primary bi bi-check-lg" id="c_btn" disabled> Επιβεβαίωση</button>

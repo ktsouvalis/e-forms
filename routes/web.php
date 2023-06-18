@@ -13,6 +13,7 @@ use App\Http\Controllers\AllDayController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\MicroappController;
+use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\EndDocumentsController;
 

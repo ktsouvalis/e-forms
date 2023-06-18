@@ -34,23 +34,15 @@
             </thead>
                 <tbody>
                     @foreach($all_fileshares as $one_fileshare)
-                        @can('view', $one_fileshare)
+                        {{-- @can('view', $one_fileshare) --}}
                             <tr>  
                                 <td>{{$one_fileshare->id}}</td>
                                 <td><div class="badge text-wrap" ><a href="/fileshare_profile/{{$one_fileshare->id}}" style="color:black; text-decoration:none;">{{$one_fileshare->name}}</a></div></td>
                                 <td>
-                                    <table class="table table-sm table-striped table-hover">
-                                        @foreach($one_fileshare->departments as $one_department)
-                                            <tr>
-                                                <td>
-                                                    {{$one_department->department->name}}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </table>
+                                    {{$one_fileshare->department->name}}
                                 </td>
                             </tr>
-                        @endcan
+                        {{-- @endcan --}}
                     @endforeach
                 </tbody>
             </table>
@@ -59,7 +51,7 @@
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/insert_fileshare")}}" method="post" class="container-fluid">
+            <form action="{{url("/insert_fileshare")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                 @csrf
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
@@ -72,11 +64,11 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">common files</span>
-                    <input name="fileshare_common_files" type="file" class="form-control" multiple ><br>
+                    <input name="fileshare_common_files[]" type="file" class="form-control" multiple ><br>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">personal files</span>
-                    <input name="fileshare_personal_files" type="file" class="form-control" multiple><br>
+                    <input name="fileshare_personal_files[]" type="file" class="form-control" multiple><br>
                 </div>
                 <div class="input-group">
                     <span class="w-25"></span>

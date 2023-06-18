@@ -20,6 +20,6 @@ class Department extends Model
     }
 
     public function fileshares(){
-        return $this->hasMany(FileshareDepartment::class);
+        return $this->hasMany(Fileshare::class);
     }
 }

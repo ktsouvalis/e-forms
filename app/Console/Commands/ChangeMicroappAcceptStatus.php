@@ -19,7 +19,7 @@ class ChangeMicroappAcceptStatus extends Command
      *
      * @var string
      */
-    protected $description = "Sets the accepts field of a microapp 0 or 1 according to opens_at and closes_at of the microapps. Scheduled to run daily";
+    protected $description = "Sets the accepts field of a microapp 0 according to closes_at of the microapps. Scheduled to run daily";
 
     /**
      * Execute the console command.
@@ -32,13 +32,6 @@ class ChangeMicroappAcceptStatus extends Command
         foreach($microapps_to_close as $microapp) {
             $microapp->update(['accepts' => 0]);
         }
-
-        $microapps_to_open = Microapp::whereDate('opens_at', '=', now())->get();
-
-        foreach($microapps_to_open as $microapp) {
-            $microapp->update(['accepts' => 1]);
-        }
-
 
         $this->info('Microapps updated successfully.');
         

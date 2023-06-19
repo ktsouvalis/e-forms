@@ -22,7 +22,9 @@ class FilesharePolicy
     public function view(User $user, Fileshare $fileshare): bool
     {
         //
-        return $user->fileshares->where('fileshare_id', $fileshare->id)->count();
+        if(in_array($user->id,[1,2])) return true;
+        if($user->department->fileshares->find($fileshare->id)) return true;
+        return false;
     }
 
     /**
@@ -31,7 +33,7 @@ class FilesharePolicy
     public function create(User $user): bool
     {
         //
-        return in_array($user->id,[1,2]);
+        // return in_array($user->id,[1,2]);
     }
 
     /**
@@ -39,12 +41,6 @@ class FilesharePolicy
      */
     public function update(User $user, Fileshare $fileshare): bool
     {
-        //
-        // if($user->Fileshares->where('fileshare_id', $fileshare->id)->first()->can_edit){
-        //     return true;
-        // }
-        // return false;
-
         return true;
     }
 
@@ -70,16 +66,5 @@ class FilesharePolicy
     public function forceDelete(User $user, Fileshare $fileshare): bool
     {
         //
-    }
-
-    public function deactivate(User $user): bool {
-        return in_array($user->id,[1,2]);
-    }
-
-    public function beViewedByAdmins(User $user, Fileshare $fileshare): bool{
-        if($Fileshare->active) return true;
-        //if(in_array($user->id,[1,2])) return true;
-        return false;
-            
     }
 }

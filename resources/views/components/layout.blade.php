@@ -87,9 +87,18 @@
           <a href="{{url('/fileshares')}}" style="text-decoration:none;" class="text-dark"> Διαμοιρασμός Αρχείων</a>
         </div>
         </li>
-        {{-- @foreach
 
-        @endforeach --}}
+        @foreach($user->department->fileshares as $fileshare)
+        @php
+          $fi = $fileshare->id;
+        @endphp
+          <li class="nav-item">
+          <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#00bfff; text-align:center;">
+          <div class="text-dark fa-solid fa-file-pdf"></div>
+          <a href="{{url("/fileshare_profile/$fi")}}" style="text-decoration:none;" class="text-dark">{{$fileshare->department->name}}: {{$fileshare->name}}</a>
+          </div>
+          </li>
+        @endforeach
         </p>
         
 

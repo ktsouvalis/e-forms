@@ -7,11 +7,13 @@ use App\Models\Microapp;
 use App\Models\Fileshare;
 use App\Models\Operation;
 use App\Policies\FormPolicy;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AllDayController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\WhocanController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
@@ -31,9 +33,11 @@ use App\Http\Controllers\EndDocumentsController;
 
 ///// INDEX ////////////////////////////////////
 
-Route::view('/', 'index')->name('index');
+Route::get('/back', function(){
+    return back();
+});
 
-//// USER ///////////////////////////////////////
+//// USER ROUTES
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
@@ -59,7 +63,7 @@ Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
 
 Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
 
-//////// SCHOOL ////////////////////////////////////////////////////////////
+//////// SCHOOL ROUTES
 
 Route::view('/schools', 'schools')->middleware('auth');
 
@@ -87,7 +91,7 @@ Route::get('/school_app/{appname}', function($appname){
     }
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if school is not in the stakeholders of this microapp
 
-//////// TEACHER //////////////////////////////////////////////////////////
+//////// TEACHER ROUTES
 
 Route::view('/teachers','teachers')->middleware('auth');
 
@@ -117,7 +121,7 @@ Route::get('/teacher_app/{appname}', function($appname){
     }
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
-//////// OPERATIONS ////////////////////////////////////////////////////
+//////// OPERATIONS ROUTES
 
 Route::view('/manage_operations', 'operations')->middleware('boss');
 
@@ -129,7 +133,7 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
-//////// MICROAPPS ////////////////////
+//////// MICROAPPS ROUTES
 
 Route::view('/microapps', 'microapps')->middleware('auth');
 
@@ -141,19 +145,11 @@ Route::get('/microapp_profile/{microapp}', function(Microapp $microapp){
 
 Route::post('/save_microapp/{microapp}', [MicroappController::class,'saveProfile']);
 
-Route::get('/import_whocan/{microapp}', function(Microapp $microapp){
-    return view('import-whocan',['microapp'=> $microapp]);
-})->middleware('can:update,microapp' );
-
-Route::post('/upload_whocan/{microapp}', [MicroappController::class, 'importStakeholdersWhoCan']);
-
-Route::post('/insert_whocan/{microapp}', [MicroappController::class, 'insertWhocans']);
-
 Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
-// FILESHARES
+// FILESHARES ROUTES
 
 Route::view('/fileshares', 'fileshares')->middleware('auth');
 
@@ -163,7 +159,18 @@ Route::post('/fileshare_save/{fileshare}', [FileshareController::class, 'update_
 
 Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
     return view('fileshare-profile', ['fileshare'=> $fileshare]);
-});
+})->middleware('can:view,fileshare');
+
+Route::get('storage/app/{filename}', function ($filename) {
+    $filePath = storage_path('app/'.$filename);
+    // dd($filePath);
+    if (file_exists($filePath)) {
+        return response()->file($filePath);
+    }
+
+    abort(404);
+})->where('filename', '.*')->middleware('auth');
+
 
 //// TESTING ////////
 // Route::get('/test/{teacher}', [TeacherController::class, 'test']);
@@ -178,6 +185,10 @@ Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
 
 // Route::post("/save_all_day/{school}", [AllDayController::class, 'saveData']);
 
+//ADMIN Routes
+
+Route::view('/', 'index')->name('index');
+
 Route::get('/admin/{appname}', function($appname){
     $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
     if($microapp->active){
@@ -188,6 +199,16 @@ Route::get('/admin/{appname}', function($appname){
     }
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
-// // END_DOCUMENTS ROUTES
 
-// Route::post("/inform_end_documents/{teacher}", [EndDocumentsController::class,'inform_end_documents']);
+//WHOCAN ROUTES
+Route::post('/import_whocan', function(Request $request){
+    return view('import-whocan',['my_app'=>$request->all()['my_app'], 'my_id'=>$request->all()['my_id']]);
+});
+
+Route::post('/upload_whocan', [WhocanController::class, 'importStakeholdersWhoCan']);
+
+Route::post('/insert_whocan', [WhocanController::class, 'insertWhocans']);
+
+Route::post("/delete_all_whocans", [WhocanController::class, 'delete_all_whocans']);
+
+Route::post("/delete_one_whocan", [WhocanController::class, 'delete_one_whocan']);

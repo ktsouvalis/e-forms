@@ -34,7 +34,7 @@
             </thead>
                 <tbody>
                     @foreach($all_fileshares as $one_fileshare)
-                        {{-- @can('view', $one_fileshare) --}}
+                        @can('view', $one_fileshare)
                             <tr>  
                                 <td>{{$one_fileshare->id}}</td>
                                 <td><div class="badge text-wrap" ><a href="/fileshare_profile/{{$one_fileshare->id}}" style="color:black; text-decoration:none;">{{$one_fileshare->name}}</a></div></td>
@@ -42,7 +42,7 @@
                                     {{$one_fileshare->department->name}}
                                 </td>
                             </tr>
-                        {{-- @endcan --}}
+                        @endcan
                     @endforeach
                 </tbody>
             </table>

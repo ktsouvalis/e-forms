@@ -26,10 +26,7 @@ class MicroappController extends Controller
     
     public function insertMicroapp(Request $request){
         $incomingFields = $request->all();
-        // foreach($incomingFields as $key=>$value){
-        //     echo $key.' '. $value.'<br>';
-        // }
-        // exit;
+        
         try{
             $record = Microapp::create([
                 'name' => $incomingFields['microapp_name'],
@@ -39,7 +36,7 @@ class MicroappController extends Controller
                 'active' => 1,
                 'visible' => 0,
                 'accepts' => 0,
-                'opens_at' => $incomingFields['microapp_opens_at'],
+                // 'opens_at' => $incomingFields['microapp_opens_at'],
                 'closes_at' => $incomingFields['microapp_closes_at']
             ]);
         } 
@@ -188,7 +185,7 @@ class MicroappController extends Controller
             return redirect(url("/microapp_profile/$microapp->id"))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
         }
 
-        $filename = "whocan_file".$microapp->id."_".Auth::id().".xlsx";
+        $filename = "whocan_file_m".$microapp->id."_".Auth::id().".xlsx";
         $path = $request->file('upload_whocan')->storeAs('files', $filename);
         $mime = Storage::mimeType($path);
         $spreadsheet = IOFactory::load("../storage/app/$path");
@@ -248,23 +245,31 @@ class MicroappController extends Controller
     }
 
     public function insertWhocans(Request $request, Microapp $microapp){
-        $microapp->stakeholders()->delete();
+        // $microapp->stakeholders()->delete();
         $whocan_array = session('whocan_array');
         $who = session('who');
         if($who=='schools'){
             $type = 'App\Models\School';
+            $string="σχολείων";
         }
         else{
             $type = 'App\Models\Teacher';
+            $string="εκπαιδευτικών";
         }
         foreach($whocan_array as $one_stakeholder){
-            MicroappStakeholder::create([
+            MicroappStakeholder::updateOrCreate(
+                [
+                'microapp_id' => $microapp->id,
+                'stakeholder_id' => $one_stakeholder['id'],
+                'stakeholder_type' => $type
+                ],
+                [
                 'microapp_id' => $microapp->id,
                 'stakeholder_id' => $one_stakeholder['id'],
                 'stakeholder_type' => $type
             ]);
         }
 
-        return redirect(url("/microapp_profile/$microapp->id"))->with('success', "Η ενημέρωση των σχολείων που μπορούν να υποβάλλουν $microapp->name έγινε επιτυχώς");
+        return redirect(url("/microapp_profile/$microapp->id"))->with('success', "Η ενημέρωση των $string που μπορούν να υποβάλλουν $microapp->name έγινε επιτυχώς");
     }
 }

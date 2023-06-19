@@ -2,7 +2,7 @@
     <div class="container">
         @empty($asks_to)
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/upload_whocan/$microapp->id")}}" method="post" enctype="multipart/form-data">
+            <form action="{{url("/upload_whocan")}}" method="post" enctype="multipart/form-data">
                     @csrf
                     <input type="file" name="upload_whocan" > 
                     <div class="hstack">
@@ -16,6 +16,8 @@
                                     <input type="radio" id="teachers" name="template_file" value="teachers">
                                     <label class="px-1" for="teachers">Εκπαιδευτικούς</label><br> 
                                 </div>
+                                <input type="hidden" name="my_app" value="{{$my_app}}">
+                                <input type="hidden" name="my_id" value="{{$my_id}}">
                             </div>
                         </div>   
                     <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
@@ -78,18 +80,36 @@
         </div>
         @if($asks_to=='save')
             <div class="hstack gap-3">
-                <form action="{{url("/insert_whocan/$microapp->id")}}" method="post" enctype="multipart/form-data>">
+                <form action="{{url("/insert_whocan")}}" method="post" enctype="multipart/form-data>">
                     @csrf
                     <button type="submit" class="btn btn-primary bi bi-file-arrow-up p-2 col"> Αποστολή</button>
+                    <input type="hidden" name="my_app" value="{{$my_app}}">
+                    <input type="hidden" name="my_id" value="{{$my_id}}">
                 </form>
-                <a href="{{url("/microapp_profile/$microapp->id")}}"> Ακύρωση</a>
+                @php
+                if($my_app=='fs'){
+                    $my_url= "/fileshare_profile/$my_id";
+                }
+                else if($my_app=='ma'){
+                    $my_url= "/microapp_profile/$my_id";
+                }
+                @endphp
+                <a href="{{url($my_url)}}"> Ακύρωση</a>
             </div>
         @else
+                @php
+                if($my_app=='fs'){
+                    $my_url= "/fileshare_profile/$my_id";
+                }
+                else if($my_app=='ma'){
+                    $my_url= "/microapp_profile/$my_id";
+                }
+                @endphp
             <div class="hstack gap-3">
                 <div>
                     Διορθώστε τα σημειωμένα σφάλματα και υποβάλετε εκ νέου το αρχείο.
                 </div>
-                <a href="{{url("/microapp_profile/$microapp->id")}}" >Ακύρωση</a>
+                <a href="{{url($my_url)}}"> Ακύρωση</a>
             </div>
         @endif
     @endif  

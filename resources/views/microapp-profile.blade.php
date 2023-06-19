@@ -155,17 +155,15 @@
                 
             </nav>
             <div>
-                <a href="{{url("/import_whocan/$microapp->id")}}" class="btn btn-primary bi bi-person-lines-fill"> Εισαγωγή Stakeholders</a>
+                <form action="/import_whocan" method="post">
+                    @csrf
+                    <input type="hidden" name="my_app" value="ma">
+                    <input type="hidden" name="my_id" value="{{$microapp->id}}">
+                    <button type="submit" class="btn btn-primary bi bi-person-lines-fill"> Εισαγωγή Stakeholders</button>
+                </form>
             </div>
         
         <div class="container">
-            {{-- @php
-                $type = $microapp->stakeholders->first()->stakeholder_type;
-                $field = 'afm';
-                if($type=="App\Models\School"){
-                    $field = 
-                }
-            @endphp --}}
             <div class="table-responsive">
                 <table  id="dataTable" class="display table table-sm table-striped table-hover">
                 <thead>

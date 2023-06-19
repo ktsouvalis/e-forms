@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('microapps:accept_not')->daily()->at('19:03');
+        $schedule->command('microapps:accept_not')->daily();
+        // ->dailyAt('19:03');
     }
 
     /**

@@ -2,7 +2,7 @@
     <div class="container">
         @empty($asks_to)
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/upload_whocan")}}" method="post" enctype="multipart/form-data">
+                <form action="{{url("/upload_whocan/$my_app/$my_id")}}" method="post" enctype="multipart/form-data">
                         @csrf
                         <input type="file" name="upload_whocan" > 
                         <div class="hstack">
@@ -16,8 +16,6 @@
                                         <input type="radio" id="teachers" name="template_file" value="teachers">
                                         <label class="px-1" for="teachers">Εκπαιδευτικούς</label><br> 
                                     </div>
-                                    <input type="hidden" name="my_app" value="{{$my_app}}">
-                                    <input type="hidden" name="my_id" value="{{$my_id}}">
                                 </div>
                             </div>   
                         <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
@@ -88,11 +86,11 @@
             @endphp
             @if($asks_to=='save')
                 <div class="hstack gap-3">
-                    <form action="{{url("/insert_whocan")}}" method="post" enctype="multipart/form-data>">
+                    <form action="{{url("/insert_whocan/$my_app/$my_id")}}" method="post" enctype="multipart/form-data>">
                         @csrf
                         <button type="submit" class="btn btn-primary bi bi-file-arrow-up p-2 col"> Αποστολή</button>
-                        <input type="hidden" name="my_app" value="{{$my_app}}">
-                        <input type="hidden" name="my_id" value="{{$my_id}}">
+                        {{-- <input type="hidden" name="my_app" value="{{$my_app}}">
+                        <input type="hidden" name="my_id" value="{{$my_id}}"> --}}
                     </form>
             @else
                 <div class="hstack gap-3">

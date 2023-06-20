@@ -20,13 +20,14 @@
 <div class="container">
             
     <div class="table-responsive">
-        <table  id="dataTable" class=" table table-sm table-striped table-bordered table-hover">
+        <table  id="dataTable" class="table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
                     <th id="search">AΜ</th>
                     <th id="search">ΑΦΜ</th>
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
+                    <th id="search">link</th>
                     <th id="search">Πατρώνυμο</th>
                     <th id="search">Μητρώνυμο</th>
                     <th id="search">Κλάδος</th>
@@ -37,7 +38,7 @@
                     <th id="search">Οργανική</th>
                     {{-- <th id="search">Υπηρέτηση</th> --}}
                     <th id="search">Οργανική στην Ειδική Αγωγή</th>
-                    <th id="search">link</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -47,6 +48,7 @@
                     <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
+                    <td>{{$teacher->md5}}</td>
                     <td>{{$teacher->fname}}</td>
                     <td>{{$teacher->mname}}</td>
                     <td>{{$teacher->klados}}</td>
@@ -61,7 +63,6 @@
                     @else
                         <td> - </td>
                     @endif
-                    <td>{{$teacher->md5}}</td>
                 </tr>
             @endforeach
         </tbody>

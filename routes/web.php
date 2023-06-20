@@ -151,6 +151,13 @@ Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 // FILESHARES ROUTES
 
+Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
+    if(Auth::guard('teacher')->id()<>$teacher->id){
+        abort(403);
+    }
+    return view('teacher-fileshare', ['teacher' => $teacher]);
+});
+
 Route::view('/fileshares', 'fileshares')->middleware('auth');
 
 Route::post('/insert_fileshare', [FileshareController::class, 'insert_fileshare']);
@@ -163,13 +170,14 @@ Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
 
 Route::get('storage/app/{filename}', function ($filename) {
     $filePath = storage_path('app/'.$filename);
-    // dd($filePath);
+    // dd(basename($filePath));
     if (file_exists($filePath)) {
         return response()->file($filePath);
     }
 
-    abort(404);
-})->where('filename', '.*')->middleware('auth');
+    abort(403);
+})->where('filename','.*')->middleware('download');
+
 
 
 //// TESTING ////////
@@ -202,14 +210,14 @@ Route::get('/admin/{appname}', function($appname){
 
 
 // WHOCAN Routes
-Route::get('/import_whocan/{kind_of}/{an_id}', function($kind_of, $an_id){
-    return view('import-whocan', ['my_app'=>$kind_of, 'my_id'=>$an_id]);
+Route::get('/import_whocan/{my_app}/{my_id}', function($my_app, $my_id){
+    return view('import-whocan', ['my_app'=>$my_app, 'my_id'=>$my_id]);
 });
 
-Route::post('/upload_whocan', [WhocanController::class, 'importStakeholdersWhoCan']);
+Route::post('/upload_whocan/{my_app}/{my_id}', [WhocanController::class, 'importStakeholdersWhoCan']);
 
-Route::post('/insert_whocan', [WhocanController::class, 'insertWhocans']);
+Route::post('/insert_whocan/{my_app}/{my_id}', [WhocanController::class, 'insertWhocans']);
 
-Route::post("/delete_all_whocans", [WhocanController::class, 'delete_all_whocans']);
+Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'delete_all_whocans']);
 
-Route::post("/delete_one_whocan", [WhocanController::class, 'delete_one_whocan']);
+Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);

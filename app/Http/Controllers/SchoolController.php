@@ -62,10 +62,10 @@ class SchoolController extends Controller
             if(!str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue(), "Ιδιωτικά Σχολεία"))
                 $check['international']= 1;
 
-            $check['action']="";
-            if(School::where('code', $check['code'])->count()){
-                $check['action']=School::where('code', $check['code'])->first()->id;
-            }
+            // $check['action']="";
+            // if(School::where('code', $check['code'])->count()){
+            //     $check['action']=School::where('code', $check['code'])->first()->id;
+            // }
 
             $check['md5']="";
 
@@ -99,42 +99,30 @@ class SchoolController extends Controller
             $record->delete();
         }
         foreach($schools_array as $school){
-            if($school['action']==''){
+            
             // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE
     
-                School::create([
-                            'name' => $school['name'], 
-                            'code' => $school['code'],
-                            'municipality' => $school['municipality'],
-                            'primary' => $school['primary'],
-                            'leitourgikotita' => $school['leitourgikotita'],
-                            'organikotita' => $school['organikotita'],
-                            'telephone' => $school['telephone'],
-                            'is_active' => $school['is_active'],
-                            'has_all_day' => $school['has_all_day'],
-                            'md5' => md5($school['code']),
-                            'mail' => $school['mail'],
-                            'experimental' => $school['experimental'],
-                            'special_needs' => $school['special_needs'],
-                            'international' => $school['international']
-                ]);
-            }
-            else{
-        // UPDATE school WHO IS IN XLSX AND IN DATABSE
-                $school_update = School::find($school['action']);
-
-                $school_update->name = $school['name'];
-                $school_update->leitourgikotita = $school['leitourgikotita'];
-                $school_update->organikotita = $school['organikotita'];
-                $school_update->telephone = $school['telephone'];
-                $school_update->is_active = $school['is_active'];
-                $school_update->has_all_day = $school['has_all_day'];
-                $school_update->mail = $school['mail'];
-            
-                if($school_update->isDirty()){
-                    $school_update->save();
-                }
-            }
+            School::updateOrCreate(
+                [
+                    'code' => $school['code']
+                ],
+                [
+                    'name' => $school['name'], 
+                    'code' => $school['code'],
+                    'municipality' => $school['municipality'],
+                    'primary' => $school['primary'],
+                    'leitourgikotita' => $school['leitourgikotita'],
+                    'organikotita' => $school['organikotita'],
+                    'telephone' => $school['telephone'],
+                    'is_active' => $school['is_active'],
+                    'has_all_day' => $school['has_all_day'],
+                    'md5' => md5($school['code']),
+                    'mail' => $school['mail'],
+                    'experimental' => $school['experimental'],
+                    'special_needs' => $school['special_needs'],
+                    'international' => $school['international']
+                ]
+            );
         }
         return redirect(url('/schools'))
             ->with('success', 'Η εισαγωγή ολοκληρώθηκε');

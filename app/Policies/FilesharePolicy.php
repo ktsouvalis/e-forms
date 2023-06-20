@@ -2,9 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Fileshare;
 use App\Models\User;
+use App\Models\Teacher;
+use App\Models\Fileshare;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 
 class FilesharePolicy
 {

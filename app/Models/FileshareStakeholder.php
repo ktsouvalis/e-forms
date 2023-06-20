@@ -21,4 +21,10 @@ class FileshareStakeholder extends Model
     public function stakeholder(){
         return $this->morphTo();
     }
+
+    public function scopeSortedByDepartment($query){
+        return $query->join('fileshares', 'fileshares_stakeholders.fileshare_id', '=', 'fileshares.id')
+            ->join('departments', 'fileshares.department_id', '=', 'departments.id')
+            ->orderBy('departments.name');
+    }
 }

@@ -3,18 +3,19 @@
     
     <div class="row hidden-md-up justify-content-center">
         @auth('teacher')
-        @php $teacher = Illuminate\Support\Facades\Auth::guard('teacher')->user(); @endphp
-                        
-            @push('title')
-                <title>Υποβολή Στοιχείων</title>
-            @endpush
-            @php
-             
+            @php 
+                $teacher = Illuminate\Support\Facades\Auth::guard('teacher')->user(); 
             @endphp
+                            
+            @push('title')
+                <title>Σελίδα Εκπαιδευτικού</title>
+            @endpush
+            
 
             <div class="py-5">
                 <div class="container">
                     <div class="row hidden-md-up justify-content-center">
+                        <hr>
                         @foreach ($teacher->forms as $one_form)
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:{{$one_form->form->color}}; text-align:center;">
@@ -29,6 +30,7 @@
                         </div>  
                         @endforeach
 
+                        <hr>
                         @foreach ($teacher->microapps as $one_microapp)
                         @if($one_microapp->microapp->visible)
                         <div class="col-md-4 py-2" style="max-width:15rem">
@@ -42,6 +44,18 @@
                         @endif
                         @endforeach
                         
+                        <hr>
+                        {{-- @foreach ($teacher->fileshares as $one_microapp) --}}
+                        <div class="col-md-4 py-2" style="max-width:15rem">
+                            <div class="card py-5" style="background-color:#00bfff; text-align:center;">
+                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/teacher_fileshare/$teacher->id")}}">
+                                <div class="h5 card-title fa-solid fa-file-pdf"></div>
+                                <div>Αρχεία Διεύθυνσης</div>
+                                </a> 
+                            </div>
+                        </div> 
+                        {{-- @endforeach --}}
+
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
                                 <a class="text-dark" href="{{url('/tlogout')}}">

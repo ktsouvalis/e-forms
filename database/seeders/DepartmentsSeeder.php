@@ -15,39 +15,39 @@ class DepartmentsSeeder extends Seeder
     {
         //
         Department::create([
-            'name'=>'Γραμματεία Διευθυντή'
+            'name'=>'Γραμματείας Διευθυντή'
         ]);
 
         Department::create([
-            'name'=>'Τμήμα Διοίκησης'
+            'name'=>"Τμήμα A' Διοικητικού"
         ]);
 
         Department::create([
-            'name'=>'Τμήμα Προσωπικού'
+            'name'=>"Τμήμα Γ' Προσωπικού"
         ]);
 
         Department::create([
-            'name'=>'Τμήμα Οικονομικού'
+            'name'=>"Τμήμα Β' Οικονομικού"
         ]);
 
         Department::create([
-            'name'=>'Τμήμα Πληροφορικής'
+            'name'=>"Τμήμα Δ' Πληροφορικής"
         ]);
 
         Department::create([
-            'name'=>'Τμήμα Εκπαιδευτικών Θεμάτων'
+            'name'=>"Τμήμα Ε' Εκπαιδευτικών Θεμάτων"
         ]);
         
         Department::create([
-            'name'=>'Περιβαλλοντική Εκπαίδευση '
+            'name'=>'Περιβαλλοντικής Εκπαίδευσης '
         ]);
 
         Department::create([
-            'name'=>'Πολιτιστικά Θέματα'
+            'name'=>'Πολιτιστικών Θεμάτων'
         ]);
 
         Department::create([
-            'name'=>'Αγωγή Υγείας'
+            'name'=>'Αγωγής Υγείας'
         ]);
 
         Department::create([

@@ -82,10 +82,10 @@ class TeacherController extends Controller
             $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
             $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
             
-            $check['action']="";
-            if(Teacher::where('afm', $check['afm'])->count()){
-                $check['action']=Teacher::where('afm', $check['afm'])->first()->id;
-            }
+            // $check['action']="";
+            // if(Teacher::where('afm', $check['afm'])->count()){
+            //     $check['action']=Teacher::where('afm', $check['afm'])->first()->id;
+            // }
 
             $check['org_eae']=1;
             if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(54, $row)->getValue()=="ΟΧΙ"){
@@ -147,10 +147,14 @@ class TeacherController extends Controller
         foreach($recordsToDelete as $record){
             $record->delete();
         }
+
+        // CREATE OR UPDATE EXISTING TEACHERS
         foreach($teachers_array as $teacher){
-            if($teacher['action']==''){
-        // CREATE TEACHER WHO IS IN XLSX BUT NOT IN DATABASE
-                Teacher::create([
+            Teacher::updateOrcreate(
+                [
+                    'afm'=> $teacher['afm'] 
+                ],
+                [
                     'md5' => md5($teacher['afm']),
                     'name'=> $teacher['name'],
                     'surname'=> $teacher['surname'],
@@ -167,29 +171,8 @@ class TeacherController extends Controller
                     'org_eae' => $teacher['org_eae'],
                     'organiki_id' => $teacher['organiki'],
                     'organiki_type' => $teacher['organiki_type']
-                ]);
-            }
-            else{
-        // UPDATE TEACHER WHO IS IN XLSX AND IN DATABSE
-                $teacher_update = Teacher::find($teacher['action']);
-                $teacher_update->name = $teacher['name'];
-                $teacher_update->surname = $teacher['surname'];
-                $teacher_update->fname = $teacher['fname'];
-                $teacher_update->mname = $teacher['mname'];
-                $teacher_update->telephone = $teacher['telephone'];
-                $teacher_update->mail = $teacher['mail'];
-                $teacher_update->sch_mail = $teacher['sch_mail'];
-                $teacher_update->klados = $teacher['klados'];
-                $teacher_update->am = $teacher['am'];
-                $teacher_update->sxesi_ergasias_id = $teacher['sxesi_ergasias'];
-                $teacher_update->org_eae = $teacher['org_eae'];
-                $teacher_update->organiki_id = $teacher['organiki'];
-                $teacher_update->organiki_type = $teacher['organiki_type'];
-
-                if($teacher_update->isDirty()){
-                    $teacher_update->save();
-                }
-            }
+                ]
+            );
         }
         return redirect(url('/teachers'))
         ->with('success', 'Η εισαγωγή ολοκληρώθηκε');

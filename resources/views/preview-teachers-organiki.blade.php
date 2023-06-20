@@ -19,7 +19,7 @@
         $recordsToDelete = App\Models\Teacher::whereNotIn('afm', $afms)->get();
     @endphp
     <div class="container">
-        <div class="p-3 mb-2 bg-success text-white">Εκπαιδευτικοί που θα εισαχθούν εκ νέου</div>
+        <div class="p-3 mb-2 bg-success text-white">Εκπαιδευτικοί που θα εισαχθούν ή θα ανανεωθούν</div>
         <div class="table-responsive">
             <table  id="" class="table table-sm table-success table-striped table-bordered table-hover">
                 <thead>
@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
                 @foreach($teachers_array as $teacher)
-                    @if($teacher['action']=='')
+                    
                     {{-- <tr class="bg-success" style="opacity:0.7;">  --}}
                     <tr>
                         <td>{{$teacher['am']}}</td>
@@ -64,7 +64,7 @@
                             <td> - </td>
                         @endif
                     </tr>
-                    @endif
+                    
                 @endforeach
                 </tbody>
             </table>

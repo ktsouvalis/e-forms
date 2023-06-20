@@ -19,7 +19,7 @@
         $recordsToDelete = App\Models\School::whereNotIn('code', $codes)->get();
     @endphp
     <div class="container">
-        <div class="p-3 mb-2 bg-success text-white">Σχολεία που θα εισαχθούν εκ νέου</div>
+        <div class="p-3 mb-2 bg-success text-white">Σχολεία που θα εισαχθούν ή θα ανανεωθούν</div>
         <div class="table-responsive">
             <table  id="" class="table table-sm table-success table-striped table-bordered table-hover">
                 <thead>
@@ -35,7 +35,7 @@
                 </thead>
                 <tbody>
                 @foreach($schools_array as $school)
-                    @if($school['action']=='')
+                    
                     {{-- <tr class="bg-success" style="opacity:0.7;">  --}}
                     <tr>
                         <td>{{$school['code']}}</td>
@@ -46,7 +46,7 @@
                         <td>{{$school['special_needs']}}</td>
                         <td>{{$school['international']}}</td>
                     </tr>
-                    @endif
+                    
                 @endforeach
                 </tbody>
             </table>

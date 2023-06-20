@@ -1,4 +1,18 @@
 <x-layout>
+    @push('links')
+        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
+        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+    @endpush
+
+    @push('scripts')
+        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
+        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
+        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
+        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+    @endpush
+    @push('title')
+        <title>{{$fileshare->name}}</title>
+    @endpush
     <div class="container py-5">
         <div class="vstack gap-5">
         <div class="container px-5">
@@ -39,22 +53,20 @@
                 <div class="hstack gap-2">
                 <a href="{{url("/import_whocan/fileshare/$fileshare->id")}}" class="btn btn-primary"> Εισαγωγή Stakeholders</a>
                 @if($fileshare->stakeholders->count())
-                <form action="{{url("/delete_all_whocans")}}" method="post">
+                <form action="{{url("/delete_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
-                    <input type="hidden" name="my_app" value="fileshare">
-                    <input type="hidden" name="my_id" value="{{$fileshare->id}}">
                     <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή Stakeholders</button>
                 </form>
                 @endif
                 </div>
             </div>
             <div class="table-responsive">
-                <table  id="dataTable" class="display table table-sm table-striped table-hover">
+                <table  id="dataTable" class="table table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
-                        <th> Διαγραφή</th>
+                        <th id="search"> Διαγραφή</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,10 +79,8 @@
                     @endif
                     <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
                     <td> 
-                        <form action="{{url('/delete_one_whocan')}}" method="post">
+                        <form action="{{url("/delete_one_whocan/fileshare/$one_stakeholder->id")}}" method="post">
                             @csrf
-                            <input type="hidden" name="my_app" value="fileshare">
-                            <input type="hidden" name="my_id" value="{{$one_stakeholder->id}}">
                             <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
                         </form>
                     </td>
@@ -96,7 +106,7 @@
                 <strong>Αρχεία κοινά για διαμοιρασμό</strong>
                 <ul>
                     @foreach($files_common as $file_c)
-                        <li><a href="{{url('/storage/app/'.$file_c)}}">{{$file_c}}</a></li>
+                        <li><a href="{{url('/storage/app/'.$file_c)}}">{{basename($file_c)}}</a></li>
                     @endforeach
                 </ul>
             </div>
@@ -104,7 +114,7 @@
                <strong>Αρχεία προσωπικά για διαμοιρασμό</strong>
                 <ul>
                     @foreach($files_personal as $file_p)
-                        <li><a href="{{url('/storage/app/'.$file_p)}}">{{$file_p}}</a></li>
+                        <li><a href="{{url('/storage/app/'.$file_p)}}">{{basename($file_p)}}</a></li>
                     @endforeach
                 </ul>
             </div>

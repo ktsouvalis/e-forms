@@ -24,8 +24,8 @@ class WhocanController extends Controller
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            // return redirect(url("/microapp_profile/$microapp->id"))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου!!');
+            return redirect(url("/"))->with('failure', 'Μη επιτρεπτός τύπος αρχείου!!!');
+            // return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου!!');
         }
 
 
@@ -103,7 +103,7 @@ class WhocanController extends Controller
         }
         $id = $request->all()['my_id'];
         $app = $request->all()['my_app'];
-        if($app=="fs"){ //fileshare
+        if($app=="fileshare"){ //fileshare
             $url = "fileshare";
             $action="δουν τα αρχεία";
             foreach($whocan_array as $one_stakeholder){
@@ -120,7 +120,7 @@ class WhocanController extends Controller
                 ]);
             }
         }
-        else if($app=="ma"){ //microapp
+        else if($app=="microapp"){ //microapp
             $url="microapp";
             $action="υποβάλλουν";
             foreach($whocan_array as $one_stakeholder){
@@ -143,11 +143,11 @@ class WhocanController extends Controller
 
     public function delete_all_whocans(Request $request){
         $incomingFields=$request->all();
-        if($incomingFields['my_app']=='fs'){
+        if($incomingFields['my_app']=='fileshare'){
             $fileshare= Fileshare::find($incomingFields['my_id']);
             $fileshare->stakeholders()->delete();
         }
-        else if($incomingFields['my_app']=='ma'){
+        else if($incomingFields['my_app']=='microapp'){
             $microapp = Microapp::find($incomingFields['my_id']);
             $microapp->stakeholders()->delete();
         }
@@ -157,10 +157,10 @@ class WhocanController extends Controller
 
     public function delete_one_whocan(Request $request){
         $incomingFields=$request->all();
-        if($incomingFields['my_app']=='fs'){
+        if($incomingFields['my_app']=='fileshare'){
             FileshareStakeholder::destroy($incomingFields['my_id']);
         }
-        else if($incomingFields['my_app']=='ma'){
+        else if($incomingFields['my_app']=='microapp'){
             MicroappStakeholder::destroy($incomingFields['my_id']);
         }
 

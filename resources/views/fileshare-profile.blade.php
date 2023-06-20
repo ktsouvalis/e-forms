@@ -37,18 +37,13 @@
         <div class="container px-5">
             <div>
                 <div class="hstack gap-2">
-                <form action="/import_whocan" method="post">
-                    @csrf
-                    <input type="hidden" name="my_app" value="fs">
-                    <input type="hidden" name="my_id" value="{{$fileshare->id}}">
-                    <button type="submit" class="btn btn-primary bi bi-person-lines-fill"> Εισαγωγή Stakeholders</button>
-                </form>
+                <a href="{{url("/import_whocan/fileshare/$fileshare->id")}}" class="btn btn-primary"> Εισαγωγή Stakeholders</a>
                 @if($fileshare->stakeholders->count())
                 <form action="{{url("/delete_all_whocans")}}" method="post">
                     @csrf
-                    <input type="hidden" name="my_app" value="fs">
+                    <input type="hidden" name="my_app" value="fileshare">
                     <input type="hidden" name="my_id" value="{{$fileshare->id}}">
-                    <button type="submit" class="btn btn-danger bi bi-x-circle"> Διαγραφή Stakeholders</button>
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή Stakeholders</button>
                 </form>
                 @endif
                 </div>
@@ -74,7 +69,7 @@
                     <td> 
                         <form action="{{url('/delete_one_whocan')}}" method="post">
                             @csrf
-                            <input type="hidden" name="my_app" value="fs">
+                            <input type="hidden" name="my_app" value="fileshare">
                             <input type="hidden" name="my_id" value="{{$one_stakeholder->id}}">
                             <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
                         </form>

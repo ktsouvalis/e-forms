@@ -38,19 +38,20 @@
         <span class="fs-4">Λειτουργίες</span>
       </a> --}}
       <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
-      <hr>
+
       <ul class="nav nav-pills flex-column mb-auto">
         {{-- Μενού για όλους --}}
-        <p>
+        
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
           <a href="{{url('/')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
         </div>
         </li>
-        </p>
-        <p>
+        
+        
           {{-- Μενού διαχείρισης χρηστών  --}}
         @if(Auth::id()==1 or Auth::id()==2)
+        <hr>
         <li class="nav-item">
           <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
             <div class="text-dark fa-solid fa-users"></div>
@@ -58,10 +59,12 @@
           </div>
         </li>
         @endif
-        </p>
+        
         {{-- Μενού για operations --}}
-        <p>
+        
+        <hr>
         @if(Auth::id()==1 or Auth::id()==2)
+        
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
           <div class="text-dark fa-solid fa-toolbox"></div>
@@ -77,10 +80,11 @@
             </div>
             </li> 
         @endforeach
-        </p>
+        
 
         {{-- Μενού για fileshares --}}
-        <p>
+        <hr>
+        
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
           <div class="text-dark fa-solid fa-file-pdf"></div>
@@ -99,11 +103,12 @@
           </div>
           </li>
         @endforeach
-        </p>
+        
         
 
         {{-- μενού για microapps --}}
-        <p>
+        <hr>
+        
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
           <div class="text-dark fa-solid fa-microchip"></div>
@@ -120,16 +125,17 @@
             </li> 
         @endcan
         @endforeach
-        </p>
         
-        <p>
+        
+        <hr>
+        
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
             <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
             <a href="{{url('/logout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
         </div>
         </li>
-        </p>
+        
       </ul>
       <hr>
     
@@ -146,7 +152,7 @@
     <div class="row justify-content-md-center">
       <div class="col p-4">
         @stack('app-icon')
-        <div class=" d-flex justify-content-center"><a href='/change_password' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{Auth::user()->display_name}}</a></div>
+        <div class=" d-flex justify-content-center"><a href='{{url('/change_password')}}' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{Auth::user()->display_name}}</a></div>
       </div>
     </div>
   </div>

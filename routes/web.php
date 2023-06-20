@@ -200,9 +200,10 @@ Route::get('/admin/{appname}', function($appname){
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
 
-//WHOCAN ROUTES
-Route::post('/import_whocan', function(Request $request){
-    return view('import-whocan',['my_app'=>$request->all()['my_app'], 'my_id'=>$request->all()['my_id']]);
+
+// WHOCAN Routes
+Route::get('/import_whocan/{kind_of}/{an_id}', function($kind_of, $an_id){
+    return view('import-whocan', ['my_app'=>$kind_of, 'my_id'=>$an_id]);
 });
 
 Route::post('/upload_whocan', [WhocanController::class, 'importStakeholdersWhoCan']);

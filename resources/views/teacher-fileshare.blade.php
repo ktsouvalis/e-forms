@@ -25,7 +25,11 @@
                     <ul>
                         @foreach($files_personal as $file_p)
                             @if(strpos(basename($file_p), $teacher->afm)!==false)
-                                <li><a href="{{Storage::url($file_p)}}">{{basename($file_p)}}</a></li>
+                                @php
+                                    $file_name = basename($file_p);
+                                    Storage::copy("/public/fileshare".$fileshare->fileshare->id."/personal_files/$file_name", 'public/temp/'.basename($file_p));
+                                @endphp
+                                <li><a href="{{ Storage::url('public/temp/'.basename($file_p)) }}">{{basename($file_p)}}</a></li>
                             @endif
                         @endforeach
                     </ul>

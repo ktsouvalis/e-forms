@@ -29,9 +29,8 @@ class FileshareController extends Controller
         // $directory_personal = 'file_shares/fileshares'.$newFileshare->id.'/personal_files';
        
         //tsouvalis version
-        $directory_common = 'file_shares/fileshares'.$newFileshare->id;
+        $directory_common = 'public/file_shares/fileshare'.$newFileshare->id;
         $directory_personal = $directory_common.'/personal_files';
-        
         $common_files = $request->file('fileshare_common_files');
         if ($common_files) {
             foreach ($common_files as $file) {
@@ -62,7 +61,7 @@ class FileshareController extends Controller
 
         //update or add files
         
-        $directory_common = 'file_shares/fileshares'.$fileshare->id;
+        $directory_common = 'public/file_shares/fileshare'.$fileshare->id;
         $directory_personal = $directory_common.'/personal_files';
         
         $common_files = $request->file('fileshare_common_files');
@@ -70,14 +69,12 @@ class FileshareController extends Controller
             foreach ($common_files as $file) {
                 $path = $file->storeAs($directory_common, $file->getClientOriginalName());
             }
-            $edited=true;
         }
 
         $personal_files = $request->file('fileshare_personal_files');
         if ($personal_files) {
             foreach ($personal_files as $file) {
                 $path = $file->storeAs($directory_personal, $file->getClientOriginalName());
-                $edited=true;
             }
         }
 

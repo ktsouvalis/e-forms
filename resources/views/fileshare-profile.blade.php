@@ -94,7 +94,7 @@
         
         @php
         
-        $directory_common = 'file_shares/fileshares'.$fileshare->id;
+        $directory_common = 'public/file_shares/fileshare'.$fileshare->id;
         $directory_personal = $directory_common.'/personal_files';
         $files_common=Storage::files($directory_common);
         $files_personal = Storage::files($directory_personal);
@@ -106,7 +106,7 @@
                 <strong>Αρχεία κοινά για διαμοιρασμό</strong>
                 <ul>
                     @foreach($files_common as $file_c)
-                        <li><a href="{{url('/storage/app/'.$file_c)}}">{{basename($file_c)}}</a></li>
+                        <li><a href="{{Storage::url($file_c)}}">{{basename($file_c)}}</a></li>
                     @endforeach
                 </ul>
             </div>
@@ -114,7 +114,7 @@
                <strong>Αρχεία προσωπικά για διαμοιρασμό</strong>
                 <ul>
                     @foreach($files_personal as $file_p)
-                        <li><a href="{{url('/storage/app/'.$file_p)}}">{{basename($file_p)}}</a></li>
+                        <li><a href="{{Storage::url($file_p)}}">{{basename($file_p)}}</a></li>
                     @endforeach
                 </ul>
             </div>

@@ -29,19 +29,20 @@ class FileshareController extends Controller
         // $directory_personal = 'file_shares/fileshares'.$newFileshare->id.'/personal_files';
        
         //tsouvalis version
-        $directory_common = 'public/file_shares/fileshare'.$newFileshare->id;
+
+        $directory_common = 'fileshare'.$newFileshare->id;
         $directory_personal = $directory_common.'/personal_files';
         $common_files = $request->file('fileshare_common_files');
         if ($common_files) {
             foreach ($common_files as $file) {
-                $path = $file->storeAs($directory_common, $file->getClientOriginalName());
+                $path = $file->storeAs($directory_common, $file->getClientOriginalName(), 'public');
             }
         }
 
         $personal_files = $request->file('fileshare_personal_files');
         if ($personal_files) {
             foreach ($personal_files as $file) {
-                $path = $file->storeAs($directory_personal, $file->getClientOriginalName());
+                $path = $file->storeAs($directory_personal, $file->getClientOriginalName(), 'public');
             }
         }
 
@@ -61,20 +62,21 @@ class FileshareController extends Controller
 
         //update or add files
         
-        $directory_common = 'public/file_shares/fileshare'.$fileshare->id;
+        $directory_common = 'fileshare'.$fileshare->id;
         $directory_personal = $directory_common.'/personal_files';
-        
         $common_files = $request->file('fileshare_common_files');
         if ($common_files) {
             foreach ($common_files as $file) {
-                $path = $file->storeAs($directory_common, $file->getClientOriginalName());
+                $path = $file->storeAs($directory_common, $file->getClientOriginalName(), 'public');
+                // $path = Storage::disk('public')->putFile($directory_common, $file);
             }
+            $edited=true;
         }
 
         $personal_files = $request->file('fileshare_personal_files');
         if ($personal_files) {
             foreach ($personal_files as $file) {
-                $path = $file->storeAs($directory_personal, $file->getClientOriginalName());
+                $path = $file->storeAs($directory_personal, $file->getClientOriginalName(), 'public');
             }
         }
 
@@ -86,40 +88,9 @@ class FileshareController extends Controller
         }
     }
 
-    // public function getGlobalFilesToShow($id){
-    // $globalPath = dirname(dirname(dirname(__DIR__)))."/storage/app/file_shares/fileshares".$id;
-    //    $filecounter = 0;
-    //     $globalFilesToShow = array();
-    //     $scandir = scandir($globalPath);
-    //     foreach($scandir as $file){
-    //         if($file!='.' && $file!='..' && $file!= 'personal'){
-    //             $filesToShow[$filecounter] = $globalPath."/".$file;
-    //             $filecounter++;
-    //         }
-    //     }
-    //     return $filesToShow;
-    // }
-    // public function getPersonalFilesToShow($id, $afm){
-    //     $globalPath = "files/fileshare".$id;
-    //     $personalPath=$globalPath."/personal";
-    //     $filecounter=0;
-    //     $personalFilesToShow = array();
-    //     $scanPersdir = scandir($personalPath);
-    //     foreach($scanPersdir as $file){
-    //         if($file!='.' && $file!='..' && $this->persFilesExist($file, $afm)){
-    //         $personalFilesToShow[$filecounter] = "$personalPath/".$file;
-    //                 $filecounter++;
-    //             }
-    //         }
-    //         return $personalFilesToShow;
-    //     }
+    public function delete_fileshare(Request $request, Fileshare $fileshare){
+        Fileshare::destroy($fileshare->id);
 
-    // private function persFilesExist($filename, $afm){
-    //     for($i=0;$i<strlen($filename);$i++){
-    //         if(substr($filename, $i, 9) == $afm){
-    //             return 1;
-    //         }
-    //     }
-    //     return 0;
-    // }
+        return redirect(url('/fileshares'))->with('success', "Η κοινοποίηση αρχείων $fileshare->name διαγράφηκε");
+    }
 }

@@ -30,6 +30,7 @@
                     <th id="search">Όνομα</th>
                     
                     <th id="search">WhoHasAccess</th>
+                    <th>Διαγραφή</th>
                 </tr>
             </thead>
                 <tbody>
@@ -40,6 +41,12 @@
                                 <td><div class="badge text-wrap" ><a href="/fileshare_profile/{{$one_fileshare->id}}" style="color:black; text-decoration:none;">{{$one_fileshare->name}}</a></div></td>
                                 <td>
                                     {{$one_fileshare->department->name}}
+                                </td>
+                                <td>
+                                    <form action="{{url("/delete_fileshare/$one_fileshare->id")}}" method="post">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
+                                    </form>
                                 </td>
                             </tr>
                         @endcan

@@ -168,15 +168,17 @@ Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
     return view('fileshare-profile', ['fileshare'=> $fileshare]);
 })->middleware('can:view,fileshare');
 
-Route::get('storage/app/{filename}', function ($filename) {
-    $filePath = storage_path('app/'.$filename);
-    // dd(basename($filePath));
-    if (file_exists($filePath)) {
-        return response()->file($filePath);
-    }
+Route::post("/delete_fileshare/{fileshare}", [FileshareController::class, 'delete_fileshare']);
 
-    abort(403);
-})->where('filename','.*')->middleware('download');
+// Route::get('storage/app/{filename}', function ($filename) {
+//     $filePath = storage_path('app/'.$filename);
+//     // dd(basename($filePath));
+//     if (file_exists($filePath)) {
+//         return response()->file($filePath);
+//     }
+
+//     abort(403);
+// })->where('filename','.*')->middleware('download');
 
 
 

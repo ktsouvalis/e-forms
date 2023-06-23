@@ -14,7 +14,7 @@
         <title>{{$fileshare->name}}</title>
     @endpush
     <div class="container py-5">
-        <div class="vstack gap-5">
+        
         <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/fileshare_save/$fileshare->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
@@ -25,15 +25,15 @@
                         <span class="input-group-text w-75"><strong>Επεξεργασία Στοιχείων Διαμοιρασμού Αρχείων</strong></span>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">Name</span>
+                        <span class="input-group-text w-25" id="basic-addon2">Τίτλος</span>
                         <input name="name" type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon2" required value="{{$fileshare->name}}"><br>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">common files</span>
+                        <span class="input-group-text w-25" id="basic-addon2">Κοινά αρχεία</span>
                         <input name="fileshare_common_files[]" type="file" class="form-control" multiple ><br>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">personal files</span>
+                        <span class="input-group-text w-25" id="basic-addon2">Προσωπικά αρχεία</span>
                         <input name="fileshare_personal_files[]" type="file" class="form-control" multiple><br>
                     </div>
                     
@@ -46,7 +46,7 @@
             </nav>
             
             
-            
+        <hr>
         </div>
         <div class="container px-5">
             <div>
@@ -66,7 +66,7 @@
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
-                        <th id="search"> Διαγραφή</th>
+                        <th id="search">Διαγραφή</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,33 +90,54 @@
                 </table>
             </div>  
         </div> 
-        </div>
-        
+        <hr>
         @php
-        
         $directory_common = '/fileshare'.$fileshare->id;
         $directory_personal = $directory_common.'/personal_files';
-        $files_common=Storage::disk('public')->files($directory_common);
-        $files_personal = Storage::disk('public')->files($directory_personal);
-       
+        $files_common=Storage::disk('local')->files($directory_common);
+        $files_personal = Storage::disk('local')->files($directory_personal);
         @endphp
         
-        <div class="row">
-            <div class="col">
+        <div class="hstack">
+            <div class="vstack gap-2">
                 <strong>Αρχεία κοινά για διαμοιρασμό</strong>
-                <ul>
                     @foreach($files_common as $file_c)
-                        <li><a href="{{Storage::url($file_c)}}">{{basename($file_c)}}</a></li>
+                        @php
+                            $fi = $fileshare->id
+                        @endphp
+                        <div class="hstack gap-1">
+                        <form action="{{url("/dl_file/$fi")}}" method="post">
+                        @csrf
+                            <input type="hidden" name="filename" value="{{$file_c}}">
+                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_c)}}</button>
+                        </form>
+                        <form action="{{url("/x_file/$fi")}}" method="post">
+                        @csrf
+                            <input type="hidden" name="filename" value="{{$file_c}}">
+                            <button class="btn btn-danger bi bi-x-circle"></button>
+                        </form>
+                    </div>
                     @endforeach
-                </ul>
             </div>
-            <div class="col">
+            <div class="vstack gap-2">
                <strong>Αρχεία προσωπικά για διαμοιρασμό</strong>
-                <ul>
                     @foreach($files_personal as $file_p)
-                        <li><a href="{{Storage::url($file_p)}}">{{basename($file_p)}}</a></li>
+                        @php
+                            $fi = $fileshare->id
+                        @endphp
+                        <div class="hstack gap-1">
+                        <form action="{{url("/dl_file/$fi")}}" method="post">
+                        @csrf
+                            <input type="hidden" name="filename" value="{{$file_p}}">
+                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_p)}}</button>
+                        </form>
+                        <form action="{{url("/x_file/$fi")}}" method="post">
+                        @csrf
+                            <input type="hidden" name="filename" value="{{$file_p}}">
+                            <button class="btn btn-danger bi bi-x-circle"></button>
+                        </form>
+                        </div>
                     @endforeach
-                </ul>
             </div>
         </div>
     </div>    

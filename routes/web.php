@@ -170,6 +170,10 @@ Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
 
 Route::post("/delete_fileshare/{fileshare}", [FileshareController::class, 'delete_fileshare']);
 
+Route::post("/dl_file/{fileshare}", [FileshareController::class, 'download_file']);
+
+Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
+
 // Route::get('storage/app/{filename}', function ($filename) {
 //     $filePath = storage_path('app/'.$filename);
 //     // dd(basename($filePath));

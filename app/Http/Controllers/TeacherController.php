@@ -39,12 +39,12 @@ class TeacherController extends Controller
     }
 
     public function logout(){
-        $files = Storage::disk('public')->files('temp');
-        foreach($files as $file_p){
-            if(strpos(basename($file_p), auth()->guard('teacher')->user()->afm)!==false){
-                Storage::disk('public')->delete($file_p);
-            }
-        }
+        // $files = Storage::disk('public')->files('temp');
+        // foreach($files as $file_p){
+        //     if(strpos(basename($file_p), auth()->guard('teacher')->user()->afm)!==false){
+        //         Storage::disk('public')->delete($file_p);
+        //     }
+        // }
         auth()->guard('teacher')->logout();
         return redirect(url('/index_teacher'))->with('success', 'Αποσυνδεθήκατε');
     }

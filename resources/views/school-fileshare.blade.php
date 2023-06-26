@@ -1,10 +1,10 @@
-<x-layout_teacher>
+<x-layout_school>
     <div class="container">
         @php
-            $fileshares = $teacher->fileshares()->get();
+            $fileshares = $school->fileshares()->get();
         @endphp
         <div class="vstack gap-2">
-        @foreach($teacher->fileshares as $fileshare)
+        @foreach($school->fileshares as $fileshare)
             @php
                 $directory_common = '/fileshare'.$fileshare->fileshare->id;
                 $directory_personal = $directory_common.'/personal_files';
@@ -29,7 +29,7 @@
                 </div>
                 <div class="vstack gap-2">
                         @foreach($files_personal as $file_p)
-                            @if(strpos(basename($file_p), $teacher->afm)!==false)
+                            @if(strpos(basename($file_p), $school->code)!==false)
                                 @php
                                     $ffi = $fileshare->fileshare->id
                                 @endphp
@@ -46,4 +46,4 @@
         @endforeach
     </div>
     </div>
-</x-layout_teacher>
+</x-layout_school>

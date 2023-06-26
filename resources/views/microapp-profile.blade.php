@@ -154,13 +154,18 @@
                 </form>
                 
             </nav>
-            <div>
-                <form action="/import_whocan" method="post">
+
+            <hr>
+            </div>
+            <div class="container px-5">
+            <div class="hstack gap-2">
+                <a href="{{url("/import_whocan/microapp/$microapp->id")}}" class="btn btn-primary"> Εισαγωγή Stakeholders</a>
+                @if($microapp->stakeholders->count())
+                <form action="{{url("/delete_all_whocans/microapp/$microapp->id")}}" method="post">
                     @csrf
-                    <input type="hidden" name="my_app" value="ma">
-                    <input type="hidden" name="my_id" value="{{$microapp->id}}">
-                    <button type="submit" class="btn btn-primary bi bi-person-lines-fill"> Εισαγωγή Stakeholders</button>
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή Stakeholders</button>
                 </form>
+                @endif
             </div>
         
         <div class="container">
@@ -170,6 +175,7 @@
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
+                        <th id="search">Διαγραφή</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -181,6 +187,12 @@
                         <td>{{$one_stakeholder->stakeholder->afm}}</td>
                     @endif
                     <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
+                    <td>
+                        <form action="{{url("/delete_one_whocan/microapp/$one_stakeholder->id")}}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
                 </tbody>
@@ -188,5 +200,6 @@
             </div>          
         </div>
         </div>
+    </div>
     </div>    
 </x-layout>

@@ -158,6 +158,13 @@ Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
     return view('teacher-fileshare', ['teacher' => $teacher]);
 });
 
+Route::get("/school_fileshare/{school}", function(School $school){
+    if(Auth::guard('school')->id()<>$school->id){
+        abort(403);
+    }
+    return view('school-fileshare', ['school' => $school]);
+});
+
 Route::view('/fileshares', 'fileshares')->middleware('auth');
 
 Route::post('/insert_fileshare', [FileshareController::class, 'insert_fileshare']);

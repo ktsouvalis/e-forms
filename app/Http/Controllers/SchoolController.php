@@ -93,15 +93,14 @@ class SchoolController extends Controller
 
 
         // DELETE schools FROM DATABASE THAT ARE NOT IN XLSX
-        $codes = array_column($schools_array, 'code');
-        $recordsToDelete = School::whereNotIn('code', $codes)->get();
-        foreach($recordsToDelete as $record){
-            $record->delete();
-        }
+        // $codes = array_column($schools_array, 'code');
+        // $recordsToDelete = School::whereNotIn('code', $codes)->get();
+        // foreach($recordsToDelete as $record){
+        //     $record->delete();
+        // }
+        
         foreach($schools_array as $school){
-            
             // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE
-    
             School::updateOrCreate(
                 [
                     'code' => $school['code']

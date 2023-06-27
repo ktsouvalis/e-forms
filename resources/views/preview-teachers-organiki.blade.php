@@ -15,8 +15,8 @@
     @endpush
     @php
         $teachers_array = session('teachers_array');
-        $afms = array_column($teachers_array, 'afm');
-        $recordsToDelete = App\Models\Teacher::whereNotIn('afm', $afms)->get();
+        // $afms = array_column($teachers_array, 'afm');
+        // $recordsToDelete = App\Models\Teacher::whereNotIn('afm', $afms)->get();
     @endphp
     <div class="container">
         <div class="p-3 mb-2 bg-success text-white">Εκπαιδευτικοί που θα εισαχθούν ή θα ανανεωθούν</div>
@@ -69,54 +69,7 @@
                 </tbody>
             </table>
         </div><p></p>
-        <div class="p-3 mb-2 bg-warning">Εκπαιδευτικοί που θα διαγραφούν</div>
-        <div class="table-responsive">
-            <table  id="" class=" table table-sm table-warning table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th id="search">AΜ</th>
-                        <th id="search">ΑΦΜ</th>
-                        <th id="search">Επώνυμο</th>
-                        <th id="search">Όνομα</th>
-                        <th id="search">Πατρώνυμο</th>
-                        <th id="search">Μητρώνυμο</th>
-                        <th id="search">Κλάδος</th>
-                        <th id="search">email</th>
-                        <th id="search">email ΠΣΔ</th>
-                        <th id="search">Τηλέφωνο</th>
-                        <th id="search">Σχέση Εργασίας</th>
-                        <th id="search">Οργανική</th>
-                        {{-- <th id="search">Υπηρέτηση</th> --}}
-                        <th id="search">Οργανική στην Ειδική Αγωγή</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach($recordsToDelete as $teacher)
-                    {{-- <tr class="bg-warning" style="opacity:0.7;">  --}}
-                    <tr>
-                        <td>{{$teacher->am}}</td>
-                        <td>{{$teacher->afm}}</td>
-                        <td>{{$teacher->surname}}</td>
-                        <td>{{$teacher->name}}</td>
-                        <td>{{$teacher->fname}}</td>
-                        <td>{{$teacher->mname}}</td>
-                        <td>{{$teacher->klados}}</td>
-                        <td>{{$teacher->mail}}</td>
-                        <td>{{$teacher->sch_mail}}</td>
-                        <td>{{$teacher->telephone}}</td>
-                        <td>{{$teacher->sxesi_ergasias->name}}</td>
-                        <td>{{$teacher->organiki->name}}</td>
-                        {{-- <td>{{$teacher->ypiretisi->name}}</td> --}}
-                        @if($teacher->org_eae)
-                            <td>ΝΑΙ</td>
-                        @else
-                            <td> - </td>
-                        @endif
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
+        
         <div> Για τους εκπαιδευτικούς που βρίσκονται ήδη στη βάση θα ανανεωθούν τα στοιχεία τους (εκτός του ΑΦΜ) σύμφωνα με τις αλλαγές που περιέχονται στο αρχείο από το myschool που ανεβάσατε</div><br>
         <div class="hstack gap-2">
         <form action="{{url("/insert_teachers_organiki")}}" method="post" enctype="multipart/form-data>">

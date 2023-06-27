@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AdminsSeeder::class,
             MunicipalitySeeder::class,
             SxesiErgasiasSeeder::class,
+            DirectoriesSeeder::class
         ]);
     }
 }

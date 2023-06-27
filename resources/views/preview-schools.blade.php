@@ -15,8 +15,8 @@
     @endpush
     @php
         $schools_array = session('schools_array');
-        $codes = array_column($schools_array, 'code');
-        $recordsToDelete = App\Models\School::whereNotIn('code', $codes)->get();
+        // $codes = array_column($schools_array, 'code');
+        // $recordsToDelete = App\Models\School::whereNotIn('code', $codes)->get();
     @endphp
     <div class="container">
         <div class="p-3 mb-2 bg-success text-white">Σχολεία που θα εισαχθούν ή θα ανανεωθούν</div>
@@ -51,36 +51,7 @@
                 </tbody>
             </table>
         </div><p></p>
-        <div class="p-3 mb-2 bg-warning">Σχολεία που θα διαγραφούν</div>
-        <div class="table-responsive">
-            <table  id="" class=" table table-sm table-warning table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th id="search">Κωδικός</th>
-                        <th id="search">Ονομασία</th>
-                        <th id="search">email</th>
-                        <th id="search">link</th>
-                        <th id="search">Δημ/Νηπ</th>
-                        <th id="search">Ειδικό</th>
-                        <th id="search">Δημόσιο</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach($recordsToDelete as $school)
-                    {{-- <tr class="bg-warning" style="opacity:0.7;">  --}}
-                    <tr>
-                        <td>{{$school->code}}</td>
-                        <td>{{$school->name}}</td>
-                        <td>{{$school->mail}}</td>
-                        <td>{{$school->md5}}</td>
-                        <td>{{$school->primary}}</td>
-                        <td>{{$school->special_needs}}</td>
-                        <td>{{$school->international}}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
+        
         <div> Για τα Σχολεία που βρίσκονται ήδη στη βάση θα ανανεωθούν τα στοιχεία τους σύμφωνα με τις αλλαγές που περιέχονται στο αρχείο από το myschool που ανεβάσατε</div><br>
         <div class="hstack gap-2">
         <form action="{{url("/insert_schools")}}" method="post" enctype="multipart/form-data>">

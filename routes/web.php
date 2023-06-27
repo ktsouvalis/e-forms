@@ -97,11 +97,11 @@ Route::view('/teachers','teachers')->middleware('auth');
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:create, ".Teacher::class);
 
-Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'importTeachersOrganiki']);
+Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'importTeachers']);
 
 Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:create, ".Teacher::class);
 
-Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachersOrganiki']);
+Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);
 
 Route::view('/index_teacher', 'index_teacher'); // auth checking in view
 

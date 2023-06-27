@@ -4,7 +4,15 @@
         <nav class="navbar navbar-light bg-light">
             <form action="{{url('/upload_teachers_organiki_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="import_teachers_organiki" >    
+                <input type="file" name="import_teachers_organiki" > 
+                <div class="hstack">
+                    <input  type="radio" id="organiki" name="template_file" value="organiki" checked>
+                    <label class="px-1" for="organiki">Οργανικά Ανήκοντες</label><br>
+                </div>
+                <div class="hstack">
+                    <input type="radio" id="apospasi" name="template_file" value="apospasi">
+                    <label class="px-1" for="apospasi">Αποσπασμένοι</label><br> 
+                </div>   
                 <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
             </form>
         </nav>

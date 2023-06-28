@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AllDayController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\WhocanController;
 use App\Http\Controllers\TeacherController;
@@ -19,6 +18,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\EndDocumentsController;
+use App\Http\Controllers\microapps\FruitsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +148,8 @@ Route::post('/save_microapp/{microapp}', [MicroappController::class,'saveProfile
 Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+
+Route::post("/save_fruits/{school}", [FruitsController::class, 'save_fruits']);
 
 // FILESHARES ROUTES
 

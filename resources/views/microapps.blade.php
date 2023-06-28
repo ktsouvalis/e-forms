@@ -131,7 +131,7 @@
                                         <form action="{{url("/microapp_onoff/$one_microapp->id")}}" method="post">
                                         @csrf
                                         @if($one_microapp->active) 
-                                            <button type="submit" class="btn btn-dark bi bi-x-circle text-white bg-dark"  data-toggle="tooltip" title="Απενεργοποίηση"></button>
+                                            <button type="submit" class="btn btn-dark bi bi-x-circle text-white bg-dark"  data-toggle="tooltip" title="Απενεργοποίηση" onclick="return confirm('Αν απενεργοποιήσετε τη μικροεφαρμογή, θα διαγραφούν οι χρήστες Διεύθυνσης που μπορούν να τη διαχειριστούν και σχολεία ή/και εκπαιδευτικοί στους οποίους απευθύνεται! \n')"></button>
                                         @else   
                                             <button type="submit" class="btn btn-dark bi bi-activity text-dark bg-white"  data-toggle="tooltip" title="Ενεργοποίηση"></button>
                                         @endif 

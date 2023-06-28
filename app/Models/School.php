@@ -4,7 +4,7 @@ namespace App\Models;
 
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Teacher;
+use App\Models\microapps\Fruit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,6 +55,10 @@ class School extends Authenticatable
 
     public function fileshares(){
         return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
+    }
+
+    public function fruit(){
+        return $this->hasOne(Fruit::class);
     }
     /**
      * The attributes that should be hidden for serialization.

@@ -73,7 +73,7 @@
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
                 <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-                <a href="{{url('/logout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
+                <a href="{{url('/slogout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
             </div>
             </li>
             </p>

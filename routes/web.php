@@ -89,7 +89,7 @@ Route::get('/school_app/{appname}', function($appname){
     else{
         return redirect(url('/index_school'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
     }
-})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if school is not in the stakeholders of this microapp
+})->middleware('isSchool')->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if school is not in the stakeholders of this microapp
 
 //////// TEACHER ROUTES
 
@@ -119,7 +119,7 @@ Route::get('/teacher_app/{appname}', function($appname){
     else{
         return redirect(url('/index_teacher'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
     }
-})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
+})->middleware('isTeacher')->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
 //////// OPERATIONS ROUTES
 
@@ -236,3 +236,5 @@ Route::post('/insert_whocan/{my_app}/{my_id}', [WhocanController::class, 'insert
 Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'delete_all_whocans']);
 
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
+
+Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);

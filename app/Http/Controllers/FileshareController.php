@@ -50,7 +50,6 @@ class FileshareController extends Controller
         $fileshare->name = $request->all()['name'];
         if($fileshare->isDirty('name')){
             $fileshare->save();
-            $edited=true;
         }
 
         //update or add files
@@ -61,25 +60,17 @@ class FileshareController extends Controller
         if ($common_files) {
             foreach ($common_files as $file) {
                 $path = $file->storeAs($directory_common, $file->getClientOriginalName(), 'local');
-                // $path = $file->storeAs($directory_common, $file->getClientOriginalName(), 'public');
             }
-            $edited=true;
         }
 
         $personal_files = $request->file('fileshare_personal_files');
         if ($personal_files) {
             foreach ($personal_files as $file) {
                 $path = $file->storeAs($directory_personal, $file->getClientOriginalName(), 'local');
-                // $path = $file->storeAs($directory_personal, $file->getClientOriginalName(), 'public');
             }
         }
 
-        if($edited){
-            return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Προστέθηκαν τα αρχεία που ανεβάσατε.');
-        }
-        else{
-            return redirect(url("/fileshare_profile/$fileshare->id"))->with('warning', 'Δεν υπάρχουν αλλαγές προς αποθήκευση');   
-        }
+        return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Αποθηκεύτηκε'); 
     }
 
     public function delete_fileshare(Request $request, Fileshare $fileshare){

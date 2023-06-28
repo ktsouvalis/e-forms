@@ -7,9 +7,12 @@ use App\Models\Teacher;
 use App\Models\Microapp;
 use App\Models\Fileshare;
 use Illuminate\Http\Request;
+use App\Mail\NewFilesToReceive;
+use App\Mail\NewMicroappToSubmit;
 use App\Models\MicroappStakeholder;
 use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -162,4 +165,54 @@ class WhocanController extends Controller
 
         return back()->with('success', 'Ο χρήστης διαγράφηκε');
     }
+
+    public function send_to_all(Request $request, $my_app, $my_id){
+        $recipients=array();
+        if($my_app=='fileshare'){
+            $fileshare = Fileshare::find($my_id);
+            $stakeholders = $fileshare->stakeholders;
+            foreach($stakeholders as $stakeholder){
+                Mail::to($stakeholder->stakeholder->mail)->send(new NewFilesToReceive($fileshare, $stakeholder));  
+            }
+        }
+        else if($my_app=='microapp'){
+            $microapp = Microapp::find($my_id);
+            $stakeholders = $microapp->stakeholders;  
+            foreach($stakeholders as $stakeholder){
+                Mail::to($stakeholder->stakeholder->mail)->send(new NewMicroappToSubmit($microapp, $stakeholder));  
+            }
+        }
+        
+        return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
+    }
 }
+
+// public function send_to_all(Request $request, $my_app, $my_id){
+//         if($my_app=='fileshare'){
+//             $fileshare = Fileshare::find($my_id);
+//             $emails = Fileshare::where('id', $fileshare->id)
+//                 ->with('stakeholders.stakeholder')
+//                 ->get()
+//                 ->flatMap(function ($fileshare) {
+//                     return $fileshare->stakeholders->map(function ($stakeholder) {
+//                         return $stakeholder->stakeholder->mail;
+//                     });
+//                 }); 
+//             Mail::bcc($emails)->send(new NewFilesToReceive($fileshare));
+//         }
+//         else if($my_app=='microapp'){
+//             $microapp = Microapp::find($my_id);
+//             $emails = Microapp::where('id', $microapp->id)
+//                 ->with('stakeholders.stakeholder')
+//                 ->get()
+//                 ->flatMap(function ($microapp) {
+//                     return $microapp->stakeholders->map(function ($stakeholder) {
+//                         return $stakeholder->stakeholder->mail;
+//                     });
+//                 }); 
+//             Mail::bcc($emails)->send(new NewMicroappToSubmit($microapp));
+//         }
+        
+        
+//         return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
+//     }

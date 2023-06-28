@@ -20,6 +20,10 @@
                         <span class="input-group-text w-25" id="basic-addon4">email</span>
                         <input name="user_email" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="{{$user->email}}" ><br>
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon5">τηλέφωνο</span>
+                        <input name="user_telephone" type="text" class="form-control" placeholder="telephone" aria-label="telephone" aria-describedby="basic-addon4" required value="{{$user->telephone}}" ><br>
+                    </div>
                     <input type="hidden" name="user_id" value="{{$user->id}}">
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>

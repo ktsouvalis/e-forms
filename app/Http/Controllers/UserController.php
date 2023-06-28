@@ -167,7 +167,7 @@ class UserController extends Controller
         //VALIDATION
         $incomingFields = $request->all();
         $given_name = $incomingFields['user_name3'];
-        $given_email = $incomingFields['user_email3'];
+        // $given_email = $incomingFields['user_email3'];
 
         if(User::where('username', $given_name)->count()){
             $existing_user = User::where('username', $given_name)->first();
@@ -175,14 +175,14 @@ class UserController extends Controller
                 ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->display_name, $existing_user->email")
                 ->with('old_data', $incomingFields);
         }
-        else{
-            if(User::where('email', $given_email)->count()){
-                $existing_user = User::where('email', $given_email)->first();
-                return redirect(url('/manage_users'))
-                    ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_email: $existing_user->username, $existing_user->display_name")
-                    ->with('old_data', $incomingFields);
-            }
-        }
+        // else{
+        //     if(User::where('email', $given_email)->count()){
+        //         $existing_user = User::where('email', $given_email)->first();
+        //         return redirect(url('/manage_users'))
+        //             ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_email: $existing_user->username, $existing_user->display_name")
+        //             ->with('old_data', $incomingFields);
+        //     }
+        // }
         //VALIDATION PASSED
 
         try{
@@ -190,7 +190,8 @@ class UserController extends Controller
                 'username' => $incomingFields['user_name3'],
                 'display_name' => $incomingFields['user_display_name3'],
                 'email' => $incomingFields['user_email3'],
-                'password' => bcrypt($incomingFields['user_password3'])
+                'password' => bcrypt($incomingFields['user_password3']),
+                'telephone' => $incomingFields["user_telephone3"]
             ]);
         } 
         catch(QueryException $e){
@@ -221,7 +222,7 @@ class UserController extends Controller
         $user->username = $incomingFields['user_name'];
         $user->display_name = $incomingFields['user_display_name'];
         $user->email = $incomingFields['user_email'];
-
+        $user->telephone = $incomingFields['user_telephone'];
         $edited=false;
         // check if changes happened to user table
         if($user->isDirty()){
@@ -233,17 +234,17 @@ class UserController extends Controller
                     return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
                 }
             }
-            else{
-                if($user->isDirty('email')){
-                    $given_email = $incomingFields['user_email'];
+            // else{
+            //     if($user->isDirty('email')){
+            //         $given_email = $incomingFields['user_email'];
 
-                    if(User::where('email', $given_email)->count()){
-                        $existing_user =User::where('email',$given_email)->first();
-                        return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name");
+            //         if(User::where('email', $given_email)->count()){
+            //             $existing_user =User::where('email',$given_email)->first();
+            //             return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name");
 
-                    }
-                }
-            }
+            //         }
+            //     }
+            // }
             $user->save();
             $edited = true;
         }

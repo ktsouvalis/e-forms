@@ -114,6 +114,10 @@
                         <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@if(session()->has('old_data')){{session('old_data')['user_email3']}}@endif" ><br>
                     </div>
                     <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon6">τηλέφωνο</span>
+                        <input name="user_telephone3" type="text" class="form-control" placeholder="τηλέφωνο" aria-label="τηλέφωνο" aria-describedby="basic-addon4" required value="@if(session()->has('old_data')){{session('old_data')['user_telephone3']}}@endif" ><br>
+                    </div>
+                    <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>
                         @php
                             $operations = App\Models\Operation::all();   

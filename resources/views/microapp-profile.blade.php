@@ -159,11 +159,15 @@
             </div>
             <div class="container px-5">
             <div class="hstack gap-2">
-                <a href="{{url("/import_whocan/microapp/$microapp->id")}}" class="btn btn-primary"> Εισαγωγή Stakeholders</a>
+                <a href="{{url("/import_whocan/microapp/$microapp->id")}}" class="btn btn-primary"> Εισαγωγή Σχολείων/Εκπαιδευτικών</a>
                 @if($microapp->stakeholders->count())
+                <form action="{{url("/send_mail_all_whocans/microapp/$microapp->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους τους ενδιαφερόμενους</button>
+                </form>
                 <form action="{{url("/delete_all_whocans/microapp/$microapp->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή Stakeholders</button>
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders;')"> Διαγραφή Σχολείων/Εκπαιδευτικών</button>
                 </form>
                 @endif
             </div>

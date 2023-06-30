@@ -159,8 +159,9 @@
             </div>
             <div class="container px-5">
             <div class="hstack gap-2">
-                <a href="{{url("/import_whocan/microapp/$microapp->id")}}" class="btn btn-primary"> Εισαγωγή Σχολείων/Εκπαιδευτικών</a>
+                <a href="{{url("/import_whocan/microapp/$microapp->id")}}" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</a>
                 @if($microapp->stakeholders->count())
+                <a href="{{url("/preview_mail_all_whocans/microapp/$microapp->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
                 <form action="{{url("/send_mail_all_whocans/microapp/$microapp->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους τους ενδιαφερόμενους</button>

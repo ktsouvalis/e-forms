@@ -2,8 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Teacher;
 use App\Models\User;
+use App\Models\Teacher;
+use App\Models\Operation;
 use Illuminate\Auth\Access\Response;
 
 class TeacherPolicy
@@ -14,6 +15,8 @@ class TeacherPolicy
     public function viewAny(User $user): bool
     {
         //
+        $operation = Operation::find(2); // teachers operation is id 2 from the seeder
+        return ($operation->users->where('user_id', $user->id)->count());
     }
 
     /**
@@ -29,12 +32,7 @@ class TeacherPolicy
      */
     public function create(User $user): bool
     {
-        foreach($user->operations->where('can_edit', 1) as $one_operation){
-            if($one_operation->operation->url=='/teachers'){
-                return true;
-            }  
-        }
-        return false;
+        //
     }
 
     /**
@@ -67,5 +65,15 @@ class TeacherPolicy
     public function forceDelete(User $user, Teacher $teacher): bool
     {
         //
+    }
+
+    public function upload(User $user): bool
+    {
+        foreach($user->operations->where('can_edit', 1) as $one_operation){
+            if($one_operation->operation->url=='/teachers'){
+                return true;
+            }  
+        }
+        return false;  
     }
 }

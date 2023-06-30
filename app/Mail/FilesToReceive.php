@@ -2,25 +2,26 @@
 
 namespace App\Mail;
 
-use App\Models\Microapp;
+use App\Models\Fileshare;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use App\Models\MicroappStakeholder;
+use App\Models\FileshareStakeholder;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewMicroappToSubmit extends Mailable implements ShouldQueue
+class FilesToReceive extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-
+    protected $name;
     /**
      * Create a new message instance.
      */
-    public function __construct(public Microapp $microapp, public MicroappStakeholder $stakeholder)
+    public function __construct(public FileshareStakeholder $stakeholder)
     {
         //
+        $this->name = $this->stakeholder->fileshare->name;
     }
 
     /**
@@ -29,10 +30,10 @@ class NewMicroappToSubmit extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Νέα Ενότητα για Υποβολή Στοιχείων',
-            tags:['new-microapp'],
+            subject: "Αρχεία '$this->name' για παραλαβή",
+            tags:['new-fileshare'],
             metadata:[
-                'microapp_id' => $this->microapp->id
+                'fileshare_id' => $this->stakeholder->fileshare_id
             ],
         );
     }
@@ -43,7 +44,7 @@ class NewMicroappToSubmit extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.new-microapp-to-submit',
+            view: 'emails.files-to-receive',
         );
     }
 

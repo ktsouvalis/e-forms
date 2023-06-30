@@ -51,15 +51,16 @@
         <div class="container px-5">
             <div>
                 <div class="hstack gap-2">
-                <a href="{{url("/import_whocan/fileshare/$fileshare->id")}}" class="btn btn-primary"> Εισαγωγή Stakeholders</a>
+                <a href="{{url("/import_whocan/fileshare/$fileshare->id")}}" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</a>
                 @if($fileshare->stakeholders->count())
+                <a href="{{url("/preview_mail_all_whocans/fileshare/$fileshare->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
                 <form action="{{url("/send_mail_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους τους ενδιαφερόμενους</button>
                 </form>
                 <form action="{{url("/delete_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή Stakeholders</button>
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή Σχολείων/Εκπαιδευτικών</button>
                 </form>
                 @endif
                 </div>

@@ -6,9 +6,9 @@ use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Microapp;
 use App\Models\Fileshare;
+use App\Mail\FilesToReceive;
 use Illuminate\Http\Request;
-use App\Mail\NewFilesToReceive;
-use App\Mail\NewMicroappToSubmit;
+use App\Mail\MicroappToSubmit;
 use App\Models\MicroappStakeholder;
 use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +59,7 @@ class WhocanController extends Controller
                 $row++;
                 $rowSumValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();   
             }
+            array_push($whocan_array, ['code'=>9999999, 'id'=>School::where('code', 9999999)->first()->id]);
         }
         else{
             session(['who' => 'teachers']);   
@@ -80,7 +81,8 @@ class WhocanController extends Controller
                 
                 $row++;
                 $rowSumValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();      
-            }  
+            } 
+            array_push($whocan_array, ['afm'=>999999999, 'id'=>Teacher::where('afm', 999999999)->first()->id]); 
         }
         
         if($error){
@@ -166,20 +168,37 @@ class WhocanController extends Controller
         return back()->with('success', 'Ο χρήστης διαγράφηκε');
     }
 
+    public function preview_mail_to_all($my_app, $my_id){
+        if($my_app=="microapp"){
+            $stakeholders = Microapp::find($my_id)->stakeholders;
+            foreach($stakeholders as $stakeholder){
+                if($stakeholder->stakeholder->code==9999999 or $stakeholder->stakeholder->afm==999999999)
+                    return new MicroappToSubmit($stakeholder);
+            }
+        }
+        else if($my_app=="fileshare"){
+            $stakeholders = Fileshare::find($my_id)->stakeholders;
+            foreach($stakeholders as $stakeholder){
+                if($stakeholder->stakeholder->code==9999999 or $stakeholder->stakeholder->afm==999999999)
+                    return new FilesToReceive($stakeholder);
+            } 
+        }
+    }
+
     public function send_to_all(Request $request, $my_app, $my_id){
         $recipients=array();
         if($my_app=='fileshare'){
             $fileshare = Fileshare::find($my_id);
             $stakeholders = $fileshare->stakeholders;
             foreach($stakeholders as $stakeholder){
-                Mail::to($stakeholder->stakeholder->mail)->send(new NewFilesToReceive($fileshare, $stakeholder));  
+                Mail::to($stakeholder->stakeholder->mail)->send(new FilesToReceive($fileshare, $stakeholder));  
             }
         }
         else if($my_app=='microapp'){
             $microapp = Microapp::find($my_id);
             $stakeholders = $microapp->stakeholders;  
             foreach($stakeholders as $stakeholder){
-                Mail::to($stakeholder->stakeholder->mail)->send(new NewMicroappToSubmit($microapp, $stakeholder));  
+                Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));  
             }
         }
         

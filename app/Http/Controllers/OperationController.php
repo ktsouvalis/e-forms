@@ -121,7 +121,7 @@ class OperationController extends Controller
                     UsersOperations::create([
                         'operation_id' => $operation->id,
                         'user_id' => $value,
-                        'can_edit' => 1 // !!!must be checked from the ui!!!!
+                        'can_edit' => 0 // !!!must be checked from the ui!!!!
                     ]);
                     $edited = true;
                 } 

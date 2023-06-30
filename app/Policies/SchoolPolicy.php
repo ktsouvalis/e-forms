@@ -2,8 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\School;
 use App\Models\User;
+use App\Models\School;
+use App\Models\Operation;
 use Illuminate\Auth\Access\Response;
 
 class SchoolPolicy
@@ -14,6 +15,8 @@ class SchoolPolicy
     public function viewAny(User $user): bool
     {
         //
+        $operation = Operation::find(1); // schools operation is id 1 from the seeder
+        return ($operation->users->where('user_id', $user->id)->count());
     }
 
     /**

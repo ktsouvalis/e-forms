@@ -8,6 +8,8 @@ use App\Models\Fileshare;
 use App\Models\Operation;
 use App\Policies\FormPolicy;
 use Illuminate\Http\Request;
+use App\Mail\MicroappToSubmit;
+use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
@@ -45,7 +47,7 @@ Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
 Route::view('/change_password', 'password_change_form')->middleware('auth');
 
-Route::post('/change_password', [UserController::class, 'passwordChange'])->middleware('auth');
+Route::post('/change_password', [UserController::class, 'passwordChange']);
 
 Route::view('/manage_users', 'users')->middleware('boss');
 
@@ -61,11 +63,11 @@ Route::get('/user_profile/{user}', function(User $user){
 
 Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
 
-Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->middleware('auth');
+Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
 
 //////// SCHOOL ROUTES
 
-Route::view('/schools', 'schools')->middleware('auth');
+Route::view('/schools', 'schools')->middleware('auth')->middleware('can:viewAny, '. School::class);
 
 Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
 
@@ -93,7 +95,7 @@ Route::get('/school_app/{appname}', function($appname){
 
 //////// TEACHER ROUTES
 
-Route::view('/teachers','teachers')->middleware('auth');
+Route::view('/teachers','teachers')->middleware('auth')->middleware('can:viewAny, '. Teacher::class);
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:create, ".Teacher::class);
 
@@ -154,14 +156,14 @@ Route::post("/save_fruits/{school}", [FruitsController::class, 'save_fruits']);
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
-    if(Auth::guard('teacher')->id()<>$teacher->id){
+    if(Auth::guard('teacher')->id()!=$teacher->id){
         abort(403);
     }
     return view('teacher-fileshare', ['teacher' => $teacher]);
 });
 
 Route::get("/school_fileshare/{school}", function(School $school){
-    if(Auth::guard('school')->id()<>$school->id){
+    if(Auth::guard('school')->id()!=$school->id){
         abort(403);
     }
     return view('school-fileshare', ['school' => $school]);
@@ -238,3 +240,5 @@ Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'd
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
 
 Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);
+
+Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);

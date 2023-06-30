@@ -69,7 +69,7 @@
         </table>
     </div>
         
-    @can('create', App\Models\Teacher::class)
+    @can('upload', App\Models\Teacher::class)
         <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
     @endcan
 </div>

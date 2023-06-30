@@ -7,14 +7,14 @@
     } 
 @endphp
 
-Σας ενημερώνουμε ότι στην εφαρμογή <a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank">"Φόρμα Υποβολής"</a> της Διεύθυνσης Π.Ε. Αχαΐας, στην ενότητα <a href="{{env('APP_URL')."/".$type."_fileshare/".$stakeholder->stakeholder->id}}" target="_blank"><strong>Διαμοιρασμός Αρχείων</strong></a> υπάρχει η υποενότητα <b>{{$fileshare->department->name}}, {{$fileshare->name}} </b> με αρχεία που σας αφορούν.
+Σας ενημερώνουμε ότι στην εφαρμογή <a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank">"Φόρμα Υποβολής"</a> της Διεύθυνσης Π.Ε. Αχαΐας, στην ενότητα <a href="{{env('APP_URL')."/".$type."_fileshare/".$stakeholder->stakeholder->id}}" target="_blank"><strong>Διαμοιρασμός Αρχείων</strong></a> υπάρχει η υποενότητα <b>{{$stakeholder->fileshare->department->name}}, {{$stakeholder->fileshare->name}} </b> με αρχεία που σας αφορούν.
 <br><br>
 <div>
     <em>Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας</em>
     <hr>
     <b> Πληροφορίες </b><br>
     
-    @foreach($fileshare->department->users as $user)
+    @foreach($stakeholder->fileshare->department->users as $user)
         @if($user->id!=1 and $user->id!=2)
             <div>{{$user->user->display_name}} {{$user->user->telephone}}</div>
         @endif

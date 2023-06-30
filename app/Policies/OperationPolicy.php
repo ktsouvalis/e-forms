@@ -26,12 +26,7 @@ class OperationPolicy
         if($user->operations->where('operation_id', $operation->id)->count()){
             return true;
         }
-        // $useroperations = UsersOperations::where('user_id', $user->id)->get();
-        // foreach($useroperations as $one_operation){
-        //     if($one_operation->operation_id == $operation->id){
-        //         return true;
-        //     }
-        // }
+        
         return false;
     }
 
@@ -49,13 +44,7 @@ class OperationPolicy
      */
     public function update(User $user, Operation $operation): bool
     {
-        //
-        // if($operation->id == 2 or $operation->name == 'Εκπαιδευτικοί'){
-        //     if($user->id != 1 and $user->id != 2){
-        //         return false;
-        //     }
-        // }
-        // return true;
+        
     }
 
     /**

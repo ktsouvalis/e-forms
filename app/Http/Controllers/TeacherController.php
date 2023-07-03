@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
 {
-    //
-    public function test(Teacher $teacher){
-        return view('test',['teacher'=>$teacher]);
-    }
-
+    /**
+     * Return the generic view for forms
+     *
+     * @param Form $form The form model instance.
+     * @return \Illuminate\View\View The rendered view.
+     */
     public function makeForm(Form $form){
     
         return view('teacher_view', ['form' => $form]);
@@ -30,6 +31,7 @@ class TeacherController extends Controller
         $state="failure";
         $teacher = Teacher::where('md5', $md5)->first();
         if($teacher){
+            //logs the teacher in using the 'teacher' guard
             Auth::guard('teacher')->login($teacher);
             session()->regenerate();
             $msg=$teacher->name." καλωσήρθατε";
@@ -39,17 +41,19 @@ class TeacherController extends Controller
     }
 
     public function logout(){
-        // $files = Storage::disk('public')->files('temp');
-        // foreach($files as $file_p){
-        //     if(strpos(basename($file_p), auth()->guard('teacher')->user()->afm)!==false){
-        //         Storage::disk('public')->delete($file_p);
-        //     }
-        // }
         auth()->guard('teacher')->logout();
         return redirect(url('/index_teacher'))->with('success', 'Αποσυνδεθήκατε');
     }
 
+    /**
+     * Import and read the xlsx file
+     *
+     * @param Request $request The HTTP request object.
+     * @return \Illuminate\Http\RedirectResponse The redirect response.
+     */
     public function importTeachers(Request $request){
+
+        //validate the input file type
         $rule = [
             'import_teachers_organiki' => 'required|mimes:xlsx'
         ];
@@ -58,10 +62,15 @@ class TeacherController extends Controller
             return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
         }
 
+        //store the file
         $filename = "teachers_organiki_file".Auth::id().".xlsx";
         $path = $request->file('import_teachers_organiki')->storeAs('files', $filename);
+
+        //load the file
         $mime = Storage::mimeType($path);
         $spreadsheet = IOFactory::load("../storage/app/$path");
+
+        //iterate inside the xlsx line by line
         $teachers_array=array();
         $row=2;
         $error=0;
@@ -73,10 +82,12 @@ class TeacherController extends Controller
             $check['surname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
             $check['fname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
             $check['mname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-
+            
+            //myschool stores the afm like eg "=999999999"
             $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
             $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
 
+            //check obvious fields
             $check['gender']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
             $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
             $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
@@ -84,23 +95,21 @@ class TeacherController extends Controller
             $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
             $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
             
+            //cross check sxesi_ergasias with database
             $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
             if(SxesiErgasias::where('name',$sxesi)->count()){
                 $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
                 $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
             }
             else{
-                $error= 1;
+                $error = 1;
                 $check['sxesi_ergasias'] = "Error: Κενό πεδίο";
             }
 
-            // $check['action']="";
-            // if(Teacher::where('afm', $check['afm'])->count()){
-            //     $check['action']=Teacher::where('afm', $check['afm'])->first()->id;
-            // }
-            $ignore_record =0;
-            if($request->input('template_file')=='organiki'){
+            $ignore_record = 0;
+            if($request->input('template_file')=='organiki'){ // myschool report 4.1
 
+                //myschool stores the organiki like eg "=999999999"
                 $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
                 $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
 
@@ -109,6 +118,7 @@ class TeacherController extends Controller
                     $check['org_eae']=0;
                 }
 
+                //check if organiki is in a school (Σχολείο) or Directory (Διεύθυνση Εκπαίδευσης)
                 if(School::where('code', $sanitized_organiki)->count()){
                     $check['organiki'] = School::where('code', $sanitized_organiki)->first()->id;
                     $check['organiki_name'] = School::where('code', $sanitized_organiki)->first()->name;
@@ -124,19 +134,16 @@ class TeacherController extends Controller
                     $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
                 }
             }
-            else if($request->input('template_file')=='apospasi'){
+            else if($request->input('template_file')=='apospasi'){ // myschool report 4.2
                 
                 $check['org_eae']=1;
                 if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="ΟΧΙ"){
                     $check['org_eae']=0;
                 }
 
+                //fix  directories to match database and then cross check
                 $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
                 if($organiki!="ΑΧΑΪΑΣ (Π.Ε.) 2018"){
-                    // $organiki =substr($organiki, 0, -5); //delete 2018
-                    // $pe_de = substr($organiki, -7, -1); //keep P.E. or D.E.
-                    // $organiki = substr($organiki, 0, -9); //delete P.E./D.E.
-                    // $organiki = "ΔΙΕΥΘΥΝΣΗ (".$pe_de.") ".$organiki;
                     
                     // Extract the parts using regular expressions
                     preg_match('/^(\S+[^ \d])?(.*?) \((.*?)\)/', $organiki, $matches);
@@ -168,16 +175,18 @@ class TeacherController extends Controller
                         $check['organiki_type'] = "App\Models\Directory";
                     }
                     else{
-                        
                         $error=1;
                         $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
                     }
                 }
                 else{
-                    $ignore_record =1;   
+                    $ignore_record = 1;  //ignore those that belongs to ΑΧΑΪΑ because they are in the database through the 4.1 report (organiki) 
                 }
             }
+            //prepare teachers_array for session
             if(!$ignore_record)array_push($teachers_array, $check);
+
+            //change line and check if it's empty
             $row++;
             $rowSumValue="";
             for($col=1;$col<=54;$col++){
@@ -185,6 +194,7 @@ class TeacherController extends Controller
             }
         }
 
+        //push the prepared array in session for later use
         session(['teachers_array' => $teachers_array]);
 
         if($error){
@@ -196,20 +206,16 @@ class TeacherController extends Controller
         }
     }
 
-
+    /**
+     * Insert teachers from session to database
+     * @return \Illuminate\Http\RedirectResponse The redirect response.
+     */
     public function insertTeachers(){
+        //read the teachers_array which is prepared from the importTeachers() method
         $teachers_array = session('teachers_array');
         session()->forget('teachers_array');
 
-
-        // // DELETE TEACHERS FROM DATABASE THAT ARE NOT IN XLSX
-        // $afms = array_column($teachers_array, 'afm');
-        // $recordsToDelete = Teacher::whereNotIn('afm', $afms)->get();
-        // foreach($recordsToDelete as $record){
-        //     $record->delete();
-        // }
-
-        // CREATE OR UPDATE EXISTING TEACHERS
+        // CREATE OR UPDATE (based on 'afm' field) EXISTING TEACHERS
         foreach($teachers_array as $teacher){
             Teacher::updateOrcreate(
                 [

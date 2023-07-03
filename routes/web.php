@@ -241,4 +241,6 @@ Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'de
 
 Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);
 
+Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanController::class, 'send_to_all_that_have_not_submitted']);
+
 Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);

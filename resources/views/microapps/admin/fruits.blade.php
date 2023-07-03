@@ -12,14 +12,15 @@
     @endpush
 
     @php
-        //fetch all stakeholders of the microapp to show them even if they have not submit some answer. $fruits_schools is MicroappStakeholder object
-        $fruits_schools = App\Models\Microapp::where('url', '/'.$appname)->first()->stakeholders; 
+        //fetch microapp data
+        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
 
-        //fetch 'accept' field value of microapp
-        $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; 
+        //fetch all stakeholders of the microapp to show them even if they have not submit some answer. $fruits_schools is MicroappStakeholder object
+        $fruits_schools = $microapp->stakeholders; 
+
     @endphp
     <div class="container">
-        @if(!$accepts)
+        @if(!$microapp->accepts)
         <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
             Η εφαρμογή δε δέχεται υποβολές
         </div>
@@ -64,6 +65,10 @@
                 @endforeach   
                 </tbody>  
             </table> 
+        <form action="{{url("/send_to_those_whocans_without_answer/microapp/$microapp->id")}}" method="post">
+            @csrf
+            <button class="btn btn-warning bi bi-eyeglasses"> Αποστολή υπενθύμισης σε όσους δεν έχουν υποβάλλει απάντηση</button>
+        </form>
         </div>
     </div>
 </x-layout>

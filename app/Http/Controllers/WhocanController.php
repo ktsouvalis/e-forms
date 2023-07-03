@@ -136,7 +136,8 @@ class WhocanController extends Controller
                     [
                     'microapp_id' => $my_id,
                     'stakeholder_id' => $one_stakeholder['id'],
-                    'stakeholder_type' => $type
+                    'stakeholder_type' => $type,
+                    'hasAnswer'=> 0
                 ]);
             }
         }
@@ -203,6 +204,20 @@ class WhocanController extends Controller
         }
         
         return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
+    }
+
+    public function send_to_all_that_have_not_submitted($my_app, $my_id){
+        if($my_app=='microapp'){
+            $microapp = Microapp::find($my_id);
+            $stakeholders = $microapp->stakeholders;  
+            foreach($stakeholders as $stakeholder){
+                if(!$stakeholder->hasAnswer){
+                    Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));
+                }  
+            }
+        }
+        
+        return back()->with('success', 'Ενημερώθηκαν όσοι ενδιαφερόμενοι δεν έχουν υποβάλλει απάντηση');
     }
 }
 

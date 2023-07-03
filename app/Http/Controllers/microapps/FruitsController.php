@@ -13,7 +13,9 @@ class FruitsController extends Controller
 {
     //
     public function save_fruits(Request $request, School $school){
-        if(Microapp::where('url', '/fruits')->first()->accepts){
+        $microapp = Microapp::where('url', '/fruits')->first();
+        if($microapp->accepts){
+            $done=0;
             try{
                 Fruit::updateOrCreate(
                     [
@@ -26,11 +28,17 @@ class FruitsController extends Controller
                         'comments' => $request->input('comments')
                     ]
                 );
+                $done=1;
             }
             catch(Throwable $exception){
                 return redirect(url('/school_app/fruits'))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
 
+            if($done){
+                $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+                $stakeholder->hasAnswer = 1;
+                $stakeholder->save();
+            }
             return redirect(url('/school_app/fruits'))->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
         else{

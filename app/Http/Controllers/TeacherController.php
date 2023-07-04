@@ -8,6 +8,7 @@ use App\Models\Teacher;
 use App\Models\Directory;
 use Illuminate\Http\Request;
 use App\Models\SxesiErgasias;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -27,17 +28,15 @@ class TeacherController extends Controller
     }
 
     public function login($md5){ 
-        $msg = "Δε βρέθηκε η σελίδα που ζητήσατε";
-        $state="failure";
-        $teacher = Teacher::where('md5', $md5)->first();
-        if($teacher){
-            //logs the teacher in using the 'teacher' guard
-            Auth::guard('teacher')->login($teacher);
-            session()->regenerate();
-            $msg=$teacher->name." καλωσήρθατε";
-            $state = 'success';
-        }
-        return redirect(url('/index_teacher'))->with($state,$msg);
+       
+        $teacher = Teacher::where('md5', $md5)->firstOrFail();
+        //logs the teacher in using the 'teacher' guard
+        Auth::guard('teacher')->login($teacher);
+        session()->regenerate();
+        $teacher->logged_in_at = Carbon::now();   
+        $teacher->save();
+
+        return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
     }
 
     public function logout(){

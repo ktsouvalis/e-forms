@@ -39,12 +39,6 @@ class MicroappPolicy
      */
     public function update(User $user, Microapp $microapp): bool
     {
-        //
-        // if($user->microapps->where('microapp_id', $microapp->id)->first()->can_edit){
-        //     return true;
-        // }
-        // return false;
-
         return ($microapp->active and $user->microapps->where('microapp_id', $microapp->id)->first()->can_edit);
     }
 

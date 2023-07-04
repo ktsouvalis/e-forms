@@ -17,45 +17,48 @@
         $all_schools = App\Models\School::all();
     @endphp
 <body>
-<div class="container">
-    <!--tabs-->
+{{-- <div class="container"> --}}
+    <div class="table-responsive">
+        <table  id="dataTable" class=" table table-sm table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th id="search">Κωδικός</th>
+                    <th id="search">Ονομασία</th>
+                    <th id="search">email</th>
+                    <th id="search">tel</th>
+                    <th id="search">link</th>
+                    <th id="search">last login</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($all_schools as $school)
+                @php
+                    $date=null;
+                    if($school->logged_in_at) 
+                        $date = Illuminate\Support\Carbon::parse($school->logged_in_at);
+                @endphp
+                <tr>  
+                    <td>{{$school->code}}</td>
+                    <td>{{$school->name}}</td>
+                    <td>{{$school->mail}}</td>
+                    <td>{{$school->telephone}}</td>
+                    <td>{{$school->md5}}</td>
+                    @if($date)
+                        <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
+                    @else
+                        <td> - </td>
+                    @endif
+                </tr>
+            @endforeach
+        </tbody>
+        </table>
+    </div>
     
-
-      
-            <!-- 1st tab's content-->
-            <div class="table-responsive">
-                <table  id="dataTable" class=" table table-sm table-striped table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th id="search">Κωδικός</th>
-                            <th id="search">Ονομασία</th>
-                            <th id="search">email</th>
-                            <th id="search">link</th>
-                            <th id="search">Δημ/Νηπ</th>
-                            <th id="search">Ειδικό</th>
-                            <th id="search">Δημόσιο</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($all_schools as $school)
-                        <tr>  
-                            <td>{{$school->code}}</td>
-                            <td>{{$school->name}}</td>
-                            <td>{{$school->mail}}</td>
-                            <td>{{$school->md5}}</td>
-                            <td>{{$school->primary}}</td>
-                            <td>{{$school->special_needs}}</td>
-                            <td>{{$school->international}}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-                </table>
-            </div>
-           
-            @can('upload', App\Models\School::class)
-                <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Σχολείων</a>
-            @endcan
-</div>
+    @can('upload', App\Models\School::class)
+        <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Σχολείων</a>
+    @endcan
+{{-- </div> --}}
 </x-layout>
         
            

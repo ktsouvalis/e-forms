@@ -115,7 +115,6 @@
                             @endphp
                             <tr>
                                 <td>
-                                {{-- can:{{$checked_radio_can}} cant:{{$checked_radio_cant}} --}}
                                 <div class="hstack gap-2">
                                     <input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}}, '{{$checked_radio_can}}')" {{$checked_checkbox}}>
                                     @php

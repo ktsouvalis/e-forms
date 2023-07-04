@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\School;
 use App\Models\Municipality;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -140,17 +141,14 @@ class SchoolController extends Controller
 
     //
     public function login($md5){ 
-        $msg = "Δε βρέθηκε η σελίδα που ζητήσατε";
-        $state="failure";
-        $school = School::where('md5', $md5)->first();
-        if($school){
-            //logs the school in using the 'school' guard
-            Auth::guard('school')->login($school);
-            session()->regenerate();
-            $msg=$school->name." καλωσήρθατε";
-            $state = 'success';
-        }
-        return redirect(url('/index_school'))->with($state,$msg);
+
+        $school = School::where('md5', $md5)->firstOrFail();
+        Auth::guard('school')->login($school);
+        $school->logged_in_at = Carbon::now();
+        $school->save();
+        session()->regenerate();
+
+        return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
     }
 
     public function logout(){

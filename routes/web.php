@@ -84,7 +84,7 @@ Route::view('/index_school', 'index_school'); // auth checking in view
 Route::get('/slogout', [SchoolController::class, 'logout']);
 
 Route::get('/school_app/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
+    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
     if($microapp->active){
         return view('microapps.school.'.$appname,['appname'=>$appname]);
     }
@@ -114,7 +114,7 @@ Route::get('/tlogout', [TeacherController::class, 'logout']);
 Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('can:view,form');
 
 Route::get('/teacher_app/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
+    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail(); 
     if($microapp->active){
         return view('microapps.teacher.'.$appname,['appname'=>$appname]);
     }
@@ -215,7 +215,7 @@ Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
 Route::view('/', 'index')->name('index');
 
 Route::get('/admin/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->first(); //there is one result because if there wasn't the middleware would throw 404
+    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
     if($microapp->active){
         return view('microapps.admin.'.$appname,['appname'=>$appname]);
     }

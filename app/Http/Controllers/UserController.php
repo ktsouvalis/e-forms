@@ -175,14 +175,7 @@ class UserController extends Controller
                 ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->display_name, $existing_user->email")
                 ->with('old_data', $incomingFields);
         }
-        // else{
-        //     if(User::where('email', $given_email)->count()){
-        //         $existing_user = User::where('email', $given_email)->first();
-        //         return redirect(url('/manage_users'))
-        //             ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_email: $existing_user->username, $existing_user->display_name")
-        //             ->with('old_data', $incomingFields);
-        //     }
-        // }
+        
         //VALIDATION PASSED
 
         try{
@@ -234,17 +227,7 @@ class UserController extends Controller
                     return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
                 }
             }
-            // else{
-            //     if($user->isDirty('email')){
-            //         $given_email = $incomingFields['user_email'];
-
-            //         if(User::where('email', $given_email)->count()){
-            //             $existing_user =User::where('email',$given_email)->first();
-            //             return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με email $given_email: $existing_user->username, $existing_user->display_name");
-
-            //         }
-            //     }
-            // }
+            
             $user->save();
             $edited = true;
         }

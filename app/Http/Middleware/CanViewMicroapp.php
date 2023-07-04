@@ -22,47 +22,39 @@ class CanViewMicroapp
         $url = $request->url();
         $segments = explode('/', $url);
         $app = end($segments);
-        $microapp = Microapp::where('url', "/".$app)->first();
-        if($microapp){
-            
-            $user = Auth::guard('web')->user();
-            if($user){
-                // echo 'web'; exit;
-                if(MicroappUser::where('user_id',$user->id)
+        $microapp = Microapp::where('url', "/".$app)->firstOrFail(); 
+        $user = Auth::guard('web')->user();
+        if($user){
+            if(MicroappUser::where('user_id',$user->id)
+                ->where('microapp_id', $microapp->id)
+                ->exists()){
+                    return $next($request);
+            }
+        }
+        if($microapp->visible){
+            $teacher = Auth::guard('teacher')->user();
+            if($teacher){
+                if(MicroappStakeholder::where('stakeholder_id',$teacher->id)
+                    ->where('stakeholder_type', 'App\Models\Teacher')
                     ->where('microapp_id', $microapp->id)
                     ->exists()){
                         return $next($request);
                 }
             }
-            if($microapp->visible){
-                $teacher = Auth::guard('teacher')->user();
-                if($teacher){
-                    // echo 'teacher'; exit;
-                    if(MicroappStakeholder::where('stakeholder_id',$teacher->id)
-                        ->where('stakeholder_type', 'App\Models\Teacher')
-                        ->where('microapp_id', $microapp->id)
-                        ->exists()){
-                            return $next($request);
-                    }
-                }
 
-                $school = Auth::guard('school')->user();
-                if($school){
-                    // echo 'school'; exit;
-                    if(MicroappStakeholder::where('stakeholder_id',$school->id)
-                        ->where('microapp_id', $microapp->id)
-                        ->where('stakeholder_type', 'App\Models\School')
-                        ->exists()){
-                            return $next($request);
-                    }
+            $school = Auth::guard('school')->user();
+            if($school){
+                if(MicroappStakeholder::where('stakeholder_id',$school->id)
+                    ->where('microapp_id', $microapp->id)
+                    ->where('stakeholder_type', 'App\Models\School')
+                    ->exists()){
+                        return $next($request);
                 }
-                abort(403, 'Unauthorized action.');
             }
-            else{
-                abort(403, 'Unauthorized action.');   
-            }
+            abort(403, 'Unauthorized action.');
         }
-        abort(404);
-        
+        else{
+            abort(403, 'Unauthorized action.');   
+        }
     }
 }

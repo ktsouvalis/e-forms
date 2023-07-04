@@ -28,41 +28,44 @@
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
                     <th id="search">link</th>
-                    <th id="search">Πατρώνυμο</th>
-                    <th id="search">Μητρώνυμο</th>
+                    <th id="search">last login</th>
                     <th id="search">Κλάδος</th>
                     <th id="search">email</th>
                     <th id="search">email ΠΣΔ</th>
                     <th id="search">Τηλέφωνο</th>
-                    <th id="search">Σχέση Εργασίας</th>
+                    
                     <th id="search">Οργανική</th>
                     {{-- <th id="search">Υπηρέτηση</th> --}}
-                    <th id="search">Οργανική στην Ειδική Αγωγή</th>
+                    
                     
                 </tr>
             </thead>
             <tbody>
             @foreach($all_teachers as $teacher)
+                @php
+                    $date=null;
+                    if($teacher->logged_in_at) 
+                        $date = Illuminate\Support\Carbon::parse($teacher->logged_in_at);
+                @endphp
                 <tr>  
                     <td>{{$teacher->am}}</td>
                     <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
                     <td>{{$teacher->md5}}</td>
-                    <td>{{$teacher->fname}}</td>
-                    <td>{{$teacher->mname}}</td>
+                    @if($date)
+                        <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
+                    @else
+                        <td> - </td>
+                    @endif  
                     <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->mail}}</td>
                     <td>{{$teacher->sch_mail}}</td>
                     <td>{{$teacher->telephone}}</td>
-                    <td>{{$teacher->sxesi_ergasias->name}}</td>
+                    
                     <td>{{$teacher->organiki->name}}</td>
                     {{-- <td>{{$teacher->ypiretisi->name}}</td> --}}
-                    @if($teacher->org_eae)
-                        <td>ΝΑΙ</td>
-                    @else
-                        <td> - </td>
-                    @endif
+                   
                 </tr>
             @endforeach
         </tbody>

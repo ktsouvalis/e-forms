@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\School;
+use App\Mail\ShareLink;
 use App\Models\Teacher;
 use App\Models\Microapp;
 use App\Models\Fileshare;
@@ -185,31 +186,6 @@ Route::post("/dl_file/{fileshare}", [FileshareController::class, 'download_file'
 
 Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
 
-// Route::get('storage/app/{filename}', function ($filename) {
-//     $filePath = storage_path('app/'.$filename);
-//     // dd(basename($filePath));
-//     if (file_exists($filePath)) {
-//         return response()->file($filePath);
-//     }
-
-//     abort(403);
-// })->where('filename','.*')->middleware('download');
-
-
-
-//// TESTING ////////
-// Route::get('/test/{teacher}', [TeacherController::class, 'test']);
-
-// Route::view('/test','test');
-
-// Route::get('/skata_test', [MicroappController::class, 'test']);
-
-// Route::get('/manage_test', function(){
-//     return view('welcome');
-// });
-
-// Route::post("/save_all_day/{school}", [AllDayController::class, 'saveData']);
-
 //ADMIN Routes
 
 Route::view('/', 'index')->name('index');
@@ -239,8 +215,23 @@ Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'd
 
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
 
+
+// MAIL Routes
 Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);
 
 Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanController::class, 'send_to_all_that_have_not_submitted']);
 
 Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);
+
+Route::post("share_link/{type}/{my_id}", function($type, $my_id){
+    if($type=="school"){
+        $school = School::findOrFail($my_id);
+        Mail::to($school->mail)->send(new ShareLink('school', $school->md5));
+    }
+    else{
+        $teacher = Teacher::findOrFail($my_id);
+        Mail::to($teacher->mail)->send(new ShareLink('teacher', $teacher->md5));
+    }
+
+    return back()->with('success', 'Ο σύνδεσμος στάλθηκε επιτυχώς');
+});

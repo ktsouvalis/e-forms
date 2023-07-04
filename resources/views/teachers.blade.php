@@ -20,9 +20,10 @@
 <div class="container">
             
     <div class="table-responsive">
-        <table  id="dataTable" class="table table-sm table-striped table-bordered table-hover">
+        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
+                    <th>Αποστολή συνδέσμου</th>
                     <th id="search">AΜ</th>
                     <th id="search">ΑΦΜ</th>
                     <th id="search">Επώνυμο</th>
@@ -48,6 +49,12 @@
                         $date = Illuminate\Support\Carbon::parse($teacher->logged_in_at);
                 @endphp
                 <tr>  
+                    <td style="text-align:center" >
+                        <form action="{{url("share_link/teacher/$teacher->id")}}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
+                        </form>
+                    </td> 
                     <td>{{$teacher->am}}</td>
                     <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->surname}}</td>

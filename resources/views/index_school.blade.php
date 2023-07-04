@@ -6,7 +6,7 @@
         @php $school = Illuminate\Support\Facades\Auth::guard('school')->user(); @endphp
                         
             @push('title')
-                <title>Υποβολή Στοιχείων</title>
+                <title>Σελίδα Σχολείου</title>
             @endpush
             
 

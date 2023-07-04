@@ -19,9 +19,10 @@
 <body>
 {{-- <div class="container"> --}}
     <div class="table-responsive">
-        <table  id="dataTable" class=" table table-sm table-striped table-bordered table-hover">
+        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
+                    <th>Αποστολή συνδέσμου</th>
                     <th id="search">Κωδικός</th>
                     <th id="search">Ονομασία</th>
                     <th id="search">email</th>
@@ -38,7 +39,13 @@
                     if($school->logged_in_at) 
                         $date = Illuminate\Support\Carbon::parse($school->logged_in_at);
                 @endphp
-                <tr>  
+                <tr>
+                    <td style="text-align:center">
+                        <form action="{{url("share_link/school/$school->id")}}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
+                        </form>
+                    </td>  
                     <td>{{$school->code}}</td>
                     <td>{{$school->name}}</td>
                     <td>{{$school->mail}}</td>

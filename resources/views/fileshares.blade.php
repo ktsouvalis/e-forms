@@ -24,7 +24,7 @@
             $all_departments = App\Models\Department::all();
         @endphp
         <div class="table-responsive">
-        <table  id="dataTable" class="display table table-sm table-striped table-hover">
+        <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
         <thead>
             <tr>
                 <th id="search">ID</th>

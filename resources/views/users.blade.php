@@ -42,7 +42,7 @@
                     $all_departments= App\Models\Department::all();
                 @endphp
                 <div class="table-responsive">
-                <table  id="dataTable" class="display table table-sm table-striped table-hover">
+                <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
@@ -77,7 +77,7 @@
                                 <td>{{$user->updated_at}}</td>
                                 <form action="{{url("/reset_password/$user->id")}}" method="post">
                                 @csrf
-                                    <td><button class="bi bi-key-fill bg-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
+                                    <td><button class="bi bi-key-fill btn btn-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
                                 </form>
                             </tr>
                         @endforeach

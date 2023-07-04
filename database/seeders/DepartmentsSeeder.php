@@ -23,11 +23,11 @@ class DepartmentsSeeder extends Seeder
         ]);
 
         Department::create([
-            'name'=>"Τμήμα Γ' Προσωπικού"
-        ]);
-
-        Department::create([
             'name'=>"Τμήμα Β' Οικονομικού"
+        ]);
+        
+        Department::create([
+            'name'=>"Τμήμα Γ' Προσωπικού"
         ]);
 
         Department::create([

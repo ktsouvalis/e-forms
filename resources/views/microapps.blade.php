@@ -238,11 +238,15 @@
                         <tr>
                             <td>
                             <div class="hstack gap-2">
-                                <input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}})">
+                                <div class="form-check form-switch">
+  
+
+                                <input class="form-check-input" role="switch" type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}})">
                                 <label for="user{{$user->id}}"> {{$user->display_name}} </label>
                             
                                 <div id="space{{$user->id}}">
 
+                                </div>
                                 </div>
                             </div>
                             </td>

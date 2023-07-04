@@ -21,6 +21,7 @@
     <div class="container">
         @php      
             $all_fileshares = App\Models\Fileshare::all();
+            $all_departments = App\Models\Department::all();
         @endphp
         <div class="table-responsive">
         <table  id="dataTable" class="display table table-sm table-striped table-hover">
@@ -68,14 +69,29 @@
                             <span class="input-group-text w-25" id="basic-addon2">Τίτλος</span>
                             <input name="fileshare_name" type="text" class="form-control" placeholder="filesharename" aria-label="filesharename" aria-describedby="basic-addon2" required><br>
                         </div>
-                        <div class="input-group">
+                        {{-- <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Κοινά αρχεία</span>
                             <input name="fileshare_common_files[]" type="file" class="form-control" multiple ><br>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Προσωπικά αρχεία</span>
                             <input name="fileshare_personal_files[]" type="file" class="form-control" multiple><br>
+                        </div> --}}
+                        @can('chooseDepartment',App\Models\Fileshare::class)
+                        <div class="input-group">
+                            <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>
+                            <select name="department" class="form-select" aria-label="Default select example">
+                                @foreach($all_departments as $department)
+                                @php
+                                    $selected=null;
+                                    if($department->id == 5)
+                                        $selected="selected";   
+                                @endphp
+                                <option {{$selected}} value="{{$department->id}}">{{$department->name}}</option>
+                                @endforeach
+                            </select>
                         </div>
+                        @endcan
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>

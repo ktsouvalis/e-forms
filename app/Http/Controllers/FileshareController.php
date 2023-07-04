@@ -16,42 +16,27 @@ use Illuminate\Support\Facades\Validator;
 class FileshareController extends Controller
 {
     /**
-     * Insert a new fileshare into database, set it's directories.
+     * Insert a new fileshare into database.
      *
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function insert_fileshare(Request $request)
     {
+        if($request->user()->can('chooseDepartment', Fileshare::class)){
+
+            $department_id = $request->input('department');
+        }
+        else{
+            $department_id = $request->user()->department->id;
+        }
         // create a database record
         $newFileshare = Fileshare::create([
             'name' => $request->all()['fileshare_name'],
-            'department_id' => Auth::user()->department->id
+            'department_id' => $department_id
         ]);
 
-        // set the directories for common and personal files
-        $directory_common = 'fileshare'.$newFileshare->id;
-        $directory_personal = $directory_common.'/personal_files';
-        
-        $common_files = $request->file('fileshare_common_files');
-
-        // store common files if any
-        if ($common_files) {
-            foreach ($common_files as $file) {
-                $path = $file->storeAs($directory_common, $file->getClientOriginalName(), 'local');
-            }
-        }
-
-        $personal_files = $request->file('fileshare_personal_files');
-
-        //store personal files if any
-        if ($personal_files) {
-            foreach ($personal_files as $file) {
-                $path = $file->storeAs($directory_personal, $file->getClientOriginalName(), 'local');
-            }
-        }
-
-        return redirect(url('/fileshares'))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε και άλλα αρχεία στη συνέχεια.');
+        return redirect(url('/fileshares'))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.');
     }
 
     /**

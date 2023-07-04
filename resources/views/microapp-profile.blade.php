@@ -130,13 +130,15 @@
                             <tr>
                                 <td>
                                 <div class="hstack gap-2">
-                                    <input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}}, '{{$checked_radio_can}}')" {{$checked_checkbox}}>
+                                    <div class="form-check form-switch">
+                                    <input class="form-check-input" role="switch" type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}}, '{{$checked_radio_can}}')" {{$checked_checkbox}}>
                                     @php
                                         $existed_user = $microapp->users->where('user_id', $user->id);
                                     @endphp
                                     <label for="user{{$user->id}}">@if($existed_user->count() and $existed_user->first()->can_edit) <strong> @endif  {{$user->display_name}}</strong> </label>
                                     <div id="space{{$user->id}}">
                                         
+                                    </div>
                                     </div>
                                 </div>
                                 </td>

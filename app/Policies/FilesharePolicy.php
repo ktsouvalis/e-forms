@@ -69,4 +69,9 @@ class FilesharePolicy
     {
         //
     }
+
+    public function chooseDepartment(User $user): bool{
+        if(in_array($user->id,[1,2])) return true;
+        return false;
+    }
 }

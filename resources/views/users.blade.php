@@ -24,14 +24,14 @@
         <a href="/users_dl" class="btn btn-primary bi bi-download"> Λήψη αρχείου χρηστών </a>
     </div> --}}
 <!--tabs-->
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link @isset($active_tab) @if($active_tab=='search') {{'active'}} @endif @else {{'active'}} @endisset" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Αναζήτηση Χρήστη</button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link @isset($active_tab) @if($active_tab=='import') {{'active'}} @endif @endisset" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Μαζική Εισαγωγή Χρηστών</button>
         </li>
-    </ul>
+    </ul> --}}
 <!--tab content-->
     <div class="tab-content" id="myTabContent">
 
@@ -39,6 +39,7 @@
             <!-- 1st tab's content-->
                 @php      
                     $all_users = App\Models\User::all();
+                    $all_departments= App\Models\Department::all();
                 @endphp
                 <div class="table-responsive">
                 <table  id="dataTable" class="display table table-sm table-striped table-hover">
@@ -48,6 +49,7 @@
                         <th id="search">Username</th>
                         <th id="search">DisplayName</th>
                         <th id="search">email</th>
+                        <th id="search">Τμήμα</th>
                         <th id="search">Έχει πρόσβαση</th>
                         <th id="search">CreatedAt</th>
                         <th id="search">UpdatedAt</th>
@@ -61,6 +63,7 @@
                                 <td>{{$user->username}}</td>
                                 <td><div class="badge bg-primary text-wrap"><a href="/user_profile/{{$user->id}}" style="color:white; text-decoration:none;">{{$user->display_name}}</a></div></td>
                                 <td>{{$user->email}}</td>
+                                <td>{{$user->department->name}}</td>
                                 <td>
                                     <table class="table table-sm table-striped table-hover table-bordered">
                                         @foreach ($user->operations as $one_operation)
@@ -114,8 +117,17 @@
                         <input name="user_email3" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="@if(session()->has('old_data')){{session('old_data')['user_email3']}}@endif" ><br>
                     </div>
                     <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>
+                        <select name="user_department3" class="form-select" aria-label="Default select example">
+                            <option selected>Επιλογή τμήματος</option>
+                            @foreach($all_departments as $department)
+                            <option value="{{$department->id}}">{{$department->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon6">τηλέφωνο</span>
-                        <input name="user_telephone3" type="text" class="form-control" placeholder="τηλέφωνο" aria-label="τηλέφωνο" aria-describedby="basic-addon4" required value="@if(session()->has('old_data')){{session('old_data')['user_telephone3']}}@endif" ><br>
+                        <input name="user_telephone3" type="text" class="form-control" placeholder="τηλέφωνο" aria-label="τηλέφωνο" aria-describedby="basic-addon6" required value="@if(session()->has('old_data')){{session('old_data')['user_telephone3']}}@endif" ><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>
@@ -145,7 +157,7 @@
             </div></div>
         </div>
 
-        <div class="tab-pane fade @isset($active_tab) @if($active_tab=='import') {{'show active'}} @endif @endisset" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+        {{-- <div class="tab-pane fade @isset($active_tab) @if($active_tab=='import') {{'show active'}} @endif @endisset" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
             @if(empty($asks_to))
             <nav class="navbar navbar-light bg-light">
                 <a href="{{url("/users_template.xlsx")}}" class="link-info">Πρότυπο αρχείο για συμπλήρωση</a>
@@ -198,7 +210,7 @@
             @isset($dberror2)
                 <div class="alert alert-danger" role="alert">{{$dberror2}}</div>
             @endisset
-        </div>
+        </div> --}}
     </div>
     </div>
 

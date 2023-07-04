@@ -61,111 +61,11 @@ class UserController extends Controller
         return back()->with('success',"Ο κωδικός του χρήστη $user->username άλλαξε επιτυχώς");
     }
 
-    public function importUsers(Request $request){
-        $rule = [
-            'import_users' => 'required|mimes:xlsx'
-        ];
-        $validator = Validator::make($request->all(), $rule);
-        if($validator->fails()){ 
-            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            
-        }
-        $filename = "users_file_".Auth::id().".xlsx"; 
-        $path = $request->file('import_users')->storeAs('files', $filename);
-        $mime = Storage::mimeType($path);
-        $spreadsheet = IOFactory::load("../storage/app/$path");
-        $users_array=array();
-        $row=2;
-        $error=0;
-        $rowSumValue="1";
-        while ($rowSumValue != "" && $row<10000){
-            $check=array();
-            $check['username'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-            $check['display_name']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-            $check['email']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
-            $check['password']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
-
-            if($check['username']=='' or $check['username']==null){
-                $error = 1; 
-                $check['username']="Κενό πεδίο";
-            }
-            else{
-                if(User::where('username', $check['username'])->count()){
-                    $error = 1;
-                    $check['username']="Υπάρχει ήδη το username";
-                }
-            }
-
-            $rule = [
-                'display_name' => 'required'
-            ];
-            $validator = Validator::make($check, $rule);
-            if($validator->fails()){ 
-                $error=1;
-                $check['display_name']="Κενό πεδίο";
-            }
-            
-            if($check['email']=='' or $check['email']==null){
-                $error = 1; 
-                $check['email']="Κενό πεδίο";
-            }
-            else{
-                if(User::where('email', $check['email'])->count()){
-                    $error = 1;
-                    $check['email']="Υπάρχει ήδη το email";
-                }
-            }
-
-            $rule = [
-                'password' => 'required'
-            ];
-            $validator = Validator::make($check, $rule);
-            if($validator->fails()){ 
-                $error=1;
-                $check['password']="Κενό πεδίο";
-            }
-           
-            array_push($users_array, $check);
-            $row++;
-            $rowSumValue="";
-            for($col=1;$col<=5;$col++){
-                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
-            }
-        }
-        
-        if($error){
-            return view('users',['users_array'=>$users_array,'active_tab'=>'import', 'asks_to'=>'error']);
-        }
-        else{
-            session(['ysers' => $users_array]);
-            return view('users',['users_array'=>$users_array,'active_tab'=>'import', 'asks_to'=>'save']);
-        }
-    }
-
-    public function insertUsers(){
-        $users_array = session('ysers');
-        $imported=0;
-        foreach($users_array as $one_user){
-            $user = new User();
-            $user->username = $one_user['name'];
-            $user->display_name = $one_user['display_name'];
-            $user->email = $one_user['email'];
-            $user->password = bcrypt($one_user['password']);
-            try{
-                $imported++;
-                $user->save();
-            } 
-            catch(QueryException $e){
-                return view('users',['dberror2'=>"Κάποιο πρόβλημα προέκυψε, προσπαθήστε ξανά.", 'active_tab'=>'import']);
-            }
-        }
-        session()->forget('ysers');
-        return redirect(url('/users'))->with('success', "Η εισαγωγή $imported χρηστών ολοκληρώθηκε");
-    }
-
+    
     public function insertUser(Request $request){
         //VALIDATION
         $incomingFields = $request->all();
+
         $given_name = $incomingFields['user_name3'];
         // $given_email = $incomingFields['user_email3'];
 
@@ -174,6 +74,12 @@ class UserController extends Controller
             return redirect(url('/manage_users'))
                 ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->display_name, $existing_user->email")
                 ->with('old_data', $incomingFields);
+        }
+
+        if($incomingFields['user_department3']=="Επιλογή τμήματος"){
+            return redirect(url('/manage_users'))
+                ->with('failure', "Πρέπει να επιλέξετε τμήμα")
+                ->with('old_data', $incomingFields);   
         }
         
         //VALIDATION PASSED
@@ -184,7 +90,8 @@ class UserController extends Controller
                 'display_name' => $incomingFields['user_display_name3'],
                 'email' => $incomingFields['user_email3'],
                 'password' => bcrypt($incomingFields['user_password3']),
-                'telephone' => $incomingFields["user_telephone3"]
+                'telephone' => $incomingFields["user_telephone3"],
+                'department_id' => $incomingFields["user_department3"]
             ]);
         } 
         catch(QueryException $e){
@@ -196,9 +103,9 @@ class UserController extends Controller
         foreach($request->all() as $key=>$value){
             if(substr($key,0,9)=='operation'){
                 UsersOperations::create([
-                    'user_id'=>$record->id,
-                    'operation_id'=>$value,
-                    'can_edit' =>0
+                    'user_id' => $record->id,
+                    'operation_id' => $value,
+                    'can_edit' => 0
                 ]); 
             }
         }
@@ -216,6 +123,7 @@ class UserController extends Controller
         $user->display_name = $incomingFields['user_display_name'];
         $user->email = $incomingFields['user_email'];
         $user->telephone = $incomingFields['user_telephone'];
+        $user->department_id = $incomingFields['user_department'];
         $edited=false;
         // check if changes happened to user table
         if($user->isDirty()){
@@ -298,3 +206,107 @@ class UserController extends Controller
         return response()->download("$filename");
     }
 }
+
+
+// public function importUsers(Request $request){
+    //     $rule = [
+    //         'import_users' => 'required|mimes:xlsx'
+    //     ];
+    //     $validator = Validator::make($request->all(), $rule);
+    //     if($validator->fails()){ 
+    //         return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            
+    //     }
+    //     $filename = "users_file_".Auth::id().".xlsx"; 
+    //     $path = $request->file('import_users')->storeAs('files', $filename);
+    //     $mime = Storage::mimeType($path);
+    //     $spreadsheet = IOFactory::load("../storage/app/$path");
+    //     $users_array=array();
+    //     $row=2;
+    //     $error=0;
+    //     $rowSumValue="1";
+    //     while ($rowSumValue != "" && $row<10000){
+    //         $check=array();
+    //         $check['username'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+    //         $check['display_name']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
+    //         $check['email']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
+    //         $check['password']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+
+    //         if($check['username']=='' or $check['username']==null){
+    //             $error = 1; 
+    //             $check['username']="Κενό πεδίο";
+    //         }
+    //         else{
+    //             if(User::where('username', $check['username'])->count()){
+    //                 $error = 1;
+    //                 $check['username']="Υπάρχει ήδη το username";
+    //             }
+    //         }
+
+    //         $rule = [
+    //             'display_name' => 'required'
+    //         ];
+    //         $validator = Validator::make($check, $rule);
+    //         if($validator->fails()){ 
+    //             $error=1;
+    //             $check['display_name']="Κενό πεδίο";
+    //         }
+            
+    //         if($check['email']=='' or $check['email']==null){
+    //             $error = 1; 
+    //             $check['email']="Κενό πεδίο";
+    //         }
+    //         else{
+    //             if(User::where('email', $check['email'])->count()){
+    //                 $error = 1;
+    //                 $check['email']="Υπάρχει ήδη το email";
+    //             }
+    //         }
+
+    //         $rule = [
+    //             'password' => 'required'
+    //         ];
+    //         $validator = Validator::make($check, $rule);
+    //         if($validator->fails()){ 
+    //             $error=1;
+    //             $check['password']="Κενό πεδίο";
+    //         }
+           
+    //         array_push($users_array, $check);
+    //         $row++;
+    //         $rowSumValue="";
+    //         for($col=1;$col<=5;$col++){
+    //             $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+    //         }
+    //     }
+        
+    //     if($error){
+    //         return view('users',['users_array'=>$users_array,'active_tab'=>'import', 'asks_to'=>'error']);
+    //     }
+    //     else{
+    //         session(['ysers' => $users_array]);
+    //         return view('users',['users_array'=>$users_array,'active_tab'=>'import', 'asks_to'=>'save']);
+    //     }
+    // }
+
+    // public function insertUsers(){
+    //     $users_array = session('ysers');
+    //     $imported=0;
+    //     foreach($users_array as $one_user){
+    //         $user = new User();
+    //         $user->username = $one_user['name'];
+    //         $user->display_name = $one_user['display_name'];
+    //         $user->email = $one_user['email'];
+    //         $user->password = bcrypt($one_user['password']);
+    //         try{
+    //             $imported++;
+    //             $user->save();
+    //         } 
+    //         catch(QueryException $e){
+    //             return view('users',['dberror2'=>"Κάποιο πρόβλημα προέκυψε, προσπαθήστε ξανά.", 'active_tab'=>'import']);
+    //         }
+    //     }
+    //     session()->forget('ysers');
+    //     return redirect(url('/users'))->with('success', "Η εισαγωγή $imported χρηστών ολοκληρώθηκε");
+    // }
+

@@ -1,4 +1,7 @@
 <x-layout>
+    @php
+        $all_departments = App\Models\Department::all();
+    @endphp
     <div class="container py-5">
         <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
@@ -23,6 +26,19 @@
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">τηλέφωνο</span>
                         <input name="user_telephone" type="text" class="form-control" placeholder="telephone" aria-label="telephone" aria-describedby="basic-addon4" required value="{{$user->telephone}}" ><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>
+                        <select name="user_department" class="form-select" aria-label="Default select example">
+                            @foreach($all_departments as $department)
+                            @php
+                                $selected=null;
+                                if($department->id == $user->department->id)
+                                    $selected="selected";   
+                            @endphp
+                            <option {{$selected}} value="{{$department->id}}">{{$department->name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <input type="hidden" name="user_id" value="{{$user->id}}">
                     <div class="input-group">

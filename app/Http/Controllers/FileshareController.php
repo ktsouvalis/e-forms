@@ -24,7 +24,6 @@ class FileshareController extends Controller
     public function insert_fileshare(Request $request)
     {
         if($request->user()->can('chooseDepartment', Fileshare::class)){
-
             $department_id = $request->input('department');
         }
         else{

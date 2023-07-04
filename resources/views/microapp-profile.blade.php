@@ -103,6 +103,7 @@
                         <input name="icon" type="text" class="form-control" placeholder="Icon" aria-label="Icon" aria-describedby="basic-addon5" required value="{{$microapp->icon}}" ><br>
                     </div>
                     <input type="hidden" name="microapp_id" value="{{$microapp->id}}">
+                    @can('addUser', App\Models\Microapp::class)
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Χρήστες</span>
                         @php
@@ -147,6 +148,7 @@
                         @endforeach
                         </table>
                     </div>
+                    @endcan
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>

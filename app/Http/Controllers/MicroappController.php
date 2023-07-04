@@ -163,42 +163,42 @@ class MicroappController extends Controller
             $microapp->save();
             $edited = true;
         }
-        
-        // everything is going to be deleted from the microapps_users table and rewriten
-        $old_records = $microapp->users;
-        $microapp->users()->delete();
+        if($request->user()->can('addUser', Microapp::class)){
+            // everything is going to be deleted from the microapps_users table and rewriten
+            $old_records = $microapp->users;
+            $microapp->users()->delete();
 
-        //check if some other users except the admins are coming in from the input and add these records to the microapps_users table
-        foreach($request->all() as $key=>$value){
-            if(substr($key,0,4)=='user'){ //checks if some user's checkbox is checked
-                $user_id=$value;
-                if(isset($incomingFields['edit'.$user_id])){ //checks if the radio buttons and their values come as excpected 
-                    $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1; //for a new user in microapp checks radiobuttons
+            //check if some other users except the admins are coming in from the input and add these records to the microapps_users table
+            foreach($request->all() as $key=>$value){
+                if(substr($key,0,4)=='user'){ //checks if some user's checkbox is checked
+                    $user_id=$value;
+                    if(isset($incomingFields['edit'.$user_id])){ //checks if the radio buttons and their values come as excpected 
+                        $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1; //for a new user in microapp checks radiobuttons
+                    }
+                    else{
+                        $can_edit = $old_records->where('user_id', $user_id)->first()->can_edit; // for an existing user with no changes in radios
+                    }
+                    MicroappUser::create([
+                        'microapp_id' => $microapp->id,
+                        'user_id' => $user_id,
+                        'can_edit' => $can_edit
+                    ]);
                 }
-                else{
-                    $can_edit = $old_records->where('user_id', $user_id)->first()->can_edit; // for an existing user with no changes in radios
-                }
-                MicroappUser::create([
-                    'microapp_id' => $microapp->id,
-                    'user_id' => $user_id,
-                    'can_edit' => $can_edit
-                ]);
             }
+
+            // add admins again in microapp 
+            MicroappUser::create([
+                'microapp_id'=>$microapp->id,
+                'user_id'=>1,
+                'can_edit' => 1
+            ]);
+            
+            MicroappUser::create([
+                'microapp_id'=>$microapp->id,
+                'user_id'=>2,
+                'can_edit' => 1
+            ]); 
         }
-
-        // add admins again in microapp 
-        MicroappUser::create([
-            'microapp_id'=>$microapp->id,
-            'user_id'=>1,
-            'can_edit' => 1
-        ]);
-        
-         MicroappUser::create([
-            'microapp_id'=>$microapp->id,
-            'user_id'=>2,
-            'can_edit' => 1
-        ]); 
-
         return redirect(url("/microapp_profile/$microapp->id"))->with('success',"Επιτυχής αποθήκευση των στοιχείων και των χρηστών της μικροεφαρμογής $microapp->name");
     }
 

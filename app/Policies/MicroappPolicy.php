@@ -76,4 +76,8 @@ class MicroappPolicy
         return false;
             
     }
+
+    public function addUser(User $user): bool {
+        return in_array($user->id,[1,2]);   
+    }
 }

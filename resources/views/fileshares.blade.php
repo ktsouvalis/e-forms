@@ -69,14 +69,6 @@
                             <span class="input-group-text w-25" id="basic-addon2">Τίτλος</span>
                             <input name="fileshare_name" type="text" class="form-control" placeholder="filesharename" aria-label="filesharename" aria-describedby="basic-addon2" required><br>
                         </div>
-                        {{-- <div class="input-group">
-                            <span class="input-group-text w-25" id="basic-addon2">Κοινά αρχεία</span>
-                            <input name="fileshare_common_files[]" type="file" class="form-control" multiple ><br>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text w-25" id="basic-addon2">Προσωπικά αρχεία</span>
-                            <input name="fileshare_personal_files[]" type="file" class="form-control" multiple><br>
-                        </div> --}}
                         @can('chooseDepartment',App\Models\Fileshare::class)
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>

@@ -219,10 +219,6 @@
                     <span class="input-group-text w-25" id="basic-addon2">icon</span>
                     <input name="microapp_icon" type="text" class="form-control" placeholder="π.χ. bi bi-menu" aria-label="microappicon" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['operation_icon']}}@endisset"><br>
                 </div>
-                {{-- <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Έναρξη</span>
-                    <input name="microapp_opens_at" type="date" class="form-control" aria-label="microopensat" aria-describedby="basic-addon2" required ><br>
-                </div> --}}
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Λήξη</span>
                     <input name="microapp_closes_at" type="date" class="form-control"  aria-label="microappclosesat" aria-describedby="basic-addon2" required ><br>

@@ -15,8 +15,6 @@
     @endpush
     @php
         $schools_array = session('schools_array');
-        // $codes = array_column($schools_array, 'code');
-        // $recordsToDelete = App\Models\School::whereNotIn('code', $codes)->get();
     @endphp
     <div class="container">
         <div class="p-3 mb-2 bg-success text-white">Σχολεία που θα εισαχθούν ή θα ανανεωθούν</div>

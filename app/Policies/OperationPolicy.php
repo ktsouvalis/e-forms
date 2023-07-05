@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Operation;
+use App\Models\Superadmin;
 use App\Models\UsersOperations;
 use Illuminate\Auth\Access\Response;
 
@@ -36,7 +37,7 @@ class OperationPolicy
     public function create(User $user): bool
     {
         //
-        return in_array($user->id, [1, 2]);
+        return Superadmin::where('user_id',$user->id)->exists();
     }
 
     /**

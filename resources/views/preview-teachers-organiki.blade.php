@@ -15,8 +15,6 @@
     @endpush
     @php
         $teachers_array = session('teachers_array');
-        // $afms = array_column($teachers_array, 'afm');
-        // $recordsToDelete = App\Models\Teacher::whereNotIn('afm', $afms)->get();
     @endphp
     <div class="container">
         <div class="p-3 mb-2 bg-success text-white">Εκπαιδευτικοί που θα εισαχθούν ή θα ανανεωθούν</div>

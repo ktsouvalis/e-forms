@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Teacher;
 use App\Models\Fileshare;
+use App\Models\Superadmin;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +25,7 @@ class FilesharePolicy
     public function view(User $user, Fileshare $fileshare): bool
     {
         //
-        if(in_array($user->id,[1,2])) return true;
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         if($user->department->fileshares->find($fileshare->id)) return true;
         return false;
     }
@@ -35,7 +36,6 @@ class FilesharePolicy
     public function create(User $user): bool
     {
         //
-        // return in_array($user->id,[1,2]);
     }
 
     /**
@@ -71,7 +71,6 @@ class FilesharePolicy
     }
 
     public function chooseDepartment(User $user): bool{
-        if(in_array($user->id,[1,2])) return true;
-        return false;
+        return Superadmin::where('user_id',$user->id)->exists();
     }
 }

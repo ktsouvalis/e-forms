@@ -111,7 +111,7 @@
                         @endphp
                         <table>
                         @foreach($all_users as $user)
-                            @if($user->id <>1 and $user->id <>2)
+                            @if(!App\Models\Superadmin::where('user_id',$user->id)->exists())
                                 @php
                                 
                                     $checked_checkbox="";

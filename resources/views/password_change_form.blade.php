@@ -3,7 +3,7 @@
         <title>Αλλαγή Κωδικού Πρόσβασης</title>
     @endpush
     @php
-        $user= App\Models\User::find(Illuminate\Support\Facades\Auth::id());
+        $user= Illuminate\Support\Facades\Auth::user();
     @endphp
     <div class="container">
         {{-- @include('menu') --}}

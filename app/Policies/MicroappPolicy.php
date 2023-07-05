@@ -2,8 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Microapp;
 use App\Models\User;
+use App\Models\Microapp;
+use App\Models\Superadmin;
 use Illuminate\Auth\Access\Response;
 
 class MicroappPolicy
@@ -31,7 +32,7 @@ class MicroappPolicy
     public function create(User $user): bool
     {
         //
-        return in_array($user->id,[1,2]);
+        return Superadmin::where('user_id',$user->id)->exists();
     }
 
     /**
@@ -67,7 +68,7 @@ class MicroappPolicy
     }
 
     public function deactivate(User $user): bool {
-        return in_array($user->id,[1,2]);
+        return Superadmin::where('user_id',$user->id)->exists();
     }
 
     public function beViewedByAdmins(User $user, Microapp $microapp): bool{
@@ -78,6 +79,6 @@ class MicroappPolicy
     }
 
     public function addUser(User $user): bool {
-        return in_array($user->id,[1,2]);   
+        return Superadmin::where('user_id',$user->id)->exists();   
     }
 }

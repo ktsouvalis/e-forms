@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\User;
+use App\Models\Superadmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,8 +17,7 @@ class isBoss
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = User::where('id',Auth::id())->first();
-        if($user->id == 1 or $user->id == 2){
+        if(Superadmin::where('user_id',Auth::guard('web')->id())->exists()){
             return $next($request);
         } 
 

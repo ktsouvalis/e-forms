@@ -50,7 +50,7 @@
         
         
           {{-- Μενού διαχείρισης χρηστών  --}}
-        @if(Auth::id()==1 or Auth::id()==2)
+        @if(App\Models\Superadmin::where('user_id',$user->id)->exists())
         <hr>
         <li class="nav-item">
           <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
@@ -63,7 +63,7 @@
         {{-- Μενού για operations --}}
         
         <hr>
-        @if(Auth::id()==1 or Auth::id()==2)
+        @if(App\Models\Superadmin::where('user_id',$user->id)->exists())
         
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">

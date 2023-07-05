@@ -84,7 +84,7 @@
                 $all_microapps = App\Models\Microapp::all();
             @endphp
             <div class="table-responsive">
-            <table  id="dataTable" class="display table table-sm table-striped table-hover">
+            <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
             <thead>
                 <tr>
                     <th id="search">ID</th>
@@ -230,7 +230,7 @@
                     @endphp
                     <table>
                     @foreach($users as $user)
-                    @if($user->id<>1 and $user->id <> 2)
+                    @if(!App\Models\Superadmin::where('user_id',$user->id)->exists())
                         <tr>
                             <td>
                             <div class="hstack gap-2">

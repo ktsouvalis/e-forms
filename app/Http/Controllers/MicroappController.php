@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Microapp;
+use App\Models\Superadmin;
 use App\Models\MicroappUser;
 use Illuminate\Http\Request;
 use App\Models\MicroappStakeholder;
@@ -59,18 +60,14 @@ class MicroappController extends Controller
             }
         }
 
-        // add tsouvalis and stefanopoulos to the microapps_users table with edit privileges
-        MicroappUser::create([
-            'microapp_id'=>$record->id,
-            'user_id'=>1,
-            'can_edit' => 1
-        ]);
-        
-         MicroappUser::create([
-            'microapp_id'=>$record->id,
-            'user_id'=>2,
-            'can_edit' => 1
-        ]); 
+        // add superadmins to the microapps_users table with edit privileges
+        foreach(Superadmin::all() as $superadmin){
+            MicroappUser::create([
+                'microapp_id'=>$record->id,
+                'user_id'=>$superadmin->user_id,
+                'can_edit' => 1
+            ]);
+        }
 
         return redirect(url('/microapps'))->with('success', 'Τα στοιχεία της εφαρμογής καταχωρήθηκαν επιτυχώς');
     }
@@ -187,17 +184,13 @@ class MicroappController extends Controller
             }
 
             // add admins again in microapp 
-            MicroappUser::create([
-                'microapp_id'=>$microapp->id,
-                'user_id'=>1,
-                'can_edit' => 1
-            ]);
-            
-            MicroappUser::create([
-                'microapp_id'=>$microapp->id,
-                'user_id'=>2,
-                'can_edit' => 1
-            ]); 
+            foreach(Superadmin::all() as $superadmin){
+                MicroappUser::create([
+                    'microapp_id'=>$microapp->id,
+                    'user_id'=>$superadmin->user_id,
+                    'can_edit' => 1
+                ]);
+            }
         }
         return redirect(url("/microapp_profile/$microapp->id"))->with('success',"Επιτυχής αποθήκευση των στοιχείων και των χρηστών της μικροεφαρμογής $microapp->name");
     }

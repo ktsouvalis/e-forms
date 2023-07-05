@@ -89,8 +89,6 @@
                     <form action="{{url("/insert_whocan/$my_app/$my_id")}}" method="post" enctype="multipart/form-data>">
                         @csrf
                         <button type="submit" class="btn btn-primary bi bi-file-arrow-up p-2 col"> Αποστολή</button>
-                        {{-- <input type="hidden" name="my_app" value="{{$my_app}}">
-                        <input type="hidden" name="my_id" value="{{$my_id}}"> --}}
                     </form>
             @else
                 <div class="hstack gap-3">

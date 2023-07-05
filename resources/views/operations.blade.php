@@ -23,7 +23,7 @@
                 $all_operations = App\Models\Operation::all();
             @endphp
             <div class="table-responsive">
-            <table  id="dataTable" class="display table table-sm table-striped table-hover">
+            <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
             <thead>
                 <tr>
                     <th id="search">ID</th>
@@ -104,8 +104,7 @@
                     @endphp
                     <table>
                     @foreach($users as $user)
-                    @if($user->id<>1 and $user->id <> 2)
-                        <tr>
+                    @if(!App\Models\Superadmin::where('user_id',$user->id)->exists())
                             <td><input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="{{$user->id}}">
                             <label for="{{$user->id}}"> {{$user->display_name}} </label></td>
                         </tr>

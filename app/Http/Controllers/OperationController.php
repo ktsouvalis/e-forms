@@ -45,18 +45,14 @@ class OperationController extends Controller
             }
         }
 
-        // add tsouvalis and stefanopoulos manually
-        UsersOperations::create([
-            'operation_id' => $record->id,
-            'user_id' => 1,
-            'can_edit' => 1
-        ]);
-
-        UsersOperations::create([
-            'operation_id' => $record->id,
-            'user_id' => 2,
-            'can_edit' => 1
-        ]);
+        // add superadmins manually
+        foreach(Superadmin::all() as $superadmin){
+            UsersOperations::create([
+                'operation_id'=>$record->id,
+                'user_id'=>$superadmin->user_id,
+                'can_edit' => 1
+            ]);
+        }
 
         return view('operations', ['record' => $record]);
     }

@@ -19,6 +19,7 @@ class TeacherPolicy
         if(Superadmin::where('user_id',$user->id)->exists()) return true;
         $operation = Operation::find(2); // teachers operation is id 2 from the seeder
         return ($operation->users->where('user_id', $user->id)->count());
+        return false;
     }
 
     /**

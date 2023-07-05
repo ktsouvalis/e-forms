@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Models\Microapp;
+use App\Models\Superadmin;
 use App\Models\MicroappUser;
 use Illuminate\Http\Request;
 use App\Models\MicroappStakeholder;
@@ -25,6 +26,9 @@ class CanViewMicroapp
         $microapp = Microapp::where('url', "/".$app)->firstOrFail(); 
         $user = Auth::guard('web')->user();
         if($user){
+            if(Superadmin::where('user_id',$user->id)->exists()){
+                return $next($request);
+            }
             if(MicroappUser::where('user_id',$user->id)
                 ->where('microapp_id', $microapp->id)
                 ->exists()){

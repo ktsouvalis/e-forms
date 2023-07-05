@@ -26,6 +26,16 @@
   
   @php
     $user = Auth::user();
+    if(App\Models\Superadmin::where('user_id',$user->id)->exists()){
+        $operations=App\Models\Operation::all(); //$operations is Operation model
+        $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
+        $super_admin=true;
+    }
+    else {
+        $operations=$user->operations; //$operations is UsersOperations model
+        $microapps=$user->microapps; // $microapps is MicroappUser model
+        $super_admin=false;
+    }
   @endphp
   <div class="row">
   
@@ -72,11 +82,19 @@
         </div>
         </li>
         @endif
-        @foreach ($user->operations as $one_operation)
+        @foreach ($operations as $operation)
+        @php
+            if(!$super_admin){
+                $one_operation = $operation->operation;
+            }
+            else{
+                $one_operation = $operation;
+            }
+        @endphp
             <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->operation->color}}; text-align:center;">
-              <div class="text-dark {{$one_operation->operation->icon}}"></div> 
-              <a href="{{url($one_operation->operation->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_operation->operation->name}}</a>
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_operation->color}}; text-align:center;">
+              <div class="text-dark {{$one_operation->icon}}"></div> 
+              <a href="{{url($one_operation->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_operation->name}}</a>
             </div>
             </li> 
         @endforeach
@@ -115,15 +133,23 @@
           <a href="{{url('/microapps')}}" style="text-decoration:none;" class="text-dark"> Μικροεφαρμογές</a>
         </div>
         </li>
-        @foreach ($user->microapps as $one_microapp)
-        @can('beViewedByAdmins', $one_microapp->microapp)
+        @foreach ($microapps as $microapp)
+        @php
+          if(!$super_admin){
+              $one_microapp = $microapp->microapp;
+          }
+          else{
+              $one_microapp = $microapp;
+          }
+        @endphp
+        @if($one_microapp->active)
             <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
-              <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
-              <a href="{{url("/admin".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}} @if(!$one_microapp->microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->color}}; text-align:center;">
+              <div class="text-dark {{$one_microapp->icon}}"></div> 
+              <a href="{{url("/admin".$one_microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
             </div>
             </li> 
-        @endcan
+        @endif
         @endforeach
         
         

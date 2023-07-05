@@ -49,7 +49,7 @@ class MicroappPolicy
                 return true;
             }
             else{
-                if($user->microapps->where('microapp_id', $microapp->id)->exists()){
+                if($user->microapps->where('microapp_id', $microapp->id)){
                     if($user->microapps->where('microapp_id', $microapp->id)->first()->can_edit){
                         return true;
                     }  
@@ -92,12 +92,12 @@ class MicroappPolicy
         return Superadmin::where('user_id',$user->id)->exists();
     }
 
-    public function beViewedByAdmins(User $user, Microapp $microapp): bool{
-        if($microapp->active) return true;
+    // public function beViewedByAdmins(User $user, Microapp $microapp): bool{
+    //     if($microapp->active) return true;
         
-        return false;
+    //     return false;
             
-    }
+    // }
 
     public function addUser(User $user): bool {
         return Superadmin::where('user_id',$user->id)->exists();   

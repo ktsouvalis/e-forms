@@ -56,43 +56,5 @@ class AdminsSeeder extends Seeder
             'color' => 'LightSalmon',
             'icon' => 'fa-solid fa-chalkboard-user'
         ]);
-
-        // ASSIGN OPERATIONS TO USERS
-
-        UsersOperations::create([
-            'user_id'=>1,
-            'operation_id'=>2,
-            'can_edit'=>1
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>2,
-            'operation_id'=>2,
-            'can_edit'=>1
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>1,
-            'operation_id'=>1,
-            'can_edit'=>1
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>2,
-            'operation_id'=>1,
-            'can_edit'=>1
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>3,
-            'operation_id'=>1,
-            'can_edit'=>0
-        ]);
-
-        UsersOperations::create([
-            'user_id'=>3,
-            'operation_id'=>2,
-            'can_edit'=>0
-        ]);
     }
 }

@@ -10,6 +10,18 @@
             @php
                 $user =  Illuminate\Support\Facades\Auth::user();
                 $fileshares = App\Models\Fileshare::all();
+               
+                if(App\Models\Superadmin::where('user_id',$user->id)->exists()){
+                    $operations=App\Models\Operation::all(); //$operations is Operation model
+                    $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
+                    $super_admin=true;
+                }
+                else {
+                    $operations=$user->operations; //$operations is UsersOperations model
+                    $microapps=$user->microapps; // $microapps is MicroappUser model
+                    $super_admin=false;
+                }
+                        
             @endphp
 
             <div class="py-5">
@@ -43,12 +55,20 @@
                                 </div>
                             </div>
                         @endif
-                        @foreach ($user->operations as $one_operation)
+                        @foreach ($operations as $operation)
+                            @php
+                                if(!$super_admin){
+                                    $one_operation = $operation->operation;
+                                }
+                                else{
+                                    $one_operation = $operation;
+                                }
+                            @endphp
                             <div class="col-md-4 py-2" style="max-width:15rem">
-                                <div class="card py-5" style="background-color:{{$one_operation->operation->color}}; text-align:center;">
-                                    <a  class="text-dark" style="text-decoration:none;" href="{{url($one_operation->operation->url)}}">
-                                    <div class="h5 card-title {{$one_operation->operation->icon}}"></div>
-                                    <div >{{$one_operation->operation->name}}</div>
+                                <div class="card py-5" style="background-color:{{$one_operation->color}}; text-align:center;">
+                                    <a  class="text-dark" style="text-decoration:none;" href="{{url($one_operation->url)}}">
+                                    <div class="h5 card-title {{$one_operation->icon}}"></div>
+                                    <div >{{$one_operation->name}}</div>
                                     </a> 
                                 </div>
                             </div>  
@@ -94,17 +114,25 @@
                             </div>
                         </div>
                         
-                        @foreach ($user->microapps as $one_microapp)
-                        @can('beViewedByAdmins', $one_microapp->microapp)
+                        @foreach ($microapps as $microapp)
+                        @php
+                            if(!$super_admin){
+                                $one_microapp = $microapp->microapp;
+                            }
+                            else{
+                                $one_microapp = $microapp;
+                            }
+                        @endphp
+                        @if($one_microapp->active)
                             <div class="col-md-4 py-2" style="max-width:15rem">
-                                <div class="card py-5" style="background-color:{{$one_microapp->microapp->color}}; text-align:center;">
-                                    <a  class="text-dark" style="text-decoration:none;" href="{{url("/admin".$one_microapp->microapp->url)}}">
-                                    <div class="h5 card-title {{$one_microapp->microapp->icon}}"></div>
-                                    <div @if(!$one_microapp->microapp->active) style="color:red" @endif>@if(!$one_microapp->microapp->active) <strong> @endif{{$one_microapp->microapp->name}}</strong></div>
+                                <div class="card py-5" style="background-color:{{$one_microapp->color}}; text-align:center;">
+                                    <a  class="text-dark" style="text-decoration:none;" href="{{url("/admin".$one_microapp->url)}}">
+                                    <div class="h5 card-title {{$one_microapp->icon}}"></div>
+                                    <div @if(!$one_microapp->active) style="color:red" @endif>@if(!$one_microapp->active) <strong> @endif{{$one_microapp->name}}</strong></div>
                                     </a> 
                                 </div>
                             </div>  
-                        @endcan
+                        @endif
                         @endforeach
                     </div>
                     <hr>

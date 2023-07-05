@@ -60,15 +60,6 @@ class MicroappController extends Controller
             }
         }
 
-        // add superadmins to the microapps_users table with edit privileges
-        foreach(Superadmin::all() as $superadmin){
-            MicroappUser::create([
-                'microapp_id'=>$record->id,
-                'user_id'=>$superadmin->user_id,
-                'can_edit' => 1
-            ]);
-        }
-
         return redirect(url('/microapps'))->with('success', 'Τα στοιχεία της εφαρμογής καταχωρήθηκαν επιτυχώς');
     }
 
@@ -182,19 +173,9 @@ class MicroappController extends Controller
                     ]);
                 }
             }
-
-            // add admins again in microapp 
-            foreach(Superadmin::all() as $superadmin){
-                MicroappUser::create([
-                    'microapp_id'=>$microapp->id,
-                    'user_id'=>$superadmin->user_id,
-                    'can_edit' => 1
-                ]);
-            }
         }
         return redirect(url("/microapp_profile/$microapp->id"))->with('success',"Επιτυχής αποθήκευση των στοιχείων και των χρηστών της μικροεφαρμογής $microapp->name");
     }
-
 
     /**
      * Import and check uploaded file for stakeholders

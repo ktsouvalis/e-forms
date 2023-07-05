@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\School;
 use App\Models\Operation;
+use App\Models\Superadmin;
 use Illuminate\Auth\Access\Response;
 
 class SchoolPolicy
@@ -16,7 +17,7 @@ class SchoolPolicy
     {
         //
         $operation = Operation::find(1); // schools operation is id 1 from the seeder
-        return ($operation->users->where('user_id', $user->id)->count());
+        if($operation->users->where('user_id', $user->id)->count()) return true;
     }
 
     /**
@@ -69,6 +70,7 @@ class SchoolPolicy
 
     public function upload(User $user): bool
     {
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         foreach($user->operations->where('can_edit', 1) as $one_operation){
             if($one_operation->operation->url=='/schools'){
                 return true;

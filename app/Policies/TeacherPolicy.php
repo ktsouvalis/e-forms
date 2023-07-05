@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Teacher;
 use App\Models\Operation;
+use App\Models\Superadmin;
 use Illuminate\Auth\Access\Response;
 
 class TeacherPolicy
@@ -15,6 +16,7 @@ class TeacherPolicy
     public function viewAny(User $user): bool
     {
         //
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         $operation = Operation::find(2); // teachers operation is id 2 from the seeder
         return ($operation->users->where('user_id', $user->id)->count());
     }
@@ -69,6 +71,7 @@ class TeacherPolicy
 
     public function upload(User $user): bool
     {
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         foreach($user->operations->where('can_edit', 1) as $one_operation){
             if($one_operation->operation->url=='/teachers'){
                 return true;

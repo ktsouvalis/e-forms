@@ -23,6 +23,7 @@ class MicroappPolicy
     public function view(User $user, Microapp $microapp): bool
     {
         //
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         return $user->microapps->where('microapp_id', $microapp->id)->count();
     }
 
@@ -40,7 +41,27 @@ class MicroappPolicy
      */
     public function update(User $user, Microapp $microapp): bool
     {
-        return ($microapp->active and $user->microapps->where('microapp_id', $microapp->id)->first()->can_edit);
+        if(!$microapp->active){
+            return false;
+        }
+        else{
+            if(Superadmin::where('user_id',$user->id)->exists()){
+                return true;
+            }
+            else{
+                if($user->microapps->where('microapp_id', $microapp->id)->exists()){
+                    if($user->microapps->where('microapp_id', $microapp->id)->first()->can_edit){
+                        return true;
+                    }  
+                    else{
+                        return false;
+                    } 
+                }
+                else{
+                    return false;
+                }
+            }
+        }
     }
 
     /**
@@ -73,7 +94,7 @@ class MicroappPolicy
 
     public function beViewedByAdmins(User $user, Microapp $microapp): bool{
         if($microapp->active) return true;
-        //if(in_array($user->id,[1,2])) return true;
+        
         return false;
             
     }

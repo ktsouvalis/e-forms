@@ -24,6 +24,7 @@ class OperationPolicy
     public function view(User $user, Operation $operation): bool
     {
         //
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         if($user->operations->where('operation_id', $operation->id)->count()){
             return true;
         }

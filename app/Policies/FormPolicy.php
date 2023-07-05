@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Form;
 use App\Models\User;
 use App\Models\FormUser;
+use App\Models\Superadmin;
 use App\Models\FormStakeholder;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,7 @@ class FormPolicy
     public function view(Form $form): bool
     {
         //
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
         if(FormUser::where('user_id',Auth::id())
             ->where('form_id', $form->id)
             ->exists()){

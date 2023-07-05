@@ -41,7 +41,7 @@ class EditSuperAdmins extends Command
                 ]);
                 $string = "added to";
             }
-            $this->info("User $string database");
+            $this->info("User $string superadmins");
         }
         else{
             $this->warn("User $u_n not found");

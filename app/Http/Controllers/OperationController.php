@@ -45,15 +45,6 @@ class OperationController extends Controller
             }
         }
 
-        // add superadmins manually
-        foreach(Superadmin::all() as $superadmin){
-            UsersOperations::create([
-                'operation_id'=>$record->id,
-                'user_id'=>$superadmin->user_id,
-                'can_edit' => 1
-            ]);
-        }
-
         return view('operations', ['record' => $record]);
     }
 

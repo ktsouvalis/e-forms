@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Commands\EditSuperAdmins;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\ChangeMicroappAcceptStatus;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;

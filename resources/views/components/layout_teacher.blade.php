@@ -126,7 +126,7 @@
 
 </div>
        <footer class="border-top text-center small text-muted py-3">
-      <p class="m-0">Copyright &copy; 2023 <a href="/" class="text-muted">library</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
+      <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_teacher")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
     <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
     <script

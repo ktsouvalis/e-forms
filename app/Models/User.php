@@ -61,4 +61,8 @@ class User extends Authenticatable
     public function microapps(){
         return $this->hasMany(MicroappUser::class);
     }
+
+    public function superadmin(){
+        return $this->belongsTo(Superadmin::class);
+    }
 }

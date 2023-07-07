@@ -86,7 +86,7 @@
                         @endcan
                         <div class="input-group">
                             <span class="w-25"></span>
-                            <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>
+                            <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
                             <a href="{{url("/fileshares")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>

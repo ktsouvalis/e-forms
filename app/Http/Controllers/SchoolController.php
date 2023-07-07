@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\School;
+use App\Models\Teacher;
 use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -155,5 +156,92 @@ class SchoolController extends Controller
         
         auth()->guard('school')->logout();
         return redirect(url('/index_school'))->with('success', 'Αποσυνδεθήκατε');
+    }
+
+    public function importDirectors(Request $request){
+        $rule = [
+            'import_directors' => 'required|mimes:xlsx'
+        ];
+        $validator = Validator::make($request->all(), $rule);
+        if($validator->fails()){ 
+            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+        }
+
+        //store the file
+        $filename = "directors_file".Auth::id().".xlsx";
+        $path = $request->file('import_directors')->storeAs('files', $filename);
+
+        //load the file with phpspreadsheet
+        $mime = Storage::mimeType($path);
+        $spreadsheet = IOFactory::load("../storage/app/$path");
+        $directors_array=array();
+        $row=2;
+        $error=0;
+        $rowSumValue="1";   
+
+        while ($rowSumValue != "" && $row<10000){
+            $check=array();
+            $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
+            $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue();
+            $check['school_name']='';
+            $check['director_surname']='';
+            $check['code'] = substr($code, 2, -1); // remove from start =" and remove from end "
+            $check['afm'] = substr($afm, 2, -1); // remove from start =" and remove from end "
+            if(!School::where('code', $check['code'])->count()){
+                $check['code'] = 'Άγνωστος κωδικός σχολείου';
+                $error = 1;
+            }
+            else{
+                $school = School::where('code', $check['code'])->first();
+                $check['school_name'] = $school->name;
+                $check['school_id'] = $school->id;
+            }
+            if(!Teacher::where('afm', $check['afm'])->count()){
+                $check['afm'] = 'Άγνωστος ΑΦΜ Εκπαιδευτικού';
+                $error = 1;
+            }
+            else{
+                $teacher = Teacher::where('afm', $check['afm'])->first();
+                $check['teacher_id'] = $teacher->id;
+                $check['director_surname'] = $teacher->surname;
+            }
+
+            //prepare directors array to pass it in session
+            array_push($directors_array, $check);
+
+            //change line and check if it's empty
+            $row++;
+            $rowSumValue="";
+            for($col=1;$col<=33;$col++){
+                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+            }
+        }
+
+        session(['directors_array' => $directors_array]);
+
+        if($error){
+            return redirect(url('/import_directors'))
+                ->with('asks_to','error');
+        }else{
+            return redirect(url('/import_directors'))
+                ->with('asks_to','save');
+        }
+    }
+
+    public function insertDirectors(){
+        $directors_array = session('directors_array');
+        session()->forget('directors_array');
+        // dd($directors_array);
+        foreach($directors_array as $one_director){
+            //  update schools records based on 'code' field
+            $school = School::find($one_director['school_id']);
+            $school_director = Teacher::find($one_director['teacher_id']);
+            $school->director_id = $school_director->id;
+            $school->save();
+            // if($one_director['school_id']==222 and $one_director['teacher_id']==1570)dd($one_director);
+        }
+
+        return redirect(url('/directors'))
+            ->with('success', 'Η εισαγωγή ολοκληρώθηκε');    
     }
 }

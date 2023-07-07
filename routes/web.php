@@ -70,13 +70,23 @@ Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
 
 Route::view('/schools', 'schools')->middleware('auth')->middleware('can:viewAny, '. School::class);
 
+Route::view('/directors', 'directors')->middleware('auth')->middleware('can:viewAny, '. School::class);
+
 Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
+
+Route::post('/upload_directors_template', [SchoolController::class, 'importDirectors']);
 
 Route::view('/import_schools', "import-schools")->middleware('can:upload, '.School::class);
 
+Route::view('/import_directors', "import-directors")->middleware('can:upload, '.School::class);
+
 Route::view('/preview_schools', "preview-schools")->middleware('can:upload, '. School::class);
 
+Route::view('/preview_directors', "preview-directors")->middleware('can:upload, '. School::class);
+
 Route::post('/insert_schools', [SchoolController::class, 'insertSchools']);
+
+Route::post('/insert_directors', [SchoolController::class, 'insertDirectors']);
 
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
@@ -98,11 +108,11 @@ Route::get('/school_app/{appname}', function($appname){
 
 Route::view('/teachers','teachers')->middleware('auth')->middleware('can:viewAny, '. Teacher::class);
 
-Route::view('/import_teachers', 'import-teachers')->middleware("can:create, ".Teacher::class);
+Route::view('/import_teachers', 'import-teachers')->middleware("can:upload, ".Teacher::class);
 
 Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'importTeachers']);
 
-Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:create, ".Teacher::class);
+Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:upload, ".Teacher::class);
 
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);
 

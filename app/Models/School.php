@@ -41,6 +41,11 @@ class School extends Authenticatable
         return $this->belongsTo(School::class, 'municipality_id');
     }
 
+    public function director()
+    {
+        return $this->belongsTo(Teacher::class, 'director_id');
+    }
+
     public function forms(){
         return $this->morphMany(FormStakeholder::class, 'stakeholder');
     }

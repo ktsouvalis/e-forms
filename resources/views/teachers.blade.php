@@ -23,6 +23,7 @@
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
+                    <th id="search">id</th>
                     <th>Αποστολή συνδέσμου</th>
                     <th id="search">AΜ</th>
                     <th id="search">ΑΦΜ</th>
@@ -49,6 +50,7 @@
                         $date = Illuminate\Support\Carbon::parse($teacher->logged_in_at);
                 @endphp
                 <tr>  
+                    <td>{{$teacher->id}}</td>
                     <td style="text-align:center" >
                         <form action="{{url("share_link/teacher/$teacher->id")}}" method="post">
                             @csrf

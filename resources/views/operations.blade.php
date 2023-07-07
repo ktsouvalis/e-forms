@@ -65,7 +65,7 @@
             @isset($record)
                 <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
                 <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                    <a href="{{url("/user_profile/$record->id")}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a>
+                    <a href="{{url("/operation_profile/$record->id")}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a>
                 </div>
             @endisset
         @endisset
@@ -114,7 +114,7 @@
                 </div>
                 <div class="input-group">
                     <span class="w-25"></span>
-                    <button type="submit" class="btn btn-primary m-2">Προσθήκη</button>
+                    <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
                     <a href="{{url("/manage_operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                 </div>
             </form>

@@ -7,11 +7,11 @@
                 <input type="file" name="import_teachers_organiki" > 
                 <div class="hstack">
                     <input  type="radio" id="organiki" name="template_file" value="organiki" checked>
-                    <label class="px-1" for="organiki">Οργανικά Ανήκοντες</label><br>
+                    <label class="px-1" for="organiki">Οργανικά Ανήκοντες (4.1 MYSCHOOL)</label><br>
                 </div>
                 <div class="hstack">
                     <input type="radio" id="apospasi" name="template_file" value="apospasi">
-                    <label class="px-1" for="apospasi">Αποσπασμένοι</label><br> 
+                    <label class="px-1" for="apospasi">Αποσπασμένοι (4.2 MYSCHOOL)</label><br> 
                 </div>   
                 <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
             </form>

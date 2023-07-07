@@ -18,7 +18,7 @@
     @endphp
 <body>
     <div class="table-responsive">
-        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover">
+        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
                 <tr>
                     <th id="search">Κωδικός</th>

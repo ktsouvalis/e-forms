@@ -38,7 +38,7 @@ class School extends Authenticatable
 
     public function municipality()
     {
-        return $this->belongsTo(School::class, 'municipality_id');
+        return $this->belongsTo(Municipality::class, 'municipality_id');
     }
 
     public function director()

@@ -17,7 +17,8 @@ return new class extends Migration
             //properties start
             $table->string('name');
             $table->string('code');
-            $table->string('municipality');
+            $table->unsignedBigInteger('municipality_id')->nullable()->constrained();   
+            $table->foreign('municipality_id')->references('id')->on('municipalities');
             $table->boolean('primary');
             $table->integer('leitourgikotita');
             $table->integer('organikotita');

@@ -17,10 +17,10 @@
         $all_teachers = App\Models\Teacher::all();
     @endphp
 <body>
-<div class="container">
+
             
     <div class="table-responsive">
-        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover">
+        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
                 <tr>
                     <th id="search">id</th>
@@ -29,9 +29,10 @@
                     <th id="search">ΑΦΜ</th>
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
+                    <th id="search">Κλάδος</th>
+                    <th id="search">Σχέση Εργασίας</th>
                     <th id="search">link</th>
                     <th id="search">last login</th>
-                    <th id="search">Κλάδος</th>
                     <th id="search">email</th>
                     <th id="search">email ΠΣΔ</th>
                     <th id="search">Τηλέφωνο</th>
@@ -61,13 +62,14 @@
                     <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
+                    <td>{{$teacher->klados}}</td>
+                    <td>{{$teacher->sxesi_ergasias->name}}</td>
                     <td>{{$teacher->md5}}</td>
                     @if($date)
                         <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else
                         <td> - </td>
                     @endif  
-                    <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->mail}}</td>
                     <td>{{$teacher->sch_mail}}</td>
                     <td>{{$teacher->telephone}}</td>
@@ -84,5 +86,5 @@
     @can('upload', App\Models\Teacher::class)
         <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
     @endcan
-</div>
+
 </x-layout>

@@ -19,16 +19,17 @@
 <body>
 {{-- <div class="container"> --}}
     <div class="table-responsive">
-        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover">
+        <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
             <thead>
                 <tr>
                     <th id="search">id</th>
-                    <th>Αποστολή συνδέσμου</th>
+                    <th class="align-middle">Αποστολή συνδέσμου</th>
                     <th id="search">Κωδικός</th>
                     <th id="search">Ονομασία</th>
                     <th id="search">email</th>
                     <th id="search">tel</th>
                     <th id="search">link</th>
+                    <th id="search">Δήμος</th>
                     <th id="search">last login</th>
                     
                 </tr>
@@ -41,22 +42,23 @@
                         $date = Illuminate\Support\Carbon::parse($school->logged_in_at);
                 @endphp
                 <tr>
-                    <td>{{$school->id}}</td>
-                    <td style="text-align:center">
+                    <td >{{$school->id}}</td>
+                    <td style="text-align:center;">
                         <form action="{{url("share_link/school/$school->id")}}" method="post">
                             @csrf
                             <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
                         </form>
                     </td>  
-                    <td>{{$school->code}}</td>
-                    <td>{{$school->name}}</td>
-                    <td>{{$school->mail}}</td>
-                    <td>{{$school->telephone}}</td>
-                    <td>{{$school->md5}}</td>
+                    <td >{{$school->code}}</td>
+                    <td >{{$school->name}}</td>
+                    <td >{{$school->mail}}</td>
+                    <td >{{$school->telephone}}</td>
+                    <td >{{$school->md5}}</td>
+                    <td >{{$school->municipality->name}}</td>
                     @if($date)
-                        <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
+                        <td >{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else
-                        <td> - </td>
+                        <td > - </td>
                     @endif
                 </tr>
             @endforeach

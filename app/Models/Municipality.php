@@ -9,7 +9,7 @@ class Municipality extends Model
 {
     use HasFactory;
 
-    protected $table='municipality';
+    protected $table='municipalities';
     public $timestamps = false;
 
     protected $fillable = [

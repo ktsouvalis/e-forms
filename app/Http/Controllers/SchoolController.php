@@ -121,7 +121,7 @@ class SchoolController extends Controller
                 [
                     'name' => $school['name'], 
                     'code' => $school['code'],
-                    'municipality' => $school['municipality'],
+                    'municipality_id' => $school['municipality'],
                     'primary' => $school['primary'],
                     'leitourgikotita' => $school['leitourgikotita'],
                     'organikotita' => $school['organikotita'],

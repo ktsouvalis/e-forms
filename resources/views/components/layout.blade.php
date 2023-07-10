@@ -7,6 +7,7 @@
     @stack('title')
     <link rel="stylesheet" href="{{url('/bootstrap/css/bootstrap.css')}}" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
     <link rel="icon" href="{!! asset(url('/favicon/favicon.ico')) !!}"/>
     <link rel="apple-touch-icon" sizes="180x180" href="{{url('/favicon/apple-touch-icon.png')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{url("/favicon/favicon-32x32.png")}}">
@@ -231,15 +232,18 @@ $(document).ready(function () {
     var title = $(this).text();
     $(this).html(`
       <div class="vstack gap-1">
-        <input type="text" class="include-search" style="width:5rem; font-size:small;" placeholder="${title} +" />
-        <input type="text" class="exclude-search" style="width:5rem; font-size:small;" placeholder="${title} - " />
+        <input type="text" class="include-search" style=" font-size:small;" placeholder="${title} +" />
+        <input type="text" class="exclude-search" style=" font-size:small;" placeholder="${title} - " />
       </div>
     `);
   });
 
   // DataTable
   var table = $('#dataTable').DataTable({
+    lengthMenu: [10, 25, 50, 100, -1], // Add -1 for "All"
+    pageLength: 10, // Set the initial page length
     initComplete: function () {
+      
       // Apply the search
       this.api()
         .columns()

@@ -13,6 +13,7 @@ use App\Models\MicroappStakeholder;
 use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -30,19 +31,24 @@ class WhocanController extends Controller
     public function import_whocans(Request $request, $my_app, $my_id){
         // reading input and seperate identifiers
         $identifiers = explode(',', $request->input('afmscodes'));
-        
+        $found=0;
+        $not_found=[];
         //iterating through identifiers
         foreach($identifiers as $identifier){
             if(School::where('code', trim($identifier))->count()){ //if identifier is school code
                 $stakeholder_id = School::where('code', trim($identifier))->first()->id;
                 $stakeholder_type = 'App\Models\School';
+                $found=1;
             }
             else if(Teacher::where('afm', trim($identifier))->count()){//if identifier is teacher afm
                 $stakeholder_id = Teacher::where('afm', trim($identifier))->first()->id;
-                $stakeholder_type = 'App\Models\Teacher';   
+                $stakeholder_type = 'App\Models\Teacher';
+                $found=1;   
             }
             else{ // if is neither
-                return redirect(url("/".$my_app."_profile/$my_id"))->with('failure', "Άγνωστος: $identifier");
+                // return redirect(url("/".$my_app."_profile/$my_id"))->with('failure', "Άγνωστος: $identifier");
+                array_push($not_found, trim($identifier));
+                continue;
             }
             if($my_app=="fileshare"){ //fileshare
                 FileshareStakeholder::updateOrCreate(
@@ -73,7 +79,14 @@ class WhocanController extends Controller
                 
             }      
         }
-        return redirect(url("/".$my_app."_profile/$my_id"))->with('success', "Η ενημέρωση των ενδιαφερόμενων έγινε επιτυχώς");
+        // dd($not_found);
+        Session::put('not_found', $not_found);
+        if($found)
+            return redirect(url("/".$my_app."_profile/$my_id"))
+                ->with('success', "Η ενημέρωση των ενδιαφερόμενων έγινε επιτυχώς");
+        else
+            return redirect(url("/".$my_app."_profile/$my_id"))
+                ->with('warning', "Δεν βρέθηκε σχολείο ή εκπαιδευτικός για να προστεθεί στους ενδιαφερόμενους");   
     }
 
     /**

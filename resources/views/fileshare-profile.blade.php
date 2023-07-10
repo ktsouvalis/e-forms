@@ -49,7 +49,7 @@
             
         <hr>
         </div>
-        <div class="container px-5">
+        <div class="container px-5 vstack gap-2">
             <div>
                 
                 <form action="{{url("/import_whocan/fileshare/$fileshare->id")}}" method="post">
@@ -61,6 +61,7 @@
                 </form>
                 
             </div>
+            @if($fileshare->stakeholders->count())
             <div class="table-responsive">
                 <table  id="dataTable" class="table table-sm table-striped table-hover">
                 <thead>
@@ -90,7 +91,6 @@
                 </tbody>
                 </table>
             </div> 
-            @if($fileshare->stakeholders->count())
             <div class="hstack gap-2">
                 <a href="{{url("/preview_mail_all_whocans/fileshare/$fileshare->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
                 <form action="{{url("/send_mail_all_whocans/fileshare/$fileshare->id")}}" method="post">
@@ -105,14 +105,31 @@
             @endif 
         </div> 
         <hr>
+       
         @php
         $directory_common = '/fileshare'.$fileshare->id;
         $directory_personal = $directory_common.'/personal_files';
         $files_common=Storage::disk('local')->files($directory_common);
         $files_personal = Storage::disk('local')->files($directory_personal);
+        $not_found = Session::pull('not_found', []);
         @endphp
+        @if($not_found)
+            <div class='container container-narrow'>
+                <div class='alert alert-warning'>
+                    <strong>Αναγνωριστικά που δεν βρέθηκαν</strong><br>
+                    @isset($not_found)
+                        @foreach($not_found as $identifier)
+                            {{$identifier}}
+                            <br>
+                        @endforeach  
+                    @endisset
+                </div>
+            </div>
+        <hr>
+        @endif
         
         <div class="hstack">
+            @if($files_common)
             <div class="vstack gap-2">
                 <strong>Αρχεία κοινά για διαμοιρασμό</strong>
                     @foreach($files_common as $file_c)
@@ -133,6 +150,8 @@
                     </div>
                     @endforeach
             </div>
+            @endif
+            @if($files_personal)
             <div class="vstack gap-2">
                <strong>Αρχεία προσωπικά για διαμοιρασμό</strong>
                     @foreach($files_personal as $file_p)
@@ -153,6 +172,7 @@
                         </div>
                     @endforeach
             </div>
+            @endif
         </div>
     </div>    
 </x-layout>

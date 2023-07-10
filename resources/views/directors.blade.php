@@ -9,6 +9,7 @@
         <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+        <script src="datatable_init.js"></script>
     @endpush
     @push('title')
         <title>Διευθυντές Σχολείων</title>

@@ -135,42 +135,6 @@
                 crossorigin="anonymous">
     </script>
     @stack('scripts')
-
-    <script>
-$(document).ready(function () {
-  // Setup - add a text input to each header cell
-  $('#dataTable thead tr #search').each(function () {
-    var title = $(this).text();
-    $(this).html('<input type="text" style="width:7rem;" placeholder="' + title + '" />');
-  });
-
-  // DataTable
-  var table = $('#dataTable').DataTable({
-    initComplete: function () {
-
-      // Apply the search
-      this.api()
-        .columns()
-        .every(function () {
-          var that = this;
-          var column = this;
-
-          $('input', this.header()).on('keyup change clear', function () {
-            if (that.search() !== this.value) {
-              that.search(this.value).draw();
-            }
-          }).on('click', function(e) {
-            e.stopPropagation(); // Stop the click event from propagating to the DataTables header cell
-            // table.ordering([[], []]); // Toggle sorting off
-            column.search($(this).val()).draw(); // Apply the search filter
-          });
-        });
-    },
-  });
-});
-</script>
-
-    
     </div> <!-- container closing -->
    
     <div class="d-flex justify-content-center"><p class="h3" style="color:black"> {{env('APP_NAME')}}</p></div>

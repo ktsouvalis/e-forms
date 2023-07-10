@@ -9,48 +9,9 @@
         <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script>
-            document.getElementById("copyCodeButton").addEventListener("click", function() {
-                var codeColumn = document.querySelectorAll("#dataTable tbody td:nth-child(4)");
-                var codeValues = Array.from(codeColumn).map(function(cell) {
-                    return cell.textContent.trim();
-                });
-
-                // Create a temporary text area element
-                var tempTextArea = document.createElement("textarea");
-
-                // Set the code values as the text area's value, separated by newlines
-                tempTextArea.value = codeValues.join("\n");
-
-                // Append the text area to the document body
-                document.body.appendChild(tempTextArea);
-
-                // Programmatically select the text within the text area
-                tempTextArea.select();
-
-                // Execute the copy command to copy the selected text to the clipboard
-                document.execCommand("copy");
-
-                // Remove the temporary text area from the document
-                document.body.removeChild(tempTextArea);
-
-                // Optionally, provide user feedback (e.g., show a success message)
-                alert("Αντιγράφτηκαν " + codeValues.length + " ΑΦΜ για επικόλληση σε αρχείο xlsx!");
-                });
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var clipboard = new ClipboardJS('.copy-button');
-
-                clipboard.on('success', function(e) {
-                    alert('Αντιγράφτηκε: ' + e.text);
-                });
-
-                clipboard.on('error', function(e) {
-                    alert('Αποτυχία αντιγραφής');
-                });
-            });
-        </script>
+        <script src="copycolumn.js"></script>
+        <script src="copylink.js"></script>
+        <script src="datatable_init.js"></script>
     @endpush
     @push('title')
         <title>Εκπαιδευτικοί</title>
@@ -69,8 +30,8 @@
                     {{-- <th id="search">id</th> --}}
                     <th class="align-middle">Αντιγραφή συνδέσμου</th>
                     <th class="align-middle">Αποστολή συνδέσμου</th>
-                    <th id="search">AΜ</th>
                     <th id="search">ΑΦΜ</th>
+                    <th id="search">AΜ</th>
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
                     <th id="search">Κλάδος</th>
@@ -107,8 +68,8 @@
                             <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
                         </form>
                     </td> 
-                    <td>{{$teacher->am}}</td>
                     <td>{{$teacher->afm}}</td>
+                    <td>{{$teacher->am}}</td>
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
                     <td>{{$teacher->klados}}</td>

@@ -9,6 +9,7 @@
         <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+        <script src="../datatable_init.js"></script>
     @endpush
     @push('scripts')
         <script>
@@ -161,19 +162,15 @@
             <hr>
             </div>
             <div class="container px-5">
-            <div class="hstack gap-2">
-                <a href="{{url("/import_whocan/microapp/$microapp->id")}}" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</a>
-                @if($microapp->stakeholders->count())
-                <a href="{{url("/preview_mail_all_whocans/microapp/$microapp->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
-                <form action="{{url("/send_mail_all_whocans/microapp/$microapp->id")}}" method="post">
+            
+                <form action="{{url("/import_whocan/microapp/$microapp->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους τους ενδιαφερόμενους</button>
+                    <div class="hstack gap-2">
+                    <textarea name="afmscodes"  class="form-control" cols="30" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
+                    <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
+                    </div>
                 </form>
-                <form action="{{url("/delete_all_whocans/microapp/$microapp->id")}}" method="post">
-                    @csrf
-                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders;')"> Διαγραφή Σχολείων/Εκπαιδευτικών</button>
-                </form>
-                @endif
+                
             </div>
         
         <div class="container">
@@ -205,7 +202,20 @@
                 @endforeach
                 </tbody>
                 </table>
-            </div>          
+            </div>   
+            @if($microapp->stakeholders->count())
+            <div class="hstack gap-2">
+                <a href="{{url("/preview_mail_all_whocans/microapp/$microapp->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
+                <form action="{{url("/send_mail_all_whocans/microapp/$microapp->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους </button>
+                </form>
+                <form action="{{url("/delete_all_whocans/microapp/$microapp->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders;')"> Διαγραφή όλων</button>
+                </form>
+            </div>
+            @endif       
         </div>
         </div>
     </div>

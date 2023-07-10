@@ -1,14 +1,19 @@
+// Attach an event listener to the button or clickable element
 document.getElementById("copyCodeButton").addEventListener("click", function () {
+    // Iterate through the table rows and extract the values from the "code" column
     var codeColumn = document.querySelectorAll("#dataTable tbody td:nth-child(3)");
     var codeValues = Array.from(codeColumn).map(function (cell) {
         return cell.textContent.trim();
     });
 
+    // Concatenate the values with a delimiter (comma in this example)
+    var concatenatedValues = codeValues.join(",");
+
     // Create a temporary text area element
     var tempTextArea = document.createElement("textarea");
 
-    // Set the code values as the text area's value, separated by newlines
-    tempTextArea.value = codeValues.join("\n");
+    // Set the concatenated values as the text area's value
+    tempTextArea.value = concatenatedValues;
 
     // Append the text area to the document body
     document.body.appendChild(tempTextArea);
@@ -23,5 +28,5 @@ document.getElementById("copyCodeButton").addEventListener("click", function () 
     document.body.removeChild(tempTextArea);
 
     // Optionally, provide user feedback (e.g., show a success message)
-    alert("Αντιγράφτηκαν " + codeValues.length + " Κωδικοί/ΑΦΜ για επικόλληση σε αρχείο xlsx!");
+    alert("Copied " + codeValues.length + " code values to clipboard!");
 });

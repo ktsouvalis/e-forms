@@ -213,18 +213,12 @@ Route::get('/admin/{appname}', function($appname){
 
 
 // WHOCAN Routes
-Route::get('/import_whocan/{my_app}/{my_id}', function($my_app, $my_id){
-    return view('import-whocan', ['my_app'=>$my_app, 'my_id'=>$my_id]);
-});
-
-Route::post('/upload_whocan/{my_app}/{my_id}', [WhocanController::class, 'importStakeholdersWhoCan']);
-
-Route::post('/insert_whocan/{my_app}/{my_id}', [WhocanController::class, 'insertWhocans']);
 
 Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'delete_all_whocans']);
 
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
 
+Route::post('/import_whocan/{my_app}/{my_id}', [WhocanController::class, 'import_whocans']);
 
 // MAIL Routes
 Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);

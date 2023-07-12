@@ -19,9 +19,8 @@
     @php
         $all_schools = App\Models\School::all();
     @endphp
-<body>
-{{-- <div class="container"> --}}
-    <button class="btn btn-secondary bi bi-clipboard" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
+
+    <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
             <thead>
@@ -49,7 +48,7 @@
                 <tr>
                     {{-- <td >{{$school->id}}</td> --}}
                     <td style="text-align:center">
-                        <button class="copy-button btn btn-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
+                        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
                     <td style="text-align:center;">
                         <form action="{{url("share_link/school/$school->id")}}" method="post">
@@ -71,12 +70,13 @@
             @endforeach
         </tbody>
         </table>
-    </div>
+        </div>
+    
     
     @can('upload', App\Models\School::class)
-        <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Σχολείων</a>
+        <a href="{{url('/import_schools')}}" class="btn btn-primary bi bi-building-up my-2"> Μαζική Εισαγωγή Σχολείων</a>
     @endcan
-{{-- </div> --}}
+
 </x-layout>
         
            

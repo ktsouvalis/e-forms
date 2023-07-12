@@ -32,7 +32,7 @@
     
     <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
       @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
-          <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
+          <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
           <hr>
           <ul class="nav nav-pills flex-column mb-auto">
             <p>
@@ -81,7 +81,7 @@
           <hr>
     @else
           @push('app-icon')
-            <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
+            <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
           @endpush
     @endif
   </div>

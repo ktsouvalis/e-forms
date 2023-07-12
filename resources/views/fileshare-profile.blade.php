@@ -40,35 +40,40 @@
                     
                     <div class="input-group">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                        <button type="submit" class="btn btn-outline-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                         <a href="{{url("/fileshare_profile/$fileshare->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
-            </nav>
-            
-            
+            </nav> 
         <hr>
-        </div>
-        <div class="container px-5 vstack gap-2">
-            <div>
-                
-                <form action="{{url("/import_whocan/fileshare/$fileshare->id")}}" method="post">
+        <nav class="navbar navbar-light bg-light">
+                <form action="{{url("/import_whocan/fileshare/$fileshare->id")}}" method="post" class="container-fluid">
                     @csrf
-                    <div class="hstack gap-2">
-                    <textarea name="afmscodes"  class="form-control" cols="30" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required ></textarea>
-                    <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
+                    <div class="input-group">
+                        <span class="input-group-text w-25"></span>
+                        <span class="input-group-text w-75"><strong>Ενδιαφερόμενοι</strong></span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon2">Name</span>
+                        <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
+                    </div>
+                    <div class="input-group py-1 px-1">
+                        <span class="w-25"></span>
+                        <button type="submit" class="btn btn-outline-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
-                
-            </div>
+            </nav>  
+        </div>
+        <div class="container px-5 vstack gap-2 py-3">
+            
             @if($fileshare->stakeholders->count())
             <div class="table-responsive">
-                <table  id="dataTable" class="table table-sm table-striped table-hover">
+                <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
-                        <th id="search">Διαγραφή</th>
+                        <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,7 +88,7 @@
                     <td> 
                         <form action="{{url("/delete_one_whocan/fileshare/$one_stakeholder->id")}}" method="post">
                             @csrf
-                            <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
+                            <button type="submit" class="btn btn-outline-danger bi bi-x-circle"> </button>
                         </form>
                     </td>
                 </tr>
@@ -92,19 +97,20 @@
                 </table>
             </div> 
             <div class="hstack gap-2">
-                <a href="{{url("/preview_mail_all_whocans/fileshare/$fileshare->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
+                <a href="{{url("/preview_mail_all_whocans/fileshare/$fileshare->id")}}" class="btn btn-outline-secondary bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
                 <form action="{{url("/send_mail_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους</button>
+                    <button type="submit" class="btn btn-outline-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους</button>
                 </form>
                 <form action="{{url("/delete_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή όλων</button>
+                    <button type="submit" class="btn btn-outline-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή όλων</button>
                 </form>
             </div>
             @endif 
+            <hr>
         </div> 
-        <hr>
+        
        
         @php
         $directory_common = '/fileshare'.$fileshare->id;
@@ -127,7 +133,7 @@
             </div>
         <hr>
         @endif
-        
+        <div class="container px-5 py-3">
         <div class="hstack">
             @if($files_common)
             <div class="vstack gap-2">
@@ -173,6 +179,7 @@
                     @endforeach
             </div>
             @endif
+        </div>
         </div>
     </div>    
 </x-layout>

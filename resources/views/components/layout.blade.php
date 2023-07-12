@@ -38,26 +38,26 @@
         $super_admin=false;
     }
   @endphp
+  <body >
   <div class="row">
-  
-    
-    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+    @if(Illuminate\Support\Facades\Request::path()!='/')
+    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 py-5 bg-body-tertiary" style="width: 280px;">
       {{-- @auth --}}
-      @if(Illuminate\Support\Facades\Request::path()!='/')
+      {{-- @if(Illuminate\Support\Facades\Request::path()!='/') --}}
       {{-- <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
         <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
         <span class="fs-4">Λειτουργίες</span>
       </a> --}}
-      <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
+      <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
 
       <ul class="nav nav-pills flex-column mb-auto">
         {{-- Μενού για όλους --}}
         
-        <li class="nav-item">
-        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
-          <a href="{{url('/')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
+        {{-- <li class="nav-item">
+        <div class="badge text-wrap py-2 m-1 bg-dark" style="width: 15rem; text-align:center;">
+          <a href="{{url('/')}}" style="text-decoration:none;" class="text-white bi bi-house"> Αρχική</a>
         </div>
-        </li>
+        </li> --}}
         
         
           {{-- Μενού διαχείρισης χρηστών  --}}
@@ -118,7 +118,7 @@
           <li class="nav-item">
           <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#00bfff; text-align:center;">
           <div class="text-dark fa-solid fa-file-pdf"></div>
-          <a href="{{url("/fileshare_profile/$fi")}}" style="text-decoration:none;" class="text-dark">{{$fileshare->department->name}}: {{$fileshare->name}}</a>
+          <a href="{{url("/fileshare_profile/$fi")}}" style="text-decoration:none;" class="text-dark"> {{$fileshare->name}}</a>
           </div>
           </li>
         @endforeach
@@ -157,34 +157,41 @@
         <hr>
         
         <li class="nav-item">
-        <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
-            <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-            <a href="{{url('/logout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
+        <div class="badge text-wrap py-2 m-1 bg-dark" style="width: 15rem; text-align:center;">
+            <div class="fa-solid fa-arrow-right-from-bracket"></div>
+            <a href="{{url('/logout')}}" style="text-decoration:none;" class="text-white"> Αποσύνδεση {{Auth::user()->username}}</a>
         </div>
         </li>
         
       </ul>
-      <hr>
     
     
     @else
     @push('app-icon')
-      <div class="d-flex justify-content-center"><img src="{{url('/favicon/index.png')}}" width="100" height="100" alt="services"></div>
+      <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="75" height="75" alt="services"></div>
     @endpush
     @endif
   {{-- @endauth  --}}
   </div>
-  <div class="col-10">
-  <div class="container ">
+  
+  <div class="col" style="min-width: 0;" >
     <div class="row justify-content-md-center">
       <div class="col p-4">
         @stack('app-icon')
-        <div class=" d-flex justify-content-center"><a href='{{url('/change_password')}}' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{Auth::user()->display_name}}</a></div>
+        <div class="hstack justify-content-end gap-2">
+          @if(Illuminate\Support\Facades\Request::path()!='/')
+            <div class=" d-flex "><a href='{{url('/')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
+          @endif
+          <div class=" d-flex "><a href='{{url('/change_password')}}' class="text-dark bi bi-gear" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> </a></div>
+          <div class=" d-flex "><a href='{{url('/logout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
+        </div>
       </div>
+
     </div>
-  </div>
   @endauth
+  
   {{$slot}}
+  
         @if (session()->has('success'))
         <div class='container container-narrow'>
           <div class='alert alert-success text-center'>

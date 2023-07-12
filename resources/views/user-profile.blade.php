@@ -63,7 +63,7 @@
                     </div>
                     <div class="input-group">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                        <button type="submit" class="btn btn-outline-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                         <a href="{{url("/user_profile/$user->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>

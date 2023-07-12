@@ -105,7 +105,7 @@ class MicroappController extends Controller
             $microapp->accepts = $microapp->accepts==1?0:1; // change acceptability based on previous state
             $microapp->save();
         }
-        return redirect(url('/microapps'))->with('success', 'H κατάσταση της εφαρμογής άλλαξε επιτυχώς');
+        return back()->with('success', 'H κατάσταση της εφαρμογής άλλαξε επιτυχώς');
     }
 
     /**

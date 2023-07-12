@@ -21,7 +21,7 @@
     @endphp
 <body>
 
-    <button class="btn btn-secondary bi bi-clipboard" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
+    <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
@@ -60,7 +60,7 @@
                     
                     {{-- <td>{{$teacher->id}}</td> --}}
                     <td style="text-align:center">
-                        <button class="copy-button btn btn-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
+                        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
                     <td style="text-align:center" >
                         <form action="{{url("share_link/teacher/$teacher->id")}}" method="post">
@@ -93,7 +93,7 @@
     </div>
         
     @can('upload', App\Models\Teacher::class)
-        <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
+        <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill my-2"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
     @endcan
 
 </x-layout>

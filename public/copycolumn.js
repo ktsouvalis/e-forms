@@ -28,5 +28,5 @@ document.getElementById("copyCodeButton").addEventListener("click", function () 
     document.body.removeChild(tempTextArea);
 
     // Optionally, provide user feedback (e.g., show a success message)
-    alert("Copied " + codeValues.length + " code values to clipboard!");
+    alert("Αντιγράφτηκαν " + codeValues.length + " αναγνωριστικά!");
 });

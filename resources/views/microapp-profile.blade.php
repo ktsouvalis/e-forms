@@ -77,15 +77,52 @@
             }
         </script>
     @endpush
+    @php
+    if($microapp->visible){
+        $opacity_vis = "";
+        $hidden_acc = "";
+        $tooltip_vis = "Κλείσιμο ορατότητας";  
+        if($microapp->accepts){
+            $opacity_acc="";
+            $tooltip_acc="Κλείσιμο υποβολών";
+        }
+        else{
+            $opacity_acc = "opacity: 0.4";
+            $tooltip_acc="Άνοιγμα Υποβολών";
+        }
+    }
+    else{
+        $opacity_vis = "opacity: 0.4";
+        $hidden_acc="hidden";
+        $opacity_acc="";
+        $tooltip_acc="";
+        $tooltip_vis = "Άνοιγμα ορατότητας";
+    }
+    @endphp
     <div class="container py-5">
         <div class="container px-5">
+            <div class="hstack gap-3 py-2">
+                <form action="{{url("/change_microapp_status/$microapp->id")}}" method="post">
+                @csrf
+                <input name="asks_to" type="hidden" value="ch_vis_status">
+                <button type="submit" class="btn btn-outline-secondary bi bi-binoculars"  style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> {{$tooltip_vis}}</button>
+                </form>
+            
+            
+                <form action="{{url("/change_microapp_status/$microapp->id")}}" method="post">
+                @csrf
+                <input name="asks_to" type="hidden" value="ch_acc_status">
+                <button type="submit" class="btn btn-outline-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}"  {{$hidden_acc}}> {{$tooltip_acc}}</button>
+                </form>        
+            </div>  
+            <hr>
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/save_microapp/$microapp->id")}}" method="post" class="container-fluid">
                     @csrf
                     <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>
-                        <span class="input-group-text w-75"><strong>Επεξεργασία Μικροεφαρμογής</strong></span>
+                        <span class="input-group-text w-75"><strong>Επεξεργασία Χαρακτηριστικών Μικροεφαρμογής</strong></span>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon2">Name</span>
@@ -152,7 +189,7 @@
                     @endcan
                     <div class="input-group">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                        <button type="submit" class="btn btn-outline-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                         <a href="{{url("/microapp_profile/$microapp->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
@@ -160,27 +197,35 @@
             </nav>
 
             <hr>
-            </div>
-            <div class="container px-5">
             
-                <form action="{{url("/import_whocan/microapp/$microapp->id")}}" method="post">
+            
+            <nav class="navbar navbar-light bg-light">
+                <form action="{{url("/import_whocan/microapp/$microapp->id")}}" method="post" class="container-fluid">
                     @csrf
-                    <div class="hstack gap-2">
-                    <textarea name="afmscodes"  class="form-control" cols="30" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
-                    <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
+                    <div class="input-group">
+                        <span class="input-group-text w-25"></span>
+                        <span class="input-group-text w-75"><strong>Ενδιαφερόμενοι</strong></span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon2">Name</span>
+                        <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
+                    </div>
+                    <div class="input-group py-1 px-1">
+                        <span class="w-25"></span>
+                        <button type="submit" class="btn btn-outline-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
-                
-            </div>
-        
-        <div class="container">
-            <div class="table-responsive">
-                <table  id="dataTable" class="display table table-sm table-striped table-hover">
+            </nav>  
+        </div>
+        <div class="container px-5 vstack gap-2 py-3">
+            @if($microapp->stakeholders->count())
+            <div class="table-responsive py-3">
+                <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
                 <thead>
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
-                        <th id="search">Διαγραφή</th>
+                        <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -195,7 +240,7 @@
                     <td>
                         <form action="{{url("/delete_one_whocan/microapp/$one_stakeholder->id")}}" method="post">
                             @csrf
-                            <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
+                            <button type="submit" class="btn btn-outline-danger bi bi-x-circle"> </button>
                         </form>
                     </td>
                 </tr>
@@ -203,21 +248,37 @@
                 </tbody>
                 </table>
             </div>   
-            @if($microapp->stakeholders->count())
             <div class="hstack gap-2">
-                <a href="{{url("/preview_mail_all_whocans/microapp/$microapp->id")}}" class="btn btn-light bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
+                <a href="{{url("/preview_mail_all_whocans/microapp/$microapp->id")}}" class="btn btn-outline-secondary bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
                 <form action="{{url("/send_mail_all_whocans/microapp/$microapp->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους </button>
+                    <button type="submit" class="btn btn-outline-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους </button>
                 </form>
                 <form action="{{url("/delete_all_whocans/microapp/$microapp->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders;')"> Διαγραφή όλων</button>
+                    <button type="submit" class="btn btn-outline-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders;')"> Διαγραφή όλων</button>
                 </form>
             </div>
             @endif       
         </div>
+        <hr>
+        @php
+            $not_found = Session::pull('not_found', []);
+        @endphp
+        @if($not_found)
+            <div class='container container-narrow'>
+                <div class='alert alert-warning'>
+                    <strong>Αναγνωριστικά που δεν βρέθηκαν</strong><br>
+                    @isset($not_found)
+                        @foreach($not_found as $identifier)
+                            {{$identifier}}
+                            <br>
+                        @endforeach  
+                    @endisset
+                </div>
+            </div>
+        <hr>
+        @endif
         </div>
-    </div>
-    </div>    
+        
 </x-layout>

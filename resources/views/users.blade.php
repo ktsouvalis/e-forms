@@ -42,7 +42,7 @@
                     $all_departments= App\Models\Department::all();
                 @endphp
                 <div class="table-responsive">
-                <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
+                <table  id="dataTable" class="align-middle display table  table-striped table-hover" style="font-size:small">
                 <thead>
                     <tr>
                         <th id="search">Αναγνωριστικό</th>
@@ -50,7 +50,7 @@
                         <th id="search">DisplayName</th>
                         <th id="search">email</th>
                         <th id="search">Τμήμα</th>
-                        <th id="search">Έχει πρόσβαση</th>
+                        {{-- <th id="search">Έχει πρόσβαση</th> --}}
                         <th id="search">CreatedAt</th>
                         <th id="search">UpdatedAt</th>
                         <th id="">Password Reset</th>
@@ -61,10 +61,10 @@
                             <tr>  
                                 <td>{{$user->id}}</td>
                                 <td>{{$user->username}}</td>
-                                <td><div class="badge bg-primary text-wrap"><a href="/user_profile/{{$user->id}}" style="color:white; text-decoration:none;">{{$user->display_name}}</a></div></td>
+                                <td><div class=" text-wrap"><a href="/user_profile/{{$user->id}}" style="">{{$user->display_name}}</a></div></td>
                                 <td>{{$user->email}}</td>
                                 <td>{{$user->department->name}}</td>
-                                <td>
+                                {{-- <td>
                                     <table class="table table-sm table-striped table-hover table-bordered">
                                         @foreach ($user->operations as $one_operation)
                                             <tr>
@@ -72,7 +72,7 @@
                                             </tr>
                                         @endforeach
                                     </table>
-                                </td>
+                                </td> --}}
                                 <td>{{$user->created_at}}</td>
                                 <td>{{$user->updated_at}}</td>
                                 <form action="{{url("/reset_password/$user->id")}}" method="post">

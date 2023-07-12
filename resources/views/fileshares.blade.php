@@ -38,7 +38,7 @@
                     @can('view', $one_fileshare)
                         <tr>  
                             <td>{{$one_fileshare->id}}</td>
-                            <td><div class="badge text-wrap" ><a href="{{url("/fileshare_profile/$one_fileshare->id")}}" style="color:black; text-decoration:none;">{{$one_fileshare->name}}</a></div></td>
+                            <td><div class="text-wrap" ><a href="{{url("/fileshare_profile/$one_fileshare->id")}}" style="color:black; ">{{$one_fileshare->name}}</a></div></td>
                             <td>
                                 {{$one_fileshare->department->name}}
                             </td>
@@ -93,4 +93,5 @@
                 </nav>
             </div>
         </div>  
+    </div>
 </x-layout>

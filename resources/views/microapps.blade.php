@@ -84,25 +84,23 @@
                 $all_microapps = App\Models\Microapp::all();
             @endphp
             <div class="table-responsive">
-            <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
+            <table  id="dataTable" class="align-middle table table-striped table-hover">
             <thead>
-                <tr>
+                <tr >
                     <th id="search">ID</th>
                     <th id="search">Name</th>
                     <th id="search">URL</th>
-                    <th id="search">Color</th>
-                    <th id="search">Icon</th>
                     <th id="search">WhoHasAccess</th>
                     <th id="search">Ενεργή/Ανενεργή</th>
                     <th id="search">Ορατή</th>
-                    <th id="search">ΔέχεταιΑπαντήσεις </th>
+                    <th id="search">Δέχεται</th>
                 </tr>
             </thead>
                 <tbody>
                     @foreach($all_microapps as $one_microapp)
                         @can('view', $one_microapp)
                         {{-- @can('beViewed', $one_microapp) --}}
-                            <tr>  
+                            <tr >  
                                 <td>{{$one_microapp->id}}</td>
                                 @can('update', $one_microapp)
                                 <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="/microapp_profile/{{$one_microapp->id}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
@@ -110,8 +108,6 @@
                                 <td>{{$one_microapp->name}}</td>
                                 @endcan
                                 <td>{{$one_microapp->url}}</td>
-                                <td>{{$one_microapp->color}}</td>
-                                <td>{{$one_microapp->icon}}</td>
                                 <td>
                                     <table class="table table-sm table-striped table-hover">
                                         @foreach($one_microapp->users as $one_user)
@@ -126,7 +122,7 @@
                                 @php
                                     
                                 @endphp
-                                <td style="text-align: center">
+                                <td >
                                     @can('deactivate', App\Models\Microapp::class)
                                         <form action="{{url("/microapp_onoff/$one_microapp->id")}}" method="post">
                                         @csrf
@@ -165,25 +161,25 @@
                                     $tooltip_acc="";
                                     $tooltip_vis = "Άνοιγμα ορατότητας";
                                 }
-                            @endphp
+                                @endphp
                             @can('update', $one_microapp)
-                            <td style="text-align: center">
+                            <td >
                                 <form action="{{url("/change_microapp_status/$one_microapp->id")}}" method="post">
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_vis_status">
-                                <button type="submit" class="btn btn-success bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> </button>
+                                <button type="submit" class="btn btn-secondary bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> </button>
                                 </form>
                             </td>
-                            <td style="text-align: center">
+                            <td >
                                 <form action="{{url("/change_microapp_status/$one_microapp->id")}}" method="post">
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_acc_status">
-                                <button type="submit" class="btn btn-success bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
+                                <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
                                 </form>
                             </td>
                             @else
-                            <td> Δεν έχετε δικαίωμα αλλαγής ορατότητας της εφαρμογής</td>
-                            <td> Δεν έχετε δικαίωμα να ανοίξετε ή να κλείσετε την εφαρμογή </td>
+                            <td> - </td>
+                            <td> - </td>
                             </tr>
                             @endcan
                         {{-- @endcan --}}
@@ -260,4 +256,5 @@
         </nav>
         </div></div>
         @endcan
+    </div>
 </x-layout>

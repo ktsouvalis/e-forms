@@ -46,7 +46,7 @@ class UserController extends Controller
         if($validator->fails()){
             return redirect(url('/password_reset'))->with('failure', 'Οι κωδικοί πρέπει να ταιριάζουν και να είναι 6+ χαρακτήρες');
         }
-        $user = User::find(Auth::id());
+        $user = Auth::user();
 
         $user->password = bcrypt($incomingFields['pass1']);
         $user->save();

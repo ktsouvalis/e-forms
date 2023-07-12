@@ -7,7 +7,7 @@
                     <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>
-                        <span class="input-group-text w-75"><strong>Επεξεργασία Λειτουργίας</strong></span>
+                        <span class="input-group-text w-75"><strong>Επεξεργασία χαρακτηριστικών Λειτουργίας</strong></span>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon2">Name</span>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="input-group">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                        <button type="submit" class="btn btn-outline-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                         <a href="{{url("/operation_profile/$operation->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>

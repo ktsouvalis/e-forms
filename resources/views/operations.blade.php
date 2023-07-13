@@ -40,7 +40,7 @@
                         @can('view', $one_operation)
                             <tr>  
                                 <td>{{$one_operation->id}}</td>
-                                <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="/operation_profile/{{$one_operation->id}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td>
+                                <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="{{url("/operation_profile/$one_operation->id")}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td>
                                 <td>{{$one_operation->url}}</td>
                                 <td>{{$one_operation->color}}</td>
                                 <td>{{$one_operation->icon}}</td>

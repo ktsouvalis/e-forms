@@ -11,6 +11,7 @@
         <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+        <script src="canedit.js"></script>
     @endpush
 
     @push('title')
@@ -48,7 +49,7 @@
                                         @foreach($one_operation->users as $one_user)
                                             <tr>
                                                 <td>
-                                                    {{$one_user->user->display_name}}
+                                                    @if($one_user->can_edit) <strong> @endif  {{$one_user->user->display_name}}</strong>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -105,8 +106,21 @@
                     <table>
                     @foreach($users as $user)
                     @if(!App\Models\Superadmin::where('user_id',$user->id)->exists())
-                            <td><input type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="{{$user->id}}">
-                            <label for="{{$user->id}}"> {{$user->display_name}} </label></td>
+                        <tr>
+                            <td>
+                            <div class="hstack gap-2">
+                                <div class="form-check form-switch">
+  
+
+                                <input class="form-check-input" role="switch" type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}})">
+                                <label for="user{{$user->id}}"> {{$user->display_name}} </label>
+                            
+                                <div id="space{{$user->id}}">
+
+                                </div>
+                                </div>
+                            </div>
+                            </td>
                         </tr>
                     @endif
                     @endforeach

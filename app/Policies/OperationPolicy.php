@@ -72,4 +72,8 @@ class OperationPolicy
     {
         //
     }
+
+    public function addUser(User $user): bool {
+        return Superadmin::where('user_id',$user->id)->exists();   
+    }
 }

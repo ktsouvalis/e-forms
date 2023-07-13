@@ -28,24 +28,28 @@ class OperationController extends Controller
                 'icon' => $incomingFields['operation_icon']
             ]);
         } catch (Throwable $e) {
-            return view('operations', [
-                'dberror' => "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.",
-                'old_data' => $request
-            ]);
+            return redirect(url('/manage_operations'))
+                ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
+                ->with('old_data', $request->all());
         }
 
-        // check the input if there is a user added to the operation. can_edit is 0 until something else is implemented
-        foreach ($request->all() as $key => $value) {
-            if (substr($key, 0, 4) == 'user') {
+        //check if some other users except the admins are coming in from the input and add these records to the users_operations table
+        foreach($request->all() as $key=>$value){
+            if(substr($key,0,4)=='user'){
+                $user_id=$value;
+                if(isset($incomingFields['edit'.$user_id])){
+                    $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1;
+                }
                 UsersOperations::create([
-                    'operation_id' => $record->id,
-                    'user_id' => $value,
-                    'can_edit' => 0
+                    'operation_id'=>$record->id,
+                    'user_id'=>$user_id,
+                    'can_edit'=> $can_edit
                 ]);
             }
         }
 
-        return view('operations', ['record' => $record]);
+        return redirect(url('/manage_operations'))->with('success', 'Τα στοιχεία της λειτουργίας καταχωρήθηκαν επιτυχώς');
+
     }
 
     /**
@@ -94,48 +98,29 @@ class OperationController extends Controller
             $edited = true;
         }
         
-        // Check if a user has been removed from the operation
-        $operation_users = $operation->users->all();
-        
-        foreach ($operation_users as $one_user) {
-            $found = false;
-            
-            foreach ($request->all() as $key => $value) {
-                if (substr($key, 0, 4) == 'user') {
-                    if ($value == $one_user->user_id) {
-                        $found = true;
-                    }
-                }
-            }
-            
-            if (!$found) {
-                UsersOperations::where('user_id', $one_user->user_id)
-                    ->where('operation_id', $operation->id)
-                    ->first()
-                    ->delete();
-                $edited = true;
-            }
-        }
+        if($request->user()->can('addUser', Operation::class)){
+            // everything is going to be deleted from the microapps_users table and rewriten
+            $old_records = $operation->users;
+            $operation->users()->delete();
 
-        // Check if a user has been added to the operation
-        foreach ($request->all() as $key => $value) {
-            if (substr($key, 0, 4) == 'user') {
-                if (!$operation->users->where('user_id', $value)->count()) {
+            //check if some other users except the admins are coming in from the input and add these records to the microapps_users table
+            foreach($request->all() as $key=>$value){
+                if(substr($key,0,4)=='user'){ //checks if some user's checkbox is checked
+                    $user_id=$value;
+                    if(isset($incomingFields['edit'.$user_id])){ //checks if the radio buttons and their values come as excpected 
+                        $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1; //for a new user in microapp checks radiobuttons
+                    }
+                    else{
+                        $can_edit = $old_records->where('user_id', $user_id)->first()->can_edit; // for an existing user with no changes in radios
+                    }
                     UsersOperations::create([
                         'operation_id' => $operation->id,
-                        'user_id' => $value,
-                        'can_edit' => 0 // !!!must be checked from the UI!!!!
+                        'user_id' => $user_id,
+                        'can_edit' => $can_edit
                     ]);
-                    $edited = true;
-                } 
+                }
             }
         }
-
-        if (!$edited) {
-            return redirect(url("/operation_profile/$operation->id"))
-                ->with('warning', "Δεν υπάρχουν αλλαγές προς αποθήκευση");
-        }
-
         return redirect(url("/operation_profile/$operation->id"))
             ->with('success', 'Επιτυχής αποθήκευση');
     }

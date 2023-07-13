@@ -93,7 +93,7 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 Route::get('/school_app/{appname}', function($appname){
     $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
-    if($microapp->active){
+    if($microapp->visible){
         return view('microapps.school.'.$appname,['appname'=>$appname]);
     }
     else{

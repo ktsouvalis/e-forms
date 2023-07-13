@@ -43,7 +43,7 @@
                             <tr >  
                                 <td>{{$one_microapp->id}}</td>
                                 @can('update', $one_microapp)
-                                <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="/microapp_profile/{{$one_microapp->id}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
+                                <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="{{url("/microapp_profile/$one_microapp->id")}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
                                 @else
                                 <td>{{$one_microapp->name}}</td>
                                 @endcan

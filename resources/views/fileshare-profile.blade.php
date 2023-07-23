@@ -40,7 +40,7 @@
                     
                     <div class="input-group">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-outline-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
+                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                         <a href="{{url("/fileshare_profile/$fileshare->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
@@ -59,7 +59,7 @@
                     </div>
                     <div class="input-group py-1 px-1">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-outline-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
+                        <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
             </nav>  
@@ -100,11 +100,11 @@
                 <a href="{{url("/preview_mail_all_whocans/fileshare/$fileshare->id")}}" class="btn btn-outline-secondary bi bi-binoculars" target="_blank"> Προεπισκόπηση email</a>
                 <form action="{{url("/send_mail_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-outline-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους</button>
+                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους</button>
                 </form>
                 <form action="{{url("/delete_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
-                    <button type="submit" class="btn btn-outline-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή όλων</button>
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή όλων</button>
                 </form>
             </div>
             @endif 

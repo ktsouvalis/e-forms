@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Month;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class ChangeActiveMonth extends Command
 {
@@ -36,6 +37,6 @@ class ChangeActiveMonth extends Command
         $new_active_month->active=1;
         $new_active_month->save();
         $now = Carbon::now();
-        $this->info("$now: Active month updated successfully.");
+        Log::info("$now: Active month updated successfully.");
     }
 }

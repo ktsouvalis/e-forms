@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Models\Superadmin;
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class EditSuperAdmins extends Command
 {
@@ -28,6 +30,7 @@ class EditSuperAdmins extends Command
     public function handle()
     {
         //
+        $now = Carbon::now();
         $u_n = $this->argument('u_n');
         $user = User::where('username', $u_n)->first();
         if($user){
@@ -41,10 +44,14 @@ class EditSuperAdmins extends Command
                 ]);
                 $string = "added to";
             }
-            $this->info("User $string superadmins");
+            
+            Log::info("$now: User $u_n $string superadmins");
+            // $this->info("$now: User $u_n $string superadmins");
+
         }
         else{
-            $this->warn("User $u_n not found");
+            Log::info("$now: User $u_n not found");
+            // $this->error("$now: User $u_n not found");
         }
     }
 }

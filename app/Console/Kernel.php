@@ -17,13 +17,13 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->command('microapps:accept_not')
-            ->daily()
-            ->appendOutputTo(storage_path('logs/laravel.log'));
+            ->daily();
+            // ->appendOutputTo(storage_path('logs/custom_cron_commands.log'));
         // ->dailyAt('19:03');
 
         $schedule->command('change-active-month')
-            ->monthly()
-            ->appendOutputTo(storage_path('logs/laravel.log'));
+            ->monthly();
+            // ->appendOutputTo(storage_path('logs/custom_cron_commands.log'));
     }
 
     /**

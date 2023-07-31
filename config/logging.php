@@ -63,6 +63,8 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
+            'encoding' =>'utf-8',
+            'days' =>30
         ],
 
         'daily' => [

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Microapp;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class ChangeMicroappAcceptStatus extends Command
 {
@@ -27,13 +28,17 @@ class ChangeMicroappAcceptStatus extends Command
     public function handle()
     {
         //
-        $microapps_to_close = Microapp::whereDate('closes_at', '<', now())->get();
-
-        foreach($microapps_to_close as $microapp) {
-            $microapp->update(['accepts' => 0]);
-        }
         $now = Carbon::now();
-        $this->info("$now: Microapps updated successfully.");
-        
+        $microapps_to_close = Microapp::whereDate('closes_at', '<', now())->get();
+        if($microapps_to_close->count()){
+            foreach($microapps_to_close as $microapp) {
+                $microapp->update(['accepts' => 0]);
+                $done=true;
+            }
+            Log::info("$now: Microapps updated successfully.");
+        }
+        else{
+            Log::info("$now: No microapps to update");   
+        }
     }
 }

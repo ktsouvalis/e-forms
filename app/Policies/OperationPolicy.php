@@ -76,4 +76,11 @@ class OperationPolicy
     public function addUser(User $user): bool {
         return Superadmin::where('user_id',$user->id)->exists();   
     }
+
+    public function changeActiveMonth(User $user){
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        $operation = Operation::where('url','/month')->first(); 
+        return ($operation->users->where('user_id', $user->id)->count());
+        return false;
+    }
 }

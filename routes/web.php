@@ -12,6 +12,7 @@ use App\Mail\MicroappToSubmit;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\WhocanController;
 use App\Http\Controllers\TeacherController;
@@ -239,3 +240,9 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
 
     return back()->with('success', 'Ο σύνδεσμος στάλθηκε επιτυχώς');
 });
+
+//MONTH Routes
+
+Route::view('/month','month')->middleware("can:changeActiveMonth, ".Operation::class);
+
+Route::post('/set_active_month', [MonthController::class,'setActiveMonth'])->middleware("can:changeActiveMonth, ".Operation::class);

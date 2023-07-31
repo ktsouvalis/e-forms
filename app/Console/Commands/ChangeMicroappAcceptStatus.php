@@ -32,8 +32,8 @@ class ChangeMicroappAcceptStatus extends Command
         foreach($microapps_to_close as $microapp) {
             $microapp->update(['accepts' => 0]);
         }
-
-        $this->info('Microapps updated successfully.');
+        $now = Carbon::now();
+        $this->info("$now: Microapps updated successfully.");
         
     }
 }

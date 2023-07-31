@@ -35,7 +35,7 @@ class ChangeActiveMonth extends Command
         $new_active_month = Month::where('number',$get_month)->first();
         $new_active_month->active=1;
         $new_active_month->save();
-
-        $this->info('Active month updated successfully.');
+        $now = Carbon::now();
+        $this->info("$now: Active month updated successfully.");
     }
 }

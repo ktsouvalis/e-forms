@@ -16,10 +16,14 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('microapps:accept_not')->daily();
+        $schedule->command('microapps:accept_not')
+            ->daily()
+            ->appendOutputTo(storage_path('logs/laravel.log'));
         // ->dailyAt('19:03');
 
-        $schedule->command('change-active-month')->monthly();
+        $schedule->command('change-active-month')
+            ->monthly()
+            ->appendOutputTo(storage_path('logs/laravel.log'));
     }
 
     /**

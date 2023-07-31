@@ -45,12 +45,12 @@ class EditSuperAdmins extends Command
                 $string = "added to";
             }
             
-            Log::info("$now: User $u_n $string superadmins");
+            Log::info("User $u_n $string superadmins");
             // $this->info("$now: User $u_n $string superadmins");
 
         }
         else{
-            Log::info("$now: User $u_n not found");
+            Log::info("User $u_n not found");
             // $this->error("$now: User $u_n not found");
         }
     }

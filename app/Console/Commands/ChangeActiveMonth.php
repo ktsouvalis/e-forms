@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Throwable;
 use App\Models\Month;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
@@ -29,14 +30,18 @@ class ChangeActiveMonth extends Command
     public function handle()
     {
         //
-        $current_active_month = Month::where('active',1)->first();
-        $current_active_month->active=0;
-        $current_active_month->save();
-        $get_month = Carbon::now()->month;
-        $new_active_month = Month::where('number',$get_month)->first();
-        $new_active_month->active=1;
-        $new_active_month->save();
-        $now = Carbon::now();
-        Log::info("$now: Active month updated successfully.");
+        try{
+            $current_active_month = Month::where('active',1)->first();
+            $current_active_month->active=0;
+            $current_active_month->save();
+            $get_month = Carbon::now()->month;
+            $new_active_month = Month::where('number',$get_month)->first();
+            $new_active_month->active=1;
+            $new_active_month->save();
+            Log::info("Active month updated successfully.");
+        }
+        catch(Throwable $e){
+            Log::error("Active month not updated!");      
+        }
     }
 }

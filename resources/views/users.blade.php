@@ -1,6 +1,4 @@
 <x-layout>
-    
-
     @push('links')
         <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
         <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
@@ -11,6 +9,7 @@
         <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+        <script src="datatable_init.js"></script>
     @endpush
 
     @push('title')
@@ -19,6 +18,7 @@
     
 <body>
     <div class="container">
+        
     {{-- @include('menu') --}}
     {{-- <div class="d-flex justify-content-end">
         <a href="/users_dl" class="btn btn-primary bi bi-download"> Λήψη αρχείου χρηστών </a>
@@ -50,38 +50,36 @@
                         <th id="search">DisplayName</th>
                         <th id="search">email</th>
                         <th id="search">Τμήμα</th>
-                        {{-- <th id="search">Έχει πρόσβαση</th> --}}
+                        <th id="search">Superadmin</th>
                         <th id="search">CreatedAt</th>
                         <th id="search">UpdatedAt</th>
                         <th id="">Password Reset</th>
                     </tr>
                 </thead>
-                    <tbody>
-                        @foreach($all_users as $user)
-                            <tr>  
-                                <td>{{$user->id}}</td>
-                                <td>{{$user->username}}</td>
-                                <td><div class=" text-wrap"><a href="/user_profile/{{$user->id}}" style="">{{$user->display_name}}</a></div></td>
-                                <td>{{$user->email}}</td>
-                                <td>{{$user->department->name}}</td>
-                                {{-- <td>
-                                    <table class="table table-sm table-striped table-hover table-bordered">
-                                        @foreach ($user->operations as $one_operation)
-                                            <tr>
-                                            <td>{{$one_operation->operation->name}}</td>  
-                                            </tr>
-                                        @endforeach
-                                    </table>
-                                </td> --}}
-                                <td>{{$user->created_at}}</td>
-                                <td>{{$user->updated_at}}</td>
-                                <form action="{{url("/reset_password/$user->id")}}" method="post">
-                                @csrf
-                                    <td><button class="bi bi-key-fill btn btn-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
-                                </form>
-                            </tr>
-                        @endforeach
-                    </tbody>
+                <tbody>
+                    @foreach($all_users as $user)
+                        <tr>  
+                            <td>{{$user->id}}</td>
+                            <td>{{$user->username}}</td>
+                            <td><div class=" text-wrap"><a href="/user_profile/{{$user->id}}" style="">{{$user->display_name}}</a></div></td>
+                            <td>{{$user->email}}</td>
+                            <td>{{$user->department->name}}</td>
+                            
+                            @if($user->superadmin)
+                                <td><strong>ΝΑΙ</strong></td>
+                            @else
+                                <td>ΟΧΙ</td>
+                            @endIF
+                            
+                            <td>{{$user->created_at}}</td>
+                            <td>{{$user->updated_at}}</td>
+                            <form action="{{url("/reset_password/$user->id")}}" method="post">
+                            @csrf
+                                <td><button class="bi bi-key-fill btn btn-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
+                            </form>
+                        </tr>
+                    @endforeach
+                </tbody>
                 </table>
             </div>
             

@@ -18,6 +18,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('microapps:accept_not')->daily();
         // ->dailyAt('19:03');
+
+        $schedule->command('change-active-month')->monthly();
     }
 
     /**

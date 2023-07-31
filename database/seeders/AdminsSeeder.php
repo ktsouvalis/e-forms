@@ -23,14 +23,6 @@ class AdminsSeeder extends Seeder
             'password' => bcrypt('123456'),
             'department_id' => 5
         ]);
-        
-        User::create([
-            'username' => 'kstefanopoulos',
-            'display_name' => 'Κωνσταντίνος Στεφανόπουλος',
-            'email' => 'konstantinostef@yahoo.gr',
-            'password' => bcrypt('123456'),
-            'department_id' => 5
-        ]);
 
         User::create([
             'username' => 'test',
@@ -40,21 +32,8 @@ class AdminsSeeder extends Seeder
             'department_id' => 3
         ]);
 
-
-        //CREATE OPERATIONS
-
-        Operation::create([
-            'name' => 'Σχολεία',
-            'url' => '/schools',
-            'color' => 'MediumAquamarine',
-            'icon' => 'fa-solid fa-school'
-        ]);
-
-        Operation::create([
-            'name' => 'Εκπαιδευτικοί',
-            'url' => '/teachers',
-            'color' => 'LightSalmon',
-            'icon' => 'fa-solid fa-chalkboard-user'
+        Superadmin::create([
+            'user_id' => 1
         ]);
     }
 }

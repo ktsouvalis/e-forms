@@ -83,4 +83,9 @@ class OperationPolicy
         return ($operation->users->where('user_id', $user->id)->count());
         return false;
     }
+
+    public function executeCommands(User $user){
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        return false;   
+    }
 }

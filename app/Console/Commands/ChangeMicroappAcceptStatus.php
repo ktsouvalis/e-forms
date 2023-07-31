@@ -28,7 +28,6 @@ class ChangeMicroappAcceptStatus extends Command
     public function handle()
     {
         //
-        $now = Carbon::now();
         $microapps_to_close = Microapp::whereDate('closes_at', '<', now())->get();
         if($microapps_to_close->count()){
             foreach($microapps_to_close as $microapp) {

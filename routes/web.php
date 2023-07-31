@@ -246,3 +246,28 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
 Route::view('/month','month')->middleware("can:changeActiveMonth, ".Operation::class);
 
 Route::post('/set_active_month', [MonthController::class,'setActiveMonth'])->middleware("can:changeActiveMonth, ".Operation::class);
+
+//  COMMANDS Routes
+
+Route::middleware("can:executeCommands," . Operation::class)->group(function () {
+
+    // Define routes inside the group
+    Route::view('/commands', 'commands');
+
+    Route::post('/com_change_active_month', function () {
+        Artisan::call('change-active-month');
+        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+    });
+
+    Route::post('/com_change_microapp_accept_status', function () {
+        Artisan::call('microapps:accept_not');
+        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+    });
+
+    Route::post('/com_edit_super_admins', function (Request $request) {
+        $username = $request->input('username');
+        Artisan::call('super', ['u_n' => $username]);
+        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+    });
+
+});

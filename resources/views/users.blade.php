@@ -61,7 +61,10 @@
                         <tr>  
                             <td>{{$user->id}}</td>
                             <td>{{$user->username}}</td>
-                            <td><div class=" text-wrap"><a href="/user_profile/{{$user->id}}" style="">{{$user->display_name}}</a></div></td>
+                            @php
+                                $link = url("/user_profile/$user->id");
+                            @endphp
+                            <td><div class=" text-wrap"><a href="{{$link}}" style="">{{$user->display_name}}</a></div></td>
                             <td>{{$user->email}}</td>
                             <td>{{$user->department->name}}</td>
                             
@@ -73,7 +76,10 @@
                             
                             <td>{{$user->created_at}}</td>
                             <td>{{$user->updated_at}}</td>
-                            <form action="{{url("/reset_password/$user->id")}}" method="post">
+                            @php
+                                $link2 = url("/reset_password/$user->id");    
+                            @endphp
+                            <form action="{{$link2}}" method="post">
                             @csrf
                                 <td><button class="bi bi-key-fill btn btn-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
                             </form>

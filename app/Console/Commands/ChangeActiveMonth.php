@@ -38,10 +38,13 @@ class ChangeActiveMonth extends Command
             $new_active_month = Month::where('number',$get_month)->first();
             $new_active_month->active=1;
             $new_active_month->save();
-            Log::info("Active month updated successfully.");
+            $output = "Active month updated successfully.";
+            Log::info($output);
         }
         catch(Throwable $e){
-            Log::error("Active month not updated!");      
+            $output = "Active month not updated!";
+            Log::error($output);      
         }
+        session()->flash('command_output', $output);
     }
 }

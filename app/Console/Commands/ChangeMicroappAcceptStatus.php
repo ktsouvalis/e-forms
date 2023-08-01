@@ -34,10 +34,13 @@ class ChangeMicroappAcceptStatus extends Command
                 $microapp->update(['accepts' => 0]);
                 $done=true;
             }
-            Log::info("Microapps updated successfully.");
+            $output = "Microapps updated successfully.";
         }
         else{
-            Log::info("No microapps to update");   
+            $output = "No microapps to update";
+              
         }
+        Log::info($output);
+        session()->flash('command_output', $output);
     }
 }

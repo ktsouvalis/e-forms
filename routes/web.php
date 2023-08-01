@@ -258,17 +258,20 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
 
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
-        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+        $output = session()->get('command_output');
+        return redirect(url('/commands'))->with('command', $output);
     });
 
     Route::post('/com_change_microapp_accept_status', function () {
         Artisan::call('microapps:accept_not');
-        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+        $output = session()->get('command_output');
+        return redirect(url('/commands'))->with('command', $output);
     });
 
     Route::post('/com_edit_super_admins', function (Request $request) {
         $username = $request->input('username');
         Artisan::call('super', ['u_n' => $username]);
-        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+        $output = session()->get('command_output');
+        return redirect(url('/commands'))->with('command',$output);
     });
 });

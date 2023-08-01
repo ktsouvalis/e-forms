@@ -131,7 +131,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon6">τηλέφωνο</span>
-                        <input name="user_telephone3" type="text" class="form-control" placeholder="τηλέφωνο" aria-label="τηλέφωνο" aria-describedby="basic-addon6" required value="@if(session()->has('old_data')){{session('old_data')['user_telephone3']}}@endif" ><br>
+                        <input name="user_telephone3" type="text" class="form-control" placeholder="τηλέφωνο" aria-label="τηλέφωνο" aria-describedby="basic-addon6" value="@if(session()->has('old_data')){{session('old_data')['user_telephone3']}}@endif" ><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">Λειτουργίες</span>

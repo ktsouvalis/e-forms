@@ -215,6 +215,14 @@
         </div>
         </div>
         @endif 
+
+        @if(session()->has('command'))
+        <div class='container container-narrow'>
+        <div class='alert alert-dark text-center fw-bold'>
+            {{session('command')}}
+        </div>
+        </div>
+        @endif 
         
 
        <!-- footer begins -->

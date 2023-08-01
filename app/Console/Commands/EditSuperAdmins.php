@@ -30,7 +30,6 @@ class EditSuperAdmins extends Command
     public function handle()
     {
         //
-        $now = Carbon::now();
         $u_n = $this->argument('u_n');
         $user = User::where('username', $u_n)->first();
         if($user){
@@ -44,14 +43,19 @@ class EditSuperAdmins extends Command
                 ]);
                 $string = "added to";
             }
+            $output = "User $u_n $string superadmins";
+            Log::info($output);
             
-            Log::info("User $u_n $string superadmins");
-            // $this->info("$now: User $u_n $string superadmins");
+            // $this->info("User $u_n $string superadmins");
+            // return "User $u_n $string superadmins";
 
         }
         else{
-            Log::info("User $u_n not found");
-            // $this->error("$now: User $u_n not found");
+            $output = "User $u_n not found";
+            Log::info($output);
+            // $this->error("User $u_n not found");
+            // return "User $u_n not found";
         }
+        session()->flash('command_output', $output);
     }
 }

@@ -1,6 +1,6 @@
 <x-layout>
     <div class="container">
-        <strong>ΠΡΟΣΟΧΗ!! ΑΠΟ ΤΟ 4.25 του myschool πρέπει να σβηστεί η 1 από τις 2 εγγραφές των σχολείων που παρουσιάζονται 2 φορές ΚΑΙ έχουν ΝΑΙ στον αναπληρωτή διευθυντή</strong>
+        <strong>ΠΡΟΣΟΧΗ!! ΑΠΟ ΤΟ 4.25 του myschool πρέπει να σβηστεί η 1 από τις 2 εγγραφές των σχολείων που παρουσιάζονται 2 φορές ΚΑΙ έχουν ΝΑΙ στον αναπληρωτή διευθυντή. Επίσης, πρέπει να διαγραφούν τα ιδιωτικά σχολεία.</strong>
         @if(!session()->has('asks_to'))
         <nav class="navbar navbar-light bg-light">
             <form action="{{url('/upload_directors_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">

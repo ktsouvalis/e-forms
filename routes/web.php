@@ -108,7 +108,7 @@ Route::view('/teachers','teachers')->middleware('auth')->middleware('can:viewAny
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:upload, ".Teacher::class);
 
-Route::post('/upload_teachers_organiki_template', [TeacherController::class, 'importTeachers']);
+Route::post('/upload_teachers_template', [TeacherController::class, 'importTeachers']);
 
 Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:upload, ".Teacher::class);
 
@@ -243,15 +243,17 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
 
 //MONTH Routes
 
-Route::view('/month','month')->middleware("can:changeActiveMonth, ".Operation::class);
+Route::group(['middleware' => 'can:changeActiveMonth,'.Operation::class], function () {
 
-Route::post('/set_active_month', [MonthController::class,'setActiveMonth'])->middleware("can:changeActiveMonth, ".Operation::class);
+    Route::view('/month','month');
+
+    Route::post('/set_active_month', [MonthController::class,'setActiveMonth']);
+});
 
 //  COMMANDS Routes
 
-Route::middleware("can:executeCommands," . Operation::class)->group(function () {
+Route::group(['middleware' => "can:executeCommands," .Operation::class], function () {
 
-    // Define routes inside the group
     Route::view('/commands', 'commands');
 
     Route::post('/com_change_active_month', function () {
@@ -269,5 +271,4 @@ Route::middleware("can:executeCommands," . Operation::class)->group(function () 
         Artisan::call('super', ['u_n' => $username]);
         return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
     });
-
 });

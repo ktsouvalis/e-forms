@@ -2,18 +2,29 @@
     <div class="container">
         @if(!session()->has('asks_to'))
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url('/upload_teachers_organiki_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+            <form action="{{url('/upload_teachers_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="import_teachers_organiki" > 
-                <div class="hstack">
+                <div class="vstack gap-3">
+                <input type="file" name="import_teachers" > 
+                <div class="hstack gap-1">
                     <input  type="radio" id="organiki" name="template_file" value="organiki" checked>
                     <label class="px-1" for="organiki">Οργανικά Ανήκοντες (4.1 MYSCHOOL)</label><br>
                 </div>
-                <div class="hstack">
+                <div class="hstack gap-1">
                     <input type="radio" id="apospasi" name="template_file" value="apospasi">
                     <label class="px-1" for="apospasi">Αποσπασμένοι (4.2 MYSCHOOL)</label><br> 
-                </div>   
+                </div>
+                <div class="hstack gap-1">
+                    <input type="radio" id="didaskalia" name="template_file" value="didaskalia">
+                    <label class="px-1" for="didaskalia">Διδάσκουν (4.9 MYSCHOOL)</label><br> 
+                </div> 
+                <div class="hstack gap-1">
+                    <input type="radio" id="apousia" name="template_file" value="apousia">
+                    <label class="px-1" for="apousia">Απουσιάζουν </label><br> 
+                    <div>4.16 MYSCHOOL: Πρέπει από το report να διαγραφούν οι αιτιολογήσεις απουσίας: ΑΠΕΥΘΕΙΑΣ ΑΠΟΣΠΑΣΗ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ, ΑΠΟΣΠΑΣΗ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ ΕΝΤΟΣ ΠΥΣΠΕ/ΠΥΣΔΕ, ΕΠΙ ΘΗΤΕΙΑ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ, ΟΛΙΚΗ ΔΙΑΘΕΣΗ ΣΕ ΣΧ. ΜΟΝΑΔΑ.<br> Πρέπει να σβηστούν τα ιδιωτικά σχολεία.</div>
+                </div>     
                 <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
+                </div>
             </form>
         </nav>
         @else

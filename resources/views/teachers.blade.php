@@ -42,7 +42,7 @@
                     <th id="search">Τηλέφωνο</th>
                     
                     <th id="search">Οργανική</th>
-                    {{-- <th id="search">Υπηρέτηση</th> --}}
+                    <th id="search">Υπηρέτηση</th>
                     <th id="search">last login</th>
                     
                     
@@ -80,7 +80,13 @@
                     <td>{{$teacher->telephone}}</td>
                     
                     <td>{{$teacher->organiki->name}}</td>
-                    {{-- <td>{{$teacher->ypiretisi->name}}</td> --}}
+
+                    @if($teacher->ypiretisi_id!=null)
+                        <td>{{$teacher->ypiretisi->name}}</td>
+                    @else
+                        <td>-</td>
+                    @endif
+
                     @if($date)
                         <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use App\Models\School;
 use App\Models\Teacher;
+use App\Models\NoSchool;
 use App\Models\Directory;
 use Illuminate\Http\Request;
 use App\Models\SxesiErgasias;
@@ -54,7 +55,7 @@ class TeacherController extends Controller
 
         //validate the input file type
         $rule = [
-            'import_teachers_organiki' => 'required|mimes:xlsx'
+            'import_teachers' => 'required|mimes:xlsx'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
@@ -62,8 +63,8 @@ class TeacherController extends Controller
         }
 
         //store the file
-        $filename = "teachers_organiki_file".Auth::id().".xlsx";
-        $path = $request->file('import_teachers_organiki')->storeAs('files', $filename);
+        $filename = "teachers_file".Auth::id().".xlsx";
+        $path = $request->file('import_teachers')->storeAs('files', $filename);
 
         //load the file
         $mime = Storage::mimeType($path);
@@ -74,125 +75,188 @@ class TeacherController extends Controller
         $row=2;
         $error=0;
         $rowSumValue="1";
-        while ($rowSumValue != "" && $row<10000){
-            $check=array();
-    
-            $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
-            $check['surname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
-            $check['fname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
-            $check['mname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-            
-            //myschool stores the afm like eg "=999999999"
-            $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-            $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
-
-            //check obvious fields
-            $check['gender']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
-            $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
-            $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
-            $check['sch_mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
-            $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
-            $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-            
-            //cross check sxesi_ergasias with database
-            $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
-            if(SxesiErgasias::where('name',$sxesi)->count()){
-                $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
-                $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
-            }
-            else{
-                $error = 1;
-                $check['sxesi_ergasias'] = "Error: Κενό πεδίο";
+        if($request->input('template_file')=='didaskalia'){
+            while ($rowSumValue != "" && $row<10000){
+                $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
+                $teacher_afm = substr($afm,2,-1); // remove from start =" and remove from end "
+                $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
+                $school_code = substr($code,2,-1); // remove from start =" and remove from end "
+                if(!Teacher::where('afm', $teacher_afm)->count())
+                    dd($teacher_afm);
+                else{
+                    $teacher = Teacher::where('afm', $teacher_afm)->first();
+                    if(!School::where('code', $school_code)->count())
+                        dd($school_code);
+                    else{
+                        $school = School::where('code', $school_code)->first();
+                        
+                        $teacher->ypiretisi_id = $school->id;
+                        $teacher->ypiretisi_type = "App\Models\School";
+                    }
+                    $teacher->save();
+                }
+                
+                //change line and check if it's empty
+                $row++;
+                $rowSumValue="";
+                for($col=1;$col<=54;$col++){
+                    $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                }
             }
 
-            $ignore_record = 0;
-            if($request->input('template_file')=='organiki'){ // myschool report 4.1
-
-                //myschool stores the organiki like eg "=999999999"
-                $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
-                $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
-
-                $check['org_eae']=1;
-                if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(54, $row)->getValue()=="ΟΧΙ"){
-                    $check['org_eae']=0;
+            return redirect(url('/teachers'))->with('success', 'Επιτυχής ενημέρωση 1ου σχολείου υπηρέτησης εκπαιδευτικών');
+        }
+        else if($request->input('template_file')=='apousia'){
+            while ($rowSumValue != "" && $row<10000){
+                $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
+                $teacher_afm = substr($afm,2,-1); // remove from start =" and remove from end "
+                $apousia = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(46, $row)->getValue();
+                
+                if(!Teacher::where('afm', $teacher_afm)->count())
+                    dd($teacher_afm);
+                else{
+                    $teacher = Teacher::where('afm', $teacher_afm)->first();
+                    if(!NoSchool::where('name', $apousia)->count())
+                        dd($apousia);
+                    else{
+                        $no_school = NoSchool::where('name', $apousia)->first();
+                        
+                        $teacher->ypiretisi_id = $no_school->id;
+                        $teacher->ypiretisi_type = "App\Models\NoSchool";
+                    }
+                    $teacher->save();
                 }
-
-                //check if organiki is in a school (Σχολείο) or Directory (Διεύθυνση Εκπαίδευσης)
-                if(School::where('code', $sanitized_organiki)->count()){
-                    $check['organiki'] = School::where('code', $sanitized_organiki)->first()->id;
-                    $check['organiki_name'] = School::where('code', $sanitized_organiki)->first()->name;
-                    $check['organiki_type'] = "App\Models\School";
+                
+                //change line and check if it's empty
+                $row++;
+                $rowSumValue="";
+                for($col=1;$col<=54;$col++){
+                    $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
                 }
-                else if(Directory::where('code', $sanitized_organiki)->count()){
-                    $check['organiki'] = Directory::where('code', $sanitized_organiki)->first()->id;
-                    $check['organiki_name'] = Directory::where('code', $sanitized_organiki)->first()->name;
-                    $check['organiki_type'] = "App\Models\Directory";    
+            }
+
+            return redirect(url('/teachers'))->with('success', 'Επιτυχής ενημέρωση απουσίας εκπαιδευτικών');    
+        }   
+        else{
+            while ($rowSumValue != "" && $row<10000){
+                $check=array();
+        
+                $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
+                $check['surname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+                $check['fname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
+                $check['mname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
+                
+                //myschool stores the afm like eg "=999999999"
+                $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
+                $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
+
+                //check obvious fields
+                $check['gender']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
+                $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
+                $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
+                $check['sch_mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
+                $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
+                $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+                
+                //cross check sxesi_ergasias with database
+                $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
+                if(SxesiErgasias::where('name',$sxesi)->count()){
+                    $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
+                    $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
                 }
                 else{
-                    $error=1;
-                    $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
-                }
-            }
-            else if($request->input('template_file')=='apospasi'){ // myschool report 4.2
-                
-                $check['org_eae']=1;
-                if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="ΟΧΙ"){
-                    $check['org_eae']=0;
+                    $error = 1;
+                    $check['sxesi_ergasias'] = "Error: Κενό πεδίο";
                 }
 
-                //fix  directories to match database and then cross check
-                $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
-                if($organiki!="ΑΧΑΪΑΣ (Π.Ε.) 2018"){
-                    
-                    // Extract the parts using regular expressions
-                    preg_match('/^(\S+[^ \d])?(.*?) \((.*?)\)/', $organiki, $matches);
-                    // Check if matches[1] is in the format of "Α'", "Β'", etc., and matches[2] is "ΑΘΗΝΑΣ"
-                    if ($matches[2]!=''){
-                        if($matches[2] == ' ΑΘΗΝΑΣ') {
-                        // Rearrange the parts to the desired format
-                        $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' ' . trim($matches[1] . $matches[2]);
-                        }
-                        else{
-                            if($matches[2]==" ΘΕΣΣΑΛΟΝΙΚΗΣ"){
-                                // echo 'true';
-                                if($matches[1]=="Α΄")$matches[2]="ΑΝΑΤ. ΘΕΣ/ΝΙΚΗΣ";
-                                if($matches[1]=="Β΄")$matches[2]="ΔΥΤ. ΘΕΣ/ΝΙΚΗΣ";
-                            }
-                            if($matches[2]==" ΑΤΤΙΚΗΣ")$matches[2]="ΔΥΤΙΚΗΣ ΑΤΤΙΚΗΣ";
-                            if($matches[2]==" ΑΝΑΤ. ΑΤΤΙΚΗΣ")$matches[2]="ΑΝΑΤΟΛΙΚΗΣ ΑΤΤΙΚΗΣ";
-                            $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' '. trim($matches[2]);    
-                        }
+                $ignore_record = 0;
+                if($request->input('template_file')=='organiki'){ // myschool report 4.1
+
+                    //myschool stores the organiki like eg "=999999999"
+                    $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
+                    $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
+
+                    $check['org_eae']=1;
+                    if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(54, $row)->getValue()=="ΟΧΙ"){
+                        $check['org_eae']=0;
                     }
-                    else {
-                        // Rearrange the parts to the desired format without keeping matches[2]
-                        $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' '. $matches[1];
+
+                    //check if organiki is in a school (Σχολείο) or Directory (Διεύθυνση Εκπαίδευσης)
+                    if(School::where('code', $sanitized_organiki)->count()){
+                        $check['organiki'] = School::where('code', $sanitized_organiki)->first()->id;
+                        $check['organiki_name'] = School::where('code', $sanitized_organiki)->first()->name;
+                        $check['organiki_type'] = "App\Models\School";
                     }
-                    
-                    if(Directory::where('name', $newString)->count()){
-                        $check['organiki'] = Directory::where('name', $newString)->first()->id;
-                        $check['organiki_name'] = Directory::where('name', $newString)->first()->name;
-                        $check['organiki_type'] = "App\Models\Directory";
+                    else if(Directory::where('code', $sanitized_organiki)->count()){
+                        $check['organiki'] = Directory::where('code', $sanitized_organiki)->first()->id;
+                        $check['organiki_name'] = Directory::where('code', $sanitized_organiki)->first()->name;
+                        $check['organiki_type'] = "App\Models\Directory";    
                     }
                     else{
                         $error=1;
                         $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
                     }
                 }
-                else{
-                    $ignore_record = 1;  //ignore those that belongs to ΑΧΑΪΑ because they are in the database through the 4.1 report (organiki) 
+                else if($request->input('template_file')=='apospasi'){ // myschool report 4.2
+                    
+                    $check['org_eae']=1;
+                    if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="ΟΧΙ"){
+                        $check['org_eae']=0;
+                    }
+
+                    //fix  directories to match database and then cross check
+                    $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
+                    if($organiki!="ΑΧΑΪΑΣ (Π.Ε.) 2018"){
+                        
+                        // Extract the parts using regular expressions
+                        preg_match('/^(\S+[^ \d])?(.*?) \((.*?)\)/', $organiki, $matches);
+                        // Check if matches[1] is in the format of "Α'", "Β'", etc., and matches[2] is "ΑΘΗΝΑΣ"
+                        if ($matches[2]!=''){
+                            if($matches[2] == ' ΑΘΗΝΑΣ') {
+                            // Rearrange the parts to the desired format
+                            $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' ' . trim($matches[1] . $matches[2]);
+                            }
+                            else{
+                                if($matches[2]==" ΘΕΣΣΑΛΟΝΙΚΗΣ"){
+                                    // echo 'true';
+                                    if($matches[1]=="Α΄")$matches[2]="ΑΝΑΤ. ΘΕΣ/ΝΙΚΗΣ";
+                                    if($matches[1]=="Β΄")$matches[2]="ΔΥΤ. ΘΕΣ/ΝΙΚΗΣ";
+                                }
+                                if($matches[2]==" ΑΤΤΙΚΗΣ")$matches[2]="ΔΥΤΙΚΗΣ ΑΤΤΙΚΗΣ";
+                                if($matches[2]==" ΑΝΑΤ. ΑΤΤΙΚΗΣ")$matches[2]="ΑΝΑΤΟΛΙΚΗΣ ΑΤΤΙΚΗΣ";
+                                $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' '. trim($matches[2]);    
+                            }
+                        }
+                        else {
+                            // Rearrange the parts to the desired format without keeping matches[2]
+                            $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' '. $matches[1];
+                        }
+                        
+                        if(Directory::where('name', $newString)->count()){
+                            $check['organiki'] = Directory::where('name', $newString)->first()->id;
+                            $check['organiki_name'] = Directory::where('name', $newString)->first()->name;
+                            $check['organiki_type'] = "App\Models\Directory";
+                        }
+                        else{
+                            $error=1;
+                            $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
+                        }
+                    }
+                    else{
+                        $ignore_record = 1;  //ignore those that belongs to ΑΧΑΪΑ because they are in the database through the 4.1 report (organiki) 
+                    }
+                }
+                //prepare teachers_array for session
+                if(!$ignore_record)array_push($teachers_array, $check);
+
+                //change line and check if it's empty
+                $row++;
+                $rowSumValue="";
+                for($col=1;$col<=54;$col++){
+                    $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
                 }
             }
-            //prepare teachers_array for session
-            if(!$ignore_record)array_push($teachers_array, $check);
-
-            //change line and check if it's empty
-            $row++;
-            $rowSumValue="";
-            for($col=1;$col<=54;$col++){
-                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
-            }
         }
-
         //push the prepared array in session for later use
         session(['teachers_array' => $teachers_array]);
 

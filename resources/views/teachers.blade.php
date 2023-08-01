@@ -21,15 +21,15 @@
     @endphp
 <body>
 
-    <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
+    {{-- <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button> --}}
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
                 <tr>
                     
                     {{-- <th id="search">id</th> --}}
-                    <th class="align-middle">Αντιγραφή συνδέσμου</th>
-                    <th class="align-middle">Αποστολή συνδέσμου</th>
+                    {{-- <th class="align-middle">Αντιγραφή συνδέσμου</th>
+                    <th class="align-middle">Αποστολή συνδέσμου</th> --}}
                     <th id="search">ΑΦΜ</th>
                     <th id="search">AΜ</th>
                     <th id="search">Επώνυμο</th>
@@ -43,7 +43,7 @@
                     
                     <th id="search">Οργανική</th>
                     <th id="search">Υπηρέτηση</th>
-                    <th id="search">last login</th>
+                    {{-- <th id="search">last login</th> --}}
                     
                     
                 </tr>
@@ -59,7 +59,7 @@
                 <tr>  
                     
                     {{-- <td>{{$teacher->id}}</td> --}}
-                    <td style="text-align:center">
+                    {{-- <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
                     <td style="text-align:center" >
@@ -67,7 +67,7 @@
                             @csrf
                             <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
                         </form>
-                    </td> 
+                    </td>  --}}
                     <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->am}}</td>
                     <td>{{$teacher->surname}}</td>
@@ -87,11 +87,11 @@
                         <td>-</td>
                     @endif
 
-                    @if($date)
+                    {{-- @if($date)
                         <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else
                         <td> - </td>
-                    @endif 
+                    @endif  --}}
                 </tr>
             @endforeach
         </tbody>

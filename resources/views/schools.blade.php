@@ -20,20 +20,20 @@
         $all_schools = App\Models\School::all();
     @endphp
 
-    <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
+    {{-- <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button> --}}
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
             <thead>
                 <tr>
                     {{-- <th id="search">id</th> --}}
-                    <th class="align-middle">Αντιγραφή συνδέσμου</th>
-                    <th class="align-middle">Αποστολή συνδέσμου</th>
+                    {{-- <th class="align-middle">Αντιγραφή συνδέσμου</th>
+                    <th class="align-middle">Αποστολή συνδέσμου</th> --}}
                     <th id="search">Κωδικός</th>
                     <th id="search">Ονομασία</th>
                     <th id="search">email</th>
                     <th id="search">tel</th>
                     <th id="search">Δήμος</th>
-                    <th id="search">last login</th>
+                    {{-- <th id="search">last login</th> --}}
                     
                 </tr>
             </thead>
@@ -47,7 +47,7 @@
                 @endphp
                 <tr>
                     {{-- <td >{{$school->id}}</td> --}}
-                    <td style="text-align:center">
+                    {{-- <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
                     <td style="text-align:center;">
@@ -55,17 +55,17 @@
                             @csrf
                             <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
                         </form>
-                    </td>  
+                    </td>   --}}
                     <td >{{$school->code}}</td>
                     <td >{{$school->name}}</td>
                     <td >{{$school->mail}}</td>
                     <td >{{$school->telephone}}</td>
                     <td >{{$school->municipality->name}}</td>
-                    @if($date)
+                    {{-- @if($date)
                         <td >{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else
                         <td > - </td>
-                    @endif
+                    @endif --}}
                 </tr>
             @endforeach
         </tbody>

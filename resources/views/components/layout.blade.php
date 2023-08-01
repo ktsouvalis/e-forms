@@ -102,7 +102,7 @@
         
 
         {{-- Μενού για fileshares --}}
-        <hr>
+        {{-- <hr>
         
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
@@ -121,12 +121,12 @@
           <a href="{{url("/fileshare_profile/$fi")}}" style="text-decoration:none;" class="text-dark"> {{$fileshare->name}}</a>
           </div>
           </li>
-        @endforeach
+        @endforeach --}}
         
         
 
         {{-- μενού για microapps --}}
-        <hr>
+        {{-- <hr>
         
         <li class="nav-item">
         <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
@@ -153,7 +153,7 @@
         @endif
         @endforeach
         
-        
+         --}}
         <hr>
         
         <li class="nav-item">

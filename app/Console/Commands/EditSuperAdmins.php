@@ -44,7 +44,7 @@ class EditSuperAdmins extends Command
                 $string = "added to";
             }
             $output = "User $u_n $string superadmins";
-            Log::info($output);
+            Log::channel('commands_executed')->info("server: ".$output);
             
             // $this->info("User $u_n $string superadmins");
             // return "User $u_n $string superadmins";
@@ -52,7 +52,7 @@ class EditSuperAdmins extends Command
         }
         else{
             $output = "User $u_n not found";
-            Log::info($output);
+            Log::channel('commands_executed')->warning("server: ".$output);
             // $this->error("User $u_n not found");
             // return "User $u_n not found";
         }

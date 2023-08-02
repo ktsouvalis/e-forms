@@ -39,11 +39,11 @@ class ChangeActiveMonth extends Command
             $new_active_month->active=1;
             $new_active_month->save();
             $output = "Active month updated successfully.";
-            Log::info($output);
+            Log::channel('commands_executed')->info("server: ".$output);
         }
         catch(Throwable $e){
             $output = "Active month not updated!";
-            Log::error($output);      
+            Log::channel('commands_executed')->error("server: ".$output);      
         }
         session()->flash('command_output', $output);
     }

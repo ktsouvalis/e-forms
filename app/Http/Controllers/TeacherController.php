@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use App\Models\Form;
 use App\Models\School;
 use App\Models\Teacher;
@@ -10,6 +11,7 @@ use App\Models\Directory;
 use Illuminate\Http\Request;
 use App\Models\SxesiErgasias;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -76,17 +78,26 @@ class TeacherController extends Controller
         $error=0;
         $rowSumValue="1";
         if($request->input('template_file')=='didaskalia'){
+            $error_did=false;
             while ($rowSumValue != "" && $row<10000){
                 $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
                 $teacher_afm = substr($afm,2,-1); // remove from start =" and remove from end "
                 $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
                 $school_code = substr($code,2,-1); // remove from start =" and remove from end "
-                if(!Teacher::where('afm', $teacher_afm)->count())
-                    dd($teacher_afm);
+                if(!Teacher::where('afm', $teacher_afm)->count()){
+                    $row++;
+                    Log::channel('throwable_db')->error('update didaskalia afm error: '.$teacher_afm);
+                    $error_did=true;
+                    $continue;
+                }
                 else{
                     $teacher = Teacher::where('afm', $teacher_afm)->first();
-                    if(!School::where('code', $school_code)->count())
-                        dd($school_code);
+                    if(!School::where('code', $school_code)->count()){
+                        $row++;
+                        Log::channel('throwable_db')->error('update didaskalia code error: '.$school_code);
+                        $error_did=true;
+                        $continue;
+                    }
                     else{
                         $school = School::where('code', $school_code)->first();
                         
@@ -103,21 +114,32 @@ class TeacherController extends Controller
                     $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
                 }
             }
-
-            return redirect(url('/teachers'))->with('success', 'Επιτυχής ενημέρωση 1ου σχολείου υπηρέτησης εκπαιδευτικών');
+            if(!$error_did)
+                return redirect(url('/teachers'))->with('success', 'Επιτυχής ενημέρωση 1ου σχολείου υπηρέτησης εκπαιδευτικών');
+            else
+                return redirect(url('/teachers'))->with('warning', 'Επιτυχής ενημέρωση 1ου σχολείου υπηρέτησης εκπαιδευτικών με σφάλματα που καταγράφηκαν στο log throwable_db');
         }
         else if($request->input('template_file')=='apousia'){
+            $error_ap=false;
             while ($rowSumValue != "" && $row<10000){
                 $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
                 $teacher_afm = substr($afm,2,-1); // remove from start =" and remove from end "
                 $apousia = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(46, $row)->getValue();
                 
-                if(!Teacher::where('afm', $teacher_afm)->count())
-                    dd($teacher_afm);
+                if(!Teacher::where('afm', $teacher_afm)->count()){
+                    $row++;
+                    Log::channel('throwable_db')->error('update apousia afm error: '.$teacher_afm);
+                    $error_ap=true;
+                    $continue;
+                }
                 else{
                     $teacher = Teacher::where('afm', $teacher_afm)->first();
-                    if(!NoSchool::where('name', $apousia)->count())
-                        dd($apousia);
+                    if(!NoSchool::where('name', $apousia)->count()){
+                        $row++;
+                        Log::channel('throwable_db')->error('update apousia no_school error: '.$apousia);
+                        $error_ap=true;
+                        $continue;
+                    }
                     else{
                         $no_school = NoSchool::where('name', $apousia)->first();
                         
@@ -134,8 +156,10 @@ class TeacherController extends Controller
                     $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
                 }
             }
-
-            return redirect(url('/teachers'))->with('success', 'Επιτυχής ενημέρωση απουσίας εκπαιδευτικών');    
+            if(!$error_ap)
+                return redirect(url('/teachers'))->with('success', 'Επιτυχής ενημέρωση απουσίας εκπαιδευτικών'); 
+            else
+                return redirect(url('/teachers'))->with('warning', 'Επιτυχής ενημέρωση απουσίας εκπαιδευτικών με σφάλματα που καταγράφηκαν στο log throwable_db');      
         }   
         else{
             while ($rowSumValue != "" && $row<10000){
@@ -277,34 +301,49 @@ class TeacherController extends Controller
         //read the teachers_array which is prepared from the importTeachers() method
         $teachers_array = session('teachers_array');
         session()->forget('teachers_array');
-
+        $error=false;
         // CREATE OR UPDATE (based on 'afm' field) EXISTING TEACHERS
         foreach($teachers_array as $teacher){
-            Teacher::updateOrcreate(
-                [
-                    'afm'=> $teacher['afm'] 
-                ],
-                [
-                    'md5' => md5($teacher['afm']),
-                    'name'=> $teacher['name'],
-                    'surname'=> $teacher['surname'],
-                    'fname' => $teacher['fname'],
-                    'mname' => $teacher['mname'],
-                    'afm' => $teacher['afm'],
-                    'gender' => $teacher['gender'],
-                    'telephone' => $teacher['telephone'],
-                    'mail' => $teacher['mail'],
-                    'sch_mail' => $teacher['sch_mail'],
-                    'klados' => $teacher['klados'],
-                    'am' => $teacher['am'],
-                    'sxesi_ergasias_id' => $teacher['sxesi_ergasias'],
-                    'org_eae' => $teacher['org_eae'],
-                    'organiki_id' => $teacher['organiki'],
-                    'organiki_type' => $teacher['organiki_type']
-                ]
-            );
+            try{
+                Teacher::updateOrcreate(
+                    [
+                        'afm'=> $teacher['afm'] 
+                    ],
+                    [
+                        'md5' => md5($teacher['afm']),
+                        'name'=> $teacher['name'],
+                        'surname'=> $teacher['surname'],
+                        'fname' => $teacher['fname'],
+                        'mname' => $teacher['mname'],
+                        'afm' => $teacher['afm'],
+                        'gender' => $teacher['gender'],
+                        'telephone' => $teacher['telephone'],
+                        'mail' => $teacher['mail'],
+                        'sch_mail' => $teacher['sch_mail'],
+                        'klados' => $teacher['klados'],
+                        'am' => $teacher['am'],
+                        'sxesi_ergasias_id' => $teacher['sxesi_ergasias'],
+                        'org_eae' => $teacher['org_eae'],
+                        'organiki_id' => $teacher['organiki'],
+                        'organiki_type' => $teacher['organiki_type']
+                    ]
+                );
+            }
+            catch(Throwable $e){
+                Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
+                $error=true;
+                continue; 
+            }
         }
-        return redirect(url('/teachers'))
-        ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+        if(!$error){
+            Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertTeachers');
+            return redirect(url('/teachers'))
+                ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+        }
+        else{
+            Log::channel('user_memorable_actions')->warning(Auth::user()->username.' insertTeachers with errors');
+            return redirect(url('/teachers'))
+                ->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db');
+        }
     }
 }

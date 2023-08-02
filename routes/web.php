@@ -10,6 +10,7 @@ use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
 use App\Models\MicroappStakeholder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthController;
@@ -259,12 +260,14 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
         $output = session()->get('command_output');
+        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         return redirect(url('/commands'))->with('command', $output);
     });
 
     Route::post('/com_change_microapp_accept_status', function () {
         Artisan::call('microapps:accept_not');
         $output = session()->get('command_output');
+        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         return redirect(url('/commands'))->with('command', $output);
     });
 
@@ -272,6 +275,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $username = $request->input('username');
         Artisan::call('super', ['u_n' => $username]);
         $output = session()->get('command_output');
+        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         return redirect(url('/commands'))->with('command',$output);
     });
 });

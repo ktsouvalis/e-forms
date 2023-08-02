@@ -54,7 +54,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single','daily'],
             'ignore_exceptions' => false,
         ],
 
@@ -64,7 +64,41 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
             'encoding' =>'utf-8',
-            'days' =>30
+        ],
+
+        'user_memorable_actions' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/user_memorable_actions.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
+        'commands_executed' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/commands_executed.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
+        'stakeholders_microapps' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/stakeholders_microapps.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
+        'stakeholders_fileshares' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/stakeholders_fileshares.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
+        'throwable_db' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/throwable_db.log'),
+            'level' => 'debug',
+            'days' => 30,
         ],
 
         'daily' => [

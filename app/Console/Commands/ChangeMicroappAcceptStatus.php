@@ -40,7 +40,7 @@ class ChangeMicroappAcceptStatus extends Command
             $output = "No microapps to update";
               
         }
-        Log::info($output);
+        Log::channel('commands_executed')->info("server: ".$output);
         session()->flash('command_output', $output);
     }
 }

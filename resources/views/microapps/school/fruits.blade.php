@@ -1,7 +1,6 @@
 <x-layout_school>
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
-        $old_data = App\Models\microapps\Fruit::where('school_id', $school->id)->first(); // fetch old data for this microapp is there is any
         $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
     @endphp
     <div class="container">

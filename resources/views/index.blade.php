@@ -1,7 +1,5 @@
 <x-layout>
     <body>
-
-        
         <div class="row px-5 justify-content-evenly">
         @auth
             @push('title')

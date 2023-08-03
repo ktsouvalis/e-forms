@@ -9,6 +9,7 @@ use App\Models\Fileshare;
 use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
+use App\Models\microapps\Ticket;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\microapps\FruitsController;
+use App\Http\Controllers\microapps\TicketsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -166,6 +168,23 @@ Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 Route::post("/save_fruits/{school}", [FruitsController::class, 'save_fruits']);
 
+Route::post("/create_ticket/{school}",[TicketsController::class, 'create_ticket']);
+
+Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
+    if(Auth::user()){
+        $blade='admin';
+    }
+    else if (Auth::guard('school')->user()){
+        $blade='school';
+    }
+    return view("microapps.$blade.ticket-profile", ['ticket'=>$ticket, 'appname'=>'tickets']);
+})->middleware('canUpdateTicket');
+
+Route::post("/update_ticket/{ticket}", [TicketsController::class, 'update_ticket'])->middleware('canUpdateTicket');
+
+Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
+
+Route::post("/mark_as_open/{ticket}",[TicketsController::class, 'mark_as_open'])->middleware('canUpdateTicket');
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){

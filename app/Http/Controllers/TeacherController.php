@@ -88,7 +88,7 @@ class TeacherController extends Controller
                     $row++;
                     Log::channel('throwable_db')->error('update didaskalia afm error: '.$teacher_afm);
                     $error_did=true;
-                    $continue;
+                    continue;
                 }
                 else{
                     $teacher = Teacher::where('afm', $teacher_afm)->first();
@@ -96,15 +96,17 @@ class TeacherController extends Controller
                         $row++;
                         Log::channel('throwable_db')->error('update didaskalia code error: '.$school_code);
                         $error_did=true;
-                        $continue;
+                        continue;
                     }
                     else{
                         $school = School::where('code', $school_code)->first();
                         
                         $teacher->ypiretisi_id = $school->id;
                         $teacher->ypiretisi_type = "App\Models\School";
+                        $teacher->save();
+                        // Log::channel('user_memorable_actions')->info(Auth::user()->username." ok ". $teacher->afm);
                     }
-                    $teacher->save();
+                    
                 }
                 
                 //change line and check if it's empty
@@ -130,7 +132,7 @@ class TeacherController extends Controller
                     $row++;
                     Log::channel('throwable_db')->error('update apousia afm error: '.$teacher_afm);
                     $error_ap=true;
-                    $continue;
+                    continue;
                 }
                 else{
                     $teacher = Teacher::where('afm', $teacher_afm)->first();
@@ -138,15 +140,14 @@ class TeacherController extends Controller
                         $row++;
                         Log::channel('throwable_db')->error('update apousia no_school error: '.$apousia);
                         $error_ap=true;
-                        $continue;
+                        continue;
                     }
                     else{
                         $no_school = NoSchool::where('name', $apousia)->first();
-                        
                         $teacher->ypiretisi_id = $no_school->id;
                         $teacher->ypiretisi_type = "App\Models\NoSchool";
-                    }
-                    $teacher->save();
+                        $teacher->save();
+                    } 
                 }
                 
                 //change line and check if it's empty

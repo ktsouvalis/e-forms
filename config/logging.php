@@ -101,6 +101,13 @@ return [
             'days' => 30,
         ],
 
+        'tickets' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/tickets.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

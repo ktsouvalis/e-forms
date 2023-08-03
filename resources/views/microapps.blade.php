@@ -12,6 +12,7 @@
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="canedit.js"></script>
+        <script src="datatable_init.js"></script>
     @endpush
 
     @push('title')
@@ -34,6 +35,7 @@
                     <th id="search">Ενεργή/Ανενεργή</th>
                     <th id="search">Ορατή</th>
                     <th id="search">Δέχεται</th>
+                    <th id="search">Ημερομηνία Λήξης</th>
                 </tr>
             </thead>
                 <tbody>
@@ -120,10 +122,12 @@
                             @else
                             <td> - </td>
                             <td> - </td>
-                            </tr>
+                            
                             @endcan
                         {{-- @endcan --}}
                         @endcan
+                        <td>{{$one_microapp->closes_at}}</td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>

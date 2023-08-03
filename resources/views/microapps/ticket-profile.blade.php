@@ -6,7 +6,7 @@
         </div>
     @else
         <div class='alert alert-success text-center'>
-            Το δελτίο είναι κλειστό
+            Το δελτίο είναι κλειστό. Θα ανοίξει αυτόματα, αν προσθέσετε κάποιο σχόλιο
         </div>
     @endif
     <nav class="navbar navbar-light bg-light">
@@ -49,11 +49,11 @@
             @csrf
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
         </form>
-    @else
+    {{-- @else
         <form action="{{url("/mark_as_open/$ticket->id")}}" method="post">
             @csrf
             <button type="submit" class="btn btn-warning bi bi-envelope-open"> Άνοιγμα δελτίου</button>
-        </form>
+        </form> --}}
     @endif
     </div>
 </div>

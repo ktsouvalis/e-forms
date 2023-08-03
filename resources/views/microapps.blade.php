@@ -125,8 +125,9 @@
                             
                             @endcan
                         {{-- @endcan --}}
-                        @endcan
                         <td>{{$one_microapp->closes_at}}</td>
+                        @endcan
+                        
                         </tr>
                     @endforeach
                 </tbody>

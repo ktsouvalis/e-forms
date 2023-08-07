@@ -18,4 +18,8 @@ class Month extends Model
     public static function getActiveMonth(){
         return self::where('active', 1)->firstOrFail();
     }
+
+    public function all_day_schools(){
+        return $this->hasMany(AllDaySchool::class);
+    }
 }

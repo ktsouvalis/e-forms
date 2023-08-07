@@ -66,6 +66,10 @@ class School extends Authenticatable
     public function tickets(){
         return $this->hasMany(Ticket::class);
     }
+
+    public function all_day_schools(){
+        return $this->hasMany(AllDaySchool::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

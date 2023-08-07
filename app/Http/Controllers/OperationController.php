@@ -6,6 +6,8 @@ use Throwable;
 use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Models\UsersOperations;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class OperationController extends Controller
 {

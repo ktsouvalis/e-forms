@@ -137,7 +137,7 @@
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
-                    <span class="input-group-text w-75"><strong>Εισαγωγή νέας Λειτουργίας</strong></span>
+                    <span class="input-group-text w-75"><strong>Εισαγωγή νέας Μικροεφαρμογής</strong></span>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">name</span>

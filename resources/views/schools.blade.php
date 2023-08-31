@@ -33,8 +33,9 @@
                     <th id="search">email</th>
                     <th id="search">tel</th>
                     <th id="search">Δήμος</th>
+                    <th id="search">Οργανικότητα</th>
+                    <th id="search">Λειτουργικότητα</th>
                     <th id="search">last login</th>
-                    
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +62,8 @@
                     <td >{{$school->mail}}</td>
                     <td >{{$school->telephone}}</td>
                     <td >{{$school->municipality->name}}</td>
+                    <td >{{$school->organikotita}}</td>
+                    <td >{{$school->leitourgikotita}}</td>
                     @if($date)
                         <td >{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else

@@ -218,8 +218,10 @@ class TeacherController extends Controller
                         $check['organiki_type'] = "App\Models\Directory";    
                     }
                     else{
-                        $error=1;
-                        $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
+                        //if no school and no directory found, save fixed ΑΧΑΪΑ
+                        $check['organiki'] = Directory::where('code', 9906101)->first()->id;
+                        $check['organiki_name'] = Directory::where('code', 9906101)->first()->name;
+                        $check['organiki_type'] = "App\Models\Directory"; 
                     }
                 }
                 else if($request->input('template_file')=='apospasi'){ // myschool report 4.2
@@ -331,7 +333,8 @@ class TeacherController extends Controller
                 );
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
+                // Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
+                Log::channel('throwable_db')->error($e.' '.$teacher['afm']);
                 $error=true;
                 continue; 
             }

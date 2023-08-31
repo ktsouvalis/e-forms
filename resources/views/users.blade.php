@@ -65,7 +65,6 @@
                                 $link = url("/user_profile/$user->id");
                             @endphp
                             <td><div class=" text-wrap"><a href="{{$link}}" style="">{{$user->display_name}}</a></div></td>
-                            <td><div class=" text-wrap"><a href="{{url("/user_profile/$user->id")}}" style="">{{$user->display_name}}</a></div></td>
                             <td>{{$user->email}}</td>
                             <td>{{$user->department->name}}</td>
                             

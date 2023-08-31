@@ -35,7 +35,7 @@
                     <th id="search">Δήμος</th>
                     <th id="search">Οργανικότητα</th>
                     <th id="search">Λειτουργικότητα</th>
-                    <th id="search">last login</th>
+                    {{-- <th id="search">last login</th> --}}
                     
                 </tr>
             </thead>

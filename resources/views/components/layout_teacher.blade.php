@@ -129,7 +129,7 @@
     </script>
     @stack('scripts')
 
-    <script>
+    {{-- <script>
 $(document).ready(function () {
   // Setup - add a text input to each header cell
   $('#dataTable thead tr #search').each(function () {
@@ -161,7 +161,7 @@ $(document).ready(function () {
     },
   });
 });
-</script>
+</script> --}}
 
     
     </div> <!-- container closing -->

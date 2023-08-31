@@ -298,3 +298,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         return redirect(url('/commands'))->with('command',$output);
     });
 });
+
+//misc routes
+
+Route::view('/anaplirotes','anaplirotes');

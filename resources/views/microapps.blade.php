@@ -12,6 +12,7 @@
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="canedit.js"></script>
+        <script src="datatable_init.js"></script>
     @endpush
 
     @push('title')
@@ -34,6 +35,7 @@
                     <th id="search">Ενεργή/Ανενεργή</th>
                     <th id="search">Ορατή</th>
                     <th id="search">Δέχεται</th>
+                    <th id="search">Ημερομηνία Λήξης</th>
                 </tr>
             </thead>
                 <tbody>
@@ -120,10 +122,13 @@
                             @else
                             <td> - </td>
                             <td> - </td>
-                            </tr>
+                            
                             @endcan
                         {{-- @endcan --}}
+                        <td>{{$one_microapp->closes_at}}</td>
                         @endcan
+                        
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -137,7 +142,7 @@
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
-                    <span class="input-group-text w-75"><strong>Εισαγωγή νέας Λειτουργίας</strong></span>
+                    <span class="input-group-text w-75"><strong>Εισαγωγή νέας Μικροεφαρμογής</strong></span>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">name</span>

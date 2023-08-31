@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -111,33 +113,48 @@ class SchoolController extends Controller
     public function insertSchools(){
         $schools_array = session('schools_array');
         session()->forget('schools_array');
-        
+        $error=false;
         foreach($schools_array as $school){
             // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE, update existing records based on 'code' field
-            School::updateOrCreate(
-                [
-                    'code' => $school['code']
-                ],
-                [
-                    'name' => $school['name'], 
-                    'code' => $school['code'],
-                    'municipality_id' => $school['municipality'],
-                    'primary' => $school['primary'],
-                    'leitourgikotita' => $school['leitourgikotita'],
-                    'organikotita' => $school['organikotita'],
-                    'telephone' => $school['telephone'],
-                    'is_active' => $school['is_active'],
-                    'has_all_day' => $school['has_all_day'],
-                    'md5' => md5($school['code']),
-                    'mail' => $school['mail'],
-                    'experimental' => $school['experimental'],
-                    'special_needs' => $school['special_needs'],
-                    'international' => $school['international']
-                ]
-            );
+            try{
+                School::updateOrCreate(
+                    [
+                        'code' => $school['code']
+                    ],
+                    [
+                        'name' => $school['name'], 
+                        'code' => $school['code'],
+                        'municipality_id' => $school['municipality'],
+                        'primary' => $school['primary'],
+                        'leitourgikotita' => $school['leitourgikotita'],
+                        'organikotita' => $school['organikotita'],
+                        'telephone' => $school['telephone'],
+                        'is_active' => $school['is_active'],
+                        'has_all_day' => $school['has_all_day'],
+                        'md5' => md5($school['code']),
+                        'mail' => $school['mail'],
+                        'experimental' => $school['experimental'],
+                        'special_needs' => $school['special_needs'],
+                        'international' => $school['international']
+                    ]
+                );
+            }
+            catch(Throwable $e){
+                Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code']);
+                $error=true;
+                continue;    
+            }
         }
-        return redirect(url('/schools'))
-            ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+        if(!$error){
+            Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools');
+            return redirect(url('/schools'))
+                ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+        }
+        else{
+            Log::channel('user_memorable_actions')->warning(Auth::user()->username.' insertSchools with errors');
+            return redirect(url('/schools'))
+                ->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db');
+        }
     }
 
     //
@@ -229,19 +246,33 @@ class SchoolController extends Controller
     }
 
     public function insertDirectors(){
+        $error=false;
         $directors_array = session('directors_array');
         session()->forget('directors_array');
         // dd($directors_array);
         foreach($directors_array as $one_director){
             //  update schools records based on 'code' field
-            $school = School::find($one_director['school_id']);
-            $school_director = Teacher::find($one_director['teacher_id']);
-            $school->director_id = $school_director->id;
-            $school->save();
+            try{
+                $school = School::find($one_director['school_id']);
+                $school_director = Teacher::find($one_director['teacher_id']);
+                $school->director_id = $school_director->id;
+                $school->save();
+            }
+            catch(Throwable $e){
+                Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id']);
+                $error=true;
+                continue;    
+            }
             // if($one_director['school_id']==222 and $one_director['teacher_id']==1570)dd($one_director);
         }
-
-        return redirect(url('/directors'))
-            ->with('success', 'Η εισαγωγή ολοκληρώθηκε');    
+        if(!$error){
+            Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertDirectors');
+            return redirect(url('/directors'))
+                ->with('success', 'Η εισαγωγή ολοκληρώθηκε');    
+        }
+        else{
+            Log::channel('user_memorable_actions')->warning(Auth::user()->username.' insertDirectors with errors');
+            return redirect(url('/directors'))->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db'); 
+        }
     }
 }

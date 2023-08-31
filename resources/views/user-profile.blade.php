@@ -25,7 +25,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">τηλέφωνο</span>
-                        <input name="user_telephone" type="text" class="form-control" placeholder="telephone" aria-label="telephone" aria-describedby="basic-addon4" required value="{{$user->telephone}}" ><br>
+                        <input name="user_telephone" type="text" class="form-control" placeholder="telephone" aria-label="telephone" aria-describedby="basic-addon4" value="{{$user->telephone}}" ><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>

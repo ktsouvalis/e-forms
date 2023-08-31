@@ -6,6 +6,8 @@ use Throwable;
 use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Models\UsersOperations;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class OperationController extends Controller
 {
@@ -27,7 +29,10 @@ class OperationController extends Controller
                 'color' => $incomingFields['operation_color'],
                 'icon' => $incomingFields['operation_icon']
             ]);
-        } catch (Throwable $e) {
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." insertOperation ". $record->name);
+        } 
+        catch (Throwable $e) {
+            Log::channel('throwable_db')->error(Auth::user()->username." insertOperation");
             return redirect(url('/manage_operations'))
                 ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
                 ->with('old_data', $request->all());

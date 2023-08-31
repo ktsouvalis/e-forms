@@ -9,6 +9,7 @@ use App\Models\Superadmin;
 use App\Models\MicroappUser;
 use Illuminate\Http\Request;
 use App\Models\MicroappStakeholder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -38,8 +39,10 @@ class MicroappController extends Controller
                 // 'opens_at' => $incomingFields['microapp_opens_at'],
                 'closes_at' => $incomingFields['microapp_closes_at']
             ]);
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." insertMicroapp ".$record->name);
         } 
         catch(Throwable $e){
+            Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (create) ". $e);
             return redirect(url('/microapps'))
                 ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
                 ->with('old_data', $request->all());
@@ -52,11 +55,17 @@ class MicroappController extends Controller
                 if(isset($incomingFields['edit'.$user_id])){
                     $can_edit = $incomingFields['edit'.$user_id]=='no'?0:1;
                 }
-                MicroappUser::create([
-                    'microapp_id'=>$record->id,
-                    'user_id'=>$user_id,
-                    'can_edit'=> $can_edit
-                ]);
+                try{
+                    MicroappUser::create([
+                        'microapp_id'=>$record->id,
+                        'user_id'=>$user_id,
+                        'can_edit'=> $can_edit
+                    ]);
+                }
+                catch(Throwable $e){
+                    Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (add users) ".$e);
+                    return redirect(url('/microapps'))->with('warning', 'Η μικροεφαρμογή δημιουργήθηκε αλλά οι χρήστες δεν προστέθηκαν.');
+                }
             }
         }
 
@@ -78,10 +87,12 @@ class MicroappController extends Controller
             $microapp->stakeholders()->delete(); // delete all stakeholders
             $microapp->users()->where('user_id', '<>', 1)->where('user_id', '<>', 2)->delete(); //delete all_users except tsouvalis and stefanopoulos
             $text="Η μικροεφαρμογή απενεργοποιήθηκε";
+            Log::channel('user_memorable_actions')->info(Auth::user()->username."microapp onOff (deactivate) ".$microapp->name);
         }
         else{
             $microapp->active=1; //activate the microapp
             $text="Η μικροεφαρμογή ενεργοποιήθηκε. Πρέπει να προσθέσετε χρήστες και ενδιαφερόμενους (σχολεία/εκπαιδευτικούς)";
+            Log::channel('user_memorable_actions')->info(Auth::user()->username."microapp onOff (activate) ".$microapp->name);
         }
         $microapp->save();
 
@@ -100,10 +111,12 @@ class MicroappController extends Controller
             $microapp->visible = $microapp->visible==1?0:1; //change visibility based on previous state
             $microapp->accepts = 0; // reset acceptability
             $microapp->save();
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." changeMicroappStatus (change visibility) ".$microapp->name);
         }
         if($request->all()['asks_to'] == 'ch_acc_status'){
             $microapp->accepts = $microapp->accepts==1?0:1; // change acceptability based on previous state
             $microapp->save();
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." changeMicroappStatus (change acceptability) ".$microapp->name);
         }
         return back()->with('success', 'H κατάσταση της εφαρμογής άλλαξε επιτυχώς');
     }
@@ -134,20 +147,20 @@ class MicroappController extends Controller
                 // if there is already a microapp with the newly given name
                 if(Microapp::where('name', $given_name)->count()){
                     return redirect(url("/microapp_profile/$microapp->id"))->with('failure',"Υπάρχει ήδη μικροεφαρμογή με name $given_name.");
-                }
+                } 
             }
-            else{
+            if($microapp->isDirty('url')){
                 // if url has changed
-                if($microapp->isDirty('url')){
-                    $given_url = $incomingFields['url'];
+                
+                $given_url = $incomingFields['url'];
 
-                    // if there is already a microapp with the newly given url
-                    if(Microapp::where('url', $given_url)->count()){
-                        $existing_microapp =Μicroapp::where('url',$given_url)->first();
-                        return redirect(url("/microapp_profile/$microapp->id"))->with('failure',"Υπάρχει ήδη μικροεφαρμογή με url $given_url: $existing_microapp->name");
-                    }
+                // if there is already a microapp with the newly given url
+                if(Microapp::where('url', $given_url)->count()){
+                    $existing_microapp =Μicroapp::where('url',$given_url)->first();
+                    return redirect(url("/microapp_profile/$microapp->id"))->with('failure',"Υπάρχει ήδη μικροεφαρμογή με url $given_url: $existing_microapp->name");
                 }
             }
+            
             $microapp->save();
             $edited = true;
         }

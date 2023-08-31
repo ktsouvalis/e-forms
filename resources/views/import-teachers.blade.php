@@ -5,7 +5,6 @@
             <form action="{{url('/upload_teachers_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
                 <div class="vstack gap-3">
-                <input type="file" name="import_teachers" > 
                 <div class="hstack gap-1">
                     <input  type="radio" id="organiki" name="template_file" value="organiki" checked>
                     <label class="px-1" for="organiki">Οργανικά Ανήκοντες (4.1 MYSCHOOL)</label><br>
@@ -22,7 +21,8 @@
                     <input type="radio" id="apousia" name="template_file" value="apousia">
                     <label class="px-1" for="apousia">Απουσιάζουν </label><br> 
                     <div>4.16 MYSCHOOL: Πρέπει από το report να διαγραφούν οι αιτιολογήσεις απουσίας: ΑΠΕΥΘΕΙΑΣ ΑΠΟΣΠΑΣΗ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ, ΑΠΟΣΠΑΣΗ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ ΕΝΤΟΣ ΠΥΣΠΕ/ΠΥΣΔΕ, ΕΠΙ ΘΗΤΕΙΑ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ, ΟΛΙΚΗ ΔΙΑΘΕΣΗ ΣΕ ΣΧ. ΜΟΝΑΔΑ.<br> Πρέπει να σβηστούν τα ιδιωτικά σχολεία.</div>
-                </div>     
+                </div> 
+                <input type="file" name="import_teachers" >     
                 <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
                 </div>
             </form>

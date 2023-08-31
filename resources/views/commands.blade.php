@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="container">
+    <div class="container p-3">
         <div class="hstack gap-3">
             <form action="{{url('/com_change_active_month')}}" method="post">
                 @csrf

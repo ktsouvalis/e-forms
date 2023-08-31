@@ -6,16 +6,16 @@ use App\Models\School;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Fruit extends Model
+class Ticket extends Model
 {
     use HasFactory;
 
-    protected $table="fruits";
+    protected $table="tickets";
     protected $guarded = [
         'id'
     ];
 
     public function school(){
-        return $this->hasOne(School::class);
+        return $this->belongsTo(School::class);
     }
 }

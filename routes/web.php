@@ -9,7 +9,9 @@ use App\Models\Fileshare;
 use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
+use App\Models\microapps\Ticket;
 use App\Models\MicroappStakeholder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthController;
@@ -20,6 +22,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\microapps\FruitsController;
+use App\Http\Controllers\microapps\TicketsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,6 +168,23 @@ Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 Route::post("/save_fruits/{school}", [FruitsController::class, 'save_fruits']);
 
+Route::post("/create_ticket/{school}",[TicketsController::class, 'create_ticket']);
+
+Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
+    if(Auth::user()){
+        $blade='admin';
+    }
+    else if (Auth::guard('school')->user()){
+        $blade='school';
+    }
+    return view("microapps.$blade.ticket-profile", ['ticket'=>$ticket, 'appname'=>'tickets']);
+})->middleware('canUpdateTicket');
+
+Route::post("/update_ticket/{ticket}", [TicketsController::class, 'update_ticket'])->middleware('canUpdateTicket');
+
+Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
+
+Route::post("/mark_as_open/{ticket}",[TicketsController::class, 'mark_as_open'])->middleware('canUpdateTicket');
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
@@ -258,17 +278,23 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
 
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
-        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+        $output = session()->get('command_output');
+        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        return redirect(url('/commands'))->with('command', $output);
     });
 
     Route::post('/com_change_microapp_accept_status', function () {
         Artisan::call('microapps:accept_not');
-        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+        $output = session()->get('command_output');
+        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        return redirect(url('/commands'))->with('command', $output);
     });
 
     Route::post('/com_edit_super_admins', function (Request $request) {
         $username = $request->input('username');
         Artisan::call('super', ['u_n' => $username]);
-        return redirect(url('/commands'))->with('success', 'Η εντολή εκτελέστηκε επιτυχώς');
+        $output = session()->get('command_output');
+        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        return redirect(url('/commands'))->with('command',$output);
     });
 });

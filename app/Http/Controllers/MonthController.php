@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Month;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class MonthController extends Controller
 {
@@ -18,7 +20,7 @@ class MonthController extends Controller
         
         $new_active_month->active = 1;
         $new_active_month->save();
-
-        return redirect(url('/month'))->with('success', "Ενεργός μήνας: $new_active_month->name");
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." set Active month to ".Month::getActiveMonth()->name);
+        return redirect(url('/month'))->with('success', "Ενεργός μήνας: ". Month::getActiveMonth()->name);
     }
 }

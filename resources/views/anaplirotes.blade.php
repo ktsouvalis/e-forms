@@ -1,7 +1,7 @@
 
     <x-layout_teacher>
 
-        @push('links')
+    @push('links')
         <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
         <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
     @endpush
@@ -15,11 +15,13 @@
     @endpush
 
     @push('title')
-        <title>Χρήστες</title>
+        <title>Αναπληρωτές</title>
     @endpush
 
 
    <div class="container">
+    <h3>Εφαρμογή εύρεσης έργου που ανήκει κάθε αναπληρωτής της Δ/νσης Π.Ε. Αχαΐας</h3>
+    <h5>Τα πραγματικά στοιχεία θα ενημερωθούν αμέσως μόλις τρέξει η ροή του πίνακα από το Υπουργείο</h5>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle display table  table-striped table-hover" style="font-size:small">
         <thead>
@@ -29,23 +31,22 @@
                 <th id="search">Πατρώνυμο</th>
                 <th id="search">Κλάδος</th>
                 <th id="search">Έργο</th>
-                test commit
             </tr>
         </thead>
         <tbody>
            
                 <tr>  
-                    <td>Στεφανόπουλος</td>
-                    <td>Κωνσταντίνος</td>
+                    <td>Παπαδόπουλος</td>
+                    <td>Ιωάννης</td>
                     <td>Νικόλαος</td>
                     <td>ΠΕ11</td>
                     <td>Έργο 1</td>
                 </tr>
                 <tr>  
-                    <td>Τσούβαλης</td>
+                    <td>Νικολόπουλος</td>
                     <td>Προκόπης</td>
-                    <td>Τζόναθαν</td>
-                    <td>ΠΕ60</td>
+                    <td>Ιάσωνας</td>
+                    <td>ΠΕ70</td>
                     <td>Έργο 2</td>
                 </tr>
             

@@ -2,6 +2,7 @@
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
         $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
+        $old_data = $school->fruit;
     @endphp
     <div class="container">
         <div class="container px-5">

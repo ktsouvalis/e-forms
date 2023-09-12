@@ -14,8 +14,7 @@ class Superadmin extends Model
         'id'
     ];
 
-    public function users(){
-        return $this->hasMany(User::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
-
 }

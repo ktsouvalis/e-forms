@@ -13,6 +13,7 @@ use App\Models\microapps\Ticket;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SchoolController;
@@ -274,7 +275,10 @@ Route::group(['middleware' => 'can:changeActiveMonth,'.Operation::class], functi
 
 Route::group(['middleware' => "can:executeCommands," .Operation::class], function () {
 
-    Route::view('/commands', 'commands');
+    Route::get('/commands', function(){
+        $maintenanceMode = app()->isDownForMaintenance();
+        return view('commands', ['maintenanceMode' => $maintenanceMode]);
+    });
 
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
@@ -296,6 +300,19 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $output = session()->get('command_output');
         Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         return redirect(url('/commands'))->with('command',$output);
+    });
+
+    Route::post('/app_down', function (Request $request){
+        $secret_parameter = $request->input('secret');
+        Artisan::call("down",['--secret'=>$secret_parameter]);
+        Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode ON");
+        return redirect(url("/$secret_parameter"))->with('success', 'Maintenance Mode ON');
+    });
+
+    Route::post('/app_up', function (Request $request){
+        Artisan::call("up");
+        Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode OFF");
+        return redirect(url('/'))->with('success', 'Maintenance Mode OFF');
     });
 });
 

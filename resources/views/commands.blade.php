@@ -16,6 +16,20 @@
                 </div>
                 <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan super a_username</button>
             </form>
+            @if(!$maintenanceMode)
+            <form action="{{url('/app_down')}}" method="post">
+                @csrf
+                <div class="input-group my-2">
+                    <input name="secret" type="text" class="form-control" placeholder="secret" aria-label="secret" aria-describedby="basic-addon3" required>
+                </div>
+                <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan down</button>
+            </form>
+            @else
+            <form action="{{url('/app_up')}}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan up</button>
+            </form>
+            @endif
         </div>
     </div>
 </x-layout>

@@ -15,9 +15,7 @@
     <b> Πληροφορίες </b><br>
     
     @foreach($stakeholder->fileshare->department->users as $user)
-        @if($user->id!=1 and $user->id!=2)
-            <div>{{$user->user->display_name}} {{$user->user->telephone}}</div>
-        @endif
+        <div>{{$user->user->display_name}} {{$user->user->telephone}}</div>
     @endforeach
     <hr>
     <div>

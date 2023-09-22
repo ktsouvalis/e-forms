@@ -34,6 +34,7 @@ class EditSuperAdmins extends Command
         $user = User::where('username', $u_n)->first();
         if($user){
             if(Superadmin::where('user_id', $user->id)->count()){
+            // if($user->isAdmin()){
                 Superadmin::where('user_id', $user->id)->first()->delete();
                 $string = "removed from";
             }

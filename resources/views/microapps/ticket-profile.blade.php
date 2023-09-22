@@ -55,5 +55,11 @@
             <button type="submit" class="btn btn-warning bi bi-envelope-open"> Άνοιγμα δελτίου</button>
         </form> --}}
     @endif
+
+    <div class="col-md-4 py-3" style="max-width:15rem">
+        <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
+            <div>Τελευταία ενημέρωση δελτίου <br><strong> {{$ticket->updated_at}}</strong></div>
+        </div>
+    </div>
     </div>
 </div>

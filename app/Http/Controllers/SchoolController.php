@@ -140,7 +140,7 @@ class SchoolController extends Controller
                 );
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code']);
+                Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code'].' '.$e->getMessage());
                 $error=true;
                 continue;    
             }
@@ -259,7 +259,7 @@ class SchoolController extends Controller
                 $school->save();
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id']);
+                Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id'].' '.$e->getMessage());
                 $error=true;
                 continue;    
             }

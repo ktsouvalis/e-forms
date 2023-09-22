@@ -334,7 +334,7 @@ class TeacherController extends Controller
             }
             catch(Throwable $e){
                 // Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
-                Log::channel('throwable_db')->error($e.' '.$teacher['afm']);
+                Log::channel('throwable_db')->error($teacher['afm'].' '.$e->getMessage());
                 $error=true;
                 continue; 
             }

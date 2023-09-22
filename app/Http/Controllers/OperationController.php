@@ -32,7 +32,7 @@ class OperationController extends Controller
             Log::channel('user_memorable_actions')->info(Auth::user()->username." insertOperation ". $record->name);
         } 
         catch (Throwable $e) {
-            Log::channel('throwable_db')->error(Auth::user()->username." insertOperation");
+            Log::channel('throwable_db')->error(Auth::user()->username." insertOperation".' '.$e->getMessage());
             return redirect(url('/manage_operations'))
                 ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
                 ->with('old_data', $request->all());

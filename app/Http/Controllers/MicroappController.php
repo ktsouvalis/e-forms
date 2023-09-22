@@ -63,7 +63,7 @@ class MicroappController extends Controller
                     ]);
                 }
                 catch(Throwable $e){
-                    Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (add users) ".$e);
+                    Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (add users) ".' '.$e->getMessage());
                     return redirect(url('/microapps'))->with('warning', 'Η μικροεφαρμογή δημιουργήθηκε αλλά οι χρήστες δεν προστέθηκαν.');
                 }
             }

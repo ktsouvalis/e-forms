@@ -34,7 +34,7 @@ class OperationController extends Controller
         catch (Throwable $e) {
             Log::channel('throwable_db')->error(Auth::user()->username." insertOperation".' '.$e->getMessage());
             return redirect(url('/manage_operations'))
-                ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
+                ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής. Δείτε το log throwable_db")
                 ->with('old_data', $request->all());
         }
 

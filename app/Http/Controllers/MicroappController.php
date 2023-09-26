@@ -42,9 +42,9 @@ class MicroappController extends Controller
             Log::channel('user_memorable_actions')->info(Auth::user()->username." insertMicroapp ".$record->name);
         } 
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (create) ". $e);
+            Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (create) ". $e->getMessage());
             return redirect(url('/microapps'))
-                ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
+                ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, δείτε το log throwable_db.")
                 ->with('old_data', $request->all());
         }
 
@@ -64,7 +64,7 @@ class MicroappController extends Controller
                 }
                 catch(Throwable $e){
                     Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (add users) ".' '.$e->getMessage());
-                    return redirect(url('/microapps'))->with('warning', 'Η μικροεφαρμογή δημιουργήθηκε αλλά οι χρήστες δεν προστέθηκαν.');
+                    return redirect(url('/microapps'))->with('warning', 'Η μικροεφαρμογή δημιουργήθηκε αλλά οι χρήστες δεν προστέθηκαν. Δείτε το log throwable_db');
                 }
             }
         }

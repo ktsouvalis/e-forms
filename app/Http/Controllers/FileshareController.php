@@ -41,8 +41,8 @@ class FileshareController extends Controller
             ]);   
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::user()->username." insert_fileshare");
-            return redirect(url('/fileshares'))->with('failure', $e);
+            Log::channel('throwable_db')->error(Auth::user()->username." insert_fileshare: ".$e->getMessage());
+            return redirect(url('/fileshares'))->with('failure', 'Κάποιο πρόβλημα προέκυψε, δείτε το log thorwable_db');
         }
 
         Log::channel('user_memorable_actions')->info(Auth::user()->username." insert_fileshare ".$request->all()['fileshare_name']." for ".$department_name);

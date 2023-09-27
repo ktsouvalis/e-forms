@@ -53,7 +53,7 @@
         </table>
     </div>
     
-    @can('upload', App\Models\School::class)
+    @can('updateDirectors', App\Models\School::class)
         <a href="{{url('/import_directors')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Διευθυντών Σχολείων</a>
     @endcan
 </x-layout>

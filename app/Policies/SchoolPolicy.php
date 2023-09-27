@@ -80,4 +80,32 @@ class SchoolPolicy
         }
         return false;  
     }
+
+    public function updateSections(User $user){
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        $operation = Operation::where('url','/sections')->first(); 
+        return ($operation->users->where('user_id', $user->id)->where('can_edit',1)->count());
+        return false;   
+    }
+
+    public function viewSections(User $user){
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        $operation = Operation::where('url','/sections')->first(); 
+        return ($operation->users->where('user_id', $user->id)->count());
+        return false;   
+    }
+
+    public function updateDirectors(User $user){
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        $operation = Operation::where('url','/directors')->first(); 
+        return ($operation->users->where('user_id', $user->id)->where('can_edit',1)->count());
+        return false;   
+    }
+
+    public function viewDirectors(User $user){
+        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        $operation = Operation::where('url','/directors')->first(); 
+        return ($operation->users->where('user_id', $user->id)->count());
+        return false;   
+    }
 }

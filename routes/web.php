@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Models\School;
 use App\Mail\ShareLink;
+use App\Models\Section;
 use App\Models\Teacher;
 use App\Models\Microapp;
 use App\Models\Fileshare;
@@ -18,6 +19,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\WhocanController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
@@ -72,7 +74,7 @@ Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
 
 Route::view('/schools', 'schools')->middleware('auth')->middleware('can:viewAny, '. School::class);
 
-Route::view('/directors', 'directors')->middleware('auth')->middleware('can:viewAny, '. School::class);
+Route::view('/directors', 'directors')->middleware('auth')->middleware('can:viewDirectors, '. School::class);
 
 Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
 
@@ -80,11 +82,11 @@ Route::post('/upload_directors_template', [SchoolController::class, 'importDirec
 
 Route::view('/import_schools', "import-schools")->middleware('can:upload, '.School::class);
 
-Route::view('/import_directors', "import-directors")->middleware('can:upload, '.School::class);
+Route::view('/import_directors', "import-directors")->middleware('can:updateDirectors, '.School::class);
 
 Route::view('/preview_schools', "preview-schools")->middleware('can:upload, '. School::class);
 
-Route::view('/preview_directors', "preview-directors")->middleware('can:upload, '. School::class);
+Route::view('/preview_directors', "preview-directors")->middleware('can:updateDirectors, '. School::class);
 
 Route::post('/insert_schools', [SchoolController::class, 'insertSchools']);
 
@@ -315,6 +317,17 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         return redirect(url('/'))->with('success', 'Maintenance Mode OFF');
     });
 });
+
+//Sections Routes
+
+Route::view('/sections', 'sections')->middleware('auth')->middleware('can:viewSections, '. School::class);
+
+Route::post('/upload_sections_template', [SectionController::class, 'import_sections']);
+
+Route::post('/delete_sections', [SectionController::class, function(Request $request){
+    Section::truncate();
+    return redirect(url('/sections'))->with('success', 'Τα τμήματα διαγράφηκαν');
+}]);
 
 //misc routes
 

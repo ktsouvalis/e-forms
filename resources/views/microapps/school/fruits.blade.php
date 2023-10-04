@@ -1,4 +1,7 @@
 <x-layout_school>
+    @push('title')
+        <title>Φρούτα</title>
+    @endpush
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
         $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field

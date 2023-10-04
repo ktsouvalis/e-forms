@@ -21,7 +21,7 @@ class CanUpdateTicket
     {
         $microapp = Microapp::where('url','/tickets')->first();
         if($microapp->active and $microapp->visible and $microapp->accepts){
-            $ticket = $request->route('ticket');
+            $ticket = $request->route('ticket'); // takes the {ticket} argument from the route, which is Outing model
             $user = Auth::guard('web')->user();
             if($user){
                 if($user->isAdmin()){
@@ -35,14 +35,12 @@ class CanUpdateTicket
             }
         
                 
-                $school = Auth::guard('school')->user();
-                if($school){
-                    if($ticket->school_id == $school->id)
-                    return $next($request);
-                }
-                abort(403, 'Unauthorized action.');
-            
-            return $next($request);
+            $school = Auth::guard('school')->user();
+            if($school){
+                if($ticket->school_id == $school->id)
+                return $next($request);
+            }
+            abort(403, 'Unauthorized action.');
         }
         abort(403, 'Microapp not active');
     }

@@ -10,6 +10,7 @@ use App\Models\Fileshare;
 use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
+use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
@@ -25,6 +26,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\microapps\FruitsController;
+use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 
 /*
@@ -188,6 +190,20 @@ Route::post("/update_ticket/{ticket}", [TicketsController::class, 'update_ticket
 Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
 
 Route::post("/mark_as_open/{ticket}",[TicketsController::class, 'mark_as_open'])->middleware('canUpdateTicket');
+
+Route::post('/new_outing/{school}',[OutingsController::class, 'new_outing']);
+
+Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']);
+
+Route::post('/delete_outing/{outing}', [OutingsController::class,'delete_outing']);
+
+Route::post('/check_outing/{outing}', [OutingsController::class,'check_outing']);
+
+Route::get('/outing_profile/{outing}', function(Outing $outing){
+    return view('microapps.school.outing-profile',['outing'=>$outing]);
+})->middleware('canUpdateOuting');
+
+Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_outing_profile'])->middleware('canUpdateOuting');
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){

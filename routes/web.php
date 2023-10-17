@@ -28,6 +28,7 @@ use App\Http\Controllers\OperationController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\AllDaySchoolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -204,6 +205,18 @@ Route::get('/outing_profile/{outing}', function(Outing $outing){
 })->middleware('canUpdateOuting');
 
 Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_outing_profile'])->middleware('canUpdateOuting');
+
+Route::post('/save_all_day_school/{school}', [AllDaySchoolController::class, 'post_all_day']);
+
+Route::post('/dl_all_day_template', function(Request $request){
+    $file = 'all_day/oloimero.xlsx';
+
+    return Storage::disk('local')->download($file);
+});
+
+Route::post('/update_all_day_template', [AllDaySchoolController::class, 'update_all_day_template']);
+
+Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){

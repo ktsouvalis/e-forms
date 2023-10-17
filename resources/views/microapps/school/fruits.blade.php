@@ -1,6 +1,6 @@
 <x-layout_school>
     @push('title')
-        <title>Φρούτα</title>
+        <title>Διανομή Φρούτων</title>
     @endpush
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in

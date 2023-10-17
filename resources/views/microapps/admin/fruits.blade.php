@@ -11,6 +11,9 @@
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
     @endpush
+    @push('title')
+        <title>Διανομή Φρούτων</title>
+    @endpush
     @php
         //fetch microapp data
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();

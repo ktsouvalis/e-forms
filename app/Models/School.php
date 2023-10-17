@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\microapps\Fruit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
+use App\Models\microapps\AllDaySchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

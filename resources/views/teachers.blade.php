@@ -39,7 +39,7 @@
                     
                     <th id="search">email</th>
                     <th id="search">email ΠΣΔ</th>
-                    <th id="search">Τηλέφωνο</th>
+                    {{-- <th id="search">Τηλέφωνο</th> --}}
                     
                     <th id="search">Οργανική</th>
                     <th id="search">Υπηρέτηση</th>
@@ -77,7 +77,7 @@
                      
                     <td>{{$teacher->mail}}</td>
                     <td>{{$teacher->sch_mail}}</td>
-                    <td>{{$teacher->telephone}}</td>
+                    {{-- <td>{{$teacher->telephone}}</td> --}}
                     
                     <td>{{$teacher->organiki->name}}</td>
 

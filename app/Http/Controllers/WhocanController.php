@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Month;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Microapp;
@@ -10,6 +11,7 @@ use App\Mail\FilesToReceive;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
 use App\Models\MicroappStakeholder;
+use Illuminate\Support\Facades\Log;
 use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -194,9 +196,19 @@ class WhocanController extends Controller
             $microapp = Microapp::find($my_id);
             $stakeholders = $microapp->stakeholders;  
             foreach($stakeholders as $stakeholder){
-                if(!$stakeholder->hasAnswer){
-                    Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));
-                }  
+                if($microapp->url == "/all_day_school"){
+                    // επειδή το ολοήμερο είναι μηνιαία υποβολή, ενημερώνεται το σχολείο αν δεν έχει υποβάλλει τον τρέχοντα μήνα
+                    if(!$stakeholder->stakeholder->all_day_schools->where('month_id', Month::getActiveMonth()->id)->count()){
+                        Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));   
+                        Log::channel('user_memorable_actions')->info(Auth::user()->username." sent reminder for all_day_school to ".$stakeholder->stakeholder->name);
+                    }
+                }
+                else{
+                    if(!$stakeholder->hasAnswer){
+                        Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));
+                        Log::channel('user_memorable_actions')->info(Auth::user()->username." sent reminder for $microapp->name to ".$stakeholder->stakeholder->name);
+                    }  
+                }
             }
         }
         

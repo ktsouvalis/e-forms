@@ -20,6 +20,7 @@
         $fruits_schools = $microapp->stakeholders; 
     @endphp
 
+    <div class="container">
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
 
     <div class="table-responsive py-2">
@@ -63,7 +64,6 @@
             </tbody>  
         </table>    
     </div>
-
     @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
-
+</div>
 </x-layout>

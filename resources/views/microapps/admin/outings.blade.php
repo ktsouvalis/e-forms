@@ -12,15 +12,20 @@
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
     @endpush
+    @push('title')
+        <title>Εκδρομές</title> 
+    @endpush  
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         $outings = App\Models\microapps\Outing::all();
         
     @endphp
-    @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-
-    {{-- <div class="container"> --}}
+    
+    <div class="container">
+       
+            @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
+        
             <div class="table-responsive py-2">
                 <table  id="dataTable" class="small display table table-sm table-striped table-hover text-center">
                 <thead>
@@ -88,4 +93,5 @@
                 </tbody>  
                 </table>    
             </div>
+    </div>
 </x-layout>

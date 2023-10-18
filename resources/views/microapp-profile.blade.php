@@ -12,8 +12,12 @@
         <script src="../datatable_init.js"></script>
         <script src="../canedit.js"></script>
     @endpush
+
+    @push('title')
+    <title>Επεξεργασία χαρακτηριστικών {{$microapp->name}}</title>
     @include('microapps.microapps_admin_before')
     <div class="container">
+        @if(Auth::user()->isAdmin())
             <hr>
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/save_microapp/$microapp->id")}}" method="post" class="container-fluid">
@@ -94,7 +98,7 @@
                 </form>
                 
             </nav>
-
+        @endif
             <hr>
             
             

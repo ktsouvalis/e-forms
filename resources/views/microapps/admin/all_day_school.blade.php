@@ -19,13 +19,15 @@
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
-@include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-<div class="container">
-    <div class="container px-5">  
+
+   
+    <div class="container">  
+        @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
             <form action="{{url("/dl_all_day_template")}}" method="post">
                 @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
-            </form>      
+            </form>
+            @if(Auth::user()->isAdmin())      
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/update_all_day_template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
@@ -43,12 +45,13 @@
                 </form>
                 
             </nav>
-        </div> 
+            @endif
+    </div> 
         
         @php
             $all_day_schools = App\Models\microapps\AllDaySchool::all()->sortByDesc('month_id');
         @endphp
-        <div class="py-5">
+        <div class="container py-5">
             <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
@@ -93,8 +96,6 @@
                 </tbody>
                 </table>
             </div>
-        
+            @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
         </div>  
-        @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
-</div>
 </x-layout>

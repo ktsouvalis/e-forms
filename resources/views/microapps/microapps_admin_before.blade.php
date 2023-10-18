@@ -29,6 +29,7 @@
             Η εφαρμογή είναι ορατή
         </div>
     @endif  
+    @can('update', $microapp)
     <form action="{{url("/change_microapp_status/$microapp->id")}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_vis_status">
@@ -40,7 +41,7 @@
         <input name="asks_to" type="hidden" value="ch_acc_status">
         <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down"  {{$hidden_acc}}> {{$tooltip_acc}}</button>
     </form>
-    
+    @endcan
     @if(!$microapp->accepts)
         <div class='alert alert-warning text-center'>
             Η εφαρμογή δε δέχεται υποβολές

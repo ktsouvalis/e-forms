@@ -18,41 +18,38 @@
         $tickets = App\Models\microapps\Ticket::all();
         
     @endphp
-    @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-
+        
     <div class="container">
-            <div class="container px-5">
-                <div class="table-responsive py-2">
-                <table  id="dataTable" class="display table table-sm table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th id="search">Κωδικός</th>
-                        <th id="search">Θέμα</th>
-                        <th id="search">Ημερομηνία Δημιουργίας</th>
-                        <th id="search">Σχολείο</th>
-                        <th id="search">Τελευταία ενημέρωση</th>
-                        <th id="search">Κατάσταση</th>
-                    </tr>
-                </thead>
-                <tbody>
-                
-                    @foreach($tickets as $ticket)
-                        <tr> 
-                            <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
-                            <td>{{$ticket->subject}}</td> 
-                            <td>{{$ticket->created_at}} </td>
-                            <td>{{$ticket->school->name}}</td>
-                            <td>{{$ticket->updated_at}} </td>
-                            @if($ticket->solved)
-                                <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id")}}">Έχει επιλυθεί</a></td>
-                            @else
-                                <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id")}}">Προς επίλυση</a></td>
-                            @endif
-                        </tr> 
-                    @endforeach   
-                </tbody>  
-                </table>    
-            </div>
+        @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
+        <div class="table-responsive py-2">
+        <table  id="dataTable" class="display table table-sm table-striped table-hover">
+        <thead>
+            <tr>
+                <th id="search">Κωδικός</th>
+                <th id="search">Θέμα</th>
+                <th id="search">Ημερομηνία Δημιουργίας</th>
+                <th id="search">Σχολείο</th>
+                <th id="search">Τελευταία ενημέρωση</th>
+                <th id="search">Κατάσταση</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($tickets as $ticket)
+                <tr> 
+                    <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
+                    <td>{{$ticket->subject}}</td> 
+                    <td>{{$ticket->created_at}} </td>
+                    <td>{{$ticket->school->name}}</td>
+                    <td>{{$ticket->updated_at}} </td>
+                    @if($ticket->solved)
+                        <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id")}}">Έχει επιλυθεί</a></td>
+                    @else
+                        <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id")}}">Προς επίλυση</a></td>
+                    @endif
+                </tr> 
+            @endforeach   
+        </tbody>  
+        </table>    
         </div>
     </div>
 </x-layout>

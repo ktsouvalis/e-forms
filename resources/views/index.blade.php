@@ -65,7 +65,7 @@
                                 <div class="card" style="background-color:{{$one_operation->color}}; font-size:small">
                                     <div style="width: 16px; height: 16px;">
                                     @if ($user->isAdmin())
-                                    <a class="text-dark bi bi-gear px-1" style="text-decoration:none;" href="{{ url("/operation_profile/".$one_operation->id) }}"></a>
+                                    <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/operation_profile/".$one_operation->id) }}"></a>
                                     @endif
                                     </div>
                                     <div class="py-2" style="text-align:center">
@@ -132,7 +132,7 @@
                                 <div class="card" style="background-color:{{ $one_microapp->color }}; font-size:small">
                                     <div style="width: 16px; height: 16px;">
                                     @if ($user->microapps->where('microapp_id', $one_microapp->id)->where('can_edit', 1)->first() || $user->isAdmin())
-                                    <a class="text-dark bi bi-gear px-1" style="text-decoration:none;" href="{{ url("/microapp_profile/".$one_microapp->id) }}"></a>
+                                    <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/microapp_profile/".$one_microapp->id) }}"></a>
                                     @endif
                                     </div>
                                     <div class="py-2" style="text-align:center">

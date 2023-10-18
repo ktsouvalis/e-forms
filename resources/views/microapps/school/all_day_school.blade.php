@@ -110,22 +110,24 @@
                 <thead>
                     <tr>
                         <th id="search">Μήνας</th>
-                        <th id="search">Μαθητές Πρωινή Υποδοχή</th>
-                        <th id="search">Τμήματα 15.00</th>
-                        <th id="search">Μαθητές 15.00</th>
-                        <th id="search">Τμήματα 16.00</th>
-                        <th id="search">Μαθητές 16.00</th>
-                        <th id="search">Τμήματα 17.30</th>
-                        <th id="search">Μαθητές 17.30</th>
-                        <th id="search">Σχόλια</th>
                         <th id="search">Λειτουργία</th>
+                        <th id="">Μαθητές Πρωινή Υποδοχή</th>
+                        <th id="">Τμήματα 15.00</th>
+                        <th id="">Μαθητές 15.00</th>
+                        <th id="">Τμήματα 16.00</th>
+                        <th id="">Μαθητές 16.00</th>
+                        <th id="">Τμήματα 17.30</th>
+                        <th id="">Μαθητές 17.30</th>
+                        <th id="">Σχόλια</th>
                         <th>Αρχείο</th>
+                        <th>Τελευταία ενημέρωση</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach($school->all_day_schools->sortByDesc('month_id') as $one)
                     <tr>
                     <td> {{$one->month->name}}</td>
+                    <td> {{$one->functionality}}</td>
                     <td> {{$one->nr_morning}}</td>
                     <td> {{$one->nr_of_class_3}}</td>
                     <td> {{$one->nr_of_pupils_3}}</td>
@@ -134,13 +136,13 @@
                     <td> {{$one->nr_of_class_5}}</td>
                     <td> {{$one->nr_of_pupils_5}}</td>
                     <td> {{$one->comments}}</td>
-                    <td> {{$one->functionality}}</td>
                     <td>
                         <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
                         @csrf
                         <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
                         </form>   
                     </td>
+                    <td>{{$one->updated_at}}</td>
                     </tr>
                 @endforeach
                 </tbody>

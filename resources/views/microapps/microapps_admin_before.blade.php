@@ -6,10 +6,10 @@
 @endphp
 
 @if (Str::contains($currentUrl, 'microapp_profile'))
-    <a class="btn btn-primary bi bi-eye px-1" style="text-decoration: none;" href="{{ url("/admin".$microapp->url) }}"></a>
+    <a class="btn btn-primary bi bi-eye px-1" data-toggle="tooltip" data-placement="top" title="Απαντήσεις" style="text-decoration: none;" href="{{ url("/admin".$microapp->url) }}"></a>
 @elseif (Str::contains($currentUrl, 'admin'))
     @can('update', $microapp)
-        <a class="btn btn-primary bi bi-pencil px-1" style="text-decoration: none;" href="{{ url("/microapp_profile/$microapp->id") }}"></a>
+        <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ url("/microapp_profile/$microapp->id") }}"></a>
     @endcan
 @endif
 </div>

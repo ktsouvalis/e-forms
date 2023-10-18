@@ -191,7 +191,7 @@ class TeacherController extends Controller
                 }
                 else{
                     $error = 1;
-                    $check['sxesi_ergasias'] = "Error: Κενό πεδίο";
+                    $check['sxesi_ergasias'] = "Error: Άγνωστη Σχέση Εργασίας";
                 }
 
                 $ignore_record = 0;

@@ -91,11 +91,11 @@
                     <tr>
                         <th id="search">Κωδικός</th>
                         <th id="search">Τύπος</th>
-                        <th id="search">Ημερομηνία</th>
-                        <th id="search">Δράση</th>
-                        <th id="search">Πρακτικό</th>
-                        <th id="search">Αρχείο</th>
-                        <th id="search">Τμήματα</th>
+                        <th id="">Ημερομηνία</th>
+                        <th id="">Δράση</th>
+                        <th id="">Πρακτικό</th>
+                        <th id="">Αρχείο</th>
+                        <th id="">Τμήματα</th>
                         
                         <th>Επεξεργασία μελλοντικής εκδρομής</th>
                         <th>Διαγραφή μελλοντικής εκδρομής</th>

@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             SxesiErgasiasSeeder::class,
             DirectoriesSeeder::class,
             MonthSeeder::class,
-            NoSchoolSeeder::class
+            NoSchoolSeeder::class,
+            OutingTypesSeeder::class
         ]);
     }
 }

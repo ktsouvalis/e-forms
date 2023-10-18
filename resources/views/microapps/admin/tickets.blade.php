@@ -29,10 +29,10 @@
             <tr>
                 <th id="search">Κωδικός</th>
                 <th id="search">Θέμα</th>
-                <th id="search">Ημερομηνία Δημιουργίας</th>
                 <th id="search">Σχολείο</th>
-                <th id="search">Τελευταία ενημέρωση</th>
                 <th id="search">Κατάσταση</th>
+                <th id="">Ημερομηνία Δημιουργίας</th>
+                <th id="">Τελευταία ενημέρωση</th>
             </tr>
         </thead>
         <tbody>
@@ -40,14 +40,14 @@
                 <tr> 
                     <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
                     <td>{{$ticket->subject}}</td> 
-                    <td>{{$ticket->created_at}} </td>
                     <td>{{$ticket->school->name}}</td>
-                    <td>{{$ticket->updated_at}} </td>
                     @if($ticket->solved)
                         <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id")}}">Έχει επιλυθεί</a></td>
                     @else
                         <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id")}}">Προς επίλυση</a></td>
                     @endif
+                    <td>{{$ticket->created_at}} </td>
+                    <td>{{$ticket->updated_at}} </td>
                 </tr> 
             @endforeach   
         </tbody>  

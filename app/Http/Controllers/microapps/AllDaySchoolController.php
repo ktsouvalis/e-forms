@@ -4,8 +4,11 @@ namespace App\Http\Controllers\microapps;
 
 use App\Models\Month;
 use App\Models\School;
+use App\Models\Microapp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\AllDaySchool;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;

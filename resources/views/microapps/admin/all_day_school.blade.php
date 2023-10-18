@@ -68,6 +68,7 @@
                         <th id="">Μαθητές 17.30</th>
                         <th id="">Σχόλια</th>
                         <th>Αρχείο</th>
+                        <th>Τελευταία ενημέρωση</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -91,6 +92,7 @@
                         <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
                         </form>   
                     </td>
+                    <td>{{$one->updated_at}}</td>
                     </tr>
                 @endforeach
                 </tbody>

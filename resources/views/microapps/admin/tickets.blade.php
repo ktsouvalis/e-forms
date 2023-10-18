@@ -18,7 +18,9 @@
         $tickets = App\Models\microapps\Ticket::all();
         
     @endphp
-        
+    @push('title')
+        <title>{{$microapp->name}}</title>
+    @endpush    
     <div class="container">
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
         <div class="table-responsive py-2">
@@ -52,4 +54,5 @@
         </table>    
         </div>
     </div>
+    
 </x-layout>

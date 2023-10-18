@@ -18,6 +18,7 @@
         $all_schools = App\Models\School::all();
     @endphp
 <body>
+    <p class="h4">Διευθυντές Σχολείων</p>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>

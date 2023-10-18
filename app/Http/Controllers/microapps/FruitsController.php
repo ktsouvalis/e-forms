@@ -30,7 +30,8 @@ class FruitsController extends Controller
                 );
                 $done=1;
             }
-            catch(Throwable $exception){
+            catch(Throwable $e){
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create fruits db error '.$e->getMessage());
                 return redirect(url('/school_app/fruits'))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
 

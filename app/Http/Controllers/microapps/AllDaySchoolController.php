@@ -15,90 +15,114 @@ class AllDaySchoolController extends Controller
 {
     //
     public function post_all_day(Request $request, School $school){
-        $noc3 = $request->all()['nr_class_3'];
-        $noc4 = $request->all()['nr_class_4'];
-        $noc5 = $request->all()['nr_class_5'];
-        $comments= $request->all()['comments'];
-        $functionality = $request->all()['functionality'];
-        $month = Month::getActiveMonth();
-        if($request->file('table_file')){
-            $rule = [
-                'table_file' => 'mimes:xlsx'
-            ];
-            $validator = Validator::make($request->all(), $rule);
-            if($validator->fails()){ 
-                return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            }
-            $file = $request->file('table_file')->getClientOriginalName();
-            //store the file
-            $filename = "all_day_".$school->code."_month".$month->id.".xlsx";
-            $path = $request->file('table_file')->storeAs('all_day', $filename);
-
-            //load the file with phpspreadsheet
-            $spreadsheet = IOFactory::load("../storage/app/$path");
-            
-            $row=7;
-            $rowSumValue="1";
-            $nos3=0;
-            $nos4=0;
-            $nos5=0;
-            $nosm=0;
-            while ($rowSumValue != "" && $row<400){
-                $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-                if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625){
-                    $nos3++;
+        $microapp = Microapp::where('url', '/all_day_school')->first();
+        if($microapp->accepts){
+            $noc3 = $request->all()['nr_class_3'];
+            $noc4 = $request->all()['nr_class_4'];
+            $noc5 = $request->all()['nr_class_5'];
+            $comments= $request->all()['comments'];
+            $functionality = $request->all()['functionality'];
+            $month = Month::getActiveMonth();
+            if($request->file('table_file')){
+                $rule = [
+                    'table_file' => 'mimes:xlsx'
+                ];
+                $validator = Validator::make($request->all(), $rule);
+                if($validator->fails()){ 
+                    return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
                 }
-                else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667){
-                    $nos4++;
+                $file = $request->file('table_file')->getClientOriginalName();
+                //store the file
+                $filename = "all_day_".$school->code."_month".$month->id.".xlsx";
+                try{
+                    $path = $request->file('table_file')->storeAs('all_day', $filename);
                 }
-                else if($time=='17:30' or $time=='5:30:00 μμ' or $time==0.7292){
-                    $nos5++;
+                catch(Throwable $e){
+                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create all_day file error ".$e->getMessage());
+                    return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
-                $morning = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
-                if($morning=="ΠΡΩΙΝΗ ΥΠΟΔΟΧΗ"){
-                    $nosm++;
+                //load the file with phpspreadsheet
+                $spreadsheet = IOFactory::load("../storage/app/$path");
+                
+                $row=7;
+                $rowSumValue="1";
+                $nos3=0;
+                $nos4=0;
+                $nos5=0;
+                $nosm=0;
+                while ($rowSumValue != "" && $row<400){
+                    $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
+                    if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625){
+                        $nos3++;
+                    }
+                    else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667){
+                        $nos4++;
+                    }
+                    else if($time=='17:30' or $time=='5:30:00 μμ' or $time==0.7292){
+                        $nos5++;
+                    }
+
+                    $morning = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
+                    if($morning=="ΠΡΩΙΝΗ ΥΠΟΔΟΧΗ"){
+                        $nosm++;
+                    }
+                    $row++;
+                    $rowSumValue="";
+                    for($col=1;$col<=4;$col++){
+                        $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                    }
                 }
-                $row++;
-                $rowSumValue="";
-                for($col=1;$col<=4;$col++){
-                    $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                try{
+                    AllDaySchool::updateOrCreate(
+                    [
+                        'month_id'=>$month->id,
+                        'school_id'=>$school->id
+                    ],
+                    [
+                        'functionality'=> $functionality,
+                        'comments' => $comments,
+                        'nr_of_pupils_3' => $nos3,
+                        'nr_of_class_3' => $noc3, 
+                        'nr_of_pupils_4' => $nos4,
+                        'nr_of_class_4' =>  $noc4,
+                        'nr_of_pupils_5' => $nos5,
+                        'nr_of_class_5' => $noc5,
+                        'nr_morning' => $nosm,
+                        'file' => $file
+                    ]); 
+                }
+                catch(Throwable $e){
+                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create all_day db error '.$e->getMessage());
+                    return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
-            AllDaySchool::updateOrCreate(
-            [
-                'month_id'=>$month->id,
-                'school_id'=>$school->id
-            ],
-            [
-                'functionality'=> $functionality,
-                'comments' => $comments,
-                'nr_of_pupils_3' => $nos3,
-                'nr_of_class_3' => $noc3, 
-                'nr_of_pupils_4' => $nos4,
-                'nr_of_class_4' =>  $noc4,
-                'nr_of_pupils_5' => $nos5,
-                'nr_of_class_5' => $noc5,
-                'nr_morning' => $nosm,
-                'file' => $file
-            ]);  
+            else{
+                try{    
+                    AllDaySchool::updateOrCreate(
+                    [
+                        'month_id'=>$month->id,
+                        'school_id'=>$school->id
+                    ],
+                    [
+                        'functionality'=> $functionality,
+                        'comments'=> $comments,
+                        'nr_of_class_3' => $noc3,
+                        'nr_of_class_4' =>  $noc4,
+                        'nr_of_class_5' => $noc5
+                    ]); 
+                }
+                catch(Throwable $e){
+                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create all_day db error without file '.$e->getMessage());
+                    return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                }  
+            }
+            Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update all_day success $month->name");
+            return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
-            AllDaySchool::updateOrCreate(
-            [
-                'month_id'=>$month->id,
-                'school_id'=>$school->id
-            ],
-            [
-                'functionality'=> $functionality,
-                'comments'=> $comments,
-                'nr_of_class_3' => $noc3,
-                'nr_of_class_4' =>  $noc4,
-                'nr_of_class_5' => $noc5
-            ]);    
+            return redirect(url('/school_app/all_day_school'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
-
-        return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
 
     }
 

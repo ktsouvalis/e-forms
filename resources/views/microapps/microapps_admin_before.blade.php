@@ -1,4 +1,19 @@
 
+<div class="hstack gap-2">
+<div class="h4">{{$microapp->name}}</div>
+@php
+    $currentUrl = request()->url();
+@endphp
+
+@if (Str::contains($currentUrl, 'microapp_profile'))
+    <a class="btn btn-primary bi bi-eye px-1" style="text-decoration: none;" href="{{ url("/admin".$microapp->url) }}"></a>
+@elseif (Str::contains($currentUrl, 'admin'))
+    @can('update', $microapp)
+        <a class="btn btn-primary bi bi-pencil px-1" style="text-decoration: none;" href="{{ url("/microapp_profile/$microapp->id") }}"></a>
+    @endcan
+@endif
+</div>
+<hr>
 @php
     //fetch all stakeholders of the microapp to show them even if they have not submit some answer. $fruits_schools is MicroappStakeholder object
     if($microapp->visible){

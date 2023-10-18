@@ -19,7 +19,7 @@
     @php
         $all_sections = App\Models\Section::all();
     @endphp
-
+    <p class="h4">Τμήματα Σχολείων</p>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
             <thead>

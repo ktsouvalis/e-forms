@@ -66,4 +66,5 @@
     </div>
     @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
 </div>
+
 </x-layout>

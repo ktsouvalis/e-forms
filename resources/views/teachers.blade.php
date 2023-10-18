@@ -20,7 +20,7 @@
         $all_teachers = App\Models\Teacher::all();
     @endphp
 <body>
-
+    <p class="h4">Εκπαιδευτικοί Διεύθυνσης</p>
     <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">

@@ -186,7 +186,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Κωδικός</label>
+                        <label for="password" class="form-label">Συνθηματικό</label>
                         <div class="">
                             <input type="password" name="password" class="form-control">
                             @error('password')

@@ -13,9 +13,8 @@
     <em>Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας</em>
     <hr>
     <b> Πληροφορίες </b><br>
-    
     @foreach($stakeholder->fileshare->department->users as $user)
-        <div>{{$user->user->display_name}} {{$user->user->telephone}}</div>
+        <div>{{$user->display_name}} {{$user->telephone}}</div>
     @endforeach
     <hr>
     <div>

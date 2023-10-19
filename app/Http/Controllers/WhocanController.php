@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use App\Models\Month;
 use App\Models\School;
 use App\Models\Teacher;
@@ -165,23 +166,39 @@ class WhocanController extends Controller
      * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
     public function send_to_all(Request $request, $my_app, $my_id){
-        $recipients=array();
+        $mail_error=false;
         if($my_app=='fileshare'){
             $fileshare = Fileshare::find($my_id);
             $stakeholders = $fileshare->stakeholders;
             foreach($stakeholders as $stakeholder){
-                Mail::to($stakeholder->stakeholder->mail)->send(new FilesToReceive($fileshare, $stakeholder));  
+                $mail = $stakeholder->stakeholder->mail;
+                try{
+                    Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));  
+                }
+                catch(Throwable $e){
+                    $mail_error = true;
+                    Log::channel('stakeholders_microapps')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                }
             }
         }
         else if($my_app=='microapp'){
             $microapp = Microapp::find($my_id);
             $stakeholders = $microapp->stakeholders;  
             foreach($stakeholders as $stakeholder){
-                Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));  
+                $mail = $stakeholder->stakeholder->mail;
+                try{ 
+                    Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                }
+                catch(Throwable $e){
+                    $mail_error = true;
+                    Log::channel('stakeholders_microapps')->error("Microapp $microapp->name, MailToStakeholders error: $mail ".$e->getMessage());   
+                }
             }
         }
-        
-        return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
+        if(!$mail_error)
+            return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
+        else
+            return back()->with('warning', 'Δείτε στο σημερινό log stakeholders_microapps ποιοι δεν ενημερώθηκαν'); 
     }
 
     /**
@@ -192,64 +209,40 @@ class WhocanController extends Controller
      * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
     public function send_to_all_that_have_not_submitted($my_app, $my_id){
+        $mail_error=false;
         if($my_app=='microapp'){
             $microapp = Microapp::find($my_id);
             $stakeholders = $microapp->stakeholders;  
             foreach($stakeholders as $stakeholder){
+                $mail = $stakeholder->stakeholder->mail;
                 if($microapp->url == "/all_day_school"){
                     // επειδή το ολοήμερο είναι μηνιαία υποβολή, ενημερώνεται το σχολείο αν δεν έχει υποβάλλει τον τρέχοντα μήνα
                     if(!$stakeholder->stakeholder->all_day_schools->where('month_id', Month::getActiveMonth()->id)->count()){
-                        Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));   
-                        Log::channel('user_memorable_actions')->info(Auth::user()->username." sent reminder for all_day_school to ".$stakeholder->stakeholder->name);
+                        try{
+                            Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                        }
+                        catch(Throwable $e){
+                            $mail_error=true;
+                            Log::channel('stakeholders_microapps')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage()); 
+                        }
                     }
                 }
                 else{
                     if(!$stakeholder->hasAnswer){
-                        Mail::to($stakeholder->stakeholder->mail)->send(new MicroappToSubmit($stakeholder));
-                        Log::channel('user_memorable_actions')->info(Auth::user()->username." sent reminder for $microapp->name to ".$stakeholder->stakeholder->name);
+                        try{
+                            Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                        }
+                        catch(Throwable $e){
+                            $mail_error=true;
+                            Log::channel('stakeholders_microapps')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage());
+                        }
                     }  
                 }
             }
         }
-        
-        return back()->with('success', 'Ενημερώθηκαν όσοι ενδιαφερόμενοι δεν έχουν υποβάλλει απάντηση');
+        if(!$mail_error)
+            return back()->with('success', 'Ενημερώθηκαν όσοι ενδιαφερόμενοι δεν έχουν υποβάλλει απάντηση');
+        else
+            return back()->with('warning', 'Δείτε στο σημερινό log stakeholders_microapps ποιοι δεν ενημερώθηκαν');   
     }
 }
-
-
-/**
- * send one email to all the stakeholders of a microapp or fileshare
- * @param Request $request the incoming request
- * @param String $my_app the kind of the app eg fileshare or microapp
- * @param Integer $my_id the id of the microapp
- * @return \Illuminate\Http\RedirectResponse The redirect response.
- */
-// public function send_to_all(Request $request, $my_app, $my_id){
-//         if($my_app=='fileshare'){
-//             $fileshare = Fileshare::find($my_id);
-//             $emails = Fileshare::where('id', $fileshare->id)
-//                 ->with('stakeholders.stakeholder')
-//                 ->get()
-//                 ->flatMap(function ($fileshare) {
-//                     return $fileshare->stakeholders->map(function ($stakeholder) {
-//                         return $stakeholder->stakeholder->mail;
-//                     });
-//                 }); 
-//             Mail::bcc($emails)->send(new NewFilesToReceive($fileshare));
-//         }
-//         else if($my_app=='microapp'){
-//             $microapp = Microapp::find($my_id);
-//             $emails = Microapp::where('id', $microapp->id)
-//                 ->with('stakeholders.stakeholder')
-//                 ->get()
-//                 ->flatMap(function ($microapp) {
-//                     return $microapp->stakeholders->map(function ($stakeholder) {
-//                         return $stakeholder->stakeholder->mail;
-//                     });
-//                 }); 
-//             Mail::bcc($emails)->send(new NewMicroappToSubmit($microapp));
-//         }
-        
-        
-//         return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
-//     }

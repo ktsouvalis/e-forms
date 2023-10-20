@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\microapps\Fruit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
+use App\Models\microapps\Immigrant;
 use App\Models\microapps\AllDaySchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -71,6 +72,10 @@ class School extends Authenticatable
 
     public function all_day_schools(){
         return $this->hasMany(AllDaySchool::class);
+    }
+
+    public function immigrants(){
+        return $this->hasMany(Immigrant::class);
     }
 
     public function sections(){

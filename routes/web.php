@@ -28,6 +28,7 @@ use App\Http\Controllers\OperationController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 
 /*
@@ -217,6 +218,19 @@ Route::post('/dl_all_day_template', function(Request $request){
 Route::post('/update_all_day_template', [AllDaySchoolController::class, 'update_all_day_template']);
 
 Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
+
+Route::post('/save_immigrants/{school}', [ImmigrantsController::class, 'post_immigrants']);
+
+Route::post('/dl_immigrants_template', function(Request $request){
+    $file = 'immigrants/immigrants.xlsx';
+
+    return Storage::disk('local')->download($file);
+});
+
+Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template']);
+
+Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
+
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){

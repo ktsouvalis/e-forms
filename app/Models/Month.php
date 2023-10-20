@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\microapps\Immigrant;
 use App\Models\microapps\AllDaySchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,5 +23,9 @@ class Month extends Model
 
     public function all_day_schools(){
         return $this->hasMany(AllDaySchool::class);
+    }
+
+    public function immigrants(){
+        return $this->hasMany(Immigrant::class);
     }
 }

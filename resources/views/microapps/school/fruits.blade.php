@@ -48,6 +48,11 @@
                         @endif
                     </form>
                 </nav>
-            </div>   
+                <div class="col-md-4 py-3" style="max-width:15rem">
+                    <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
+                        <div>Τελευταία ενημέρωση <br><strong> {{$old_data->updated_at}}</strong></div>
+                    </div>
+                </div>
+            </div>       
     </div>
 </x-layout_school>

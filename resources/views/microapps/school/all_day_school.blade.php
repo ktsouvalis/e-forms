@@ -27,7 +27,7 @@
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
-                        <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα {{$active_month->name}}</strong></span>
+                        <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{$active_month->name}}</my_text></strong></span>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως τις 15:00</span>

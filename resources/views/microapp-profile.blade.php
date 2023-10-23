@@ -11,6 +11,7 @@
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
         <script src="../canedit.js"></script>
+        <script src="../copycolumn2.js"></script>
     @endpush
 
     @push('title')
@@ -121,21 +122,27 @@
             </nav>  
         <div class="vstack gap-2 py-3">
             @if($microapp->stakeholders->count())
+            
             <div class="table-responsive py-3">
+                <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails ενδιαφερόμενων</button>
                 <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
                 <thead>
                     <tr>
+                        <th id="search">Τύπος</th>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
                         <th class="align-middle">Διαγραφή</th>
+                        <th class="search">email</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach($microapp->stakeholders as $one_stakeholder)
                 <tr>
                     @if($one_stakeholder->stakeholder_type=="App\Models\School")
+                        <td>Σχολείο</td>
                         <td>{{$one_stakeholder->stakeholder->code}}</td>
                     @else
+                        <td>Εκπαιδευτικός</td>
                         <td>{{$one_stakeholder->stakeholder->afm}}</td>
                     @endif
                     <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
@@ -145,6 +152,8 @@
                             <button type="submit" class="btn btn-outline-danger bi bi-x-circle"> </button>
                         </form>
                     </td>
+                    <td>{{$one_stakeholder->stakeholder->mail}}</td>
+                    
                 </tr>
                 @endforeach
                 </tbody>

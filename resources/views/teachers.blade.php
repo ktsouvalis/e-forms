@@ -10,6 +10,7 @@
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="copycolumn.js"></script>
+        <script src="copycolumn2.js"></script>
         <script src="copylink.js"></script>
         <script src="datatable_init.js"></script>
     @endpush
@@ -21,7 +22,10 @@
     @endphp
 <body>
     <p class="h4">Εκπαιδευτικοί Διεύθυνσης</p>
-    <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
+    <div class="hstack gap-3">
+        <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
+        <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails εκπαιδευτικών</button>
+    </div>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
@@ -32,12 +36,12 @@
                     <th class="align-middle">Αποστολή συνδέσμου</th>
                     <th id="search">ΑΦΜ</th>
                     <th id="search">AΜ</th>
+                    <th id="search">email</th>
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
                     <th id="search">Κλάδος</th>
                     <th id="search">Σχέση Εργασίας</th>
                     
-                    <th id="search">email</th>
                     <th id="search">email ΠΣΔ</th>
                     {{-- <th id="search">Τηλέφωνο</th> --}}
                     
@@ -70,12 +74,13 @@
                     </td> 
                     <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->am}}</td>
+                    <td>{{$teacher->mail}}</td>
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
                     <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->sxesi_ergasias->name}}</td>
                      
-                    <td>{{$teacher->mail}}</td>
+                    
                     <td>{{$teacher->sch_mail}}</td>
                     {{-- <td>{{$teacher->telephone}}</td> --}}
                     

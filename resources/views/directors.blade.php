@@ -45,7 +45,7 @@
                     {{-- <td>{{$school->director->telephone}}</td> --}}
                     @else
                     <td> - </td>
-                    <td> - </td>
+                    {{-- <td> - </td> --}}
                     @endif
                 </tr>
         

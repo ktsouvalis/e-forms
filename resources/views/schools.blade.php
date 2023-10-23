@@ -10,6 +10,7 @@
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="copycolumn.js"></script>
+        <script src="copycolumn2.js"></script>
         <script src="copylink.js"></script>
         <script src="datatable_init.js"></script>
     @endpush
@@ -20,7 +21,10 @@
         $all_schools = App\Models\School::all();
     @endphp
     <p class="h4">Σχολεία Διεύθυνσης</p>
-    <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
+    <div class="hstack gap-3">
+        <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
+        <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails σχολείων</button>
+    </div>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
             <thead>

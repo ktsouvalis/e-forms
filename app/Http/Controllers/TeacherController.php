@@ -68,7 +68,7 @@ class TeacherController extends Controller
             }
 
             //store the file
-            $filename = "teachers_file_did".Auth::id().".xlsx";
+            $filename = "teachers_file_didaskalia".Auth::id().".xlsx";
             $path = $request->file('import_teachers')->storeAs('files', $filename);
 
             //load the file
@@ -134,7 +134,7 @@ class TeacherController extends Controller
             }
 
             //store the file
-            $filename = "teachers_file_ap".Auth::id().".xlsx";
+            $filename = "teachers_file_apousia".Auth::id().".xlsx";
             $path = $request->file('import_teachers')->storeAs('files', $filename);
 
             //load the file
@@ -197,9 +197,9 @@ class TeacherController extends Controller
             }
 
             //store the files
-            $filename = "teachers_file_org".Auth::id().".xlsx";
+            $filename = "teachers_file_organiki".Auth::id().".xlsx";
             $path = $request->file('organiki_file')->storeAs('files', $filename);
-            $filename2 = "teachers_file_ap".Auth::id().".xlsx";
+            $filename2 = "teachers_file_apospasi".Auth::id().".xlsx";
             $path2 = $request->file('apospasi_file')->storeAs('files', $filename2);
 
             //load the file
@@ -273,6 +273,7 @@ class TeacherController extends Controller
                     $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
                 }
             }
+            // dd($teachers_array);
             $spreadsheet2 = IOFactory::load("../storage/app/$path2");
             $row=2;
             $error=0;
@@ -280,25 +281,25 @@ class TeacherController extends Controller
             while ($rowSumValue != "" && $row<10000){
                 $check=array();
         
-                $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
-                $check['surname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
-                $check['fname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
-                $check['mname']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
+                $check['name'] = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
+                $check['surname']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+                $check['fname']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
+                $check['mname']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
                 
                 //myschool stores the afm like eg "=999999999"
-                $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
+                $afm = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
                 $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
 
                 //check obvious fields
-                $check['gender']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
-                $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
-                $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
-                $check['sch_mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
-                $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
-                $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+                $check['gender']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
+                $check['telephone']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
+                $check['mail']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
+                $check['sch_mail']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
+                $check['klados']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
+                $check['am']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
                 
                 //cross check sxesi_ergasias with database
-                $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
+                $sxesi = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
                 if(SxesiErgasias::where('name',$sxesi)->count()){
                     $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
                     $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
@@ -310,23 +311,19 @@ class TeacherController extends Controller
 
                 $ignore_record = 0;
                 
-                
-                //myschool stores the organiki like eg "=999999999"
-                $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(36, $row)->getValue();
-                $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
-                
                 $check['org_eae']=1;
-                if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="ΟΧΙ"){
+                if($spreadsheet2->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="ΟΧΙ"){
                     $check['org_eae']=0;
                 }
 
                 //fix  directories to match database and then cross check
-                $organiki = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
+                $organiki = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
                 if($organiki!="ΑΧΑΪΑΣ (Π.Ε.) 2018"){
                     
                     // Extract the parts using regular expressions
                     preg_match('/^(\S+[^ \d])?(.*?) \((.*?)\)/', $organiki, $matches);
                     // Check if matches[1] is in the format of "Α'", "Β'", etc., and matches[2] is "ΑΘΗΝΑΣ"
+                    
                     if ($matches[2]!=''){
                         if($matches[2] == ' ΑΘΗΝΑΣ') {
                         // Rearrange the parts to the desired format
@@ -361,15 +358,16 @@ class TeacherController extends Controller
                 else{
                     $ignore_record = 1;  //ignore those that belongs to ΑΧΑΪΑ because they are in the database through the 4.1 report (organiki) 
                 }
-            }
-            //prepare teachers_array for session
-            if(!$ignore_record)array_push($teachers_array, $check);
+            
+                //prepare teachers_array for session
+                if(!$ignore_record)array_push($teachers_array, $check);
 
-            //change line and check if it's empty
-            $row++;
-            $rowSumValue="";
-            for($col=1;$col<=54;$col++){
-                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                //change line and check if it's empty
+                $row++;
+                $rowSumValue="";
+                for($col=1;$col<=54;$col++){
+                    $rowSumValue .= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                }
             }
         }
         
@@ -418,13 +416,11 @@ class TeacherController extends Controller
                         'sxesi_ergasias_id' => $teacher['sxesi_ergasias'],
                         'org_eae' => $teacher['org_eae'],
                         'organiki_id' => $teacher['organiki'],
-                        'organiki_type' => $teacher['organiki_type']
+                        'organiki_type' => $teacher['organiki_type'],
+                        'active'=>1
                     ]
                 );
-
-                // $record = Teacher::where('afm', $teacher['afm'])->first(); //η εντολή θα επιστρέψει μια εγγραφή που βρέθηκε στο excel ΚΑΙ στη βάση
-                // $record->updated_at=now(); //είτε δημιουργήθηκε τώρα στη βάση, είτε υπήρχε (ανεξάρτητα από το αν είναι dirty ή όχι), ανανεώνω το timestamp
-                // $record->save();
+                
                 $done_at_least_once = true;
             }
             catch(Throwable $e){
@@ -434,7 +430,9 @@ class TeacherController extends Controller
                 continue; 
             }
         }
-
+        // make not active the teachers that exist in database but not in 4.1 and 4.2
+        Teacher::whereNotIn('afm', collect($teachers_array)->pluck('afm'))->update(['active' => 0]);
+        
         if($done_at_least_once){
             DB::table('last_update_teachers')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
         }

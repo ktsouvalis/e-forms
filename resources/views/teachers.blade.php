@@ -30,14 +30,7 @@
     @if(Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1))
     <div class="col-md-4 py-3" style="max-width:15rem">
         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-            <div>Τελευταία ενημέρωση <br> οργανικά ανήκοντες <br><strong> {{Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1)->date_updated}}</strong></div>
-        </div>
-    </div>
-    @endif
-    @if(Illuminate\Support\Facades\DB::table('last_update_teachers')->find(2))
-    <div class="col-md-4 py-3" style="max-width:15rem">
-        <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-            <div>Τελευταία ενημέρωση <br>  αποσπασμένοι<br><strong> {{Illuminate\Support\Facades\DB::table('last_update_teachers')->find(2)->date_updated}}</strong></div>
+            <div>Τελευταία ενημέρωση<br><strong> {{Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1)->date_updated}}</strong></div>
         </div>
     </div>
     @endif
@@ -69,21 +62,17 @@
                 </tr>
             </thead>
             <tbody>
-            {{-- @php
-                $date_table_updated_str = Illuminate\Support\Carbon::parse(DB::table('last_update_teachers')->get()->min('date_updated'))->toDateString(); 
-                $date_table_updated = Illuminate\Support\Carbon::parse($date_table_updated_str);
-                // dd($date_table_updated);     
-            @endphp --}}
+        
             @foreach($all_teachers as $teacher)
+            @if($teacher->active)
                 @php
                     $date=null;
                     if($teacher->logged_in_at) 
                         $date = Illuminate\Support\Carbon::parse($teacher->logged_in_at);
                     $text = url("/teacher/$teacher->md5");
-                    // $date_teacher_updated_str = Illuminate\Support\Carbon::parse($teacher->updated_at)->toDateString();
-                    // $date_teacher_updated = Illuminate\Support\Carbon::parse($date_teacher_updated_str);
+                    
                 @endphp
-                {{-- @if($date_teacher_updated >= $date_table_updated) --}}
+                
                 <tr>  
                     <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
@@ -116,7 +105,7 @@
                         <td> - </td>
                     @endif 
                 </tr>
-                {{-- @endif --}}
+            @endif  
             @endforeach
         </tbody>
         </table>

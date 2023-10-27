@@ -92,12 +92,12 @@
         </div> 
         <div class="container px-5 py-2">
             @if($old_data)
-                    <div class="hstack gap-3">
-                    <label class="form-control  w-25"><strong> Καταμέτρηση πρωινής υποδοχής: {{$old_data->nr_morning}}</strong></label>
+                    <div class="vstack gap-3">
+                    <div class="hstack gap-2"><label class="form-control  w-25"><strong> Καταμέτρηση πρωινής υποδοχής για τον μήνα {{$old_data->month->name}}: </strong></label><mytext class="text-primary">{{$old_data->nr_morning}}</mytext> </div> 
                     {{-- <label class="form-control text-success"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}} </label> --}}
                     <form action="{{url("/dl_all_day_file/$old_data->id")}}" method="post">
                         @csrf
-                        <button class="btn btn-success bi bi-box-arrow-down"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}}</button> 
+                    <div class="hstack gap-2"><label class="form-control  w-25"><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> </div>
                     </form>
                     
                     </div>

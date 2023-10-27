@@ -57,7 +57,7 @@
             @if($old_data)
                 <form action="{{url("/dl_immigrants_file/$old_data->id")}}" method="post">
                     @csrf
-                    <button class="btn btn-success bi bi-box-arrow-down"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}}</button> 
+                   Αρχείο που έχετε υποβάλλει: <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> 
                 </form>   
             @endif
         </div>

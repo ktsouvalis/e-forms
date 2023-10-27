@@ -8,6 +8,7 @@ use App\Models\Teacher;
 use App\Models\Municipality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -114,6 +115,7 @@ class SchoolController extends Controller
         $schools_array = session('schools_array');
         session()->forget('schools_array');
         $error=false;
+        $done_at_least_once=false;
         foreach($schools_array as $school){
             // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE, update existing records based on 'code' field
             try{
@@ -138,12 +140,19 @@ class SchoolController extends Controller
                         'international' => $school['international']
                     ]
                 );
+                $record = School::where('code', $school['code'])->first(); //η εντολή θα επιστρέψει μια εγγραφή που βρέθηκε στο excel ΚΑΙ στη βάση
+                $record->updated_at=now(); //είτε δημιουργήθηκε τώρα στη βάση, είτε υπήρχε (ανεξάρτητα από το αν είναι dirty ή όχι), ανανεώνω το timestamp
+                $record->save();
+                $done_at_least_once=true;
             }
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code'].' '.$e->getMessage());
                 $error=true;
                 continue;    
             }
+        }
+        if($done_at_least_once){
+            DB::table('last_update_schools')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
         }
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools');
@@ -247,6 +256,7 @@ class SchoolController extends Controller
 
     public function insertDirectors(){
         $error=false;
+        $done_at_least_once=false;
         $directors_array = session('directors_array');
         session()->forget('directors_array');
         // dd($directors_array);
@@ -257,6 +267,7 @@ class SchoolController extends Controller
                 $school_director = Teacher::find($one_director['teacher_id']);
                 $school->director_id = $school_director->id;
                 $school->save();
+                $done_at_least_once=true;
             }
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id'].' '.$e->getMessage());
@@ -264,6 +275,9 @@ class SchoolController extends Controller
                 continue;    
             }
             // if($one_director['school_id']==222 and $one_director['teacher_id']==1570)dd($one_director);
+        }
+        if($done_at_least_once){
+            DB::table('last_update_directors')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
         }
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertDirectors');

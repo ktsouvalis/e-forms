@@ -5,14 +5,21 @@
             <form action="{{url('/upload_teachers_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
                 <div class="vstack gap-3">
-                <div class="hstack gap-1">
-                    <input  type="radio" id="organiki" name="template_file" value="organiki" checked>
-                    <label class="px-1" for="organiki">Οργανικά Ανήκοντες (4.1 MYSCHOOL)</label><br>
+                    <div class="hstack gap-1">
+                        <input  type="file" id="organiki" name="organiki_file" required>
+                        <label class="px-1" for="organiki">Οργανικά Ανήκοντες (4.1 MYSCHOOL)</label><br>
+                    </div>
+                    <div class="hstack gap-1">
+                        <input type="file" id="apospasi" name="apospasi_file" required>
+                        <label class="px-1" for="apospasi">Αποσπασμένοι (4.2 MYSCHOOL)</label><br> 
+                    </div>
                 </div>
-                <div class="hstack gap-1">
-                    <input type="radio" id="apospasi" name="template_file" value="apospasi">
-                    <label class="px-1" for="apospasi">Αποσπασμένοι (4.2 MYSCHOOL)</label><br> 
-                </div>
+                <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείων</button>
+            </form>
+        </nav>
+        <hr>
+        <nav class="navbar navbar-light bg-light">
+            <form action="{{url('/upload_teachers_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 <div class="hstack gap-1">
                     <input type="radio" id="didaskalia" name="template_file" value="didaskalia">
                     <label class="px-1" for="didaskalia">Διδάσκουν (4.9 MYSCHOOL)</label><br> 

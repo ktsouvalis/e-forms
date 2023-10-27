@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\School;
 use App\Models\Section;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -33,9 +34,9 @@ class SectionController extends Controller
         $spreadsheet = IOFactory::load("../storage/app/$path");
         $schools_array=array();
         $row=3;
-        $error=0;
         $rowSumValue="1";
         $error=false;
+        $done_at_least_once=false;
         while ($rowSumValue != "" && $row<10000){
             $school_code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
             $section_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, $row)->getValue();
@@ -56,6 +57,7 @@ class SectionController extends Controller
                             'sec_code'=>$section_code  
                         ]
                     );
+                    $done_at_least_once=true;
                 }
                 catch(Throwable $e){
                     Log::channel('throwable_db')->error(Auth::user()->username.' create section error '.$school_code.' '.$e->getMessage());
@@ -72,6 +74,9 @@ class SectionController extends Controller
             $row++;
             $rowSumValue="";
             $rowSumValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();   
+        }
+        if($done_at_least_once){
+            DB::table('last_update_sections')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
         }
         if(!$error)
             return redirect(url('/sections'))->with('success', 'Επιτυχής ενημέρωση τμημάτων σχολείων');

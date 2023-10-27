@@ -20,7 +20,16 @@
     @php
         $all_schools = App\Models\School::all();
     @endphp
+    
     <p class="h4">Σχολεία Διεύθυνσης</p>
+    @if(Illuminate\Support\Facades\DB::table('last_update_schools')->find(1))
+    <div class="col-md-4 py-3" style="max-width:15rem">
+        <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
+            <div>Τελευταία ενημέρωση <br><strong> {{Illuminate\Support\Facades\DB::table('last_update_schools')->find(1)->date_updated}}</strong></div>
+        </div>
+    </div>
+    @endif
+    
     <div class="hstack gap-3">
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails σχολείων</button>

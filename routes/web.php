@@ -8,6 +8,7 @@ use App\Models\Teacher;
 use App\Models\Microapp;
 use App\Models\Fileshare;
 use App\Models\Operation;
+use App\Models\Consultant;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
 use App\Models\microapps\Outing;
@@ -25,6 +26,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
+use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
@@ -114,7 +116,7 @@ Route::get('/school_app/{appname}', function($appname){
 
 //////// TEACHER ROUTES
 
-Route::view('/teachers','teachers')->middleware('auth')->middleware('can:viewAny, '. Teacher::class);
+Route::view('/teachers','teachers')->middleware('can:viewAny, '.Teacher::class);
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:upload, ".Teacher::class);
 
@@ -143,6 +145,16 @@ Route::get('/teacher_app/{appname}', function($appname){
         return redirect(url('/index_teacher'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
     }
 })->middleware('isTeacher')->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
+
+//////// CONSULTANT ROUTES
+
+Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
+
+Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
+
+Route::view('/index_consultant', 'index_consultant'); // auth checking in view
+
+Route::get('/clogout', [ConsultantController::class, 'logout']);
 
 //////// OPERATIONS ROUTES
 
@@ -301,9 +313,13 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
         $school = School::findOrFail($my_id);
         Mail::to($school->mail)->send(new ShareLink('school', $school->md5));
     }
-    else{
+    else if ($type=="teacher"){
         $teacher = Teacher::findOrFail($my_id);
         Mail::to($teacher->mail)->send(new ShareLink('teacher', $teacher->md5));
+    }
+    else if($type=="consultant"){
+        $consultant = Consultant::findOrFail($my_id);
+        Mail::to($consultant->mail)->send(new ShareLink('consultant', $consultant->md5));
     }
 
     return back()->with('success', 'Ο σύνδεσμος στάλθηκε επιτυχώς');

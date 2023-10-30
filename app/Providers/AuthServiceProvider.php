@@ -20,7 +20,8 @@ class AuthServiceProvider extends ServiceProvider
         Form::class => FormPolicy::class,
         Microapp::class => MicroappPolicy::class,
         Fileshare::class => FilesharePolicy::class,
-        Ticket::class => TicketPolicy::class
+        Ticket::class => TicketPolicy::class,
+        Consultant::class => ConsultantPolicy::class,
     ];
 
     /**

@@ -48,6 +48,7 @@
                     <th id="search">Δήμος</th>
                     <th id="search">Οργανικότητα</th>
                     <th id="search">Λειτουργικότητα</th>
+                    <th id="search">Σύμβουλος Εκπαίδευσης</th>
                     <th id="search">last login</th>
                 </tr>
             </thead>
@@ -77,6 +78,11 @@
                     <td >{{$school->municipality->name}}</td>
                     <td >{{$school->organikotita}}</td>
                     <td >{{$school->leitourgikotita}}</td>
+                    @if($school->schregion)
+                        <td>{{$school->schregion->consultant->surname}} {{$school->schregion->consultant->name}}</td>
+                    @else
+                        <td>-</td>
+                    @endif
                     @if($date)
                         <td >{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else

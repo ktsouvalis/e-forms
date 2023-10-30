@@ -85,7 +85,7 @@
     <div class="row justify-content-md-center">
       <div class="col p-4">
         @stack('app-icon')
-        <div class=" d-flex justify-content-center"><a href='/change_password' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{$user->name}}</a></div>
+        {{-- <div class=" d-flex justify-content-center"><a href='/change_password' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{$user->name}}</a></div> --}}
       </div>
     </div>
   </div>

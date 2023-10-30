@@ -22,23 +22,23 @@
     <script src="https://kit.fontawesome.com/5083d79d45.js" crossorigin="anonymous"></script>
   
   </head> 
-  @auth('teacher')
+  @auth('consultant')
   
   @php
-    $user = Auth::guard('teacher')->user();
+    $user = Auth::guard('consultant')->user();
   @endphp
   <div class="row">
   
     
     <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
-      @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
+      @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
           <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
           <hr>
-          <ul class="nav nav-pills flex-column mb-auto">
+          {{-- <ul class="nav nav-pills flex-column mb-auto">
             <p>
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
-              <a href="{{url('/index_teacher')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
+              <a href="{{url('/index_consultant')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
             </div>
             </li>
             </p>
@@ -71,7 +71,7 @@
             </li>
             </p>
           </ul>
-          <hr>
+          <hr> --}}
     @else
           @push('app-icon')
             <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
@@ -119,7 +119,7 @@
 
 </div>
        <footer class="border-top text-center small text-muted py-3">
-      <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_teacher")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
+      <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_consultant")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
     <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
     <script

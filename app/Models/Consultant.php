@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Consultant extends Model
+class Consultant extends Authenticatable
 {
     use HasFactory;
 
@@ -13,7 +14,7 @@ class Consultant extends Model
         'id'
     ];
 
-    public function schregions()
+    public function schregion()
     {
         return $this->belongsTo(Schregion::class);
     }

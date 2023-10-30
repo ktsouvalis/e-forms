@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
             DirectoriesSeeder::class,
             MonthSeeder::class,
             NoSchoolSeeder::class,
-            OutingTypesSeeder::class
+            OutingTypesSeeder::class,
+            ConsultantsSeeder::class,
+            SchregionSeeder::class,
         ]);
     }
 }

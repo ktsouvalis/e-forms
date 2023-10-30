@@ -25,7 +25,7 @@
         </nav>
         <hr>
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url('/upload_teachers_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+            <form action="{{url('/upload_didaskalia_apousia_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="vstack gap-3">

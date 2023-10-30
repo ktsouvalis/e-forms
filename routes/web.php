@@ -120,6 +120,8 @@ Route::view('/import_teachers', 'import-teachers')->middleware("can:upload, ".Te
 
 Route::post('/upload_teachers_template', [TeacherController::class, 'importTeachers']);
 
+Route::post('/upload_didaskalia_apousia_template', [TeacherController::class, 'import_didaskalia_apousia']);
+
 Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:upload, ".Teacher::class);
 
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);

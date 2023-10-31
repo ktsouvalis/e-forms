@@ -333,27 +333,51 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
 Route::post("share_links_to_all/{type}", function($type){
     $error=false;
     if($type=="school"){
-        $school = School::all();
+        $school = School::where('sent_link_mail', false)->take(70)->get();
+        // dd($school);
     }
     else if ($type=="teacher"){
-        $teacher = Teacher::all();
+        $teacher = Teacher::where('sent_link_mail', false)->take(70)->get();
     }
     else if($type=="consultant"){
         $consultant = Consultant::all();
     }
-    foreach($$type as $one){
-        try{
-            Mail::to($one->mail)->send(new ShareLink($type, $one->md5));   
+    if($$type->count()){
+        foreach($$type as $one){
+            $error_personal=false;
+            try{
+                // Log::channel('mails')->info("Μαζική αποστολή: Σύνδεσμος στάλθηκε στο ".$one->mail);
+                Mail::to($one->mail)->send(new ShareLink($type, $one->md5));   
+            }
+            catch(\Exception $e){
+                Log::channel('mails')->error("Μαζική αποστολή: Σύνδεσμος δεν στάλθηκε στο ".$one->mail.": ".$e->getMessage());
+                $error=true;
+                $error_personal=true;
+            }
+            if(!$error_personal){
+                $one->sent_link_mail=true;
+                $one->save();
+                Log::channel('mails')->info("Μαζική αποστολή: Σύνδεσμος στάλθηκε στο ".$one->mail);
+            }
         }
-        catch(\Exception $e){
-            Log::channel('mails')->error("Μαζική αποστολή: Σύνδεσμος δεν στάλθηκε στο ".$one->mail.": ".$e->getMessage());
-            $error=true;
-        }
+    }
+    else{
+        return back()->with('warning', 'Δεν υπάρχουν περισσότεροι χρήστες προς αποστολή συνδέσμου');
     }
     if($error){
         return back()->with('warning', 'Η αποστολή έγινε με σφάλματα που καταγράφηκαν στο Log mails');
     }
     return back()->with('success', 'Οι σύνδεσμοι στάλθηκαν επιτυχώς');
+});
+
+Route::post("/reset_links_to_all/{type}", function($type){
+    if($type=="schools"){
+        School::query()->update(['sent_link_mail' => false]);
+    }
+    else if ($type=="teachers"){
+        Teacher::query()->update(['sent_link_mail' => false]);
+    }
+    return back()->with('success', 'All links have been reset successfully');
 });
 
 //MONTH Routes

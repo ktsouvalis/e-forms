@@ -169,6 +169,7 @@
     @else
     @push('app-icon')
       <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="75" height="75" alt="services"></div>
+      <div class="d-flex justify-content-center h4">{{$user->username}}</div>
     @endpush
     @endif
   {{-- @endauth  --}}

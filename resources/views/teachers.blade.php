@@ -39,10 +39,19 @@
     <div class="hstack gap-3">
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails εκπαιδευτικών</button>
-        <form action="{{url("share_links_to_all/teacher")}}" method="post">
-            @csrf
-            <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση μαζικής αποστολής;')"> Μαζική Αποστολή Συνδέσμων</button>
-        </form>
+        @if(Auth::user()->isAdmin())
+            @if(App\Models\Teacher::where('sent_link_mail',0)->count())
+                <form action="{{url("share_links_to_all/teacher")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση μαζικής αποστολής;')"> Μαζική Αποστολή Συνδέσμων</button>
+                </form>
+            @else
+                <form action="{{url("/reset_links_to_all/teachers")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-danger bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση reset μαζικής αποστολής;')" > Reset Μαζικής Αποστολής Αποστολή Συνδέσμων</button>
+                </form>
+            @endif
+        @endif
     </div>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
@@ -61,6 +70,7 @@
                     <th id="search">Οργανική</th>
                     <th id="search">Υπηρέτηση</th>
                     <th id="search">last login</th> 
+                    <th id="search">Μαζική Αποστολή</th>
                 </tr>
             </thead>
             <tbody>
@@ -106,6 +116,11 @@
                     @else
                         <td> - </td>
                     @endif 
+                    @if($teacher->sent_link_mail)
+                        <td style="text-align:center"><i class="btn btn-success bi bi-check2-circle"></i></td>
+                    @else
+                        <td style="text-align:center"> - </td>
+                    @endif
                 </tr>
             @endif  
             @endforeach

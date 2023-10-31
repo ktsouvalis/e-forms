@@ -33,6 +33,10 @@
     <div class="hstack gap-3">
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή κωδικών σχολείων</button>
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails σχολείων</button>
+        <form action="{{url("share_links_to_all/school")}}" method="post">
+            @csrf
+            <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση μαζικής αποστολής;')"> Μαζική Αποστολή Συνδέσμων</button>
+        </form>
     </div>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >

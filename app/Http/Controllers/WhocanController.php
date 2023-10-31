@@ -177,7 +177,7 @@ class WhocanController extends Controller
                 }
                 catch(Throwable $e){
                     $mail_error = true;
-                    Log::channel('stakeholders_microapps')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                    Log::channel('mails')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
                 }
             }
         }
@@ -191,7 +191,7 @@ class WhocanController extends Controller
                 }
                 catch(Throwable $e){
                     $mail_error = true;
-                    Log::channel('stakeholders_microapps')->error("Microapp $microapp->name, MailToStakeholders error: $mail ".$e->getMessage());   
+                    Log::channel('mails')->error("Microapp $microapp->name, MailToStakeholders error: $mail ".$e->getMessage());   
                 }
             }
         }
@@ -223,7 +223,7 @@ class WhocanController extends Controller
                         }
                         catch(Throwable $e){
                             $mail_error=true;
-                            Log::channel('stakeholders_microapps')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage()); 
+                            Log::channel('mails')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage()); 
                         }
                     }
                 }
@@ -234,7 +234,7 @@ class WhocanController extends Controller
                         }
                         catch(Throwable $e){
                             $mail_error=true;
-                            Log::channel('stakeholders_microapps')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage());
+                            Log::channel('mails')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage());
                         }
                     }  
                 }

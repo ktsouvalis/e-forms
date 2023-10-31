@@ -20,6 +20,10 @@
     @endphp
 <body>    
     <p class="h4">Σύμβουλοι Διεύθυνσης</p>
+    <form action="{{url("share_links_to_all/consultant")}}" method="post">
+        @csrf
+        <button type="submit" class="mb-2 btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση μαζικής αποστολής;')"> Μαζική Αποστολή Συνδέσμων</button>
+    </form>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>

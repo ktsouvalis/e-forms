@@ -108,6 +108,13 @@ return [
             'days' => 30,
         ],
 
+        'mails' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mails.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

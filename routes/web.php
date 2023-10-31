@@ -311,18 +311,49 @@ Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::clas
 Route::post("share_link/{type}/{my_id}", function($type, $my_id){
     if($type=="school"){
         $school = School::findOrFail($my_id);
-        Mail::to($school->mail)->send(new ShareLink('school', $school->md5));
     }
     else if ($type=="teacher"){
         $teacher = Teacher::findOrFail($my_id);
-        Mail::to($teacher->mail)->send(new ShareLink('teacher', $teacher->md5));
     }
     else if($type=="consultant"){
         $consultant = Consultant::findOrFail($my_id);
-        Mail::to($consultant->mail)->send(new ShareLink('consultant', $consultant->md5));
+    }
+    try{
+        Mail::to($$type->mail)->send(new ShareLink($type, $$type->md5));  //if $type is 'school', $$type is $school etc
+    }
+    catch(\Exception $e){
+        Log::channel('mails')->error("Σύνδεσμος δεν στάλθηκε προσωπικά στο ".$$type->mail.": ".$e->getMessage());
+        return back()->with('warning', 'Η αποστολή δεν έγινε και τα σφάλματα που καταγράφηκαν στο Log mails');
     }
 
+    Log::channel('mails')->info("Σύνδεσμος στάλθηκε προσωπικά στο ".$$type->mail);
     return back()->with('success', 'Ο σύνδεσμος στάλθηκε επιτυχώς');
+});
+
+Route::post("share_links_to_all/{type}", function($type){
+    $error=false;
+    if($type=="school"){
+        $school = School::all();
+    }
+    else if ($type=="teacher"){
+        $teacher = Teacher::all();
+    }
+    else if($type=="consultant"){
+        $consultant = Consultant::all();
+    }
+    foreach($$type as $one){
+        try{
+            Mail::to($one->mail)->send(new ShareLink($type, $one->md5));   
+        }
+        catch(\Exception $e){
+            Log::channel('mails')->error("Μαζική αποστολή: Σύνδεσμος δεν στάλθηκε στο ".$one->mail.": ".$e->getMessage());
+            $error=true;
+        }
+    }
+    if($error){
+        return back()->with('warning', 'Η αποστολή έγινε με σφάλματα που καταγράφηκαν στο Log mails');
+    }
+    return back()->with('success', 'Οι σύνδεσμοι στάλθηκαν επιτυχώς');
 });
 
 //MONTH Routes

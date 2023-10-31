@@ -39,6 +39,10 @@
     <div class="hstack gap-3">
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails εκπαιδευτικών</button>
+        <form action="{{url("share_links_to_all/teacher")}}" method="post">
+            @csrf
+            <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση μαζικής αποστολής;')"> Μαζική Αποστολή Συνδέσμων</button>
+        </form>
     </div>
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
@@ -56,9 +60,7 @@
                     <th id="search">email ΠΣΔ</th>
                     <th id="search">Οργανική</th>
                     <th id="search">Υπηρέτηση</th>
-                    <th id="search">last login</th>
-                    
-                    
+                    <th id="search">last login</th> 
                 </tr>
             </thead>
             <tbody>

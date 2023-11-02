@@ -34,7 +34,7 @@
       @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
           <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
           <hr>
-          {{-- <ul class="nav nav-pills flex-column mb-auto">
+          <ul class="nav nav-pills flex-column mb-auto">
             <p>
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
@@ -42,36 +42,33 @@
             </div>
             </li>
             </p>
-            <li class="nav-item">
 
-            @foreach ($user->microapps as $one_microapp)
-              @if($one_microapp->microapp->visible)
-                <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
-                  <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
-                  <a href="{{url("/teacher_app".$one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
-                </div>
-                </li>
-              @endif 
-            @endforeach
-            
             <li class="nav-item">
+            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#f1948a; text-align:center;">
+              <div class="text-dark fa-solid fa-file-signature"></div> 
+              <a href="{{url("/consultant_app/internal_rules")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
+            </div>
+            </li>
+               
+            
+            
+            {{-- <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#00bfff; text-align:center;">
               <div class="text-dark fa-solid fa-file-pdf"></div> 
               <a href="{{url("/teacher_fileshare/$user->id")}}" style=" text-decoration:none;" class="text-dark"> Αρχεία Διεύθυνσης</a>
             </div>
-            </li> 
+            </li>  --}}
 
             <p>
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
                 <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-                <a href="{{url('/tlogout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
+                <a href="{{url('/clogout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
             </div>
             </li>
             </p>
           </ul>
-          <hr> --}}
+          <hr>
     @else
           @push('app-icon')
             <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>

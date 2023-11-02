@@ -9,6 +9,7 @@ use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
 use App\Models\microapps\Immigrant;
 use App\Models\microapps\AllDaySchool;
+use App\Models\microapps\InternalRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -90,7 +91,11 @@ class School extends Authenticatable
     public function outings(){
         return $this->hasMany(Outing::class);
     }
-    /**
+
+    public function internal_rule(){
+        return $this->hasOne(InternalRule::class);
+    }
+        /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>

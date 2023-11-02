@@ -16,6 +16,7 @@ use App\Models\microapps\Ticket;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthController;
@@ -32,6 +33,7 @@ use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
+use App\Http\Controllers\microapps\InternalRulesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,6 +152,8 @@ Route::get('/teacher_app/{appname}', function($appname){
 
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
+Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
+
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/index_consultant', 'index_consultant'); // auth checking in view
@@ -244,6 +248,22 @@ Route::post('/dl_immigrants_template', function(Request $request){
 Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template']);
 
 Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
+
+Route::post("/save_internal_rules/{school}", [InternalRulesController::class, 'save_internal_rules']);
+
+Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file']);
+
+Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file']);
+
+Route::post("/approve_int_rule/{type}/{internal_rule}", [InternalRulesController::class, 'approve_int_rule']);
+
+Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file']);
+
+Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file']);
+
+Route::post("/dl_internal_rules_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_int_rule_file']);
+
+
 
 // FILESHARES ROUTES
 

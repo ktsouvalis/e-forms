@@ -57,6 +57,7 @@ class Kernel extends HttpKernel
         'canUpdateTicket' => \App\Http\Middleware\CanUpdateTicket::class,
         'isTeacher' => \App\Http\Middleware\TeacherAuth::class,
         'isSchool' => \App\Http\Middleware\SchoolAuth::class,
+        'isConsultant' => \App\Http\Middleware\ConsultantAuth::class,
         'canViewMicroapp' => \App\Http\Middleware\CanViewMicroapp::class,
         'boss' => \App\Http\Middleware\isBoss::class,
         'auth' => \App\Http\Middleware\Authenticate::class,

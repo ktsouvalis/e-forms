@@ -55,6 +55,13 @@ class CanViewMicroapp
                         return $next($request);
                 }
             }
+
+            $consultant = Auth::guard('consultant')->user();
+            if($consultant){
+                if($microapp->url=="/internal_rules"){
+                        return $next($request);
+                }
+            }
             abort(403, 'Unauthorized action.');
         }
         else{

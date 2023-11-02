@@ -16,6 +16,6 @@ class Consultant extends Authenticatable
 
     public function schregion()
     {
-        return $this->belongsTo(Schregion::class);
+        return $this->hasOne(Schregion::class);
     }
 }

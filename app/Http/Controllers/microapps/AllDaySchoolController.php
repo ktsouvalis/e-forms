@@ -36,7 +36,7 @@ class AllDaySchoolController extends Controller
                 }
                 $file = $request->file('table_file')->getClientOriginalName();
                 //store the file
-                $filename = "all_day_".$school->code."_month".$month->id.".xlsx";
+                $filename = "all_day_".$school->code."_".$month->id.".xlsx";
                 try{
                     $path = $request->file('table_file')->storeAs('all_day', $filename);
                 }
@@ -131,7 +131,7 @@ class AllDaySchoolController extends Controller
 
     public function download_file(Request $request, AllDaySchool $all_day_school){
        
-        $file = 'all_day/all_day_'.$all_day_school->school->code.'_month'.$all_day_school->month->id.'.xlsx';
+        $file = 'all_day/all_day_'.$all_day_school->school->code.'_'.$all_day_school->month->id.'.xlsx';
 
         return Storage::disk('local')->download($file, $all_day_school->file);
     }

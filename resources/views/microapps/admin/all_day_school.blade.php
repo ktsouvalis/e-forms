@@ -23,10 +23,16 @@
    
     <div class="container">  
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-            <form action="{{url("/dl_all_day_template")}}" method="post">
+        <div class="hstack gap-3">
+            <form action="{{url("/dl_all_day_template/1")}}" method="post">
                 @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
+                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας δημοτικών προς συμπλήρωση </button>
             </form>
+            <form action="{{url("/dl_all_day_template/0")}}" method="post">
+                @csrf
+                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
+            </form>
+        </div>
             @if(Auth::user()->isAdmin())      
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/update_all_day_template")}}" method="post" enctype="multipart/form-data" class="container-fluid">

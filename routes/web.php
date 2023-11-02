@@ -227,8 +227,11 @@ Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_out
 
 Route::post('/save_all_day_school/{school}', [AllDaySchoolController::class, 'post_all_day']);
 
-Route::post('/dl_all_day_template', function(Request $request){
-    $file = 'all_day/oloimero.xlsx';
+Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
+    if($type==1)
+        $file = 'all_day/oloimero_dim.xlsx';
+    else
+        $file = 'all_day/oloimero_nip.xlsx';   
 
     return Storage::disk('local')->download($file);
 });

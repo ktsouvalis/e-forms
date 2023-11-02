@@ -18,7 +18,7 @@
 @endphp
 <div class="container">
     <div class="container px-5">  
-            <form action="{{url("/dl_all_day_template")}}" method="post">
+            <form action="{{url("/dl_all_day_template/$school->primary")}}" method="post">
                 @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
             </form>      
@@ -29,18 +29,20 @@
                         {{-- <span class="input-group-text w-25"></span> --}}
                         <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{$active_month->name}}</my_text></strong></span>
                     </div>
+                    @if($school->primary)
+                        <div class="input-group">
+                            <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως 14:50 ή 15:00</span>
+                            <input name="nr_class_3" id="nr_class_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_3}}@endif"><br>
+                            @if($old_data)
+                                <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_3 + $old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές</label>
+                            @endif
+                        </div>
+                    @endif
                     <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως τις 15:00</span>
-                        <input name="nr_class_3" id="nr_class_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_3}}@endif"><br>
-                        @if($old_data)
-                            <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_3}} μαθητές</label>
-                        @endif
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων 15:00 - 16:00</span>
+                        <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως 15:50 ή 16:00</span>
                         <input name="nr_class_4" id="nr_class_4" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_4}}@endif"><br>
                         @if($old_data)
-                            <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_4}} μαθητές</label>
+                            <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές</label>
                         @endif
                     </div>
                     <div class="input-group">
@@ -112,10 +114,12 @@
                         <th id="search">Μήνας</th>
                         <th id="search">Λειτουργία</th>
                         <th id="">Μαθητές Πρωινή Υποδοχή</th>
-                        <th id="">Τμήματα 15.00</th>
-                        <th id="">Μαθητές 15.00</th>
-                        <th id="">Τμήματα 16.00</th>
-                        <th id="">Μαθητές 16.00</th>
+                        @if($school->primary)
+                            <th id="">Τμήματα 14.50 ή 15.00</th>                        
+                            <th id="">Μαθητές 14.50 ή 15.00</th>
+                        @endif
+                        <th id="">Τμήματα 15.50 ή 16.00</th>
+                        <th id="">Μαθητές 15.50 ή 16.00</th>
                         <th id="">Τμήματα 17.30</th>
                         <th id="">Μαθητές 17.30</th>
                         <th id="">Σχόλια</th>
@@ -129,10 +133,12 @@
                     <td> {{$one->month->name}}</td>
                     <td> {{$one->functionality}}</td>
                     <td> {{$one->nr_morning}}</td>
-                    <td> {{$one->nr_of_class_3}}</td>
-                    <td> {{$one->nr_of_pupils_3}}</td>
+                    @if($school->primary)
+                        <td> {{$one->nr_of_class_3}}</td>
+                        <td> {{$one->nr_of_pupils_3 + $one->nr_of_pupils_4 + $one->nr_of_pupils_5}}</td>
+                    @endif
                     <td> {{$one->nr_of_class_4}}</td>
-                    <td> {{$one->nr_of_pupils_4}}</td>
+                    <td> {{$one->nr_of_pupils_4 + $one->nr_of_pupils_5}}</td>
                     <td> {{$one->nr_of_class_5}}</td>
                     <td> {{$one->nr_of_pupils_5}}</td>
                     <td> {{$one->comments}}</td>

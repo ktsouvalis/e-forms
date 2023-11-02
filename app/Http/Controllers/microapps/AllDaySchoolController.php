@@ -20,7 +20,10 @@ class AllDaySchoolController extends Controller
     public function post_all_day(Request $request, School $school){
         $microapp = Microapp::where('url', '/all_day_school')->first();
         if($microapp->accepts){
-            $noc3 = $request->all()['nr_class_3'];
+            if(isset($request->all()['nr_class_3']))
+                $noc3 = $request->all()['nr_class_3'];
+            else
+                $noc3=0;
             $noc4 = $request->all()['nr_class_4'];
             $noc5 = $request->all()['nr_class_5'];
             $comments= $request->all()['comments'];
@@ -56,10 +59,10 @@ class AllDaySchoolController extends Controller
                 $nosm=0;
                 while ($rowSumValue != "" && $row<400){
                     $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-                    if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625){
+                    if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625 or $time=='15:00 ή 14:50'){
                         $nos3++;
                     }
-                    else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667){
+                    else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667 or $time=='16:00 ή 15:50'){
                         $nos4++;
                     }
                     else if($time=='17:30' or $time=='5:30:00 μμ' or $time==0.7292){

@@ -85,7 +85,7 @@ class School extends Authenticatable
     }
 
     public function sections(){
-        return $this->hasMany(Section::class);
+        return $this->hasMany(Section::class)->orderBy('sec_code', 'asc');
     }
 
     public function outings(){

@@ -404,8 +404,10 @@ Route::post("share_links_to_all/{type}", function($type){
                 $error_personal=true;
             }
             if(!$error_personal){
-                $one->sent_link_mail=true;
-                $one->save();
+                if($type!="consultant"){
+                    $one->sent_link_mail=true;
+                    $one->save();
+                }
                 try{
                     Log::channel('mails')->info("Μαζική αποστολή: Σύνδεσμος στάλθηκε στο ".$one->mail);
                 }

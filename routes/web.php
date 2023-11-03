@@ -235,9 +235,13 @@ Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
     if($type==1)
         $file = 'all_day/oloimero_dim.xlsx';
     else
-        $file = 'all_day/oloimero_nip.xlsx';   
+        $file = 'all_day/oloimero_nip.xlsx';
+
+    
+    $response = Storage::disk('local')->download($file);  
+    ob_end_clean();
     try{
-        return Storage::disk('local')->download($file);
+        return $response;
     }
     catch(Throwable $e){
         return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
@@ -252,8 +256,10 @@ Route::post('/save_immigrants/{school}', [ImmigrantsController::class, 'post_imm
 
 Route::post('/dl_immigrants_template', function(Request $request){
     $file = 'immigrants/immigrants.xlsx';
+    $response = Storage::disk('local')->download($file);  
+    ob_end_clean();
     try{
-        return Storage::disk('local')->download($file);
+        return $response;
     }
     catch(Throwable $e){
         return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    

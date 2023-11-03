@@ -93,8 +93,10 @@ class OutingsController extends Controller
     public function download_record(Request $request, Outing $outing){
        
         $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
+        $response = Storage::disk('local')->download($file, $outing->file);  
+        ob_end_clean();
         try{
-            return Storage::disk('local')->download($file, $outing->file);
+            return $response;
         }
         catch(Throwable $e){
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    

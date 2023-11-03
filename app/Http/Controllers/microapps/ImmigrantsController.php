@@ -108,8 +108,10 @@ class ImmigrantsController extends Controller
     public function download_file(Request $request, Immigrant $immigrant){
        
         $file = 'immigrants/immigrants_'.$immigrant->school->code.'_month'.$immigrant->month->id.'.xlsx';
+        $response = Storage::disk('local')->download($file, $immigrant->file);  
+        ob_end_clean();
         try{
-            return Storage::disk('local')->download($file, $immigrant->file);
+            return $response;
         }
         catch(Throwable $e){
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    

@@ -392,8 +392,10 @@ class InternalRulesController extends Controller
                 $file = "internal_rules/int_rules_".$internal_rule->school->code."_ds".$extension;
                 break;
         }
+        $response = Storage::disk('local')->download($file, $filename);
+        ob_end_clean();
         try{
-            return Storage::disk('local')->download($file, $filename);    
+            return $response; 
         }
         catch(Throwable $e){
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    

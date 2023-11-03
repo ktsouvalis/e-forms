@@ -127,8 +127,9 @@ class FileshareController extends Controller
         
         if(Auth::guard('school')->check())Log::channel('stakeholders_fileshares')->info(Auth::guard('school')->user()->code." download_file $file ".$fileshare->name);
         if(Auth::guard('teacher')->check())Log::channel('stakeholders_fileshares')->info(Auth::guard('teacher')->user()->afm." download_file $file ".$fileshare->name);
-
-        return Storage::disk('local')->download($file);
+        $response = Storage::disk('local')->download($file);  
+        ob_end_clean();
+        return $response;
     }
 
     /**

@@ -103,9 +103,9 @@
                     <td> {{$one->functionality}}</td>
                     <td> {{$one->nr_morning}}</td>
                     <td> {{$one->nr_of_class_3}}</td>
-                    <td> {{$one->nr_of_pupils_3}}</td>
+                    <td> {{$one->nr_of_pupils_3 + $one->nr_of_pupils_4+ $one->nr_of_pupils_5}}</td>
                     <td> {{$one->nr_of_class_4}}</td>
-                    <td> {{$one->nr_of_pupils_4}}</td>
+                    <td> {{$one->nr_of_pupils_4+ $one->nr_of_pupils_5}}</td>
                     <td> {{$one->nr_of_class_5}}</td>
                     <td> {{$one->nr_of_pupils_5}}</td>
                     <td> {{$one->comments}}</td>

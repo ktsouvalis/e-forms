@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout_consultant>
     @push('links')
         <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
         <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
@@ -15,7 +15,8 @@
         <title>Διευθυντές Σχολείων</title>
     @endpush
     @php
-        $all_schools = App\Models\School::all();
+        $consultant = Auth::guard('consultant')->user(); //check which user is logged in
+        $all_schools = $consultant->schregion->schools;
     @endphp
 <body>
     
@@ -62,10 +63,4 @@
         </tbody>
         </table>
     </div>
-    
-    @can('updateDirectors', App\Models\School::class)
-        <a href="{{url('/import_directors')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Διευθυντών Σχολείων</a>
-    @endcan
-</x-layout>
-        
-           
+</x-layout_consultant>

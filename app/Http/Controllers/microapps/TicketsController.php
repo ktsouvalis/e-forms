@@ -28,27 +28,51 @@ class TicketsController extends Controller
             ]); 
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name." ticket creation failed");
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create ticket db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
             return redirect(url('/school_app/tickets'))->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
-
-        Log::channel('stakeholders_microapps')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
-        Log::channel('tickets')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
+        try{
+            Log::channel('stakeholders_microapps')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
+        }
+        catch(Throwable $e){
+    
+        }
+        try{
+            Log::channel('tickets')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
+        }
+        catch(Throwable $e){
+    
+        }
 
         try{
             Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketCreated($new_ticket));
         }
         catch(Throwable $e){
             $no_failure=true;
-            Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to plinet ".$e->getMessage());
+            try{
+                Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to plinet ".$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
         }
 
         try{
             Mail::to($new_ticket->school->mail)->send(new TicketCreated($new_ticket));
         }
         catch(Throwable $e){
-            $mail_failure=true;  
-            Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to school ".$e->getMessage()); 
+            $mail_failure=true;
+            try{  
+                Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to school ".$e->getMessage()); 
+            }
+            catch(Throwable $e){
+    
+            }
         }
 
         foreach(Superadmin::all() as $superadmin){
@@ -57,7 +81,12 @@ class TicketsController extends Controller
             } 
             catch(Throwable $e){
                 $mail_failure=true;  
-                Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to admin ".$e->getMessage()); 
+                try{
+                    Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to admin ".$e->getMessage()); 
+                }
+                catch(Throwable $e){
+    
+                }
             }  
         }
 
@@ -87,7 +116,12 @@ class TicketsController extends Controller
         }
         catch(Throwable $e){
             $no_failure=true;
-            Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
+            try{
+                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
         }
 
         try{
@@ -95,7 +129,12 @@ class TicketsController extends Controller
         }
         catch(Throwable $e){
             $mail_failure=true;  
-            Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to school ".$e->getMessage()); 
+            try{
+                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to school ".$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            } 
         }
 
         foreach(Superadmin::all() as $superadmin){
@@ -103,8 +142,13 @@ class TicketsController extends Controller
                 Mail::to($superadmin->user->email)->send(new TicketUpdated($ticket, $new_string, $superadmin->user->username, ""));
             } 
             catch(Throwable $e){
-                $mail_failure=true;  
-                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to admin ".$e->getMessage()); 
+                $mail_failure=true;
+                try{  
+                    Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to admin ".$e->getMessage()); 
+                }
+                catch(Throwable $e){
+    
+                }
             }  
         }
         Log::channel('tickets')->info($name." ticket $ticket->id updated comments");
@@ -126,8 +170,12 @@ class TicketsController extends Controller
         $updated_comments = $ticket->comments.$new_string;
         $ticket->comments = $updated_comments;
         $ticket->save();
-
-        Log::channel('tickets')->info($name." ticket $ticket->id resolved");
+        try{
+            Log::channel('tickets')->info($name." ticket $ticket->id resolved");
+        }
+        catch(Throwable $e){
+    
+        }
         return back()->with('success', 'Το δελτίο έκλεισε επιτυχώς');
     }
 
@@ -143,8 +191,12 @@ class TicketsController extends Controller
         $updated_comments = $ticket->comments.$new_string;
         $ticket->comments = $updated_comments;
         $ticket->save();
-
-        Log::channel('tickets')->info($name." ticket $ticket->id reopened");
+        try{
+            Log::channel('tickets')->info($name." ticket $ticket->id reopened");
+        }
+        catch(Throwable $e){
+    
+        }
         return back()->with('success', 'Το δελτίο άνοιξε ξανά και ειδοποιήθηκε η Τεχνική Υποστήριξη');
     }
 }

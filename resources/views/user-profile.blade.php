@@ -21,7 +21,7 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">email</span>
-                        <input name="user_email" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" required value="{{$user->email}}" ><br>
+                        <input name="user_email" type="text" class="form-control" placeholder="email" aria-label="email" aria-describedby="basic-addon4" value="{{$user->email}}" ><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon5">τηλέφωνο</span>

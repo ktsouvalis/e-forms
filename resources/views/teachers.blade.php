@@ -67,6 +67,7 @@
                     <th id="search">Κλάδος</th>
                     <th id="search">Σχέση Εργασίας</th>
                     <th id="search">email ΠΣΔ</th>
+                    <th id="search">Τηλέφωνο</th>
                     <th id="search">Οργανική</th>
                     <th id="search">Υπηρέτηση</th>
                     <th id="search">last login</th> 
@@ -103,6 +104,7 @@
                     <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->sxesi_ergasias->name}}</td>
                     <td>{{$teacher->sch_mail}}</td>
+                    <td>{{$teacher->telephone}}</td>
                     <td>{{$teacher->organiki->name}}</td>
 
                     @if($teacher->ypiretisi_id!=null)

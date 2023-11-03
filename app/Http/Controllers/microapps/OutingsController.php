@@ -45,7 +45,12 @@ class OutingsController extends Controller
             ]);
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create outing error '.$e->getMessage());
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create outing error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
             return redirect(url('/school_app/outings'))->with('failure', 'Δεν έγινε η καταχώρηση της εκδρομής, προσπαθήστε ξανά');
         }
 
@@ -60,7 +65,12 @@ class OutingsController extends Controller
             }
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' match Section-Outing error '.$e->getMessage());
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' match Section-Outing error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
             return redirect(url('/school_app/outings'))->with('warning', 'Δεν έγινε η καταχώρηση των τμημάτων και του πρακτικού στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να τα εισάγετε ξανά');    
         }
 
@@ -68,7 +78,12 @@ class OutingsController extends Controller
             $path = $file->storeAs($directory, $school->code.'_'.$new_outing->id.'_'.$file->getClientOriginalName(), 'local');
         }
         catch(Throwable $e){
-            Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file upload error ".$e->getMessage());
+            try{
+                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file upload error ".$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
             return redirect(url('/school_app/outings'))->with('warning', 'Δεν ανέβηκε το αρχείο στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να το ανεβάσετε ξανά');
         }
         // Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." created outing ".$new_outing->id);
@@ -78,8 +93,12 @@ class OutingsController extends Controller
     public function download_record(Request $request, Outing $outing){
        
         $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
-
-        return Storage::disk('local')->download($file, $outing->file);
+        try{
+            return Storage::disk('local')->download($file, $outing->file);
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
     }
 
     public function delete_outing(Request $request, Outing $outing){
@@ -87,7 +106,12 @@ class OutingsController extends Controller
         $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
 
         $outing->delete();
-        Storage::disk('local')->delete($file);
+        try{
+            Storage::disk('local')->delete($file);
+        }
+        catch(Throwable $e){
+    
+        }
 
         // return redirect(url('/school_app/outings'))->with('success','Η εκδρομή διαγράφηκε');
         return back()->with('success','Η εκδρομή διαγράφηκε');
@@ -122,7 +146,12 @@ class OutingsController extends Controller
                 Storage::disk('local')->delete($old_file);
             }
             catch(Throwable $e){
-                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file delete error ".$e->getMessage());
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file delete error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+        
+                }
             }
             //prepare the new file
             $file = $request->file('record_file');
@@ -160,7 +189,12 @@ class OutingsController extends Controller
             }
             catch(Throwable $e){
                 $name = Section::find($value)->name;
-                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." add section $value to outing error ".$e->getMessage());  
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." add section $value to outing error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+        
+                }  
                 session(['error' => "Το τμήμα $name δεν αποθηκεύτηκε στην εκδρομή"]);
             }
         }

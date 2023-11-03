@@ -40,7 +40,12 @@ class ImmigrantsController extends Controller
                     $path = $request->file('table_file')->storeAs('immigrants', $filename);
                 }
                 catch(Throwable $e){
-                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create immigrants file error ".$e->getMessage());
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create immigrants file error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
                     return redirect(url('/school_app/immigrants'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
@@ -56,7 +61,12 @@ class ImmigrantsController extends Controller
                     ]); 
                 }
                 catch(Throwable $e){
-                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create immigrants db error '.$e->getMessage());
+                    try{
+                        Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create immigrants db error '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
                     return redirect(url('/school_app/immigrants'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
@@ -72,11 +82,21 @@ class ImmigrantsController extends Controller
                     ]); 
                 }
                 catch(Throwable $e){
-                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create immigrants db error without file '.$e->getMessage());
+                    try{
+                        Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create immigrants db error without file '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
                     return redirect(url('/school_app/immigrants'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
-            Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update immigrants success $month->name");
+            try{
+                Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update immigrants success $month->name");
+            }
+            catch(Throwable $e){
+    
+            }
             return redirect(url('/school_app/immigrants'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
@@ -88,8 +108,12 @@ class ImmigrantsController extends Controller
     public function download_file(Request $request, Immigrant $immigrant){
        
         $file = 'immigrants/immigrants_'.$immigrant->school->code.'_month'.$immigrant->month->id.'.xlsx';
-
-        return Storage::disk('local')->download($file, $immigrant->file);
+        try{
+            return Storage::disk('local')->download($file, $immigrant->file);
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
     }
 
     public function update_immigrants_template(Request $request){
@@ -101,7 +125,12 @@ class ImmigrantsController extends Controller
             return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
         }
         
-        $path = $request->file('template_file')->storeAs('immigrants', 'immigrants.xlsx');  
+        try{
+            $path = $request->file('template_file')->storeAs('immigrants', 'immigrants.xlsx'); 
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η αποθήκευση του αρχείου, προσπαθήστε ξανά');
+        }
         
         return back()->with('success', 'Το αρχείο ενημερώθηκε');
     }

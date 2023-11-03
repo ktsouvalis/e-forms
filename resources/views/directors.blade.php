@@ -37,7 +37,7 @@
                     <th id="search">email</th>
                     <th id="search">tel</th>
                     <th id="search">Διευθυντής</th>
-                    {{-- <th id="search">Τηλέφωνο Διευθυντή</th> --}}
+                    <th id="search">Τηλέφωνο Διευθυντή</th>
                     
                 </tr>
             </thead>
@@ -51,10 +51,10 @@
                     <td>{{$school->telephone}}</td>
                     @if($school->director)
                     <td>{{$school->director->surname}} {{$school->director->name}}</td>
-                    {{-- <td>{{$school->director->telephone}}</td> --}}
+                    <td>{{$school->director->telephone}}</td>
                     @else
                     <td> - </td>
-                    {{-- <td> - </td> --}}
+                    <td> - </td>
                     @endif
                 </tr>
         

@@ -43,7 +43,21 @@
             </div>
             </li>
             </p>
+      
+            <li class="nav-item">
+              <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:mediumaquamarine; text-align:center;">
+                <div class="text-dark fa-solid fa-school"></div> 
+                <a href="{{url("/consultant_schools")}}" style=" text-decoration:none;" class="text-dark"> Σχολεία</a>
+              </div>
+            </li>
 
+            <li class="nav-item">
+              <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:skyblue; text-align:center;">
+                <div class="text-dark fa-solid fa-signature"></div> 
+                  <a href="{{url("/consultant_directors")}}" style=" text-decoration:none;" class="text-dark"> Διευθυντές</a>
+                </div>
+            </li>
+      
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#f1948a; text-align:center;">
               <div class="text-dark fa-solid fa-file-signature"></div> 

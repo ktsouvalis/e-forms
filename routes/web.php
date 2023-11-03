@@ -156,6 +156,10 @@ Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_con
 
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
+Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');
+
+Route::view('/consultant_directors','consultant_directors')->middleware('isConsultant');
+
 Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 
 Route::get('/clogout', [ConsultantController::class, 'logout']);
@@ -232,8 +236,12 @@ Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
         $file = 'all_day/oloimero_dim.xlsx';
     else
         $file = 'all_day/oloimero_nip.xlsx';   
-
-    return Storage::disk('local')->download($file);
+    try{
+        return Storage::disk('local')->download($file);
+    }
+    catch(Throwable $e){
+        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+    }
 });
 
 Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template']);
@@ -244,8 +252,12 @@ Route::post('/save_immigrants/{school}', [ImmigrantsController::class, 'post_imm
 
 Route::post('/dl_immigrants_template', function(Request $request){
     $file = 'immigrants/immigrants.xlsx';
-
-    return Storage::disk('local')->download($file);
+    try{
+        return Storage::disk('local')->download($file);
+    }
+    catch(Throwable $e){
+        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+    }
 });
 
 Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template']);
@@ -345,11 +357,20 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
         Mail::to($$type->mail)->send(new ShareLink($type, $$type->md5));  //if $type is 'school', $$type is $school etc
     }
     catch(\Exception $e){
-        Log::channel('mails')->error("Σύνδεσμος δεν στάλθηκε προσωπικά στο ".$$type->mail.": ".$e->getMessage());
+        try{
+            Log::channel('mails')->error("Σύνδεσμος δεν στάλθηκε προσωπικά στο ".$$type->mail.": ".$e->getMessage());
+        }
+        catch(\Exception $e){
+    
+        }
         return back()->with('warning', 'Η αποστολή δεν έγινε και τα σφάλματα που καταγράφηκαν στο Log mails');
     }
-
-    Log::channel('mails')->info("Σύνδεσμος στάλθηκε προσωπικά στο ".$$type->mail);
+    try{
+        Log::channel('mails')->info("Σύνδεσμος στάλθηκε προσωπικά στο ".$$type->mail);
+    }
+    catch(\Exception $e){
+    
+    }
     return back()->with('success', 'Ο σύνδεσμος στάλθηκε επιτυχώς');
 });
 
@@ -373,14 +394,24 @@ Route::post("share_links_to_all/{type}", function($type){
                 Mail::to($one->mail)->send(new ShareLink($type, $one->md5));   
             }
             catch(\Exception $e){
-                Log::channel('mails')->error("Μαζική αποστολή: Σύνδεσμος δεν στάλθηκε στο ".$one->mail.": ".$e->getMessage());
+                try{
+                    Log::channel('mails')->error("Μαζική αποστολή: Σύνδεσμος δεν στάλθηκε στο ".$one->mail.": ".$e->getMessage());
+                }
+                catch(\Exception $e){
+        
+                }
                 $error=true;
                 $error_personal=true;
             }
             if(!$error_personal){
                 $one->sent_link_mail=true;
                 $one->save();
-                Log::channel('mails')->info("Μαζική αποστολή: Σύνδεσμος στάλθηκε στο ".$one->mail);
+                try{
+                    Log::channel('mails')->info("Μαζική αποστολή: Σύνδεσμος στάλθηκε στο ".$one->mail);
+                }
+                catch(\Exception $e){
+        
+                }
             }
         }
     }
@@ -424,14 +455,24 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
         $output = session()->get('command_output');
-        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        }
+        catch(Throwable $e){
+    
+        }
         return redirect(url('/commands'))->with('command', $output);
     });
 
     Route::post('/com_change_microapp_accept_status', function () {
         Artisan::call('microapps:accept_not');
         $output = session()->get('command_output');
-        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        }
+        catch(Throwable $e){
+    
+        }
         return redirect(url('/commands'))->with('command', $output);
     });
 
@@ -439,20 +480,35 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $username = $request->input('username');
         Artisan::call('super', ['u_n' => $username]);
         $output = session()->get('command_output');
-        Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        }
+        catch(Throwable $e){
+    
+        }
         return redirect(url('/commands'))->with('command',$output);
     });
 
     Route::post('/app_down', function (Request $request){
         $secret_parameter = $request->input('secret');
         Artisan::call("down",['--secret'=>$secret_parameter]);
-        Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode ON");
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode ON");
+        }
+        catch(Throwable $e){
+    
+        }
         return redirect(url("/$secret_parameter"))->with('success', 'Maintenance Mode ON');
     });
 
     Route::post('/app_up', function (Request $request){
         Artisan::call("up");
-        Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode OFF");
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode OFF");
+        }
+        catch(Throwable $e){
+    
+        }
         return redirect(url('/'))->with('success', 'Maintenance Mode OFF');
     });
 });

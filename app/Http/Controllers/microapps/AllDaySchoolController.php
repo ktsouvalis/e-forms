@@ -181,4 +181,11 @@ class AllDaySchoolController extends Controller
         
         return back()->with('success', 'Το αρχείο ενημερώθηκε');
     }
+
+    public function showPopup()
+    {
+        $message = 'Δοκιμαστικό Μήνυμα';
+        return view('microapps.all_day_school')->with('message', $message);
+    }
+
 }

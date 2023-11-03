@@ -6,6 +6,7 @@
     @push('scripts')
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+        
     @endpush
     @push('title')
         <title>Ολοήμερο και Πρωινή Υποδοχή</title>
@@ -16,8 +17,15 @@
     $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
     $old_data = $school->all_day_schools->where('month_id', $active_month->id)->first(); 
 @endphp
+
 <div class="container">
-    <div class="container px-5">  
+    <div class="container px-5">
+        <div class="alert alert-info text-center">
+            ΣΗΜΑΝΤΙΚΟ: Παρακαλούμε μη χρησιμοποιείτε τα παλιά αρχεία στην καινούρια Φόρμα. Μπορείτε να καταχωρήσετε με αντιγραφή-επικόλληση τα <strong>Ονοματεπώνυμο, Διεύθυνση, Τηλέφωνο και την Τάξη Φοίτησης</strong>
+            <br> ΜΗΝ ΑΝΤΙΓΡΑΦΕΤΕ ΤΗΝ <strong>ΩΡΑ ΑΠΟΧΩΡΗΣΗΣ</strong> και τη συμμετοχή στην <strong>ΠΡΩΙΝΗ ΥΠΟΔΟΧΗ</strong>. Αυτές οι τιμές πρέπει για μία φορά να περαστούν με επιλογή από την αναπτυσσόμενη λίστα!
+            <br><br>
+            Ευχαριστούμε!
+        </div>  
             <form action="{{url("/dl_all_day_template/$school->primary")}}" method="post">
                 @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>

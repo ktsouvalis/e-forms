@@ -29,7 +29,7 @@
                     @else
                         @if($old_data)
                             @if($old_data->approved_by_consultant and $old_data->approved_by_director)
-                                <div class=" btn btn-primary bi bi-bricks rounded text-light mt-2" style="text-align:center;">
+                                <div class="alert alert-info text-center">
                                     Ο Εσωτερικός Κανονισμός που έχετε υποβάλλει, έχει εγκριθεί από τον Σύμβουλο και τον Διευθυντή Εκπαίδευσης.
                                     @if(!$old_data->signed_file2)Ο τελικός υπογεγραμμένος Εσωτερικός Κανονισμός θα εμφανιστεί στη σελίδα όταν υπογραφεί και από τους δύο.@endif
                                 </div>

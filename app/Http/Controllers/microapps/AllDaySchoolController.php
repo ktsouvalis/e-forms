@@ -35,7 +35,7 @@ class AllDaySchoolController extends Controller
                 ];
                 $validator = Validator::make($request->all(), $rule);
                 if($validator->fails()){ 
-                    return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
                 }
                 $file = $request->file('table_file')->getClientOriginalName();
                 //store the file
@@ -44,7 +44,12 @@ class AllDaySchoolController extends Controller
                     $path = $request->file('table_file')->storeAs('all_day', $filename);
                 }
                 catch(Throwable $e){
-                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create all_day file error ".$e->getMessage());
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create all_day file error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
                     return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
@@ -99,7 +104,12 @@ class AllDaySchoolController extends Controller
                     ]); 
                 }
                 catch(Throwable $e){
-                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create all_day db error '.$e->getMessage());
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create all_day db error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
                     return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
@@ -119,11 +129,21 @@ class AllDaySchoolController extends Controller
                     ]); 
                 }
                 catch(Throwable $e){
-                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create all_day db error without file '.$e->getMessage());
+                    try{
+                        Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create all_day db error without file '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
                     return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
-            Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update all_day success $month->name");
+            try{
+                Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update all_day success $month->name");
+            }
+            catch(Throwable $e){
+    
+            }
             return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
@@ -135,21 +155,30 @@ class AllDaySchoolController extends Controller
     public function download_file(Request $request, AllDaySchool $all_day_school){
        
         $file = 'all_day/all_day_'.$all_day_school->school->code.'_'.$all_day_school->month->id.'.xlsx';
-
-        return Storage::disk('local')->download($file, $all_day_school->file);
+        try{
+            return Storage::disk('local')->download($file, $all_day_school->file);
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
     }
 
-    public function update_all_day_template(Request $request){
+    public function update_all_day_template(Request $request, $type){
         $rule = [
             'template_file' => 'required|mimes:xlsx'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
         }
         
-        $path = $request->file('template_file')->storeAs('all_day', 'oloimero.xlsx');  
+        try{
+            $path = $request->file('template_file')->storeAs('all_day', "oloimero_$type.xlsx");  
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+        }
         
-        return redirect()->back()->with('success', 'Το αρχείο ενημερώθηκε');
+        return back()->with('success', 'Το αρχείο ενημερώθηκε');
     }
 }

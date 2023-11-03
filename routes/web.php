@@ -236,7 +236,7 @@ Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
     return Storage::disk('local')->download($file);
 });
 
-Route::post('/update_all_day_template', [AllDaySchoolController::class, 'update_all_day_template']);
+Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template']);
 
 Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
 

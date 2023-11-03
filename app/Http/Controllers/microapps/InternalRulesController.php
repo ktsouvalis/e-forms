@@ -25,7 +25,7 @@ class InternalRulesController extends Controller
 
             $validator = Validator::make($request->all(), $rule);
             if($validator->fails()){ 
-                return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
             $mimeType = $request->file('int_rules_file')->getClientMimeType();
             if($mimeType=="application/pdf"){
@@ -63,7 +63,12 @@ class InternalRulesController extends Controller
                 $path = $request->file('int_rules_file')->storeAs('internal_rules', $filename);
             }
             catch(Throwable $e){
-                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create internal_rules file error ".$e->getMessage());
+                try {
+                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create internal_rules file error ".$e->getMessage());
+                } 
+                catch(Throwable $e) {
+
+                }
                 return redirect(url('/school_app/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
 
@@ -79,7 +84,12 @@ class InternalRulesController extends Controller
                 ]); 
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create internal_rules db error '.$e->getMessage());
+                try{
+                    Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create internal_rules db error '.$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/school_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
             return redirect(url('/school_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');   
@@ -98,7 +108,7 @@ class InternalRulesController extends Controller
 
             $validator = Validator::make($request->all(), $rule);
             if($validator->fails()){ 
-                return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
             $mimeType = $request->file("director_comment_file")->getClientMimeType();
             if($mimeType=="application/pdf"){
@@ -119,7 +129,12 @@ class InternalRulesController extends Controller
                 $path = $request->file("director_comment_file")->storeAs('internal_rules', $filename);
             }
             catch(Throwable $e){
-                Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director comments file error ".$e->getMessage());
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director comments file error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
 
@@ -128,7 +143,12 @@ class InternalRulesController extends Controller
                 $internal_rule->save();
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' update director comments file '.$e->getMessage());
+                try{
+                    Log::channel('throwable_db')->error(Auth::user()->username.' update director comments file '.$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
             return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
@@ -148,7 +168,7 @@ class InternalRulesController extends Controller
 
             $validator = Validator::make($request->all(), $rule);
             if($validator->fails()){ 
-                return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
             $mimeType = $request->file("director_signed_file")->getClientMimeType();
             if($mimeType=="application/pdf"){
@@ -169,7 +189,12 @@ class InternalRulesController extends Controller
                 $path = $request->file("director_signed_file")->storeAs('internal_rules', $filename);
             }
             catch(Throwable $e){
-                Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director signed file error ".$e->getMessage());
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director signed file error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
 
@@ -179,7 +204,12 @@ class InternalRulesController extends Controller
                 $internal_rule->save();
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' update director signed file '.$e->getMessage());
+                try{
+                    Log::channel('throwable_db')->error(Auth::user()->username.' update director signed file '.$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
             return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
@@ -198,7 +228,7 @@ class InternalRulesController extends Controller
 
             $validator = Validator::make($request->all(), $rule);
             if($validator->fails()){ 
-                return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
             $mimeType = $request->file("consultant_signed_file")->getClientMimeType();
             if($mimeType=="application/pdf"){
@@ -219,7 +249,12 @@ class InternalRulesController extends Controller
                 $path = $request->file("consultant_signed_file")->storeAs('internal_rules', $filename);
             }
             catch(Throwable $e){
-                Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant signed file error ".$e->getMessage());
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant signed file error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
 
@@ -229,7 +264,12 @@ class InternalRulesController extends Controller
                 $internal_rule->save();
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' update consultant signed file '.$e->getMessage());
+                try{
+                    Log::channel('throwable_db')->error(Auth::user()->username.' update consultant signed file '.$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
             return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
@@ -248,7 +288,7 @@ class InternalRulesController extends Controller
 
             $validator = Validator::make($request->all(), $rule);
             if($validator->fails()){ 
-                return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
             $mimeType = $request->file("consultant_comment_file")->getClientMimeType();
             if($mimeType=="application/pdf"){
@@ -269,7 +309,12 @@ class InternalRulesController extends Controller
                 $path = $request->file("consultant_comment_file")->storeAs('internal_rules', $filename);
             }
             catch(Throwable $e){
-                Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant comments file error ".$e->getMessage());
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant comments file error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
 
@@ -278,7 +323,12 @@ class InternalRulesController extends Controller
                 $internal_rule->save();
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' update consultant comments file '.$e->getMessage());
+                try{
+                    Log::channel('throwable_db')->error(Auth::user()->username.' update consultant comments file '.$e->getMessage());
+                }
+                catch(Throwable $e){
+
+                }
                 return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
             return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
@@ -302,10 +352,15 @@ class InternalRulesController extends Controller
             $internal_rule->save();
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error($username.' approve internal rule '.$e->getMessage());
+            try{
+                Log::channel('throwable_db')->error($username.' approve internal rule '.$e->getMessage());
+            }
+            catch(Throwable $e){
+
+            }
             return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
         }
-        return redirect()->back()->with('success', 'Επιτυχής καταχώρηση');
+        return back()->with('success', 'Επιτυχής καταχώρηση');
     }
 
     public function download_int_rule_file(InternalRule $internal_rule, $file_type){
@@ -337,6 +392,11 @@ class InternalRulesController extends Controller
                 $file = "internal_rules/int_rules_".$internal_rule->school->code."_ds".$extension;
                 break;
         }
-        return Storage::disk('local')->download($file, $filename);
+        try{
+            return Storage::disk('local')->download($file, $filename);    
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
     }
 }

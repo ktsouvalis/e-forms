@@ -33,6 +33,7 @@
     <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
       @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
           <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
+          <div class="d-flex justify-content-center h6">{{$user->surname}} {{$user->name}}</div>
           <hr>
           <ul class="nav nav-pills flex-column mb-auto">
             <p>
@@ -50,15 +51,6 @@
             </div>
             </li>
                
-            
-            
-            {{-- <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#00bfff; text-align:center;">
-              <div class="text-dark fa-solid fa-file-pdf"></div> 
-              <a href="{{url("/teacher_fileshare/$user->id")}}" style=" text-decoration:none;" class="text-dark"> Αρχεία Διεύθυνσης</a>
-            </div>
-            </li>  --}}
-
             <p>
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
@@ -70,10 +62,10 @@
           </ul>
           <hr>
     @else
-          @push('app-icon')
-            <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
-            <div class="d-flex justify-content-center h4">{{$user->name}} {{$user->surname}}</div>
-          @endpush
+        @push('app-icon')
+          <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
+          <div class="d-flex justify-content-center h4">{{$user->name}} {{$user->surname}}</div>
+        @endpush
     @endif
   </div>
   <div class="col-8">
@@ -88,80 +80,43 @@
   @endauth
   {{$slot}}
         @if (session()->has('success'))
-        <div class='container container-narrow'>
-          <div class='alert alert-success text-center'>
-            {{session('success')}}
+          <div class='container container-narrow'>
+            <div class='alert alert-success text-center'>
+              {{session('success')}}
+            </div>
           </div>
-        </div>
         @endif
     
         @if(session()->has('failure'))
-        <div class='container container-narrow'>
-        <div class='alert alert-danger text-center'>
-            {{session('failure')}}
-        </div>
-        </div>
+          <div class='container container-narrow'>
+            <div class='alert alert-danger text-center'>
+                {{session('failure')}}
+            </div>
+          </div>
         @endif
         
         @if(session()->has('warning'))
-        <div class='container container-narrow'>
-        <div class='alert alert-warning text-center'>
-            {{session('warning')}}
-        </div>
-        </div>
+          <div class='container container-narrow'>
+            <div class='alert alert-warning text-center'>
+                {{session('warning')}}
+            </div>
+          </div>
         @endif 
-        
-
        <!-- footer begins -->
 </div>
 
 </div>
-       <footer class="border-top text-center small text-muted py-3">
+    <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_consultant")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
     <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
     <script
-                src="https://code.jquery.com/jquery-3.6.4.min.js"
-                integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
-                crossorigin="anonymous">
+        src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+        crossorigin="anonymous">
     </script>
     @stack('scripts')
 
-    {{-- <script>
-$(document).ready(function () {
-  // Setup - add a text input to each header cell
-  $('#dataTable thead tr #search').each(function () {
-    var title = $(this).text();
-    $(this).html('<input type="text" style="width:7rem;" placeholder="' + title + '" />');
-  });
-
-  // DataTable
-  var table = $('#dataTable').DataTable({
-    initComplete: function () {
-
-      // Apply the search
-      this.api()
-        .columns()
-        .every(function () {
-          var that = this;
-          var column = this;
-
-          $('input', this.header()).on('keyup change clear', function () {
-            if (that.search() !== this.value) {
-              that.search(this.value).draw();
-            }
-          }).on('click', function(e) {
-            e.stopPropagation(); // Stop the click event from propagating to the DataTables header cell
-            // table.ordering([[], []]); // Toggle sorting off
-            column.search($(this).val()).draw(); // Apply the search filter
-          });
-        });
-    },
-  });
-});
-</script> --}}
-
-    
     </div> <!-- container closing -->
    
     <div class="d-flex justify-content-center"><p class="h3" style="color:black"> {{env('APP_NAME')}}</p></div>

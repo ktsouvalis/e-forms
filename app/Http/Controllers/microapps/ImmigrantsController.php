@@ -31,7 +31,7 @@ class ImmigrantsController extends Controller
                 ];
                 $validator = Validator::make($request->all(), $rule);
                 if($validator->fails()){ 
-                    return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
                 }
                 $file = $request->file('table_file')->getClientOriginalName();
                 //store the file
@@ -98,11 +98,11 @@ class ImmigrantsController extends Controller
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect()->back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
         }
         
         $path = $request->file('template_file')->storeAs('immigrants', 'immigrants.xlsx');  
         
-        return redirect()->back()->with('success', 'Το αρχείο ενημερώθηκε');
+        return back()->with('success', 'Το αρχείο ενημερώθηκε');
     }
 }

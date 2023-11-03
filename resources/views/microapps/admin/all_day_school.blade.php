@@ -23,33 +23,50 @@
    
     <div class="container">  
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-        <div class="hstack gap-3">
-            <form action="{{url("/dl_all_day_template/1")}}" method="post">
-                @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας δημοτικών προς συμπλήρωση </button>
-            </form>
-            <form action="{{url("/dl_all_day_template/0")}}" method="post">
-                @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
-            </form>
-        </div>
             @if(Auth::user()->isAdmin())      
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/update_all_day_template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                    @csrf
-                    <div class="input-group">
-                        {{-- <span class="input-group-text w-25"></span> --}}
-                        <span class="input-group-text w-50"><strong>Ενημέρωση πρότυπου αρχείου</strong></span>
+                <div class="vstack gap-2">
+                    <div class="hstack gap-3">
+                    <form action="{{url("/update_all_day_template/dim")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                        @csrf
+                        <div class="input-group">
+                            {{-- <span class="input-group-text w-25"></span> --}}
+                            <span class="input-group-text w-50"><strong>Ενημέρωση πρότυπου αρχείου Δημοτικών</strong></span>
+                        </div>
+                        <div class="input-group w-50">
+                            <input name="template_file" type="file" class="form-control"><br>
+                        </div>
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        </div>
+                    </form>
+                    <form action="{{url("/dl_all_day_template/1")}}" method="post">
+                        @csrf
+                        <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας δημοτικών προς συμπλήρωση </button>
+                    </form>
                     </div>
-                    <div class="input-group w-50">
-                        <input name="template_file" type="file" class="form-control"><br>
-                    </div>
-                    <div class="input-group">
-                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
-                    </div>
-                </form>
-                
+                    <div class="hstack gap-3">
+                    <form action="{{url("/update_all_day_template/nip")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                        @csrf
+                        <div class="input-group">
+                            {{-- <span class="input-group-text w-25"></span> --}}
+                            <span class="input-group-text w-50"><strong>Ενημέρωση πρότυπου αρχείου Νηπιαγωγείων</strong></span>
+                        </div>
+                        <div class="input-group w-50">
+                            <input name="template_file" type="file" class="form-control"><br>
+                        </div>
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        </div>
+                    </form>
+                    <form action="{{url("/dl_all_day_template/0")}}" method="post">
+                        @csrf
+                        <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
+                    </form>
+                </div>
+                </div>
             </nav>
             @endif
     </div> 

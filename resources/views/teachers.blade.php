@@ -92,7 +92,7 @@
                     <td style="text-align:center" >
                         <form action="{{url("share_link/teacher/$teacher->id")}}" method="post">
                             @csrf
-                            <button type="submit" class="btn btn-warning bi bi-envelope-at"> </button>
+                            <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής συνδέσμου;')"> </button>
                         </form>
                     </td> 
                     <td>{{$teacher->afm}}</td>

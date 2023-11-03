@@ -90,13 +90,13 @@ class OutingsController extends Controller
         Storage::disk('local')->delete($file);
 
         // return redirect(url('/school_app/outings'))->with('success','Η εκδρομή διαγράφηκε');
-        return redirect()->back()->with('success','Η εκδρομή διαγράφηκε');
+        return back()->with('success','Η εκδρομή διαγράφηκε');
     }
 
     public function check_outing(Request $request, Outing $outing){
         $outing->checked=1;
         $outing->save();
-        return redirect()->back();
+        return back();
     }
 
     public function save_outing_profile(Request $request, Outing $outing){

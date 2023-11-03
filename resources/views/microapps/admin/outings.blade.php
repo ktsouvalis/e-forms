@@ -34,7 +34,7 @@
                         <th id="search">Έλεγχος</th>
                         <th id="search">Τύπος</th>
                         <th id="">Ημερομηνία</th>
-                        <th id="">Τμήματα</th>
+                        <th id="">Τμήματα (πλήθος εκδρομών)</th>
                         <th id="">Δράση</th>
                         <th id="">Πρακτικό</th>
                         <th id="">Αρχείο</th>
@@ -66,7 +66,7 @@
                             <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>
                             <td>
                                 @foreach($outing->sections as $section)
-                                    {{$section->section->name}} (σύνολο εκδρομών: {{$section->section->outings->count()}})<br>
+                                    {{$section->section->name}} (<b>{{$section->section->outings->count()}}</b>)<br>
                                 @endforeach
                             </td>
                             <td>{{$outing->destination}}</td>

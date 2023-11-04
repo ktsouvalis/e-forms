@@ -59,17 +59,20 @@ class InternalRulesController extends Controller
             $file = $request->file('int_rules_file')->getClientOriginalName();
             //store the file
             $filename = "int_rules_".$school->code."_$prefix".$extension;
-            try{
+            try {
                 $path = $request->file('int_rules_file')->storeAs('internal_rules', $filename);
-            }
-            catch(Throwable $e){
+            } catch (\Illuminate\Http\UploadedFile\FileSizeException $e) {
+                // Handle file size exceeded exception
+                throw new \Exception("File size exceeded: " . $e->getMessage());
+            } catch (\Throwable $e) {
+                // Handle other exceptions
                 try {
                     Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create internal_rules file error ".$e->getMessage());
                 } 
                 catch(Throwable $e) {
 
                 }
-                return redirect(url('/school_app/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+                return redirect(url('/school_app/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');
             }
 
             try{

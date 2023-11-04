@@ -77,6 +77,10 @@ class OutingsController extends Controller
         try{
             $path = $file->storeAs($directory, $school->code.'_'.$new_outing->id.'_'.$file->getClientOriginalName(), 'local');
         }
+        catch (\Illuminate\Http\UploadedFile\FileSizeException $e) {
+            // Handle file size exceeded exception
+            throw new \Exception("File size exceeded: " . $e->getMessage());
+        } 
         catch(Throwable $e){
             try{
                 Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file upload error ".$e->getMessage());

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\microapps\Ticket;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\microapps\TicketPost;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,7 +24,7 @@ class TicketsController extends Controller
             $new_ticket = Ticket::create([
                 'school_id' => Auth::guard('school')->user()->id,
                 'subject' => $request->input('subject'),
-                'comments' => Auth::guard('school')->user()->name.": ".$request->input('comments'),
+                'comments' => $request->input('comments'),
                 'solved' => 0
             ]); 
         }
@@ -51,6 +52,7 @@ class TicketsController extends Controller
 
         try{
             Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketCreated($new_ticket));
+            Mail::to("ktsouvalis@sch.gr")->send(new TicketCreated($new_ticket));
         }
         catch(Throwable $e){
             $no_failure=true;
@@ -75,21 +77,6 @@ class TicketsController extends Controller
             }
         }
 
-        foreach(Superadmin::all() as $superadmin){
-            try{
-                Mail::to($superadmin->user->email)->send(new TicketCreated($new_ticket)); 
-            } 
-            catch(Throwable $e){
-                $mail_failure=true;  
-                try{
-                    Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to admin ".$e->getMessage()); 
-                }
-                catch(Throwable $e){
-    
-                }
-            }  
-        }
-
         if(!$mail_failure)
             return redirect(url('/school_app/tickets'))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');  
         else
@@ -99,20 +86,40 @@ class TicketsController extends Controller
 
     public function update_ticket(Ticket $ticket, Request $request){
         if(Auth::user()){
-            $name = Auth::user()->username;
+            $user = Auth::user();
+            $name = $user->username;
+            $type = 'App\Models\User';
         }
         else if(Auth::guard('school')->user()){
-            $name = Auth::guard('school')->user()->name;
+            $user = Auth::guard('school')->user();
+            $name = $user->name;
+            $type = 'App\Models\School';
         }
         $mail_failure=false;
-        $new_string = "\n".$name.": ".$request->input('comments');
-        $updated_comments = $ticket->comments.$new_string;
-        $ticket->comments = $updated_comments;
-        $ticket->solved=0;
-        $ticket->save();
         
         try{
+            TicketPost::create([
+                'ticket_id' => $ticket->id,
+                'text' => $request->input('comments'),
+                'ticketer_id' => $user->id,
+                'ticketer_type' => $type
+            ]);
+        }
+        catch(Throwable $e){
+            try{
+                Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
+            return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
+        }
+        $ticket->solved=0;
+        $ticket->save();
+        $new_string = "\nΟ χρήστης ".$name." έγραψε:\n".$request->input('comments');
+        try{
             Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
+            Mail::to("ktsouvalis@sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
         }
         catch(Throwable $e){
             $no_failure=true;
@@ -137,20 +144,6 @@ class TicketsController extends Controller
             } 
         }
 
-        foreach(Superadmin::all() as $superadmin){
-            try{
-                Mail::to($superadmin->user->email)->send(new TicketUpdated($ticket, $new_string, $superadmin->user->username, ""));
-            } 
-            catch(Throwable $e){
-                $mail_failure=true;
-                try{  
-                    Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to admin ".$e->getMessage()); 
-                }
-                catch(Throwable $e){
-    
-                }
-            }  
-        }
         Log::channel('tickets')->info($name." ticket $ticket->id updated comments");
         if(!$mail_failure)
             return back()->with('success', 'Το δελτίο ανανεώθηκε με την απάντησή σας'); 
@@ -160,16 +153,36 @@ class TicketsController extends Controller
 
     public function mark_as_resolved(Request $request, Ticket $ticket){
         $ticket->solved=1;
+        $ticket->save();
         if(Auth::user()){
-            $name = Auth::user()->username;
+            $user = Auth::user();
+            $name = $user->username;
+            $type='App\Models\User';
         }
         else if(Auth::guard('school')->user()){
-            $name = Auth::guard('school')->user()->name;
+            $user = Auth::guard('school')->user();
+            $name = $user->name;
+            $type='App\Models\School';
         }
-        $new_string = "\nΟ χρήστης ".$name." έκλεισε το δελτίο";
-        $updated_comments = $ticket->comments.$new_string;
-        $ticket->comments = $updated_comments;
-        $ticket->save();
+        $new_string = "Ο χρήστης ".$name." έκλεισε το δελτίο";
+        // try{
+            TicketPost::create([
+                'ticket_id' => $ticket->id,
+                'text' => $new_string,
+                'ticketer_id' => $user->id,
+                'ticketer_type' => $type
+            ]);
+        // }
+        // catch(Throwable $e){
+        //     try{
+        //         Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
+        //     }
+        //     catch(Throwable $e){
+    
+        //     }
+        //     return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
+        // }
+       
         try{
             Log::channel('tickets')->info($name." ticket $ticket->id resolved");
         }

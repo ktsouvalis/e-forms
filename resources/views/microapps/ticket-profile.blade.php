@@ -1,3 +1,6 @@
+@php
+    $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
+@endphp
 <div class="container">
 <div class="container px-5">   
     @if(!$ticket->solved)
@@ -10,6 +13,40 @@
         </div>
     @endif
     <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <div class="col-md-4 py-2" style="max-width:60rem">
+                    <div style="font-size:small">
+                        <i>{{$ticket->created_at}}</i>, <b>{{$ticket->school->name}}</b>: <br>
+                    </div>
+                    <div class="card py-2" style="background-color:Gainsboro; text-decoration:none; font-size:small">
+                        <div class="m-1">{{$ticket->comments}}</div>
+                    </div>  
+                </div>
+            </div>
+            <hr>
+        @foreach($ticket->posts as $one_post)
+            @php
+                if($one_post->ticketer_type=='App\Models\School'){
+                    $color = 'Gainsboro';
+                    $name = $one_post->ticketer->name;
+                }  
+                else{
+                    $color = 'LightCyan';
+                    $name = $one_post->ticketer->username;
+                }  
+            @endphp
+                <div class="container-fluid">
+                    <div class="col-md-4 py-2" style="max-width:rem">
+                        <div style="font-size:small">
+                            <i>{{$one_post->created_at}}</i>, <b>{{$name}}</b>: <br>
+                        </div>
+                        <div class="card py-2" style="background-color:{{$color}}; text-decoration:none; font-size:small">
+                            <div class="m-1">{{$one_post->text}}</div>
+                        </div>  
+                    </div>
+                </div>
+                <hr>
+        @endforeach
         <form action="{{url("/update_ticket/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
             @csrf
             <div class="input-group">
@@ -20,11 +57,6 @@
             <div class="input-group">
                 <span class="input-group-text w-25 text-wrap">Θέμα:</span>
                 <input name="subject" id="subject" type="text" class="form-control" placeholder="Σύντομη Περιγραφή" aria-label="Θέμα" aria-describedby="basic-addon2" value="{{$ticket->subject}}" disabled><br>
-            </div>
-            
-            <div class="input-group">
-                <span class="input-group-text w-25 text-wrap">Περιγραφή</span>
-                <textarea name="old_comments" id="old_comments" class="form-control" cols="30" rows="20" style="resize: none;" disabled>{{$ticket->comments}}</textarea>
             </div>
 
             <div class="input-group">

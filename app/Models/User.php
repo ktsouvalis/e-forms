@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasMany(MicroappUser::class);
     }
 
+    public function posts()
+    {
+        return $this->morphMany(TicketPost::class, 'ticketer');
+    }
+
     public function superadmin(){
         return $this->hasOne(Superadmin::class);
     }

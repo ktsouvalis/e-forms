@@ -76,6 +76,10 @@ class School extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
+    public function posts(){
+        return $this->morphMany(TicketPost::class, 'ticketer');
+    }
+
     public function all_day_schools(){
         return $this->hasMany(AllDaySchool::class);
     }

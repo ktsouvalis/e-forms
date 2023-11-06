@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text w-25" id="basic-addon4">Πρακτικό</span>
+                            <span class="input-group-text w-25" id="basic-addon4">Απόσπασμα Πρακτικού</span>
                             <input name="record_file" type="file" class="form-control" required><br>
                         </div>
                         @if(!$accepts)
@@ -76,8 +76,8 @@
                             </div>
                         @else
                             <div class="input-group">
-                                <span class="w-25"></span>
-                                <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
+                                <span class="input-group-text w-25"><em>Μορφή αρχείου: .pdf < 10MB</em></span>
+                                <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή Εκδρομής </button>
                                 <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                             </div>
                         @endif

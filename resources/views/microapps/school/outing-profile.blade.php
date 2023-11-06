@@ -71,7 +71,7 @@
                             </div>
                         @else
                             <div class="input-group">
-                                <span class="w-25"></span>
+                                <span class="input-group-text w-25"><em>Μορφή αρχείου: .pdf < 10MB</em></span>
                                 <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση</button>
                                 
                                 <a href="{{url("/outing_profile/$outing->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Ακύρωση</a>

@@ -6,9 +6,11 @@ use Throwable;
 use App\Models\School;
 use App\Models\Microapp;
 use Illuminate\Http\Request;
+use App\Mail\InternalRuleMail;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -215,6 +217,7 @@ class InternalRulesController extends Controller
                 }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
+            Mail::to($internal_rule->school->mail)->send(new InternalRuleMail());
             return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
         }
         else{

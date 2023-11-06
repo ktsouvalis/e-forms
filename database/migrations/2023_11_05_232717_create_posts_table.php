@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ticket_posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ticket_id');
-            $table->string('text');
+            $table->longText('long');
             $table->unsignedBigInteger('ticketer_id'); //  id απο τον πίνακα schools ή από τον πίνακα users
             $table->string('ticketer_type'); // όνομα  Model (School ή User)
             $table->timestamps();

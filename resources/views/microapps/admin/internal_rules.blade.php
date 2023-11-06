@@ -20,7 +20,7 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
     @php
-        $internal_rules = App\Models\microapps\InternalRule::all();
+        $schools = App\Models\School::where('is_active',1)->get();
     @endphp
     <div class="container">
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}} 
@@ -36,7 +36,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($internal_rules as $one)
+                @foreach($schools as $one_school)
+                    @if($one_school->internal_rule <>null)
+                    @php
+                        $one = $one_school->internal_rule;
+                    @endphp
                     <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
                         <td><strong>{{$one->school->name}}</strong></td>
                         @if(!$one->approved_by_director)
@@ -127,6 +131,16 @@
                         </td>
                         <td>{{$one->school->schregion->consultant->surname}} {{$one->school->schregion->consultant->name}}</td>
                     </tr>
+                    @else
+                    <tr>
+                        <td><strong>{{$one_school->name}}</strong></td>
+                        <td>Δεν έχει υποβληθεί</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{$one_school->schregion->consultant->surname}} {{$one_school->schregion->consultant->name}}</td>
+                    </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

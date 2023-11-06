@@ -20,7 +20,7 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
     @php
-        $internal_rules = App\Models\microapps\InternalRule::whereIn('school_id', $user->schregion->schools->pluck('id'))->get();
+        $schools = App\Models\School::whereIn('id', $user->schregion->schools->pluck('id'))->get();
     @endphp
     <div class="container">
         <div class="container px-5">
@@ -35,7 +35,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($internal_rules as $one)
+                @foreach($schools as $one_school)
+                    @if($one_school->internal_rule <>null)
+                    @php
+                        $one = $one_school->internal_rule;
+                    @endphp
                     <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
                         <td><strong>{{$one->school->name}}</strong></td>
                         @if(!$one->approved_by_consultant)
@@ -125,6 +129,15 @@
                             @endif
                         </td>
                     </tr>
+                    @else
+                    <tr>
+                        <td><strong>{{$one_school->name}}</strong></td>
+                        <td>Δεν έχει υποβληθεί</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

@@ -12,15 +12,19 @@
             Το δελτίο είναι κλειστό. Θα ανοίξει αυτόματα, αν προσθέσετε κάποιο σχόλιο
         </div>
     @endif
-    <nav class="navbar navbar-light bg-light">
+    
             <div class="container-fluid">
-                <div class="col-md-4 py-2" style="max-width:60rem">
-                    <div style="font-size:small">
-                        <i>{{$ticket->created_at}}</i>, <b>{{$ticket->school->name}}</b>: <br>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-md-6 py-2" style="max-width:60rem">
+                        <div style="font-size:small">
+                            <i>{{$ticket->created_at}}</i>, <u>Αρχικό Μήνυμα</u> από<b> {{$ticket->school->name}}</b>: <br>
+                        </div>
+                        <div class="card py-2" style="background-color:Gainsboro; text-decoration:none; font-size:small">
+                            <div class="m-1">{{$ticket->comments}}</div>
+                        </div>  
                     </div>
-                    <div class="card py-2" style="background-color:Gainsboro; text-decoration:none; font-size:small">
-                        <div class="m-1">{{$ticket->comments}}</div>
-                    </div>  
+                    <div class="col"></div>
                 </div>
             </div>
             <hr>
@@ -35,7 +39,23 @@
                     $name = $one_post->ticketer->username;
                 }  
             @endphp
-                <div class="container-fluid">
+
+                <div class="container-fluid my-3">
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-md-6">
+                            <div style="font-size: small">
+                                <i>{{$one_post->created_at}}</i>, <b>{{$name}}</b>: <br>
+                            </div>
+                            <div class="card py-2" style="background-color: {{$color}}; text-decoration: none; font-size: small">
+                                <div class="m-1">{{$one_post->text}}</div>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+            
+                {{-- <div class="container-fluid">
                     <div class="col-md-4 py-2" style="max-width:rem">
                         <div style="font-size:small">
                             <i>{{$one_post->created_at}}</i>, <b>{{$name}}</b>: <br>
@@ -44,24 +64,17 @@
                             <div class="m-1">{{$one_post->text}}</div>
                         </div>  
                     </div>
-                </div>
-                <hr>
+                </div> --}}
+                {{-- <hr> --}}
         @endforeach
+        <hr>
+        <nav class="navbar navbar-light bg-light">
         <form action="{{url("/update_ticket/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
             @csrf
+            <span class="input-group-text"><strong>Προσθήκη Νέου Σχολίου </strong></span>
             <div class="input-group">
-                <span class="input-group-text w-25"></span>
-                <span class="input-group-text w-75"><strong>Επεξεργασία αιτήματος Τεχνικής Υποστήριξης</strong></span>
-            </div>
-            
-            <div class="input-group">
-                <span class="input-group-text w-25 text-wrap">Θέμα:</span>
-                <input name="subject" id="subject" type="text" class="form-control" placeholder="Σύντομη Περιγραφή" aria-label="Θέμα" aria-describedby="basic-addon2" value="{{$ticket->subject}}" disabled><br>
-            </div>
-
-            <div class="input-group">
-                <span class="input-group-text w-25 text-wrap">Απάντηση</span>
                 <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="Απάντηση" required></textarea>
+            </div>
             </div>
             @if(!$accepts)
                 <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
@@ -87,10 +100,15 @@
             <button type="submit" class="btn btn-warning bi bi-envelope-open"> Άνοιγμα δελτίου</button>
         </form> --}}
     @endif
-
+    @php
+        if($ticket->posts<>null)
+            $text = $ticket->updated_at;
+        else
+            $text = $ticket->posts->last()->created_at;
+    @endphp
     <div class="col-md-4 py-3" style="max-width:15rem">
         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-            <div>Τελευταία ενημέρωση δελτίου <br><strong> {{$ticket->updated_at}}</strong></div>
+            <div>Τελευταία ενημέρωση δελτίου <br><strong> {{$text}}</strong></div>
         </div>
     </div>
     </div>

@@ -31,13 +31,13 @@
                     <tr>
                         <th id="search">Κωδικός</th>
                         <th id="search">Σχολείο</th>
-                        <th id="search">Έλεγχος</th>
+                        <th id="search">Ημερομηνία</th>
+                        <th id="">Αρχείο</th>
                         <th id="search">Τύπος</th>
-                        <th id="">Ημερομηνία</th>
+                        <th id="search">Έλεγχος</th>
                         <th id="">Τμήματα (πλήθος εκδρομών)</th>
                         <th id="">Δράση</th>
-                        <th id="">Πρακτικό</th>
-                        <th id="">Αρχείο</th>
+                        {{-- <th id="">Πρακτικό</th> --}}
                         <th>Ημερομηνία Υποβολής</th>
                         <th>Διαγραφή εκδρομής</th>
                     </tr>
@@ -51,6 +51,18 @@
                         <tr> 
                             <td>{{$outing->id}}</td>
                             <td>{{$outing->school->name}}</td> 
+                            <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>
+                            <td>
+                                <div class="hstack gap-2">
+                                
+                                <form action="{{url("/download_record/$outing->id")}}" method="post">
+                                    @csrf
+                                    <button class="btn btn-secondary bi bi-box-arrow-down"> </button>
+                                </form>
+                                {{$outing->file}}
+                                </div>
+                            </td>
+                            <td>{{$outing->type->description}}</td>
                             @if(!$outing->checked)
                             <td>
                                 <form action="{{url("/check_outing/$outing->id")}}" method="post">
@@ -62,27 +74,14 @@
                             @else
                             <td> <div class="bi bi-check-circle btn btn-success"  style="color:white"> Ελέγχθηκε </div> </td>
                             @endif  
-                            <td>{{$outing->type->description}}</td> 
-                            <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>
+                             
                             <td>
                                 @foreach($outing->sections as $section)
                                     {{$section->section->name}} (<b>{{$section->section->outings->count()}}</b>)<br>
                                 @endforeach
                             </td>
                             <td>{{$outing->destination}}</td>
-                            <td>{{$outing->record}} </td>
-                            <td>
-                                <div class="hstack gap-2">
-                                
-                                <form action="{{url("/download_record/$outing->id")}}" method="post">
-                                    @csrf
-                                    <button class="btn btn-secondary bi bi-box-arrow-down"> </button>
-                                </form>
-                                {{$outing->file}}
-                                </div>
-                            </td>
-                    
-                             
+                            {{-- <td>{{$outing->record}} </td> --}}
                             <td>{{$outing->updated_at}}</td>
                             <td>
                                 <form action="{{url("/delete_outing/$outing->id")}}" method="post">

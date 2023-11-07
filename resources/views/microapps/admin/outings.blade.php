@@ -18,18 +18,16 @@
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
-        $outings = App\Models\microapps\Outing::all();
-        
+        //$outings = App\Models\microapps\Outing::all();  
+        $outings = App\Models\microapps\Outing::orderBy('outing_date', 'desc')->get();
     @endphp
-    
     {{-- <div class="container"> --}}
             @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
         
             <div class="table-responsive py-2">
-                <table  id="dataTable" class="small display table table-sm table-striped table-hover text-center">
+                <table  id="dataTableCustom" class="small display table table-sm table-striped table-hover text-center">
                 <thead>
                     <tr>
-                        <th id="search">Κωδικός</th>
                         <th id="search">Σχολείο</th>
                         <th id="search">Ημερομηνία</th>
                         <th id="">Αρχείο</th>
@@ -40,6 +38,7 @@
                         {{-- <th id="">Πρακτικό</th> --}}
                         <th>Ημερομηνία Υποβολής</th>
                         <th>Διαγραφή εκδρομής</th>
+                        <th id="search">Κωδικός</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,8 +48,7 @@
                             $my_date = Illuminate\Support\Carbon::parse($outing->outing_date); 
                         @endphp
                         <tr> 
-                            <td>{{$outing->id}}</td>
-                            <td>{{$outing->school->name}}</td> 
+                            <td>{{$outing->school->name}}</td>
                             <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>
                             <td>
                                 <div class="hstack gap-2">
@@ -89,6 +87,7 @@
                                     <button class="bi bi-x-circle btn btn-danger" type="submit" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>
                                 </form>
                             </td>
+                            <td>{{$outing->id}}</td>
                             
                         </tr> 
                     @endforeach   
@@ -96,5 +95,15 @@
                 </table>    
             </div>
     {{-- </div> --}}
+
+    @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#dataTableCustom').DataTable({
+                "order": []
+            });
+        });
+    </script>
+@endpush
 
 </x-layout>

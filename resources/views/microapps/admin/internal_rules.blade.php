@@ -29,7 +29,7 @@
                     });
 
                     $.ajax({
-                        url: '/check_internal_rule/'+internalRuleId,
+                        url: '../check_internal_rule/'+internalRuleId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates

@@ -60,7 +60,7 @@
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
-        $outings = App\Models\microapps\Outing::orderBy('outing_date', 'desc')->get();
+        $outings = App\Models\microapps\Outing::all()->sortByDesc('outing_date');
     @endphp
     {{-- <div class="container"> --}}
             @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
@@ -70,7 +70,7 @@
                 <thead>
                     <tr>
                         <th id="search">Σχολείο</th>
-                        <th id="search">Ημερομηνία</th>
+                        <th id="search">Ημερομηνία (έτος/μήνας/μέρα)</th>
                         <th id="">Αρχείο</th>
                         <th id="search">Τύπος</th>
                         <th id="search">Έλεγχος</th>
@@ -86,11 +86,20 @@
                 
                     @foreach($outings as $outing)
                         @php
-                            $my_date = Illuminate\Support\Carbon::parse($outing->outing_date); 
+                            $my_date = Illuminate\Support\Carbon::parse($outing->outing_date);
+                            $day=$my_date->day;
+                            $month=$my_date->month;
+                            $year=$my_date->year;
+                            if($day<10){
+                                $day='0'.$day;
+                            }
+                            if($month<10){
+                                $month='0'.$month;
+                            }
                         @endphp
                         <tr> 
                             <td>{{$outing->school->name}}</td>
-                            <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>
+                            <td>{{$year}}/{{$month}}/{{$day}} </td>
                             <td>
                                 <div class="hstack gap-2">
                                 

@@ -60,7 +60,7 @@
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
-        $outings = App\Models\microapps\Outing::all()->sortByDesc('outing_date');
+        $outings = App\Models\microapps\Outing::orderBy('outing_date','desc')->get();
     @endphp
     {{-- <div class="container"> --}}
             @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}

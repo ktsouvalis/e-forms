@@ -12,6 +12,7 @@ $(document).ready(function () {
 
     // DataTable
     var table = $('#dataTable').DataTable({
+        "order": [],
         lengthMenu: [10, 25, 50, 100, -1], // Add -1 for "All"
         pageLength: 10, // Set the initial page length
         initComplete: function () {

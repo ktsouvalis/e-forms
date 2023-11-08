@@ -10,6 +10,48 @@
         <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
+        
+        <script>
+            $(document).ready(function() {
+                $('.outing-checkbox').on('change', function() {
+                    
+                    const outingId = $(this).data('outing-id');
+                    const isChecked = $(this).is(':checked');
+                    // Get the CSRF token from the meta tag
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/check_outing/'+outingId,
+                        type: 'POST',
+                        data: {
+                            // _method: 'PATCH', // Laravel uses PATCH for updates
+                            checked: isChecked
+                        },
+                        success: function(response) {
+                            // Handle the response here, update the page as needed
+                            $('#successMessage').text(response.message).show();
+                            if(isChecked){
+                                $('.check_td_'+outingId).html('Ελέγχθηκε')
+                            }
+                            else{
+                                $('.check_td_'+outingId).html('Προς έλεγχο')
+                            }
+
+                        },
+                        error: function(error) {
+                            // Handle errors
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
         <script src="../datatable_init.js"></script>
     @endpush
     @push('title')
@@ -17,15 +59,14 @@
     @endpush  
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
-        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
-        //$outings = App\Models\microapps\Outing::all();  
+        $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
         $outings = App\Models\microapps\Outing::orderBy('outing_date', 'desc')->get();
     @endphp
     {{-- <div class="container"> --}}
             @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
         
             <div class="table-responsive py-2">
-                <table  id="dataTableCustom" class="small display table table-sm table-striped table-hover text-center">
+                <table  id="dataTable" class="small display table table-sm table-striped table-hover text-center">
                 <thead>
                     <tr>
                         <th id="search">Σχολείο</th>
@@ -61,18 +102,13 @@
                                 </div>
                             </td>
                             <td>{{$outing->type->description}}</td>
-                            @if(!$outing->checked)
-                            <td>
-                                <form action="{{url("/check_outing/$outing->id")}}" method="post">
-                                    @csrf
-                                    <button class="bi bi-check btn btn-primary" type="submit" style="color:white"> </button>
-                                </form>
+                            @php
+                                $text = $outing->checked ? 'Ελέγχθηκε' : 'Προς έλεγχο';
+                            @endphp
+                            <td >
+                                <input type="checkbox" class="outing-checkbox" data-outing-id="{{ $outing->id }}" {{ $outing->checked ? 'checked' : '' }}>
+                                <div class="check_td_{{$outing->id}}"> {{$text}}</div>
                             </td>
-                            
-                            @else
-                            <td> <div class="bi bi-check-circle btn btn-success"  style="color:white"> Ελέγχθηκε </div> </td>
-                            @endif  
-                             
                             <td>
                                 @foreach($outing->sections as $section)
                                     {{$section->section->name}} (<b>{{$section->section->outings->count()}}</b>)<br>
@@ -97,13 +133,7 @@
     {{-- </div> --}}
 
     @push('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#dataTableCustom').DataTable({
-                "order": []
-            });
-        });
-    </script>
-@endpush
+    
+    @endpush
 
 </x-layout>

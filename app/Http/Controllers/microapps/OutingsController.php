@@ -124,9 +124,13 @@ class OutingsController extends Controller
     }
 
     public function check_outing(Request $request, Outing $outing){
-        $outing->checked=1;
+        if($request->input('checked')=='true')
+            $outing->checked = 1;
+        else
+            $outing->checked = 0;
         $outing->save();
-        return back();
+
+        return response()->json(['message' => 'Outing updated successfully']);
     }
 
     public function save_outing_profile(Request $request, Outing $outing){

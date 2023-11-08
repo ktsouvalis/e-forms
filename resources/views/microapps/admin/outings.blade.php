@@ -30,7 +30,7 @@
                         url: '/check_outing/'+outingId,
                         type: 'POST',
                         data: {
-                            // _method: 'PATCH', // Laravel uses PATCH for updates
+                            _method: 'PATCH', // Laravel uses PATCH for updates
                             checked: isChecked
                         },
                         success: function(response) {

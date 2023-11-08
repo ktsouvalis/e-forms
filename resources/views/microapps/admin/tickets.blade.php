@@ -15,7 +15,7 @@
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
-        $tickets = App\Models\microapps\Ticket::all();
+        $tickets = App\Models\microapps\Ticket::orderBy('created_at', 'desc')->get();
         
     @endphp
     @push('title')

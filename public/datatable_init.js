@@ -14,7 +14,7 @@ $(document).ready(function () {
     var table = $('#dataTable').DataTable({
         "order": [],
         lengthMenu: [10, 25, 50, 100, -1], // Add -1 for "All"
-        pageLength: 10, // Set the initial page length
+        pageLength: 25, // Set the initial page length
         initComplete: function () {
             // Apply the search
             this.api().columns().every(function () {

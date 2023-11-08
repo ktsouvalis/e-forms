@@ -284,6 +284,8 @@ Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesCont
 
 Route::post("/dl_internal_rules_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_int_rule_file']);
 
+Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::class,'check_internal_rule']);
+
 
 
 // FILESHARES ROUTES

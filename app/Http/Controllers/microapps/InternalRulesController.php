@@ -366,6 +366,7 @@ class InternalRulesController extends Controller
             }
             return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
         }
+        
         return back()->with('success', 'Επιτυχής καταχώρηση');
     }
 
@@ -406,5 +407,16 @@ class InternalRulesController extends Controller
         catch(Throwable $e){
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
         }
+    }
+
+    public function check_internal_rule(Request $request, InternalRule $internal_rule){
+            if($request->input('checked_by_director')==true)
+                $internal_rule->approved_by_director = 1;
+            else
+                $internal_rule->approved_by_director = 0;
+        
+        $internal_rule->save();
+
+        return response()->json(['message' => 'Internal Rule updated successfully']);
     }
 }

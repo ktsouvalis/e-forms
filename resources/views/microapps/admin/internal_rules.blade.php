@@ -10,6 +10,50 @@
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('.internal-rule-button').on('click', function() {
+                    const internalRuleId = $(this).data('internal-rule-id');
+                    const buttonValue = $(this).data('set');
+                    var isYea;
+                    if(buttonValue =='approve'){
+                        isYea = true;
+                    }
+                    // Get the CSRF token from the meta tag
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+
+                    $.ajax({
+                        url: '/check_internal_rule/'+internalRuleId,
+                        type: 'POST',
+                        data: {
+                            // _method: 'PATCH', // Laravel uses PATCH for updates
+                            checked_by_director: isYea
+                        },
+                        success: function(response) {
+                            // Handle the response here, update the page as needed
+                            if(isYea){
+                                $('#button_'+internalRuleId).text('Εγκρίθηκε');
+                                $('#button_'+internalRuleId).addClass('disabled');
+                                $('#button_'+internalRuleId).removeClass('bi-check');
+                                $('#button_'+internalRuleId).addClass('bi-check-circle');
+                                $('#button_'+internalRuleId).removeClass(' btn-outline-success');
+                                $('#button_'+internalRuleId).addClass(' btn-success');
+                            }
+                        },
+                        error: function(error) {
+                            // Handle errors
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
     @endpush
     @push('title')
         <title>Εσωτερικός Κανονισμός</title>
@@ -45,16 +89,16 @@
                         <td><strong>{{$one->school->name}}</strong></td>
                         @if(!$one->approved_by_director)
                             <td @if($one->approved_by_consultant) class="table-success" @endif>{{-- Έγκριση Συμβούλου Εκπαίδευσης --}}
-                                <form action="{{url("/approve_int_rule/director/$one->id")}}" method="post">
-                                    @csrf
-                                    <button class="bi bi-check btn btn-outline-success" type="submit" > Έγκριση</button>
-                                </form>
+                               
+                                <button class="bi bi-check btn btn-outline-success internal-rule-button" data-set="approve" 
+                                data-internal-rule-id="{{ $one->id }}" id="button_{{ $one->id }}" type="submit" >Έγκριση</button>
+                                
                                 @if($one->approved_by_consultant) Εγκεκριμένος από Σύμβουλο Εκπαίδευσης @endif
                             </td>
                         @else
                             <td> 
                                 @if($one->approved_by_consultant) <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
-                                @else <div class="bi bi-check-circle btn btn-success"  style="color:white"> Εγκρίθηκε </div>
+                                @else <div class="bi bi-check-circle btn btn-success internal-rule-button disabled" data-internal-rule-id="{{ $one->id }}"  style="color:white"> Εγκρίθηκε </div>
                                 @endif
                             </td>
                         @endif

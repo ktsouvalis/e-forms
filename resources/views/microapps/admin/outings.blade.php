@@ -13,7 +13,7 @@
         <script src="../datatable_init.js"></script>
         <script>
             $(document).ready(function() {
-                $('body').on('change', '.outing-checkbox', function() {
+                $('.outing-checkbox').on('change', function() {
                     
                     const outingId = $(this).data('outing-id');
                     const isChecked = $(this).is(':checked');

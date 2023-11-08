@@ -1,8 +1,15 @@
+@push('title')
+    <title>Δελτίο {{$ticket->id}}</title>
+@endpush
 @php
     $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
 @endphp
 <div class="container">
 <div class="container px-5">   
+    <div class=" hstack gap-2">          
+        <div> <b> ID δελτίου:</b> {{$ticket->id}}</div>          
+        <div><b>Τηλέφωνο Σχολείου:</b> {{$ticket->school->telephone}}</div>             
+    </div>
     @if(!$ticket->solved)
         <div class='alert alert-warning text-center'>
             Το δελτίο είναι ανοιχτό
@@ -12,7 +19,6 @@
             Το δελτίο είναι κλειστό. Θα ανοίξει αυτόματα, αν προσθέσετε κάποιο σχόλιο
         </div>
     @endif
-    
             <div class="container-fluid">
                 <div class="row">
                     <div class="col"></div>

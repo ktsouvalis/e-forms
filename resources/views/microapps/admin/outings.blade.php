@@ -13,7 +13,7 @@
         <script src="../datatable_init.js"></script>
         <script>
             $(document).ready(function() {
-                $('.outing-checkbox').on('change', function() {
+                $('body').on('change', '.outing-checkbox', function() {
                     
                     const outingId = $(this).data('outing-id');
                     const isChecked = $(this).is(':checked');
@@ -27,10 +27,10 @@
                     });
 
                     $.ajax({
-                        url: '/check_outing/'+outingId,
+                        url: '../check_outing/'+outingId,
                         type: 'POST',
                         data: {
-                            _method: 'PATCH', // Laravel uses PATCH for updates
+                            // _method: 'PATCH', // Laravel uses PATCH for updates
                             checked: isChecked
                         },
                         success: function(response) {

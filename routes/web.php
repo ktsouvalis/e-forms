@@ -221,7 +221,7 @@ Route::post('/download_record/{outing}', [OutingsController::class, 'download_re
 
 Route::post('/delete_outing/{outing}', [OutingsController::class,'delete_outing']);
 
-Route::patch('/check_outing/{outing}', [OutingsController::class,'check_outing']);
+Route::post('/check_outing/{outing}', [OutingsController::class,'check_outing']);
 
 Route::get('/outing_profile/{outing}', function(Outing $outing){
     return view('microapps.school.outing-profile',['outing'=>$outing]);

@@ -410,11 +410,20 @@ class InternalRulesController extends Controller
     }
 
     public function check_internal_rule(Request $request, InternalRule $internal_rule){
-            if($request->input('checked_by_director')==true)
+        
+        if($request->input('checked_by')=='director'){
+             if($request->input('checked') == 'true')
                 $internal_rule->approved_by_director = 1;
             else
                 $internal_rule->approved_by_director = 0;
-        
+        }
+           
+        if($request->input('checked_by')=='consultant'){
+            if($request->input('checked') == 'true')
+               $internal_rule->approved_by_consultant = 1;
+           else
+               $internal_rule->approved_by_consultant = 0;
+       }
         $internal_rule->save();
 
         return response()->json(['message' => 'Internal Rule updated successfully']);

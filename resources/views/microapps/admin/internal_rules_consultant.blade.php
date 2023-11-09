@@ -10,6 +10,46 @@
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('body').on('change', '.internal-rule-checkbox', function() {
+                    const internalRuleId = $(this).data('internal-rule-id');
+                    const isChecked = $(this).is(':checked');
+                    
+                    // Get the CSRF token from the meta tag
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+
+                    $.ajax({
+                        url: '../check_internal_rule/'+internalRuleId,
+                        type: 'POST',
+                        data: {
+                            // _method: 'PATCH', // Laravel uses PATCH for updates
+                            checked_by: 'consultant',
+                            checked: isChecked
+                        },
+                        success: function(response) {
+                            // Handle the response here, update the page as needed
+                            if(isChecked){
+                                $('.check_td_'+internalRuleId).html('Ελέγχθηκε')
+                            }
+                            else{
+                                $('.check_td_'+internalRuleId).html('Προς έλεγχο')
+                            }
+                        },
+                        error: function(error) {
+                            // Handle errors
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
     @endpush
     @push('title')
         <title>Εσωτερικός Κανονισμός</title>
@@ -42,18 +82,24 @@
                     @endphp
                     <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
                         <td><strong>{{$one->school->name}}</strong></td>
+                        @php
+                            $text = $one->approved_by_consultant ? 'Ελέγχθηκε' : 'Προς έλεγχο';
+                        @endphp
                         @if(!$one->approved_by_consultant)
                             <td @if($one->approved_by_director) class="table-success" @endif>{{-- Έγκριση Διευθυντή Εκπαίδευσης --}}
-                                <form action="{{url("/approve_int_rule/consultant/$one->id")}}" method="post">
-                                    @csrf
-                                    <button class="bi bi-check btn btn-outline-success" type="submit"> Έγκριση</button>
-                                </form>
+
+                                <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_consultant ? 'checked' : '' }}>
+                                <div class="check_td_{{$one->id}}"> {{$text}}</div>
+
                                 @if($one->approved_by_director) Εγκεκριμένος από Διευθυντή Εκπαίδευσης @endif
                             </td>
                         @else
                             <td> 
-                                @if($one->approved_by_director) <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
-                                @else <div class="bi bi-check-circle btn btn-success"  style="color:white"> Εγκρίθηκε </div>
+                                @if($one->approved_by_director) 
+                                    <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
+                                @else 
+                                    <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_consultant ? 'checked' : '' }}>
+                                    <div class="check_td_{{$one->id}}"> {{$text}}</div>
                                 @endif
                             </td>
                         @endif

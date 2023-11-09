@@ -12,13 +12,11 @@
         <script src="../datatable_init.js"></script>
         <script>
             $(document).ready(function() {
-                $('.internal-rule-button').on('click', function() {
+                $('body').on('change', '.internal-rule-checkbox', function() {
                     const internalRuleId = $(this).data('internal-rule-id');
-                    const buttonValue = $(this).data('set');
-                    var isYea;
-                    if(buttonValue =='approve'){
-                        isYea = true;
-                    }
+                    const isChecked = $(this).is(':checked');
+                    //const buttonValue = $(this).data('set');
+                    console.log(internalRuleId);
                     // Get the CSRF token from the meta tag
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     
@@ -33,17 +31,16 @@
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
-                            checked_by_director: isYea
+                            checked_by: 'director',
+                            checked: isChecked
                         },
                         success: function(response) {
                             // Handle the response here, update the page as needed
-                            if(isYea){
-                                $('#button_'+internalRuleId).text('Εγκρίθηκε');
-                                $('#button_'+internalRuleId).addClass('disabled');
-                                $('#button_'+internalRuleId).removeClass('bi-check');
-                                $('#button_'+internalRuleId).addClass('bi-check-circle');
-                                $('#button_'+internalRuleId).removeClass(' btn-outline-success');
-                                $('#button_'+internalRuleId).addClass(' btn-success');
+                            if(isChecked){
+                                $('.check_td_'+internalRuleId).html('Ελέγχθηκε')
+                            }
+                            else{
+                                $('.check_td_'+internalRuleId).html('Προς έλεγχο')
                             }
                         },
                         error: function(error) {
@@ -87,18 +84,24 @@
                     @endphp
                     <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
                         <td><strong>{{$one->school->name}}</strong></td>
+                        @php
+                                $text = $one->approved_by_director ? 'Ελέγχθηκε' : 'Προς έλεγχο';
+                            @endphp
                         @if(!$one->approved_by_director)
                             <td @if($one->approved_by_consultant) class="table-success" @endif>{{-- Έγκριση Συμβούλου Εκπαίδευσης --}}
                                
-                                <button class="bi bi-check btn btn-outline-success internal-rule-button" data-set="approve" 
-                                data-internal-rule-id="{{ $one->id }}" id="button_{{ $one->id }}" type="submit" >Έγκριση</button>
+                                <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_director ? 'checked' : '' }}>
+                                <div class="check_td_{{$one->id}}"> {{$text}}</div>
                                 
                                 @if($one->approved_by_consultant) Εγκεκριμένος από Σύμβουλο Εκπαίδευσης @endif
                             </td>
                         @else
                             <td> 
-                                @if($one->approved_by_consultant) <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
-                                @else <div class="bi bi-check-circle btn btn-success internal-rule-button disabled" data-internal-rule-id="{{ $one->id }}"  style="color:white"> Εγκρίθηκε </div>
+                                @if($one->approved_by_consultant) 
+                                    <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
+                                @else 
+                                    <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_director ? 'checked' : '' }}>
+                                    <div class="check_td_{{$one->id}}"> {{$text}}</div>
                                 @endif
                             </td>
                         @endif

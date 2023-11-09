@@ -15,8 +15,15 @@
                 $('body').on('change', '.internal-rule-checkbox', function() {
                     const internalRuleId = $(this).data('internal-rule-id');
                     const isChecked = $(this).is(':checked');
+                    var who
+                    if(isChecked == true){
+                        who = 'directorYes';
+                    }else {
+                       who = 'directorNo';
+                    }
+
                     //const buttonValue = $(this).data('set');
-                    console.log(internalRuleId);
+                    console.log(who);
                     // Get the CSRF token from the meta tag
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     
@@ -31,8 +38,7 @@
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
-                            checked_by: 'director',
-                            checked: isChecked
+                            checked: who,
                         },
                         success: function(response) {
                             // Handle the response here, update the page as needed
@@ -85,8 +91,8 @@
                     <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
                         <td><strong>{{$one->school->name}}</strong></td>
                         @php
-                                $text = $one->approved_by_director ? 'Ελέγχθηκε' : 'Προς έλεγχο';
-                            @endphp
+                            $text = $one->approved_by_director ? 'Ελέγχθηκε' : 'Προς έλεγχο';
+                        @endphp
                         @if(!$one->approved_by_director)
                             <td @if($one->approved_by_consultant) class="table-success" @endif>{{-- Έγκριση Συμβούλου Εκπαίδευσης --}}
                                

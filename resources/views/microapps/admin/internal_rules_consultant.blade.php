@@ -15,7 +15,15 @@
                 $('body').on('change', '.internal-rule-checkbox', function() {
                     const internalRuleId = $(this).data('internal-rule-id');
                     const isChecked = $(this).is(':checked');
-                    
+                    var who
+                    if(isChecked == true){
+                        who = 'consultantYes';
+                    }else {
+                       who = 'consultantNo';
+                    }
+
+                    //const buttonValue = $(this).data('set');
+                    console.log(who);
                     // Get the CSRF token from the meta tag
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
                     
@@ -30,8 +38,7 @@
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
-                            checked_by: 'consultant',
-                            checked: isChecked
+                            checked: who,
                         },
                         success: function(response) {
                             // Handle the response here, update the page as needed

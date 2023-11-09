@@ -150,6 +150,8 @@ Route::get('/teacher_app/{appname}', function($appname){
 
 //////// CONSULTANT ROUTES
 
+Route::post('/consultant_app/check_internal_rule/{internal_rule}', [InternalRulesController::class,'check_internal_rule']);
+
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
 Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');

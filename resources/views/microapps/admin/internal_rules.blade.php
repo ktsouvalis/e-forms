@@ -29,7 +29,7 @@
                     
                     $.ajaxSetup({
                         headers: {
-                            'X-CSRF-TOKEN': csrfToken
+                            'X-CSRF-TOKEN': csrfToken,
                         }
                     });
 

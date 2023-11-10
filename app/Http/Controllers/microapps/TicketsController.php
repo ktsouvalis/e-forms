@@ -110,7 +110,8 @@ class TicketsController extends Controller
         }
 
         // Sanitize the input (optional)
-        $sanitizedComments = htmlspecialchars($request->input('comments')); // Example: HTML special characters encoding
+        $sanitizedComments = strip_tags($request->input('comments'), '<a><b><i><u><ul><ol><li>'); //allow only these tags
+        
         try{
             TicketPost::create([
                 'ticket_id' => $ticket->id,

@@ -63,7 +63,7 @@ Route::post('/find_entity', function(Request $request){
         case 6:
             $teacher=App\Models\Teacher::where('am', $request->entity_code)->first();
             if($teacher) {
-                return redirect(url('/share_link/{"teacher"}/{$teacher->id}'));
+                return redirect(url("/share_link/teacher/$teacher->id"));
             }else {
                 return redirect(url('/'))->with('warning', "Δε βρέθηκε Εκπαιδευτικός της Δ/νσης Π.Ε. Αχαΐας με αυτά τα στοιχεία.");
             }
@@ -71,7 +71,7 @@ Route::post('/find_entity', function(Request $request){
         case 7:
             $school=App\Models\School::where('code', $request->entity_code)->first();
             if($school) {
-                return redirect(url('/share_link/{"school"}/{$school->id}'));
+                return redirect(url("/share_link/school/$school->id"));
             }else {
                 return redirect(url('/'))->with('warning', "Δε βρέθηκε Σχολική Μονάδα της Δ/νσης Π.Ε. Αχαΐας με αυτό τον Κωδικό Υ.ΠΑΙ.Θ.Α.");
             }
@@ -79,7 +79,7 @@ Route::post('/find_entity', function(Request $request){
         case 9:
             $teacher=App\Models\Teacher::where('afm', $request->entity_code)->first();
             if($teacher) {
-                return redirect(url('/share_link/{"teacher"}/{$teacher->id}'));
+                return redirect(url("/share_link/teacher/$teacher->id"));
             }else {
                 return redirect(url('/'))->with('warning', "Δε βρέθηκε Εκπαιδευτικός της Δ/νσης Π.Ε. Αχαΐας με αυτά τα στοιχεία.");
             }
@@ -404,7 +404,7 @@ Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanCon
 
 Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);
 
-Route::match(array('GET','post'), "share_link/{type}/{my_id}", function($type, $my_id){
+Route::match(array('GET','post'), "/share_link/{type}/{my_id}", function($type, $my_id){
     if($type=="school"){
         $school = School::findOrFail($my_id);
     }
@@ -430,12 +430,14 @@ Route::match(array('GET','post'), "share_link/{type}/{my_id}", function($type, $
         Log::channel('mails')->info("Σύνδεσμος στάλθηκε προσωπικά στο ".$$type->mail);
     }
     catch(\Exception $e){
-    
-        $mail_address = $$type->mail;
-        $at_position = str_pos($mail_address, '@');
-        $mail_to_show = substr($mail_address, 0 ,1).substr_replace($mail_address,'*', 1, $at_position-1);
-    return back()->with('success', 'Ο σύνδεσμος στάλθηκε στο '.$mail_to_show);
+        
     }
+    $mail_address = $$type->mail;
+    $first_letter = substr($mail_address, 0 ,1);
+    $at_position = strpos($mail_address, '@');
+    $rest_of_address = substr($mail_address, $at_position-1);
+    $mail_to_show = $first_letter.'*****'.$rest_of_address;
+    return back()->with('success', 'Ο σύνδεσμος στάλθηκε στο '.$mail_to_show);
     });
 
 Route::post("share_links_to_all/{type}", function($type){

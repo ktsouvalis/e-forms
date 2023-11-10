@@ -13,7 +13,8 @@
             width:600,
             toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['list', ['ul', 'ol']]
+                ['list', ['ul', 'ol']],
+                ['link', ['link']]
             ],
             placeholder: 'Απάντηση...',
             lang: 'el-GR' // Set language to Greek

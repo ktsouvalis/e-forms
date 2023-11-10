@@ -181,7 +181,7 @@ class SchoolController extends Controller
     public function logout(){
         
         auth()->guard('school')->logout();
-        return redirect(url('/index_school'))->with('success', 'Αποσυνδεθήκατε');
+        return redirect(url('/'))->with('success', 'Αποσυνδεθήκατε');
     }
 
     public function importDirectors(Request $request){

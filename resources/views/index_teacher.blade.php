@@ -65,20 +65,6 @@
                     </div>
                 </div>
             </div>
-            
-        
-        @else
-            @push('title')
-                <title>Σύνδεση</title>
-            @endpush
-            <div class="row justify-content-md-center">
-                <div class="col"></div>
-                <div class="col p-3">
-                        <img src="{{url("/favicon/android-chrome-512x512.png")}}" width="200" height="200" alt="">
-                </div>
-                <div class="col m-5"> Πρέπει να συνδεθείτε με τον μοναδικό προσωπικό σύνδεσμό σας</div>
-                <div class="col"></div>
-            </div>
         @endauth
         
         </div>

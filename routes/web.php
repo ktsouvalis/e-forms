@@ -48,9 +48,64 @@ use App\Http\Controllers\microapps\InternalRulesController;
 
 ///// INDEX ////////////////////////////////////
 
+Route::view('/', 'index')->name('index');
+
+Route::view('/index_user', 'index_user');
+
 Route::get('/back', function(){
     return back();
 });
+
+Route::post('/find_entity', function(Request $request){
+    if(!is_numeric($request->entity_code))
+        return redirect(url('/'))->with('warning', "Θα πρέπει να καταχωρίσετε αριθητική τιμή.");
+    switch (strlen($request->entity_code)) {
+        case 6:
+            $teacher=App\Models\Teacher::where('am', $request->entity_code)->first();
+            if($teacher) {
+                return redirect(url('/share_link/{"teacher"}/{$teacher->id}'));
+            }else {
+                return redirect(url('/'))->with('warning', "Δε βρέθηκε Εκπαιδευτικός της Δ/νσης Π.Ε. Αχαΐας με αυτά τα στοιχεία.");
+            }
+        break;
+        case 7:
+            $school=App\Models\School::where('code', $request->entity_code)->first();
+            if($school) {
+                return redirect(url('/share_link/{"school"}/{$school->id}'));
+            }else {
+                return redirect(url('/'))->with('warning', "Δε βρέθηκε Σχολική Μονάδα της Δ/νσης Π.Ε. Αχαΐας με αυτό τον Κωδικό Υ.ΠΑΙ.Θ.Α.");
+            }
+        break;
+        case 9:
+            $teacher=App\Models\Teacher::where('afm', $request->entity_code)->first();
+            if($teacher) {
+                return redirect(url('/share_link/{"teacher"}/{$teacher->id}'));
+            }else {
+                return redirect(url('/'))->with('warning', "Δε βρέθηκε Εκπαιδευτικός της Δ/νσης Π.Ε. Αχαΐας με αυτά τα στοιχεία.");
+            }
+        break;
+        default:
+        return redirect(url('/'))->with('warning', "Θα πρέπει να καταχωρίσετε ΑΜ/ΑΦΜ για Εκπαιδευτικό, Κωδικό Υ.ΠΑΙ.Θ.Α. για Σχολείο.");
+        break;
+    }
+}
+
+);
+
+//ADMIN Routes
+
+Route::get('/admin/{appname}', function($appname){
+    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
+    if($microapp->active){
+        return view('microapps.admin.'.$appname,['appname'=>$appname]);
+    }
+    else{
+        return redirect(url('/index_user'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
+    }
+})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
+
+
+
 
 //// USER ROUTES
 
@@ -102,7 +157,12 @@ Route::post('/insert_directors', [SchoolController::class, 'insertDirectors']);
 
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
-Route::view('/index_school', 'index_school'); // auth checking in view
+Route::get('/index_school', function(){
+    if(Auth::guard('school')->user())
+        return view('index_school');
+    else
+        return view('index');
+});
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
 
@@ -130,7 +190,12 @@ Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middlewa
 
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);
 
-Route::view('/index_teacher', 'index_teacher'); // auth checking in view
+Route::get('/index_teacher', function(){
+    if(Auth::guard('teacher')->user())
+        return view('index_teacher');
+    else
+        return view('index');
+});
 
 Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
 
@@ -322,21 +387,6 @@ Route::post("/dl_file/{fileshare}", [FileshareController::class, 'download_file'
 
 Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
 
-//ADMIN Routes
-
-Route::view('/', 'index')->name('index');
-
-Route::get('/admin/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
-    if($microapp->active){
-        return view('microapps.admin.'.$appname,['appname'=>$appname]);
-    }
-    else{
-        return redirect(url('/index'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
-    }
-})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
-
-
 
 // WHOCAN Routes
 
@@ -347,13 +397,14 @@ Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'de
 Route::post('/import_whocan/{my_app}/{my_id}', [WhocanController::class, 'import_whocans']);
 
 // MAIL Routes
+
 Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);
 
 Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanController::class, 'send_to_all_that_have_not_submitted']);
 
 Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);
 
-Route::post("share_link/{type}/{my_id}", function($type, $my_id){
+Route::match(array('GET','post'), "share_link/{type}/{my_id}", function($type, $my_id){
     if($type=="school"){
         $school = School::findOrFail($my_id);
     }
@@ -380,9 +431,12 @@ Route::post("share_link/{type}/{my_id}", function($type, $my_id){
     }
     catch(\Exception $e){
     
+        $mail_address = $$type->mail;
+        $at_position = str_pos($mail_address, '@');
+        $mail_to_show = substr($mail_address, 0 ,1).substr_replace($mail_address,'*', 1, $at_position-1);
+    return back()->with('success', 'Ο σύνδεσμος στάλθηκε στο '.$mail_to_show);
     }
-    return back()->with('success', 'Ο σύνδεσμος στάλθηκε επιτυχώς');
-});
+    });
 
 Route::post("share_links_to_all/{type}", function($type){
     $error=false;

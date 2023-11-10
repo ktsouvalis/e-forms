@@ -45,7 +45,7 @@ class TeacherController extends Controller
 
     public function logout(){
         auth()->guard('teacher')->logout();
-        return redirect(url('/index_teacher'))->with('success', 'Αποσυνδεθήκατε');
+        return redirect(url('/'))->with('success', 'Αποσυνδεθήκατε');
     }
 
     public function import_didaskalia_apousia(Request $request){

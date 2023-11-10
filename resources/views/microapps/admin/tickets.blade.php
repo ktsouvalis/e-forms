@@ -37,6 +37,12 @@
         </thead>
         <tbody>
             @foreach($tickets as $ticket)
+            @php
+                if($ticket->posts<>null)
+                    $text = $ticket->updated_at;
+                else
+                    $text = $ticket->posts->last()->created_at;
+            @endphp
                 <tr> 
                     <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
                     <td>{{$ticket->subject}}</td> 
@@ -47,7 +53,7 @@
                         <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id")}}">Προς επίλυση</a></td>
                     @endif
                     <td>{{$ticket->created_at}} </td>
-                    <td>{{$ticket->updated_at}} </td>
+                    <td>{{$text}} </td>
                 </tr> 
             @endforeach   
         </tbody>  

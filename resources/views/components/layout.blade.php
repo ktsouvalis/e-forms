@@ -7,7 +7,18 @@
     @stack('title')
     <link rel="stylesheet" href="{{url('/bootstrap/css/bootstrap.css')}}" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
+    <script
+        src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+        crossorigin="anonymous">
+    </script>
+    
+    <!-- include summernote css/js -->
+    {{-- <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+    {{-- <script src="https://cdn.tiny.cloud/1/7hzaxz17v4iqocewppyq2cg30iqt2bu2dgemxjww0vughlm1/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> --}}
     <link rel="icon" href="{!! asset(url('/favicon/favicon.ico')) !!}"/>
     <link rel="apple-touch-icon" sizes="180x180" href="{{url('/favicon/apple-touch-icon.png')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{url("/favicon/favicon-32x32.png")}}">
@@ -234,12 +245,7 @@
        <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="{{url("/")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
-    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
-    <script
-                src="https://code.jquery.com/jquery-3.6.4.min.js"
-                integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
-                crossorigin="anonymous">
-    </script>
+    
     @stack('scripts')
     </div> <!-- container closing -->
    

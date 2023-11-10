@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Models\microapps\TicketPost;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class TicketsController extends Controller
 {
@@ -96,11 +97,24 @@ class TicketsController extends Controller
             $type = 'App\Models\School';
         }
         $mail_failure=false;
-        
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'comments' => 'required|string|max:5000', // Adjust the max length as needed
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Sanitize the input (optional)
+        $sanitizedComments = htmlspecialchars($request->input('comments')); // Example: HTML special characters encoding
         try{
             TicketPost::create([
                 'ticket_id' => $ticket->id,
-                'text' => $request->input('comments'),
+                'text' => $sanitizedComments,
                 'ticketer_id' => $user->id,
                 'ticketer_type' => $type
             ]);
@@ -165,23 +179,23 @@ class TicketsController extends Controller
             $type='App\Models\School';
         }
         $new_string = "Ο χρήστης ".$name." έκλεισε το δελτίο";
-        // try{
+        try{
             TicketPost::create([
                 'ticket_id' => $ticket->id,
                 'text' => $new_string,
                 'ticketer_id' => $user->id,
                 'ticketer_type' => $type
             ]);
-        // }
-        // catch(Throwable $e){
-        //     try{
-        //         Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
-        //     }
-        //     catch(Throwable $e){
+        }
+        catch(Throwable $e){
+            try{
+                Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
     
-        //     }
-        //     return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
-        // }
+            }
+            return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
+        }
        
         try{
             Log::channel('tickets')->info($name." ticket $ticket->id resolved");

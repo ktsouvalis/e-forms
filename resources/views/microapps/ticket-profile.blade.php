@@ -1,6 +1,28 @@
 @push('title')
     <title>Δελτίο {{$ticket->id}}</title>
 @endpush
+@push('links')
+    <link href="../summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
+@endpush
+@push('scripts')
+    <script src="../summernote-0.8.18-dist/summernote-lite.min.js"></script>
+    <script>
+       $(document).ready(function () {
+        $('#comments').summernote({
+            height: 200, // Adjust the height as needed
+            width:600,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['list', ['ul', 'ol']],
+                ['link', ['link']]
+            ],
+            placeholder: 'Απάντηση...',
+            lang: 'el-GR' // Set language to Greek
+        });
+        $('#comments').prop('width', '600px');
+    });
+    </script>
+@endpush
 @php
     $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
 @endphp
@@ -54,32 +76,20 @@
                                 <i>{{$one_post->created_at}}</i>, <b>{{$name}}</b>: <br>
                             </div>
                             <div class="card py-2" style="background-color: {{$color}}; text-decoration: none; font-size: small">
-                                <div class="m-1">{{$one_post->text}}</div>
+                                <div class="m-1">{!!html_entity_decode($one_post->text)!!}</div>
                             </div>
                         </div>
                         <div class="col"></div>
                     </div>
                 </div>
-            
-                {{-- <div class="container-fluid">
-                    <div class="col-md-4 py-2" style="max-width:rem">
-                        <div style="font-size:small">
-                            <i>{{$one_post->created_at}}</i>, <b>{{$name}}</b>: <br>
-                        </div>
-                        <div class="card py-2" style="background-color:{{$color}}; text-decoration:none; font-size:small">
-                            <div class="m-1">{{$one_post->text}}</div>
-                        </div>  
-                    </div>
-                </div> --}}
-                {{-- <hr> --}}
         @endforeach
         <hr>
-        <nav class="navbar navbar-light bg-light">
-        <form action="{{url("/update_ticket/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+        <nav class="navbar navbar-light bg-light justify-content-center">
+        <form action="{{url("/update_ticket/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @csrf
             <span class="input-group-text"><strong>Προσθήκη Νέου Σχολίου </strong></span>
-            <div class="input-group">
-                <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="Απάντηση" required></textarea>
+            <div class="input-group justify-content-center">
+                <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="width: 600px; resize: none;" placeholder="Απάντηση" required></textarea>
             </div>
             </div>
             @if(!$accepts)
@@ -100,11 +110,6 @@
             @csrf
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
         </form>
-    {{-- @else
-        <form action="{{url("/mark_as_open/$ticket->id")}}" method="post">
-            @csrf
-            <button type="submit" class="btn btn-warning bi bi-envelope-open"> Άνοιγμα δελτίου</button>
-        </form> --}}
     @endif
     @php
         if($ticket->posts<>null)

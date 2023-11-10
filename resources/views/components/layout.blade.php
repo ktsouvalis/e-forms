@@ -193,7 +193,7 @@
         @stack('app-icon')
         <div class="hstack justify-content-end gap-2">
           @if(Illuminate\Support\Facades\Request::path()!='/')
-            <div class=" d-flex "><a href='{{url('/')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
+            <div class=" d-flex "><a href='{{url('/index_user')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
           @endif
           <div class=" d-flex "><a href='{{url('/change_password')}}' class="text-dark bi bi-gear" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> </a></div>
           <div class=" d-flex "><a href='{{url('/logout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>

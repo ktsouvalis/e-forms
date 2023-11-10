@@ -44,50 +44,50 @@
             <li class="nav-item">
             
                                         <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DarkKhaki; text-align:center;">
+                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:DarkKhaki; text-align:center;">
                   <div class="text-dark fa-solid fa-headset"></div> 
-                  <a href="" style=" text-decoration:none;" class="text-dark"> Τεχνική Στήριξη</a>
+                    Τεχνική Στήριξη
                 </div>
                 </li> 
                                                     <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:skyblue; text-align:center;">
+                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:skyblue; text-align:center;">
                   <div class="text-dark fa-regular fa-sun"></div> 
-                  <a href="" style=" text-decoration:none;" class="text-dark"> Ολοήμερο, Πρωινή Υποδοχή</a>
+                  Ολοήμερο, Πρωινή Υποδοχή
                 </div>
                 </li> 
                                                     <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Khaki; text-align:center;">
+                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:Khaki; text-align:center;">
                   <div class="text-dark fa-solid fa-bus"></div> 
-                  <a href="" style=" text-decoration:none;" class="text-dark"> Εκδρομές</a>
+                        Εκδρομές
                 </div>
                 </li> 
                                                                             <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Plum; text-align:center;">
+                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:Plum; text-align:center;">
                   <div class="text-dark fa-solid fa-suitcase"></div> 
-                  <a href="" style=" text-decoration:none;" class="text-dark"> Πρόσφυγες Μαθητές</a>
+                     Πρόσφυγες Μαθητές
                 </div>
                 </li> 
                                                     <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#f1948a; text-align:center;">
+                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:#f1948a; text-align:center;">
                   <div class="text-dark fa-solid fa-file-signature"></div> 
-                  <a href="" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
+                    Εσωτερικός Κανονισμός
                 </div>
                 </li> 
                         
             
             <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#00bfff; text-align:center;">
+            <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:#00bfff; text-align:center;">
               <div class="text-dark fa-solid fa-file-pdf"></div> 
-              <a href="" style=" text-decoration:none;" class="text-dark"> Αρχεία Διεύθυνσης</a>
+                Αρχεία Διεύθυνσης
             </div>
             </li> 
 
 
             <p>
             <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
+            <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:Gainsboro; text-align:center;">
                 <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-                <a href="" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
+                    Αποσύνδεση
             </div>
             </li>
             </p>

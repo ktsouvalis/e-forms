@@ -7,6 +7,7 @@ use App\Models\School;
 use App\Models\Microapp;
 use Illuminate\Http\Request;
 use App\Mail\InternalRuleMail;
+use App\Mail\InternalRuleCommented;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;

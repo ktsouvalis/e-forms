@@ -156,7 +156,8 @@ class InternalRulesController extends Controller
                 }
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
-            return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
+            Mail::to($internal_rule->school->mail)->send(new InternalRuleCommented('Διευθυντής Εκπαίδευσης', $internal_rule->school->md5));
+            return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
         }
         else{
             return redirect(url('/admin/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
@@ -218,7 +219,7 @@ class InternalRulesController extends Controller
                 return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
             Mail::to($internal_rule->school->mail)->send(new InternalRuleMail());
-            return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
+            return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
         }
         else{
             return redirect(url('/admin/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
@@ -337,7 +338,8 @@ class InternalRulesController extends Controller
                 }
                 return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
-            return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
+            Mail::to($internal_rule->school->mail)->send(new InternalRuleCommented('Σύμβουλος Εκπαίδευσης', $internal_rule->school->md5));
+            return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
         }
         else{
             return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');

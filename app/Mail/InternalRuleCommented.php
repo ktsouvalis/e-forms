@@ -9,14 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class InternalRuleMail extends Mailable
+class InternalRuleCommented extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(public $who, public $link)
     {
         //
     }
@@ -27,16 +27,17 @@ class InternalRuleMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Υποβολή υπογεγραμμένου Εσωτερικού Κανονισμού",
+            subject: 'Υποβολή αρχείου με παρατηρήσεις-διορθώσεις στον Εσωτερικό Κανονισμό',
         );
     }
+
     /**
      * Get the message content definition.
      */
     public function content(): Content
     {
         return new Content(
-            view: 'emails.internal_rule-submitted',
+            view: 'emails.internal_rule-commented',
         );
     }
 

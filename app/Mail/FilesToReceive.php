@@ -18,10 +18,10 @@ class FilesToReceive extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(public FileshareStakeholder $stakeholder)
+    public function __construct(public Fileshare $fileshare, public FileshareStakeholder $stakeholder)
     {
         //
-        $this->name = $this->stakeholder->fileshare->name;
+        $this->name = $this->fileshare->name;
     }
 
     /**
@@ -33,7 +33,7 @@ class FilesToReceive extends Mailable implements ShouldQueue
             subject: "Αρχεία '$this->name' για παραλαβή",
             tags:['new-fileshare'],
             metadata:[
-                'fileshare_id' => $this->stakeholder->fileshare_id
+                'fileshare_id' => $this->fileshare->id
             ],
         );
     }

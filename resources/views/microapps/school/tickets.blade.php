@@ -29,7 +29,7 @@
                         
                         <div class="input-group">
                             <span class="input-group-text w-25 text-wrap">Περιγραφή</span>
-                            <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="Αναλυτική Περιγραφή" ></textarea>
+                            <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="Σύντομη Περιγραφή" ></textarea>
                         </div>
                         @if(!$accepts)
                             <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">

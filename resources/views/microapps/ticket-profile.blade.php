@@ -64,7 +64,7 @@
                 }  
                 else{
                     $color = 'LightCyan';
-                    $name = $one_post->ticketer->username;
+                    $name = $one_post->ticketer->display_name;
                 }  
             @endphp
 

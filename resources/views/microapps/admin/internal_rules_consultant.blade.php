@@ -43,10 +43,10 @@
                         success: function(response) {
                             // Handle the response here, update the page as needed
                             if(isChecked){
-                                $('.check_td_'+internalRuleId).html('Ελέγχθηκε')
+                                $('.check_td_'+internalRuleId).html('Εγκρίθηκε')
                             }
                             else{
-                                $('.check_td_'+internalRuleId).html('Προς έλεγχο')
+                                $('.check_td_'+internalRuleId).html('Έγκριση')
                             }
                         },
                         error: function(error) {
@@ -90,7 +90,7 @@
                     <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
                         <td><strong>{{$one->school->name}}</strong></td>
                         @php
-                            $text = $one->approved_by_consultant ? 'Ελέγχθηκε' : 'Προς έλεγχο';
+                            $text = $one->approved_by_consultant ? 'Εγκρίθηκε' : 'Έγκριση';
                         @endphp
                         @if(!$one->approved_by_consultant)
                             <td @if($one->approved_by_director) class="table-success" @endif>{{-- Έγκριση Διευθυντή Εκπαίδευσης --}}

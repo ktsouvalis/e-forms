@@ -110,7 +110,7 @@ class TicketsController extends Controller
         }
 
         // Sanitize the input (optional)
-        $sanitizedComments = strip_tags($request->input('comments'), '<a><b><i><u><ul><ol><li>'); //allow only these tags
+        $sanitizedComments = strip_tags($request->input('comments'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
         
         try{
             TicketPost::create([

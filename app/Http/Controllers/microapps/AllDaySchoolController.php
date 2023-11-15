@@ -64,13 +64,13 @@ class AllDaySchoolController extends Controller
                 $nosm=0;
                 while ($rowSumValue != "" && $row<400){
                     $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-                    if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625 or $time=='15:00 ή 14:50'){
+                    if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625 or $time=='15:00 ή 14:50' or $time=='15:00 ή 14:55' or $time='15:00:00'){
                         $nos3++;
                     }
-                    else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667 or $time=='16:00 ή 15:50'){
+                    else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667 or $time=='16:00 ή 15:50' or $time='16:00:00') {
                         $nos4++;
                     }
-                    else if($time=='17:30' or $time=='5:30:00 μμ' or $time==0.7292){
+                    else if($time=='17:30' or $time=='5:30:00 μμ' or $time==0.7292 or $time='17:30:00'){
                         $nos5++;
                     }
 

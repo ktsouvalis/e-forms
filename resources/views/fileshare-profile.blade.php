@@ -10,13 +10,14 @@
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
+        <script src="../copylink.js"></script>
     @endpush
     @push('title')
         <title>{{$fileshare->name}}</title>
     @endpush
-    <div class="container py-5">
+    
         
-        <div class="container px-5">
+        <div class="container">
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/fileshare_save/$fileshare->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
@@ -62,6 +63,13 @@
                         <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
+                <form action="{{url("/auto_update_fileshare_whocan/$fileshare->id")}}" method="post" class="container-fluid">
+                    @csrf
+                    <div class="input-group py-1 px-1">
+                        <span class="w-25"></span>
+                        <button type="submit" class="btn btn-warning bi bi-database-add"> Αυτόματη Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
+                    </div>
+                </form>
             </nav>  
         </div>
         <div class="container px-5 vstack gap-2 py-3">
@@ -71,20 +79,30 @@
                 <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>
                     <tr>
+                        <th>Σύνδεσμος</th>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
+                        <th id="search">mail</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach($fileshare->stakeholders as $one_stakeholder)
+                @php
+                    $md = $one_stakeholder->stakeholder->md5;
+                    $text = url("/teacher/$md");
+                @endphp
                 <tr>
+                    <td style="text-align:center">
+                        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
+                    </td>
                     @if($one_stakeholder->stakeholder_type=="App\Models\School")
                         <td>{{$one_stakeholder->stakeholder->code}}</td>
                     @else
                         <td>{{$one_stakeholder->stakeholder->afm}}</td>
                     @endif
                     <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
+                    <td>{{$one_stakeholder->stakeholder->mail}}</td>
                     <td> 
                         <form action="{{url("/delete_one_whocan/fileshare/$one_stakeholder->id")}}" method="post">
                             @csrf
@@ -180,6 +198,25 @@
             </div>
             @endif
         </div>
-        </div>
-    </div>    
+        <hr>
+        @if(session()->has('stakeholders_array'))
+            @php
+                $stakeholders_array = Session::pull('stakeholders_array', []);
+            @endphp
+            <table>
+                <tr>
+                <th>Αρχείο</th>
+                <th>Ενδιαφερόμενος</th>
+                </tr>
+            @foreach($stakeholders_array as $one)
+            
+            <tr>
+                <td>{{$one['filename']}}</td>
+                <td>{{ isset($one['stakeholder']) ? $one['stakeholder'] : 'N/A' }}</td>
+            </tr>
+            @endforeach
+            </table>
+        @endif
+    </div>
+       
 </x-layout>

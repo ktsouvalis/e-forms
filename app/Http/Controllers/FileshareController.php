@@ -150,4 +150,48 @@ class FileshareController extends Controller
         Log::channel('user_memorable_actions')->info(Auth::user()->username." delete_file $fn from ".$fileshare->name);
         return back()->with('success', "Το αρχείο $fn αφαιρέθηκε από τον διαμοιρασμό");
     }
+
+    public function auto_update_whocan(Fileshare $fileshare, Request $request){
+        $directory_personal = '/fileshare'.$fileshare->id.'/personal_files';
+        $files_personal = Storage::disk('local')->files($directory_personal);
+        $stakeholders_array=array();
+        foreach($files_personal as $file_p){
+            $check=array();
+            $string = basename($file_p); 
+            $check['filename']=$string;
+            // Regular expression for a 6-digit number
+            $regex6 = '/(?<!\d)\d{6}(?!\d)/';
+
+            // Regular expression for a 9-digit number
+            $regex9 = '/(?<!\d)\d{9}(?!\d)/';
+            $fieldOfInterest = '';
+        
+            if (preg_match($regex9, $string, $matches)) {
+                $fieldOfInterest = 'afm';//the number is afm
+            } 
+            else if (preg_match($regex6, $string, $matches)) {
+                $fieldOfInterest = 'am';//else the number is am
+            }
+            if(!empty($fieldOfInterest)){
+                $stakeholder = Teacher::where($fieldOfInterest, $matches[0])->first();
+                if($stakeholder){
+                    $check['stakeholder']=$stakeholder->surname.' '.$stakeholder->name;
+                    FileshareStakeholder::updateOrCreate(
+                    [
+                        'fileshare_id' => $fileshare->id,
+                        'stakeholder_id' => $stakeholder->id,
+                        'stakeholder_type' => 'App\Models\Teacher'
+                    ],
+                    [
+                        'fileshare_id' => $fileshare->id,
+                        'stakeholder_id' => $stakeholder->id,
+                        'stakeholder_type' => 'App\Models\Teacher'
+                    ]); 
+                }
+            }
+            array_push($stakeholders_array,$check);
+        }
+        session()->flash('stakeholders_array', $stakeholders_array);
+        return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Οι ενδιαφερόμενοι προστέθηκαν αυτόματα με βάση τους ΑΜ/ΑΦΜ που βρέθηκαν στα αρχεία');
+    }
 }

@@ -29,10 +29,28 @@
                 </div>
                 <div class="vstack gap-2">
                         @foreach($files_personal as $file_p)
-                            @if(strpos(basename($file_p), $teacher->afm)!==false)
+                            @php
+                                $string = basename($file_p); 
+                                
+                                // Regular expression for a 6-digit number
+                                $regex6 = '/(?<!\d)\d{6}(?!\d)/';
+
+                                // Regular expression for a 9-digit number
+                                $regex9 = '/(?<!\d)\d{9}(?!\d)/';
+                                $fieldOfInterest = '';
+                                
+                                if (preg_match($regex9, $string)) {
+                                    $fieldOfInterest = $teacher->afm;//the number is afm
+                                } 
+                                else if (preg_match($regex6, $string)) {
+                                    $fieldOfInterest = $teacher->am;//else the number is am
+                                }
+                            @endphp
+                            @if(!empty($fieldOfInterest) && strpos(basename($file_p), $fieldOfInterest)!==false)
                                 @php
                                     $ffi = $fileshare->fileshare->id
                                 @endphp
+                                
                                 <form action="{{url("/dl_file/$ffi")}}" method="post">
                                 @csrf
                                     <input type="hidden" name="filename" value="{{$file_p}}">

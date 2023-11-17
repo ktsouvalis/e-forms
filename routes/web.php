@@ -387,6 +387,8 @@ Route::post("/dl_file/{fileshare}", [FileshareController::class, 'download_file'
 
 Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
 
+Route::post('auto_update_fileshare_whocan/{fileshare}', [FileshareController::class, 'auto_update_whocan']);
+
 
 // WHOCAN Routes
 
@@ -395,6 +397,8 @@ Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'd
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
 
 Route::post('/import_whocan/{my_app}/{my_id}', [WhocanController::class, 'import_whocans']);
+
+
 
 // MAIL Routes
 

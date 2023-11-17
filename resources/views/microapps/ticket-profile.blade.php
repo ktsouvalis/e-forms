@@ -28,8 +28,9 @@
 @endphp
 <div class="container">
 <div class="container px-5">   
-    <div class=" hstack gap-2">          
-        <div> <b> ID δελτίου:</b> {{$ticket->id}}</div>          
+    <div class=" hstack gap-2"> 
+        <div><b>Θέμα:</b>{{$ticket->subject}}</div>         
+        <div><b>ID δελτίου:</b> {{$ticket->id}}</div>          
         <div><b>Τηλέφωνο Σχολείου:</b> {{$ticket->school->telephone}}</div>             
     </div>
     @if(!$ticket->solved)

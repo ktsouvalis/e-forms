@@ -389,6 +389,8 @@ Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
 
 Route::post('auto_update_fileshare_whocan/{fileshare}', [FileshareController::class, 'auto_update_whocan']);
 
+Route::post('/inform_my_teachers/{fileshare}', [FileshareController::class, 'school_informs_teachers']);
+
 
 // WHOCAN Routes
 

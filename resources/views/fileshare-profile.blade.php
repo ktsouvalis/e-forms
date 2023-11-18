@@ -67,7 +67,7 @@
                     @csrf
                     <div class="input-group py-1 px-1">
                         <span class="w-25"></span>
-                        <button type="submit" class="btn btn-warning bi bi-database-add"> Αυτόματη Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
+                        <button type="submit" class="btn btn-warning bi bi-database-add"> Αυτόματη Εισαγωγή Ενδιαφερόμενων για τα προσωπικά αρχεία</button>
                     </div>
                 </form>
             </nav>  
@@ -83,6 +83,7 @@
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
                         <th id="search">mail</th>
+                        <th id="search">added by</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
@@ -90,7 +91,10 @@
                 @foreach($fileshare->stakeholders as $one_stakeholder)
                 @php
                     $md = $one_stakeholder->stakeholder->md5;
-                    $text = url("/teacher/$md");
+                    if($one_stakeholder->stakeholder_type=="App\Models\School")
+                        $text = url("/school/$md");
+                    else
+                        $text = url("/teacher/$md");
                 @endphp
                 <tr>
                     <td style="text-align:center">
@@ -103,6 +107,11 @@
                     @endif
                     <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
                     <td>{{$one_stakeholder->stakeholder->mail}}</td>
+                    @if($one_stakeholder->addedby_type=="App\Models\School")
+                        <td>{{$one_stakeholder->addedby->name}}</td>
+                    @else
+                        <td>{{$one_stakeholder->addedby->username}}</td>
+                    @endif
                     <td> 
                         <form action="{{url("/delete_one_whocan/fileshare/$one_stakeholder->id")}}" method="post">
                             @csrf

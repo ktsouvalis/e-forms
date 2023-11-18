@@ -27,4 +27,8 @@ class FileshareStakeholder extends Model
             ->join('departments', 'fileshares.department_id', '=', 'departments.id')
             ->orderBy('departments.name');
     }
+
+    public function addedby(){
+        return $this->morphTo();
+    }
 }

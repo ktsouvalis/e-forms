@@ -99,6 +99,11 @@ class School extends Authenticatable
     public function internal_rule(){
         return $this->hasOne(InternalRule::class);
     }
+
+    public function addedbys()
+    {
+        return $this->morphMany(FileshareStakeholder::class, 'addedby');
+    }
         /**
      * The attributes that should be hidden for serialization.
      *

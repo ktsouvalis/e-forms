@@ -63,7 +63,9 @@ class WhocanController extends Controller
                     [
                     'fileshare_id' => $my_id,
                     'stakeholder_id' => $stakeholder_id,
-                    'stakeholder_type' => $stakeholder_type
+                    'stakeholder_type' => $stakeholder_type,
+                    'addedby_id' => Auth::user()->id,
+                    'addedby_type' => get_class(Auth::user())
                 ]); 
             }
             else if($my_app=="microapp"){ //microapp

@@ -75,4 +75,9 @@ class User extends Authenticatable
     public static function isAdmin(){
         return Superadmin::where('user_id',Auth::id())->exists(); 
     }
+
+    public function addedbys()
+    {
+        return $this->morphMany(FileshareStakeholder::class, 'addedby');
+    }
 }

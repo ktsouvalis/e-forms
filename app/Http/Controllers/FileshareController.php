@@ -155,6 +155,7 @@ class FileshareController extends Controller
         $directory_personal = '/fileshare'.$fileshare->id.'/personal_files';
         $files_personal = Storage::disk('local')->files($directory_personal);
         $stakeholders_array=array();
+        $error=false;  
         foreach($files_personal as $file_p){
             $check=array();
             $string = basename($file_p); 
@@ -175,23 +176,76 @@ class FileshareController extends Controller
             if(!empty($fieldOfInterest)){
                 $stakeholder = Teacher::where($fieldOfInterest, $matches[0])->first();
                 if($stakeholder){
-                    $check['stakeholder']=$stakeholder->surname.' '.$stakeholder->name;
-                    FileshareStakeholder::updateOrCreate(
-                    [
-                        'fileshare_id' => $fileshare->id,
-                        'stakeholder_id' => $stakeholder->id,
-                        'stakeholder_type' => 'App\Models\Teacher'
-                    ],
-                    [
-                        'fileshare_id' => $fileshare->id,
-                        'stakeholder_id' => $stakeholder->id,
-                        'stakeholder_type' => 'App\Models\Teacher'
-                    ]); 
+                    try{
+                        FileshareStakeholder::updateOrCreate(
+                        [
+                            'fileshare_id' => $fileshare->id,
+                            'stakeholder_id' => $stakeholder->id,
+                            'stakeholder_type' => 'App\Models\Teacher'
+                        ],
+                        [
+                            'fileshare_id' => $fileshare->id,
+                            'stakeholder_id' => $stakeholder->id,
+                            'stakeholder_type' => 'App\Models\Teacher',
+                            'addedby_id' => Auth::user()->id,
+                            'addedby_type' => get_class(Auth::user())
+                        ]);
+                        $check['stakeholder']=$stakeholder->surname.' '.$stakeholder->name;
+                    }
+                    catch(Throwable $e){
+                        Log::channel('throwable_db')->error(Auth::user()->username." auto_update_whocan: ".$e->getMessage());
+                        $error=true;
+                    }
                 }
             }
             array_push($stakeholders_array,$check);
         }
         session()->flash('stakeholders_array', $stakeholders_array);
-        return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Οι ενδιαφερόμενοι προστέθηκαν αυτόματα με βάση τους ΑΜ/ΑΦΜ που βρέθηκαν στα αρχεία');
+        if($error)
+            return back()->with('warning', 'Κάποιες εισαγωγές απέτυχαν, δείτε το log thorwable_db');
+        else
+            return back()->with('success', 'Οι ενδιαφερόμενοι προστέθηκαν αυτόματα με βάση τους ΑΜ/ΑΦΜ που βρέθηκαν στα αρχεία');
+    }
+
+    public function school_informs_teachers(Fileshare $fileshare, Request $request){
+        $school = Auth::guard('school')->user();
+        $teachers = $school->organikis->merge($school->ypiretisis);
+        $stakeholders_array=array();
+        $i=0;
+        $error=false;
+        foreach($teachers as $teacher){
+            $check=array();
+            try{
+                FileshareStakeholder::updateOrCreate(
+                [
+                    'fileshare_id' => $fileshare->id,
+                    'stakeholder_id' => $teacher->id,
+                    'stakeholder_type' => 'App\Models\Teacher'
+                ],
+                [
+                    'fileshare_id' => $fileshare->id,
+                    'stakeholder_id' => $teacher->id,
+                    'stakeholder_type' => 'App\Models\Teacher',
+                    'addedby_id' => $school->id,
+                    'addedby_type' => get_class($school)
+                ]);
+                $i++;
+                $check['stakeholder']=$i.'. '.$teacher->surname.' '.$teacher->name;
+            }
+            catch(Throwable $e){
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name." school_informs_teachers: ".$e->getMessage());
+                $error=true;
+            }
+            array_push($stakeholders_array,$check);
+        }
+        $count = $teachers->count();
+        session()->flash('stakeholders_array', $stakeholders_array);
+        $message = "Eνημερώθηκαν $i/$count εκπαιδευτικοί";
+        if($error){
+            return back()->with('warning', $message);
+        }
+        else{
+            return back()->with('success', $message);
+        }
     }
 }

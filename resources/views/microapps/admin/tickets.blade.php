@@ -33,6 +33,7 @@
                 <th id="search">Κατάσταση</th>
                 <th id="">Ημερομηνία Δημιουργίας</th>
                 <th id="">Τελευταία ενημέρωση</th>
+                <th id="search">Επίσκεψη</th>
             </tr>
         </thead>
         <tbody>
@@ -54,6 +55,11 @@
                     @endif
                     <td>{{$ticket->created_at}} </td>
                     <td>{{$text}} </td>
+                    @if($ticket->needed_visit)
+                        <td class="text-center">Ναι</td>
+                    @else
+                        <td class="text-center">Όχι</td>
+                    @endif
                 </tr> 
             @endforeach   
         </tbody>  

@@ -282,6 +282,8 @@ Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_res
 
 Route::post("/mark_as_open/{ticket}",[TicketsController::class, 'mark_as_open'])->middleware('canUpdateTicket');
 
+Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
+
 Route::post('/new_outing/{school}',[OutingsController::class, 'new_outing']);
 
 Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']);

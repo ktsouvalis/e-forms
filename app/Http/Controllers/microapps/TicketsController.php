@@ -227,4 +227,14 @@ class TicketsController extends Controller
         }
         return back()->with('success', 'Το δελτίο άνοιξε ξανά και ειδοποιήθηκε η Τεχνική Υποστήριξη');
     }
+
+    public function ticket_needed_visit(Ticket $ticket, Request $request){
+        if($request->input('checked')=='true')
+            $ticket->needed_visit = 1;
+        else
+            $ticket->needed_visit = 0;
+        $ticket->save();
+
+        return response()->json(['message' => 'Fileshare updated successfully']);
+    }
 }

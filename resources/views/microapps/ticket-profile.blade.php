@@ -22,6 +22,41 @@
         $('#comments').prop('width', '600px');
     });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('body').on('change', '.ticket-checkbox', function() {
+                
+                const ticketId = $(this).data('ticket-id');
+                const isChecked = $(this).is(':checked');
+                // Get the CSRF token from the meta tag
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+
+                $.ajax({
+                    url: '../ticket_needed_visit/'+ticketId,
+                    type: 'POST',
+                    data: {
+                        // _method: 'PATCH', // Laravel uses PATCH for updates
+                        checked: isChecked
+                    },
+                    success: function(response) {
+                        // Handle the response here, update the page as needed
+                        console.log("success");
+
+                    },
+                    error: function(error) {
+                        // Handle errors
+                        console.log("An error occurred: " + error);
+                    }
+                });
+            });
+        });
+    </script>
 @endpush
 @php
     $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
@@ -111,6 +146,10 @@
             @csrf
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
         </form>
+    @endif
+    @if(Auth::user())
+        <input type="checkbox" id="visit" class="ticket-checkbox" data-ticket-id="{{ $ticket->id }}" {{ $ticket->needed_visit ? 'checked' : '' }}>
+        <label for="visit"> Πραγματοποιήθηκε επίσκεψη;</label>
     @endif
     @php
         if($ticket->posts<>null)

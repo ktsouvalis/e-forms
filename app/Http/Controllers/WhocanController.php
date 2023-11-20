@@ -151,11 +151,12 @@ class WhocanController extends Controller
             }
         }
         else if($my_app=="fileshare"){
-            $stakeholders = Fileshare::find($my_id)->stakeholders;
+            $fileshare = Fileshare::find($my_id);
+            $stakeholders = $fileshare->stakeholders;
             foreach($stakeholders as $stakeholder){
                 if($stakeholder->stakeholder->code==9999999 or $stakeholder->stakeholder->afm==999999999)
                 //returns the view that the mailable uses
-                    return new FilesToReceive($stakeholder);
+                    return new FilesToReceive($fileshare, $stakeholder);
             } 
         }
     }

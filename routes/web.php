@@ -391,6 +391,8 @@ Route::post('auto_update_fileshare_whocan/{fileshare}', [FileshareController::cl
 
 Route::post('/inform_my_teachers/{fileshare}', [FileshareController::class, 'school_informs_teachers']);
 
+Route::post('/fileshare_allow_schools/{fileshare}', [FileshareController::class, 'allow_schools']);
+
 
 // WHOCAN Routes
 

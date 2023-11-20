@@ -36,10 +36,12 @@
                                     <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_c)}}</button>
                                 </form>
                             @endforeach
+                            @if($fileshare->fileshare->allow_school)
                             <form action="{{url("/inform_my_teachers/$ffi")}}" method="post">
                                 @csrf
                                 <button type="submit" class="bi bi-info-circle btn btn-primary" onclick="return confirm('Επιβεβαίωση ενημέρωσης εκπαιδευτικών;')"> Ενημέρωση Εκπαιδευτικών Σχολείου για τα κοινά αρχεία</button>
                             </form>
+                            @endif
                     </div>
                     <div class="vstack gap-2">
                             @foreach($files_personal as $file_p)

@@ -248,4 +248,14 @@ class FileshareController extends Controller
             return back()->with('success', $message);
         }
     }
+
+    public function allow_schools(Fileshare $fileshare, Request $request){
+        if($request->input('checked')=='true')
+            $fileshare->allow_school = 1;
+        else
+            $fileshare->allow_school = 0;
+        $fileshare->save();
+
+        return response()->json(['message' => 'Fileshare updated successfully']);
+    }
 }

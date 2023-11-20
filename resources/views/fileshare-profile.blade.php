@@ -11,6 +11,41 @@
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
         <script src="../copylink.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('body').on('change', '.fileshare-checkbox', function() {
+                    
+                    const fileshareId = $(this).data('fileshare-id');
+                    const isChecked = $(this).is(':checked');
+                    // Get the CSRF token from the meta tag
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+
+                    $.ajax({
+                        url: '../fileshare_allow_schools/'+fileshareId,
+                        type: 'POST',
+                        data: {
+                            // _method: 'PATCH', // Laravel uses PATCH for updates
+                            checked: isChecked
+                        },
+                        success: function(response) {
+                            // Handle the response here, update the page as needed
+                            console.log("success");
+
+                        },
+                        error: function(error) {
+                            // Handle errors
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
     @endpush
     @push('title')
         <title>{{$fileshare->name}}</title>
@@ -70,7 +105,9 @@
                         <button type="submit" class="btn btn-warning bi bi-database-add"> Αυτόματη Εισαγωγή Ενδιαφερόμενων για τα προσωπικά αρχεία</button>
                     </div>
                 </form>
-            </nav>  
+            </nav> 
+            <input type="checkbox" id="allow" class="fileshare-checkbox" data-fileshare-id="{{ $fileshare->id }}" {{ $fileshare->allow_school ? 'checked' : '' }}>
+            <label for="allow"> <strong> Τα σχολεία μπορούν να προσθέτουν τους εκαιδευτικούς στους ενδιαφερόμενους του fileshare;</strong></label> 
         </div>
         <div class="container px-5 vstack gap-2 py-3">
             

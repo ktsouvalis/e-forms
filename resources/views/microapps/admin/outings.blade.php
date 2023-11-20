@@ -86,19 +86,9 @@
                     @foreach($outings as $outing)
                         @php
                             $my_date = Illuminate\Support\Carbon::parse($outing->outing_date)->isoFormat('YYYY-MM-DD');
-                            // $day=$my_date->day;
-                            // $month=$my_date->month;
-                            // $year=$my_date->year;
-                            // if($day<10){
-                            //     $day='0'.$day;
-                            // }
-                            // if($month<10){
-                            //     $month='0'.$month;
-                            // }
                         @endphp
                         <tr> 
                             <td>{{$outing->school->name}}</td>
-                            {{-- <td>{{$year}}/{{$month}}/{{$day}} </td> --}}
                             <td>{{$my_date}}</td>
                             <td>
                                 <div class="vstack gap-2">

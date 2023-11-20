@@ -143,23 +143,16 @@ class WhocanController extends Controller
      */
     public function preview_mail_to_all($my_app, $my_id){
         if($my_app=="microapp"){
-            $stakeholders = Microapp::find($my_id)->stakeholders;
-            foreach($stakeholders as $stakeholder){
-                if($stakeholder->stakeholder->code==9999999 or $stakeholder->stakeholder->afm==999999999)
-                    //returns the view that the mailable uses
-                    return new MicroappToSubmit($stakeholder);
-            }
+            $stakeholder = Microapp::find($my_id)->stakeholders->first();
+            return new MicroappToSubmit($stakeholder);
         }
         else if($my_app=="fileshare"){
             $fileshare = Fileshare::find($my_id);
-            $stakeholders = $fileshare->stakeholders;
-            foreach($stakeholders as $stakeholder){
-                if($stakeholder->stakeholder->code==9999999 or $stakeholder->stakeholder->afm==999999999)
-                //returns the view that the mailable uses
-                    return new FilesToReceive($fileshare, $stakeholder);
-            } 
+            $stakeholder = $fileshare->stakeholders->first();
+            return new FilesToReceive($fileshare, $stakeholder);
         }
     }
+    
 
     /**
      * send one mail to each of the stakeholders
@@ -201,7 +194,7 @@ class WhocanController extends Controller
         if(!$mail_error)
             return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι');
         else
-            return back()->with('warning', 'Δείτε στο σημερινό log stakeholders_microapps ποιοι δεν ενημερώθηκαν'); 
+            return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν'); 
     }
 
     /**
@@ -246,6 +239,6 @@ class WhocanController extends Controller
         if(!$mail_error)
             return back()->with('success', 'Ενημερώθηκαν όσοι ενδιαφερόμενοι δεν έχουν υποβάλλει απάντηση');
         else
-            return back()->with('warning', 'Δείτε στο σημερινό log stakeholders_microapps ποιοι δεν ενημερώθηκαν');   
+            return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν');   
     }
 }

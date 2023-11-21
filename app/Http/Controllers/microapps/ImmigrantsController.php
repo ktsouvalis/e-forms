@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Validator;
 class ImmigrantsController extends Controller
 {
     //
-    public function post_immigrants(Request $request, School $school){
+    public function post_immigrants(Request $request){
+        $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/immigrants')->first();
         if($microapp->accepts){
-            
             $comments= $request->all()['comments'];
             
             $month = Month::getActiveMonth();

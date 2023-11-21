@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Validator;
 class OutingsController extends Controller
 {
     //
-    public function new_outing(Request $request, School $school){
-
+    public function new_outing(Request $request){
+        $school = Auth::guard('school')->user();
         $rule = [
             'record_file' => 'mimes:pdf'
         ];

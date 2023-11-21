@@ -12,7 +12,8 @@ use App\Http\Controllers\Controller;
 class FruitsController extends Controller
 {
     //
-    public function save_fruits(Request $request, School $school){
+    public function save_fruits(Request $request){
+        $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/fruits')->first();
         if($microapp->accepts){
             $done=0;
@@ -22,7 +23,6 @@ class FruitsController extends Controller
                         'school_id'=>$school->id
                     ],
                     [
-                        'school_id'=>$school->id,
                         'no_of_students' => $request->input('students_number'),
                         'no_of_ukr_students' => $request->input('ukr_students_number'),
                         'comments' => $request->input('comments')

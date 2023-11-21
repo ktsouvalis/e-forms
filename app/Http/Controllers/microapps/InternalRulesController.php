@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Validator;
 class InternalRulesController extends Controller
 {
     //
-    public function save_internal_rules(School $school, Request $request){
+    public function save_internal_rules(Request $request){
+        $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/internal_rules')->first();
         if($microapp->accepts){
             $rule = [

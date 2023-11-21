@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Validator;
 class TicketsController extends Controller
 {
     //
-    public function create_ticket(School $school, Request $request){
+    public function create_ticket(Request $request){
+        $school = Auth::guard('school')->user();
         $mail_failure=false;
         try{
             $new_ticket = Ticket::create([
@@ -205,27 +206,6 @@ class TicketsController extends Controller
     
         }
         return back()->with('success', 'Το δελτίο έκλεισε επιτυχώς');
-    }
-
-    public function mark_as_open(Request $request, Ticket $ticket){
-        $ticket->solved=0;
-        if(Auth::user()){
-            $name = Auth::user()->username;
-        }
-        else if(Auth::guard('school')->user()){
-            $name = Auth::guard('school')->user()->name;
-        }
-        $new_string = "\nΟ χρήστης ".$name." άνοιξε το δελτίο";
-        $updated_comments = $ticket->comments.$new_string;
-        $ticket->comments = $updated_comments;
-        $ticket->save();
-        try{
-            Log::channel('tickets')->info($name." ticket $ticket->id reopened");
-        }
-        catch(Throwable $e){
-    
-        }
-        return back()->with('success', 'Το δελτίο άνοιξε ξανά και ειδοποιήθηκε η Τεχνική Υποστήριξη');
     }
 
     public function ticket_needed_visit(Ticket $ticket, Request $request){

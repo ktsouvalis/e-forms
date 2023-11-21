@@ -262,9 +262,9 @@ Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'ch
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
-Route::post("/save_fruits/{school}", [FruitsController::class, 'save_fruits']);
+Route::post("/save_fruits", [FruitsController::class, 'save_fruits']);
 
-Route::post("/create_ticket/{school}",[TicketsController::class, 'create_ticket']);
+Route::post("/create_ticket",[TicketsController::class, 'create_ticket']);
 
 Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
     if(Auth::user()){
@@ -280,11 +280,9 @@ Route::post("/update_ticket/{ticket}", [TicketsController::class, 'update_ticket
 
 Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
 
-Route::post("/mark_as_open/{ticket}",[TicketsController::class, 'mark_as_open'])->middleware('canUpdateTicket');
-
 Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
 
-Route::post('/new_outing/{school}',[OutingsController::class, 'new_outing']);
+Route::post('/new_outing',[OutingsController::class, 'new_outing']);
 
 Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']);
 
@@ -298,7 +296,7 @@ Route::get('/outing_profile/{outing}', function(Outing $outing){
 
 Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_outing_profile'])->middleware('canUpdateOuting');
 
-Route::post('/save_all_day_school/{school}', [AllDaySchoolController::class, 'post_all_day']);
+Route::post('/save_all_day_school', [AllDaySchoolController::class, 'post_all_day']);
 
 Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
     if($type==1)
@@ -321,7 +319,7 @@ Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, '
 
 Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
 
-Route::post('/save_immigrants/{school}', [ImmigrantsController::class, 'post_immigrants']);
+Route::post('/save_immigrants', [ImmigrantsController::class, 'post_immigrants']);
 
 Route::post('/dl_immigrants_template', function(Request $request){
     $file = 'immigrants/immigrants.xlsx';
@@ -339,7 +337,7 @@ Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update
 
 Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
 
-Route::post("/save_internal_rules/{school}", [InternalRulesController::class, 'save_internal_rules']);
+Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules']);
 
 Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file']);
 

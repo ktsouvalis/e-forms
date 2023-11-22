@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\microapps\Outing;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\OutingSection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -95,45 +96,53 @@ class OutingsController extends Controller
     }
 
     public function download_record(Request $request, Outing $outing){
-       
-        $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
-        $response = Storage::disk('local')->download($file, $outing->file);  
-        ob_end_clean();
-        try{
-            return $response;
-        }
-        catch(Throwable $e){
+        if((Auth::check() && (Auth::user()->microapps->where('url', '/outings')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){
+            $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
+            $response = Storage::disk('local')->download($file, $outing->file);  
+            ob_end_clean();
+            try{
+                return $response;
+            }
+            catch(Throwable $e){
+            
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+            }
         }
+        abort(403, 'Unauthorized action.');
     }
 
     public function delete_outing(Request $request, Outing $outing){
+        if((Auth::check() && (Auth::user()->microapps->where('url', 'outings')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){    
+            $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
 
-        $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
+            $outing->delete();
+            try{
+                Storage::disk('local')->delete($file);
+            }
+            catch(Throwable $e){
+        
+            }
 
-        $outing->delete();
-        try{
-            Storage::disk('local')->delete($file);
+            // return redirect(url('/school_app/outings'))->with('success','Η εκδρομή διαγράφηκε');
+            return back()->with('success','Η εκδρομή διαγράφηκε');
         }
-        catch(Throwable $e){
-    
-        }
-
-        // return redirect(url('/school_app/outings'))->with('success','Η εκδρομή διαγράφηκε');
-        return back()->with('success','Η εκδρομή διαγράφηκε');
+        abort(403, 'Unauthorized action.');
     }
 
     public function check_outing(Request $request, Outing $outing){
-        if($request->input('checked')=='true')
-            $outing->checked = 1;
-        else
-            $outing->checked = 0;
-        $outing->save();
+        if((Auth::check() && (Auth::user()->microapps->where('url', '/outings')->count() or Auth::user()->isAdmin()))){
+            if($request->input('checked')=='true')
+                $outing->checked = 1;
+            else
+                $outing->checked = 0;
+            $outing->save();
 
-        return response()->json(['message' => 'Outing updated successfully']);
+            return response()->json(['message' => 'Outing updated successfully']);
+        }
+        abort(403, 'Unauthorized action.');
     }
 
-    public function save_outing_profile(Request $request, Outing $outing){
+    public function save_outing_profile(Request $request, Outing $outing){// protected by middleware
         $rule = [
             'record_file' => 'mimes:pdf'
         ];

@@ -107,246 +107,257 @@ class InternalRulesController extends Controller
     }
 
     public function upload_director_comments_file(InternalRule $internal_rule, Request $request){
-        $microapp = Microapp::where('url', '/internal_rules')->first();
-        if($microapp->accepts){
-            $rule = [
-                "director_comment_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            ];
+        if((Auth::check() && (Auth::user()->microapps->where('url', '/internal_rules')->count() or Auth::user()->isAdmin()))){
+            $microapp = Microapp::where('url', '/internal_rules')->first();
+            if($microapp->accepts){
+                $rule = [
+                    "director_comment_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ];
 
-            $validator = Validator::make($request->all(), $rule);
-            if($validator->fails()){ 
-                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            }
-            $mimeType = $request->file("director_comment_file")->getClientMimeType();
-            if($mimeType=="application/pdf"){
-                $extension = ".pdf";
-            }
-            else if($mimeType=="application/msword"){
-                $extension = ".doc";
-            }
-            else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                $extension = ".docx";
-            }
+                $validator = Validator::make($request->all(), $rule);
+                if($validator->fails()){ 
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                }
+                $mimeType = $request->file("director_comment_file")->getClientMimeType();
+                if($mimeType=="application/pdf"){
+                    $extension = ".pdf";
+                }
+                else if($mimeType=="application/msword"){
+                    $extension = ".doc";
+                }
+                else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    $extension = ".docx";
+                }
 
-            $file = $request->file("director_comment_file")->getClientOriginalName();
-            //store the file
-            $school_code = $internal_rule->school->code;
-            $filename = "int_rules_".$school_code."_dc".$extension;
-            try{
-                $path = $request->file("director_comment_file")->storeAs('internal_rules', $filename);
-            }
-            catch(Throwable $e){
+                $file = $request->file("director_comment_file")->getClientOriginalName();
+                //store the file
+                $school_code = $internal_rule->school->code;
+                $filename = "int_rules_".$school_code."_dc".$extension;
                 try{
-                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director comments file error ".$e->getMessage());
+                    $path = $request->file("director_comment_file")->storeAs('internal_rules', $filename);
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director comments file error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
-                return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
-            }
 
-            try{
-                $internal_rule->director_comments_file = $file;
-                $internal_rule->save();
-            }
-            catch(Throwable $e){
                 try{
-                    Log::channel('throwable_db')->error(Auth::user()->username.' update director comments file '.$e->getMessage());
+                    $internal_rule->director_comments_file = $file;
+                    $internal_rule->save();
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('throwable_db')->error(Auth::user()->username.' update director comments file '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
-                return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                Mail::to($internal_rule->school->mail)->send(new InternalRuleCommented('Διευθυντής Εκπαίδευσης', $internal_rule->school->md5));
+                return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
             }
-            Mail::to($internal_rule->school->mail)->send(new InternalRuleCommented('Διευθυντής Εκπαίδευσης', $internal_rule->school->md5));
-            return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
+            else{
+                return redirect(url('/admin/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            }
         }
-        else{
-            return redirect(url('/admin/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
-        }
-
+        abort(403, 'Unauthorized action.');
     }
 
     public function upload_director_signed_file(InternalRule $internal_rule, Request $request){
-        $microapp = Microapp::where('url', '/internal_rules')->first();
-        if($microapp->accepts){
-            $rule = [
-                "director_signed_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            ];
+        if((Auth::check() && (Auth::user()->microapps->where('url', '/internal_rules')->count() or Auth::user()->isAdmin()))){
+            $microapp = Microapp::where('url', '/internal_rules')->first();
+            if($microapp->accepts){
+                $rule = [
+                    "director_signed_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ];
 
-            $validator = Validator::make($request->all(), $rule);
-            if($validator->fails()){ 
-                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            }
-            $mimeType = $request->file("director_signed_file")->getClientMimeType();
-            if($mimeType=="application/pdf"){
-                $extension = ".pdf";
-            }
-            else if($mimeType=="application/msword"){
-                $extension = ".doc";
-            }
-            else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                $extension = ".docx";
-            }
+                $validator = Validator::make($request->all(), $rule);
+                if($validator->fails()){ 
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                }
+                $mimeType = $request->file("director_signed_file")->getClientMimeType();
+                if($mimeType=="application/pdf"){
+                    $extension = ".pdf";
+                }
+                else if($mimeType=="application/msword"){
+                    $extension = ".doc";
+                }
+                else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    $extension = ".docx";
+                }
 
-            $file = $request->file("director_signed_file")->getClientOriginalName();
-            //store the file
-            $school_code = $internal_rule->school->code;
-            $filename = "int_rules_".$school_code."_ds".$extension;
-            try{
-                $path = $request->file("director_signed_file")->storeAs('internal_rules', $filename);
-            }
-            catch(Throwable $e){
+                $file = $request->file("director_signed_file")->getClientOriginalName();
+                //store the file
+                $school_code = $internal_rule->school->code;
+                $filename = "int_rules_".$school_code."_ds".$extension;
                 try{
-                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director signed file error ".$e->getMessage());
+                    $path = $request->file("director_signed_file")->storeAs('internal_rules', $filename);
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload director signed file error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
-                return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
-            }
 
-            try{
-                $internal_rule->director_signed_file = $file;
-                $internal_rule->director_signed_at = now();
-                $internal_rule->save();
-            }
-            catch(Throwable $e){
                 try{
-                    Log::channel('throwable_db')->error(Auth::user()->username.' update director signed file '.$e->getMessage());
+                    $internal_rule->director_signed_file = $file;
+                    $internal_rule->director_signed_at = now();
+                    $internal_rule->save();
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('throwable_db')->error(Auth::user()->username.' update director signed file '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
-                return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                Mail::to($internal_rule->school->mail)->send(new InternalRuleMail());
+                return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
             }
-            Mail::to($internal_rule->school->mail)->send(new InternalRuleMail());
-            return redirect(url('/admin/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
+            else{
+                return redirect(url('/admin/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            }
         }
-        else{
-            return redirect(url('/admin/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
-        }
+        abort(403, 'Unauthorized action.');
     }
 
     public function upload_consultant_signed_file(InternalRule $internal_rule, Request $request){
-        $microapp = Microapp::where('url', '/internal_rules')->first();
-        if($microapp->accepts){
-            $rule = [
-                "consultant_signed_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            ];
+        $consultantSchoolIds = Auth::guard('consultant')->user()->schools->pluck('id');
+        if($consultantSchoolIds->contains($internal_rule->school->id)) {
+            $microapp = Microapp::where('url', '/internal_rules')->first();
+            if($microapp->accepts){
+                $rule = [
+                    "consultant_signed_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ];
+                $validator = Validator::make($request->all(), $rule);
+                if($validator->fails()){ 
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                }
+                $mimeType = $request->file("consultant_signed_file")->getClientMimeType();
+                if($mimeType=="application/pdf"){
+                    $extension = ".pdf";
+                }
+                else if($mimeType=="application/msword"){
+                    $extension = ".doc";
+                }
+                else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    $extension = ".docx";
+                }
 
-            $validator = Validator::make($request->all(), $rule);
-            if($validator->fails()){ 
-                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            }
-            $mimeType = $request->file("consultant_signed_file")->getClientMimeType();
-            if($mimeType=="application/pdf"){
-                $extension = ".pdf";
-            }
-            else if($mimeType=="application/msword"){
-                $extension = ".doc";
-            }
-            else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                $extension = ".docx";
-            }
-
-            $file = $request->file("consultant_signed_file")->getClientOriginalName();
-            //store the file
-            $school_code = $internal_rule->school->code;
-            $filename = "int_rules_".$school_code."_cs".$extension;
-            try{
-                $path = $request->file("consultant_signed_file")->storeAs('internal_rules', $filename);
-            }
-            catch(Throwable $e){
+                $file = $request->file("consultant_signed_file")->getClientOriginalName();
+                //store the file
+                $school_code = $internal_rule->school->code;
+                $filename = "int_rules_".$school_code."_cs".$extension;
                 try{
-                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant signed file error ".$e->getMessage());
+                    $path = $request->file("consultant_signed_file")->storeAs('internal_rules', $filename);
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant signed file error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
-                return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
-            }
 
-            try{
-                $internal_rule->consultant_signed_file = $file;
-                $internal_rule->consultant_signed_at = now();
-                $internal_rule->save();
-            }
-            catch(Throwable $e){
                 try{
-                    Log::channel('throwable_db')->error(Auth::user()->username.' update consultant signed file '.$e->getMessage());
+                    $internal_rule->consultant_signed_file = $file;
+                    $internal_rule->consultant_signed_at = now();
+                    $internal_rule->save();
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('throwable_db')->error(Auth::user()->username.' update consultant signed file '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
-                return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
             }
-            return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου');
+            else{
+                return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            }
         }
-        else{
-            return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
-        }
+        abort(403, 'Unauthorized action.');
     }
 
     public function upload_consultant_comments_file(InternalRule $internal_rule, Request $request){
-        $microapp = Microapp::where('url', '/internal_rules')->first();
-        if($microapp->accepts){
-            $rule = [
-                "consultant_comment_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            ];
+        $consultantSchoolIds = Auth::guard('consultant')->user()->schools->pluck('id');
+        if($consultantSchoolIds->contains($internal_rule->school->id)) {    
+            $microapp = Microapp::where('url', '/internal_rules')->first();
+            if($microapp->accepts){
+                $rule = [
+                    "consultant_comment_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ];
 
-            $validator = Validator::make($request->all(), $rule);
-            if($validator->fails()){ 
-                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-            }
-            $mimeType = $request->file("consultant_comment_file")->getClientMimeType();
-            if($mimeType=="application/pdf"){
-                $extension = ".pdf";
-            }
-            else if($mimeType=="application/msword"){
-                $extension = ".doc";
-            }
-            else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                $extension = ".docx";
-            }
+                $validator = Validator::make($request->all(), $rule);
+                if($validator->fails()){ 
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                }
+                $mimeType = $request->file("consultant_comment_file")->getClientMimeType();
+                if($mimeType=="application/pdf"){
+                    $extension = ".pdf";
+                }
+                else if($mimeType=="application/msword"){
+                    $extension = ".doc";
+                }
+                else if($mimeType=="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                    $extension = ".docx";
+                }
 
-            $file = $request->file("consultant_comment_file")->getClientOriginalName();
-            //store the file
-            $school_code = $internal_rule->school->code;
-            $filename = "int_rules_".$school_code."_cc".$extension;
-            try{
-                $path = $request->file("consultant_comment_file")->storeAs('internal_rules', $filename);
-            }
-            catch(Throwable $e){
+                $file = $request->file("consultant_comment_file")->getClientOriginalName();
+                //store the file
+                $school_code = $internal_rule->school->code;
+                $filename = "int_rules_".$school_code."_cc".$extension;
                 try{
-                    Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant comments file error ".$e->getMessage());
+                    $path = $request->file("consultant_comment_file")->storeAs('internal_rules', $filename);
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('stakeholders_microapps')->error(Auth::user()->username." upload consultant comments file error ".$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
-                return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
-            }
 
-            try{
-                $internal_rule->consultant_comments_file = $file;
-                $internal_rule->save();
-            }
-            catch(Throwable $e){
                 try{
-                    Log::channel('throwable_db')->error(Auth::user()->username.' update consultant comments file '.$e->getMessage());
+                    $internal_rule->consultant_comments_file = $file;
+                    $internal_rule->save();
                 }
                 catch(Throwable $e){
+                    try{
+                        Log::channel('throwable_db')->error(Auth::user()->username.' update consultant comments file '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
 
+                    }
+                    return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
-                return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                Mail::to($internal_rule->school->mail)->send(new InternalRuleCommented('Σύμβουλος Εκπαίδευσης', $internal_rule->school->md5));
+                return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
             }
-            Mail::to($internal_rule->school->mail)->send(new InternalRuleCommented('Σύμβουλος Εκπαίδευσης', $internal_rule->school->md5));
-            return redirect(url('/consultant_app/internal_rules'))->with('success', 'Επιτυχής καταχώρηση αρχείου και αποστολή mail ειδοποίησης στο Σχολείο.');
+            else{
+                return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            }
         }
-        else{
-            return redirect(url('/consultant_app/internal_rules'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
-        }
-
+        abort(403, 'Unauthorized action.');
     }
 
     public function approve_int_rule($type, InternalRule $internal_rule, Request $request){
@@ -355,8 +366,12 @@ class InternalRulesController extends Controller
             $internal_rule->approved_by_director = true;
         }
         else if($type=='consultant'){
-            $username = Auth::guard('consultant')->user()->surname;
-            $internal_rule->approved_by_consultant = true;
+            $consultantSchoolIds = Auth::guard('consultant')->user()->schools->pluck('id');
+            if($consultantSchoolIds->contains($internal_rule->school->id)) {
+                $username = Auth::guard('consultant')->user()->surname;
+                $internal_rule->approved_by_consultant = true;
+            }
+            abort(403, 'Unauthorized action.');
         }
         try{
             $internal_rule->save();
@@ -375,6 +390,9 @@ class InternalRulesController extends Controller
     }
 
     public function download_int_rule_file(InternalRule $internal_rule, $file_type){
+        // code for auth checks here
+        //...........
+
         //find the extension
         $filename = $internal_rule->$file_type;
         $lastDotPos = strrpos($filename, '.');
@@ -414,7 +432,8 @@ class InternalRulesController extends Controller
     }
 
     public function check_internal_rule(Request $request, InternalRule $internal_rule){
-        
+        // code for auth checks here
+        //...........
         if($request->input('checked') == 'directorYes'){
             $internal_rule->approved_by_director = 1;
         }    

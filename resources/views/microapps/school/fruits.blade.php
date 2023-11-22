@@ -11,7 +11,7 @@
         <div class="container px-5">
             
                 <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/save_fruits/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/save_fruits")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <input type="hidden" name="asks_to" value="insert">
                         <div class="input-group">

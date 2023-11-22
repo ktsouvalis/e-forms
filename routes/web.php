@@ -262,9 +262,9 @@ Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'ch
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
-Route::post("/save_fruits", [FruitsController::class, 'save_fruits']);
+Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
 
-Route::post("/create_ticket",[TicketsController::class, 'create_ticket']);
+Route::post("/create_ticket",[TicketsController::class, 'create_ticket'])->middleware('isSchool');
 
 Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
     if(Auth::user()){
@@ -282,13 +282,13 @@ Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_res
 
 Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
 
-Route::post('/new_outing',[OutingsController::class, 'new_outing']);
+Route::post('/new_outing',[OutingsController::class, 'new_outing'])->middleware('isSchool');
 
-Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']);
+Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']); //checking Auth inside the method
 
-Route::post('/delete_outing/{outing}', [OutingsController::class,'delete_outing']);
+Route::post('/delete_outing/{outing}', [OutingsController::class,'delete_outing']); //checking Auth inside the method
 
-Route::post('/check_outing/{outing}', [OutingsController::class,'check_outing']);
+Route::post('/check_outing/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
 
 Route::get('/outing_profile/{outing}', function(Outing $outing){
     return view('microapps.school.outing-profile',['outing'=>$outing]);
@@ -296,7 +296,7 @@ Route::get('/outing_profile/{outing}', function(Outing $outing){
 
 Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_outing_profile'])->middleware('canUpdateOuting');
 
-Route::post('/save_all_day_school', [AllDaySchoolController::class, 'post_all_day']);
+Route::post('/save_all_day_school', [AllDaySchoolController::class, 'post_all_day'])->middleware('isSchool');
 
 Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
     if($type==1)
@@ -313,13 +313,13 @@ Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
     catch(Throwable $e){
         return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
     }
-});
+})->middleware('isSchool');
 
-Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template']);
+Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
-Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
+Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file'])->middleware('auth'); //checking who is Auth inside the method
 
-Route::post('/save_immigrants', [ImmigrantsController::class, 'post_immigrants']);
+Route::post('/save_immigrants', [ImmigrantsController::class, 'post_immigrants'])->middleware('isSchool');
 
 Route::post('/dl_immigrants_template', function(Request $request){
     $file = 'immigrants/immigrants.xlsx';
@@ -333,21 +333,21 @@ Route::post('/dl_immigrants_template', function(Request $request){
     }
 });
 
-Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template']);
+Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template'])->middleware('boss');
 
 Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
 
-Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules']);
+Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules'])->middleware('isSchool');
 
-Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file']);
+Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further
 
-Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file']);
+Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file'])->middleware('isConsultant');
 
 Route::post("/approve_int_rule/{type}/{internal_rule}", [InternalRulesController::class, 'approve_int_rule']);
 
-Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file']);
+Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file']); //inside method check further
 
-Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file']);
+Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file'])->middleware('isConsultant');
 
 Route::post("/dl_internal_rules_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_int_rule_file']);
 

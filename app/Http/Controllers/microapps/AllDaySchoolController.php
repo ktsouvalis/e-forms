@@ -154,16 +154,18 @@ class AllDaySchoolController extends Controller
     }
 
     public function download_file(Request $request, AllDaySchool $all_day_school){
-       
-        $file = 'all_day/all_day_'.$all_day_school->school->code.'_'.$all_day_school->month->id.'.xlsx';
-        $response = Storage::disk('local')->download($file, $all_day_school->file);  
-        ob_end_clean();
-        try{
-            return $response;
+        if((Auth::check() && (Auth::user()->microapps->where('url', '/all_day_school')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $all_day_school->school->id)){    
+            $file = 'all_day/all_day_'.$all_day_school->school->code.'_'.$all_day_school->month->id.'.xlsx';
+            $response = Storage::disk('local')->download($file, $all_day_school->file);  
+            ob_end_clean();
+            try{
+                return $response;
+            }
+            catch(Throwable $e){
+                return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+            }
         }
-        catch(Throwable $e){
-            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
-        }
+        abort(403, 'Unauthorized action.');
     }
 
     public function update_all_day_template(Request $request, $type){

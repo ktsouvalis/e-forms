@@ -11,7 +11,7 @@
     <div class="container">
     <div class="container px-5">  
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/save_internal_rules/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/save_internal_rules")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}

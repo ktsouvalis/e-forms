@@ -31,7 +31,7 @@
                 <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/save_all_day_school/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/save_all_day_school")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}

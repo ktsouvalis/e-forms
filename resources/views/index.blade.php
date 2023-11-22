@@ -104,7 +104,7 @@
             </div>
             <div class="row flex justify-content-end">
                 <div class="col px-4 pb-3 h2">Ηλεκτρονικές Φόρμες</div>
-                <div class="col px-4 pb-3"> <a href="{{url('/index_user')}}" class="position-absolute top-0 end-0 text-secondary"><i class="fa fa-sign-in" aria-hidden="true"> Σύνδεση Υπαλλήλου Διεύθυνσης</i></a>
+                <div class="col px-4 pb-3"> <a href="{{url('/index_user')}}" class="position-absolute bottom-0 start-0 text-secondary"><i class="fa fa-sign-in" aria-hidden="true"> Σύνδεση Υπαλλήλου Διεύθυνσης</i></a>
                 </div>
         </div>
     </div>

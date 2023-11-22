@@ -39,52 +39,48 @@ class WhocanController extends Controller
         //iterating through identifiers
         foreach($identifiers as $identifier){
             if(School::where('code', trim($identifier))->count()){ //if identifier is school code
-                $stakeholder_id = School::where('code', trim($identifier))->first()->id;
-                $stakeholder_type = 'App\Models\School';
+                $stakeholder = School::where('code', trim($identifier))->first();
                 $found=1;
             }
             else if(Teacher::where('afm', trim($identifier))->count()){//if identifier is teacher afm
-                $stakeholder_id = Teacher::where('afm', trim($identifier))->first()->id;
-                $stakeholder_type = 'App\Models\Teacher';
+                $stakeholder = Teacher::where('afm', trim($identifier))->first();
                 $found=1;   
             }
-            else{ // if is neither
-                // return redirect(url("/".$my_app."_profile/$my_id"))->with('failure', "Άγνωστος: $identifier");
+            else{ // if is neither school code nor teacher afm
                 array_push($not_found, trim($identifier));
                 continue;
             }
             if($my_app=="fileshare"){ //fileshare
+                // dd($stakeholder);
                 FileshareStakeholder::updateOrCreate(
                     [
                     'fileshare_id' => $my_id,
-                    'stakeholder_id' => $stakeholder_id,
-                    'stakeholder_type' => $stakeholder_type
+                    'stakeholder_id' => $stakeholder->id,
+                    'stakeholder_type' => get_class($stakeholder)
                     ],
                     [
-                    'fileshare_id' => $my_id,
-                    'stakeholder_id' => $stakeholder_id,
-                    'stakeholder_type' => $stakeholder_type,
                     'addedby_id' => Auth::user()->id,
                     'addedby_type' => get_class(Auth::user())
-                ]); 
+                    ]
+                ); 
+                $stakeholder->visited_fileshare = 0;
+                $stakeholder->save();
             }
             else if($my_app=="microapp"){ //microapp
                 MicroappStakeholder::updateOrCreate(
                     [
                     'microapp_id' => $my_id,
-                    'stakeholder_id' => $stakeholder_id,
-                    'stakeholder_type' => $stakeholder_type
+                    'stakeholder_id' => $stakeholder->id,
+                    'stakeholder_type' => get_class($stakeholder)
                     ],
                     [
-                    'microapp_id' => $my_id,
-                    'stakeholder_id' => $stakeholder_id,
-                    'stakeholder_type' => $stakeholder_type,
                     'hasAnswer'=> 0
-                ]);
+                    ]
+                );
                 
             }      
         }
-        // dd($not_found);
+
         Session::put('not_found', $not_found);
         if($found)
             return redirect(url("/".$my_app."_profile/$my_id"))

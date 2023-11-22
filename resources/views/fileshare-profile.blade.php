@@ -121,6 +121,7 @@
                         <th id="search">name</th>
                         <th id="search">mail</th>
                         <th id="search">added by</th>
+                        <th id="search">visited</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
@@ -148,6 +149,11 @@
                         <td>{{$one_stakeholder->addedby->name}}</td>
                     @else
                         <td>{{$one_stakeholder->addedby->username}}</td>
+                    @endif
+                    @if($one_stakeholder->stakeholder->visited_fileshare)
+                        <td>ΝΑΙ</td>
+                    @else
+                        <td>ΟΧΙ</td>
                     @endif
                     <td> 
                         <form action="{{url("/delete_one_whocan/fileshare/$one_stakeholder->id")}}" method="post">

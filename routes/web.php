@@ -363,15 +363,19 @@ Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
     if(Auth::guard('teacher')->id()!=$teacher->id){
         abort(403);
     }
+    $teacher->visited_fileshare=true;
+    $teacher->save();
     return view('teacher-fileshare', ['teacher' => $teacher]);
-});
+})->middleware('isTeacher');
 
 Route::get("/school_fileshare/{school}", function(School $school){
     if(Auth::guard('school')->id()!=$school->id){
         abort(403);
     }
+    $school->visited_fileshare=true;
+    $school->save();
     return view('school-fileshare', ['school' => $school]);
-});
+})->middleware('isSchool');
 
 Route::view('/fileshares', 'fileshares')->middleware('auth');
 

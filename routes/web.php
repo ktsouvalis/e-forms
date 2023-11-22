@@ -611,17 +611,3 @@ Route::post('/delete_sections', [SectionController::class, function(Request $req
 //misc routes
 
 Route::view('/anaplirotes','anaplirotes');
-
-Route::get('/fix_fileshare', function(){
-    // Get the teachers who have visited fileshare
-    $teachers = Teacher::where('visited_fileshare', 1)->get();
-
-    // Update the fileshare_stakeholders table
-    foreach ($teachers as $teacher) {
-        DB::table('fileshares_stakeholders')
-            ->where('fileshare_id', 4)
-            ->where('stakeholder_id', $teacher->id)
-            ->where('stakeholder_type', Teacher::class)
-            ->update(['visited_fileshare' => 1]);
-    }
-});

@@ -165,7 +165,12 @@ class WhocanController extends Controller
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
                 try{
-                    Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));  
+                    Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+                    try{
+                        Log::channel('mails')->info("Fileshare $fileshare->id, MailToStakeholders success: $mail");  
+                    }
+                    catch(Throwable $e){
+                    }
                 }
                 catch(Throwable $e){
                     $mail_error = true;
@@ -180,6 +185,11 @@ class WhocanController extends Controller
                 $mail = $stakeholder->stakeholder->mail;
                 try{ 
                     Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                    try{
+                        Log::channel('mails')->info("Microapp $microapp->name, MailToStakeholders success: $mail");
+                    }
+                    catch(Throwable $e){
+                    }
                 }
                 catch(Throwable $e){
                     $mail_error = true;

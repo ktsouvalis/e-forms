@@ -56,14 +56,17 @@
             @endif
             @endforeach
 
-            
+            @foreach($user->fileshares as $fileshare)
+            @php
+                $ffi = $fileshare->fileshare->id
+            @endphp
             <li class="nav-item">
             <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#00bfff; text-align:center;">
               <div class="text-dark fa-solid fa-file-pdf"></div> 
-              <a href="{{url("/school_fileshare/$user->id")}}" style=" text-decoration:none;" class="text-dark"> Αρχεία Διεύθυνσης</a>
+              <a href="{{url("/school_fileshare/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$fileshare->fileshare->name}}</a>
             </div>
             </li> 
-
+            @endforeach
 
             <p>
             <li class="nav-item">

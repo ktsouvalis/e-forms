@@ -359,22 +359,24 @@ Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::cl
 
 // FILESHARES ROUTES
 
-Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
-    if(Auth::guard('teacher')->id()!=$teacher->id){
+Route::get("/teacher_fileshare/{fileshare}", function(Fileshare $fileshare){
+    $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
+    if(!$stakeholder){
         abort(403);
     }
-    $teacher->visited_fileshare=true;
-    $teacher->save();
-    return view('teacher-fileshare', ['teacher' => $teacher]);
+    $stakeholder->visited_fileshare=true;
+    $stakeholder->save();
+    return view('teacher-fileshare', ['fileshare' => $fileshare]);
 })->middleware('isTeacher');
 
-Route::get("/school_fileshare/{school}", function(School $school){
-    if(Auth::guard('school')->id()!=$school->id){
+Route::get("/school_fileshare/{fileshare}", function(Fileshare $fileshare){
+    $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
+    if(!$stakeholder){
         abort(403);
     }
-    $school->visited_fileshare=true;
-    $school->save();
-    return view('school-fileshare', ['school' => $school]);
+    $stakeholder->visited_fileshare=true;
+    $stakeholder->save();
+    return view('school-fileshare', ['fileshare' => $fileshare]);
 })->middleware('isSchool');
 
 Route::view('/fileshares', 'fileshares')->middleware('auth');
@@ -609,3 +611,17 @@ Route::post('/delete_sections', [SectionController::class, function(Request $req
 //misc routes
 
 Route::view('/anaplirotes','anaplirotes');
+
+Route::get('/fix_fileshare', function(){
+    // Get the teachers who have visited fileshare
+    $teachers = Teacher::where('visited_fileshare', 1)->get();
+
+    // Update the fileshare_stakeholders table
+    foreach ($teachers as $teacher) {
+        DB::table('fileshares_stakeholders')
+            ->where('fileshare_id', 4)
+            ->where('stakeholder_id', $teacher->id)
+            ->where('stakeholder_type', Teacher::class)
+            ->update(['visited_fileshare' => 1]);
+    }
+});

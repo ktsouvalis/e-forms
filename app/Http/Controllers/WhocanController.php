@@ -60,11 +60,10 @@ class WhocanController extends Controller
                     ],
                     [
                     'addedby_id' => Auth::user()->id,
-                    'addedby_type' => get_class(Auth::user())
+                    'addedby_type' => get_class(Auth::user()),
+                    'visited_fileshare'=>0 
                     ]
                 ); 
-                $stakeholder->visited_fileshare = 0;
-                $stakeholder->save();
             }
             else if($my_app=="microapp"){ //microapp
                 MicroappStakeholder::updateOrCreate(

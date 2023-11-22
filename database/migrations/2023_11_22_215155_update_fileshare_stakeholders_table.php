@@ -12,11 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::table('schools', function ($table) {
-            $table->boolean('visited_fileshare')->nullable()->default(0);
-        });
-
-        Schema::table('teachers', function ($table) {
+        Schema::table('fileshares_stakeholders', function ($table) {
             $table->boolean('visited_fileshare')->nullable()->default(0);
         });
     }

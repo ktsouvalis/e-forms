@@ -150,7 +150,7 @@
                     @else
                         <td>{{$one_stakeholder->addedby->username}}</td>
                     @endif
-                    @if($one_stakeholder->stakeholder->visited_fileshare)
+                    @if($one_stakeholder->visited_fileshare)
                         <td>ΝΑΙ</td>
                     @else
                         <td>ΟΧΙ</td>

@@ -21,7 +21,7 @@
     @push('title')
         <title>{{$microapp->name}}</title>
     @endpush    
-    <div class="container">
+    <div class="mx-2">
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
         <div class="table-responsive py-2">
         <table  id="dataTable" class="display table table-sm table-striped table-hover">

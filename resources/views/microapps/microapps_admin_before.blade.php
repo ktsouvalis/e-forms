@@ -33,7 +33,7 @@
         $tooltip_vis = "Άνοιγμα ορατότητας";
     }
 @endphp
-<div class="d-flex justify-content-center">
+<div class="d-flex mx-2 justify-content-center">
 <div class="hstack gap-3 py-2">
     @if(!$microapp->visible)
         <div class='alert alert-warning text-center'>

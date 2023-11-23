@@ -21,7 +21,7 @@
     @endphp
 
    
-    <div class="container">  
+    <div class=" mx-2">  
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
             @if(Auth::user()->isAdmin())      
             <nav class="navbar navbar-light bg-light">
@@ -31,9 +31,9 @@
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
-                            <span class="input-group-text w-50"><strong>Ενημέρωση πρότυπου αρχείου Δημοτικών</strong></span>
+                            <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Δημοτικών</strong></span>
                         </div>
-                        <div class="input-group w-50">
+                        <div class="input-group w-75">
                             <input name="template_file" type="file" class="form-control"><br>
                         </div>
                         <div class="input-group">
@@ -51,9 +51,9 @@
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
-                            <span class="input-group-text w-50"><strong>Ενημέρωση πρότυπου αρχείου Νηπιαγωγείων</strong></span>
+                            <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Νηπιαγωγείων</strong></span>
                         </div>
-                        <div class="input-group w-50">
+                        <div class="input-group w-75">
                             <input name="template_file" type="file" class="form-control"><br>
                         </div>
                         <div class="input-group">
@@ -69,13 +69,13 @@
                 </div>
             </nav>
             @endif
-    </div> 
+    
         
         @php
             $all_day_schools = App\Models\microapps\AllDaySchool::all()->sortByDesc('month_id');
         @endphp
-        <div class="container py-5">
-            <div class="table-responsive py-2">
+        <div class="mx-2">
+            <div class="table-responsive py-2" style="align-self:flex-start">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
                     <tr>
@@ -122,5 +122,6 @@
                 </table>
             </div>
             @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
+        </div> 
         </div>  
 </x-layout>

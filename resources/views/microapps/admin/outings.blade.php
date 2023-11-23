@@ -61,7 +61,7 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
         $outings = App\Models\microapps\Outing::orderBy('outing_date','desc')->get();
     @endphp
-    {{-- <div class="container"> --}}
+    <div class="mx-2">
             @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
         
             <div class="table-responsive py-2">
@@ -69,16 +69,16 @@
                 <thead>
                     <tr>
                         <th id="search">Σχολείο</th>
-                        <th id="search">Ημερομηνία (έτος/μήνας/μέρα)</th>
+                        <th id="">Ημερομηνία (έτος/μήνας/μέρα)</th>
                         <th id="">Αρχείο</th>
-                        <th id="search">Τύπος</th>
-                        <th id="search">Έλεγχος</th>
+                        <th id="">Τύπος</th>
+                        <th id="">Έλεγχος</th>
                         <th id="">Τμήματα (πλήθος εκδρομών)</th>
                         <th id="">Δράση</th>
                         {{-- <th id="">Πρακτικό</th> --}}
                         <th>Ημερομηνία Υποβολής</th>
                         <th>Διαγραφή εκδρομής</th>
-                        <th id="search">Κωδικός</th>
+                        <th id="">Κωδικός</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -129,7 +129,7 @@
                 </tbody>  
                 </table>    
             </div>
-    {{-- </div> --}}
+    </div>
 
     @push('scripts')
     

@@ -21,7 +21,7 @@
     @endphp
 
    
-    <div class="container">  
+    <div class="mx-2">  
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
             <form action="{{url("/dl_immigrants_template")}}" method="post">
                 @csrf
@@ -50,7 +50,7 @@
         @php
             $immigrants = App\Models\microapps\Immigrant::all()->sortByDesc('month_id');
         @endphp
-        <div class="container py-5">
+        <div class="mx-2 py-2">
             <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>

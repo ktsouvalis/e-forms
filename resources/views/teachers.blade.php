@@ -20,9 +20,7 @@
     @php
         $all_teachers = App\Models\Teacher::all();
     @endphp
-<body>
-    
-        
+    <body>     
     <p class="h4">Εκπαιδευτικοί Διεύθυνσης</p>
     <p class="text-muted">Δεν περιλαμβάνονται οι ΕΕΠ, ΕΒΠ, οι ιδιωτικοί εκπαιδευτικοί και όσοι συμπληρώνουν ωράριο από τη Δ/θμια</p>
     

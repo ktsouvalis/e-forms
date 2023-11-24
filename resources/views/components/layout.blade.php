@@ -22,102 +22,63 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     @stack('links')
-  </head> 
-  @auth
+  </head>
+  <body>
   
-  @php
-    $user = Auth::user();
-    if(App\Models\Superadmin::where('user_id',$user->id)->exists()){
-        $operations=App\Models\Operation::all(); //$operations is Operation model
-        $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
-        $super_admin=true;
-    }
-    else {
-        $operations=$user->operations; //$operations is UsersOperations model
-        $microapps=$user->microapps; // $microapps is MicroappUser model
-        $super_admin=false;
-    }
-  @endphp
-  <body >
-  <div class="row">
+  @auth
+    @php
+      $user = Auth::user();
+      if(App\Models\Superadmin::where('user_id',$user->id)->exists()){
+          $operations=App\Models\Operation::all(); //$operations is Operation model
+          $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
+          $super_admin=true;
+      }
+      else {
+          $operations=$user->operations; //$operations is UsersOperations model
+          $microapps=$user->microapps; // $microapps is MicroappUser model
+          $super_admin=false;
+      }
+    @endphp
+    <!-- If this page is not index show horizontal menu -->
     @if(Illuminate\Support\Facades\Request::path()!='index_user')
-      @include('menu')
-    @else
+      @include('components/menu_of_user') 
+    @else {{--if this page is index show pc icon--}}
       @push('app-icon')
         <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="50" height="50" alt="services"></div>
-        <div class="d-flex justify-content-center h6">{{$user->username}}</div>
+        <div class="d-flex justify-content-center h6">{{$user->display_name}}</div>
       @endpush
     @endif
-  </div>
-  
-  {{-- <div class="col" style="min-width: 0;" > --}}
-    <div class="row justify-content-md-center">
-      <div class="col p-4">
-        @stack('app-icon')
-        <div class="hstack justify-content-start gap-2">
-          @if(Illuminate\Support\Facades\Request::path()!='index_user')
-            <div class=" d-flex "><a href='{{url('/index_user')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
-          @endif
-          <div class=" d-flex "><a href='{{url('/change_password')}}' class="text-dark bi bi-gear" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> </a></div>
-          <div class=" d-flex "><a href='{{url('/logout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
-        </div>
+    <!--show a line containing: FrontPage, ProfileName, Logout-->
+    <div class="pt-2 pb-2 ps-4">
+      @stack('app-icon')
+      <div class="hstack justify-content-start gap-2">
+        @if(Illuminate\Support\Facades\Request::path()!='index_user')
+          <div class=" d-flex "><a href='{{url('/index_user')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
+        @endif
+        <div class=" d-flex "><a href='{{url('/change_password')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης">{{$user->username}} </a></div>
+        <div class=" d-flex "><a href='{{url('/logout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
       </div>
-
     </div>
   @endauth
-  
+ 
+  <div class="container-xl px-2"> <!-- Custom container --> 
+  @include('components/messages')    <!-- Show Notifications --> 
   {{$slot}}
-  
-        @if (session()->has('success'))
-        <div class='container container-narrow'>
-          <div class='alert alert-success text-center'>
-            {{session('success')}}
-          </div>
-        </div>
-        @endif
-    
-        @if(session()->has('failure'))
-        <div class='container container-narrow'>
-        <div class='alert alert-danger text-center'>
-            {{session('failure')}}
-        </div>
-        </div>
-        @endif
-        
-        @if(session()->has('warning'))
-        <div class='container container-narrow'>
-        <div class='alert alert-warning text-center'>
-            {{session('warning')}}
-        </div>
-        </div>
-        @endif 
+  </div> <!-- End of custom container --> 
 
-        @if(session()->has('command'))
-        <div class='container container-narrow'>
-        <div class='alert alert-dark text-center fw-bold'>
-            {{session('command')}}
-        </div>
-        </div>
-        @endif 
-        
-
-       <!-- footer begins -->
-{{-- </div> --}}
-
-</div>
-       <footer class="border-top text-center small text-muted py-3">
-      <p class="m-0">Copyright &copy; {{Illuminate\Support\Carbon::now()->year}} <a href="{{url("/")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
-    </footer>
-    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
-    <script
-        src="https://code.jquery.com/jquery-3.6.4.min.js"
-        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
-        crossorigin="anonymous">
-    </script>
-    @stack('scripts')
-    </div> <!-- container closing -->
-   
+  <!-- footer begins -->
+  <footer class="border-top text-center small text-muted py-3">
+    <p class="m-0">Copyright &copy; {{Illuminate\Support\Carbon::now()->year}} <a href="{{url("/")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
+  </footer>
+  <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+    crossorigin="anonymous">
+  </script>
+  @stack('scripts')
+  </div> <!-- container closing -->
     <div class="d-flex justify-content-center"><p class="h3" style="color:black"> {{env('APP_NAME')}}</p></div>
     @stack('copy_script')
-   </body>
+  </body>
 </html>

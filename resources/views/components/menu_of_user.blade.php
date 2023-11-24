@@ -10,11 +10,10 @@
         $microapps=$user->microapps; // $microapps is MicroappUser model
         $super_admin=false;
     }
-  
 @endphp
-<div class="mx-1">
-<nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(32, 94, 138);">
-    <!-- Navbar content -->
+
+<nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
+<!-- Navbar content -->
     @if($user->isAdmin())
     <div class="badge text-wrap py-2" style="width: 10rem; background-color:Gainsboro; text-align:center;">
         <div class="text-dark fa-solid fa-users"></div>
@@ -32,11 +31,15 @@
         @endphp
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_operation->color}}; text-align:center;">
             <div class="text-dark {{$one_operation->icon}}"></div>
-            <a href="{{url("/admin".$one_operation->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_operation->name}}</a>
+            <a href="{{url($one_operation->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_operation->name}}</a>
         </div>
     @endforeach
+    <div class="badge text-wrap py-2" style="width: 10rem; background-color:#00bfff; text-align:center;">
+        <div class="text-dark fa-solid fa-file-pdf"></div>
+        <a href="{{url('/fileshares')}}" style="color:black; text-decoration:none;" class=""> Αποστολή Αρχείων </a>
+    </div>
 </nav>
-<nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: #1f3f57;">
+<nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(71, 151, 209);">
     @foreach ($microapps as $microapp)
         @php
           if(!$super_admin){
@@ -82,4 +85,3 @@
         <a href="{{url('/logout')}}" style="color:white; text-decoration:none;" class=""> Αποσύνδεση</a>
     </div> --}}
 </nav>
-</div>

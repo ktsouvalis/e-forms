@@ -24,7 +24,7 @@
     <script src="https://kit.fontawesome.com/5083d79d45.js" crossorigin="anonymous"></script>
   
 </head> 
-    
+<body>
 <div class="row">
     <!-- This blank div appears only in small screens-->
     <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary d-md-none" style="width: 280px; opacity:0.2;">
@@ -108,6 +108,7 @@
                 </div>
         </div>
     </div>
+@include('components/messages')
 <div class="row bg-dark bg-gradient p-5 m-2  border border-danger rounded shadow text-white justify-content-md-center">
     Οι Ηλεκτρονικές Φόρμες είναι ένα Πληροφοριακό Σύστημα που έχει αναπτυχθεί στη Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας προκειμένου μέσα από αυτό να επιτυγχάνεται 
         γρήγορη ανταλλαγή (συλλογή και διαμοιρασμός) στοιχείων και αρχείων μεταξύ της Υπηρεσίας και των Σχολικών Μονάδων καθώς και των Εκπαιδευτικών.
@@ -149,33 +150,7 @@
     </div>
     <div class="col"></div>
 </div>            
-                
-<!-- Messages-->  
-@if (session()->has('success'))
-    <div class='container container-narrow'>
-        <div class='alert alert-success text-center'>
-        {{session('success')}}
-        </div>
-    </div>
-@endif
-
-@if(session()->has('failure'))
-    <div class='container container-narrow'>
-    <div class='alert alert-danger text-center'>
-        {{session('failure')}}
-    </div>
-    </div>
-@endif
-    
-@if(session()->has('warning'))
-    <div class='container container-narrow'>
-    <div class='alert alert-warning text-center'>
-        {{session('warning')}}
-    </div>
-    </div>
-@endif 
-
-       <!-- footer begins -->
+<!-- footer begins -->
 </div>
 
 </div>

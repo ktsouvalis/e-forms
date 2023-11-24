@@ -93,7 +93,7 @@ class School extends Authenticatable
     }
 
     public function outings(){
-        return $this->hasMany(Outing::class);
+        return $this->hasMany(Outing::class)->orderBy('outing_date', 'desc');
     }
 
     public function internal_rule(){

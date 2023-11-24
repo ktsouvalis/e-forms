@@ -18,7 +18,6 @@
         $all_schools = App\Models\School::all();
     @endphp
 <body>
-    
     <p class="h4">Διευθυντές Σχολείων</p>
     @if(Illuminate\Support\Facades\DB::table('last_update_directors')->find(1))
     <div class="col-md-4 py-3" style="max-width:15rem">
@@ -66,6 +65,7 @@
     @can('updateDirectors', App\Models\School::class)
         <a href="{{url('/import_directors')}}" class="btn btn-primary bi bi-building-up"> Μαζική Εισαγωγή Διευθυντών Σχολείων</a>
     @endcan
+
 </x-layout>
         
            

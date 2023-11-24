@@ -27,20 +27,18 @@
   @php
     $user = Auth::guard('teacher')->user();
   @endphp
-  @push('app-icon')
-  <div class="hstack justify-content-start gap-2">
-    @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
-      <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
-    @endif
-    <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} {{$user->surname}}</a></div>
-    <div class=" d-flex px-2"><a href='{{url('/tlogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
-  </div>
-  @endpush
+  <!--show a line containing: FrontPage, ProfileName, Logout-->
   <div class="justify-content-auto" style="background-color: #fffde3;"> 
     <div class="container">
       <div class="row justify-content-md-center">
         <div class="col">
-          @stack('app-icon')
+          <div class="hstack justify-content-start gap-2">
+            @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
+              <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
+            @endif
+              <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} {{$user->surname}}</a></div>
+              <div class=" d-flex px-2"><a href='{{url('/tlogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
+          </div>
         </div>
       </div>
     </div>

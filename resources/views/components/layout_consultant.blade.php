@@ -29,10 +29,27 @@
     $user = Auth::guard('consultant')->user();
   @endphp
   <body>
+   <!--show a line containing: FrontPage, ProfileName, Logout-->
+   <div class="justify-content-auto" style="background-color: #fffde3;"> 
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col">
+          <div class="hstack justify-content-start gap-2">
+            @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
+              <div class=" d-flex px-2"><a href='{{url('/index_consultant')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
+            @endif
+              <div class=" d-flex px-2"><a href='{{url('/index_consultant')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} {{$user->surname}}</a></div>
+              <div class=" d-flex px-2"><a href='{{url('/clogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
       <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
-        <div class="badge text-wrap py-2" style="width: 10rem; background-color:DodgerBlue; text-align:center;">
-          <a href="{{url('/index_consultant')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
+          <div class="text-dark fa-solid fa-file-signature"></div> 
+            <a href="{{url("/consultant_app/internal_rules")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
           <div class="text-dark fa-solid fa-school"></div> 
@@ -42,21 +59,14 @@
           <div class="text-dark fa-solid fa-signature"></div> 
             <a href="{{url("/consultant_directors")}}" style=" text-decoration:none;" class="text-dark"> Διευθυντές</a>
         </div>
-        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
-          <div class="text-dark fa-solid fa-file-signature"></div> 
-            <a href="{{url("/consultant_app/internal_rules")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
-        </div>
-        <div class="badge text-wrap py-2" style="width: 10rem; background-color:Gainsboro; text-align:center;">
-          <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-            <a href="{{url('/clogout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
-        </div>
+      </nav>
       @else
           @push('app-icon')
             <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
             <div class="d-flex justify-content-center h4">{{$user->name}} {{$user->surname}}</div>
           @endpush
       @endif
-    </nav>
+    
     @endauth
     <div class="px-4"> {{-- Custom container --}} 
     @include('components/messages')

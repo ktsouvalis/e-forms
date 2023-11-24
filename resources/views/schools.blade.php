@@ -47,6 +47,10 @@
                 @endif
             @endif
         </div>
+{{-- Στον πίνακα πρέπει στην 4η στήλη (4) να βρίσκεται το e-mail και το ΑΦΜ στην 7η στήλη (7)  --}}
+{{-- Στις στήλες 2, 4, 5, 6, 7 και 11 μειώνεται το πλάτος του serch field με javascript  --}}
+{{-- Αν αλλαχτεί κάτι από τα παραπάνω στον πίνακα όπως σειρά στηλών κλπ θα πρέπει να αλλαχτεί και στα javascript: datatable_init_schools.js, copycolumn.js, copycolumn2.js  --}}
+{{-- Τα copycolumn αρχεία είναι κοινά για τους πίνακες teachers και schools. Αλλαγή στο ένα θα επηρεάσει και το άλλο. --}}
         <div class="table-responsive">
             <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
                 <thead>

@@ -10,7 +10,7 @@
         <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
+        <script src="../datatable_init_outings.js"></script>
         <script>
             $(document).ready(function() {
                 $('body').on('change', '.outing-checkbox', function() {
@@ -68,14 +68,14 @@
             <thead>
                 <tr>
                     <th id="search">Σχολείο</th>
-                    <th id="">Ημερομηνία (έτος/μήνας/μέρα)</th>
+                    <th id="search">Ημερομηνία (έτος/μήνας/μέρα)</th>
                     <th id="">Αρχείο</th>
-                    <th id="">Τύπος</th>
-                    <th id="">Έλεγχος</th>
+                    <th id="search">Τύπος</th>
+                    <th id="search">Έλεγχος</th>
                     <th id="">Τμήματα (πλήθος εκδρομών)</th>
-                    <th id="">Δράση</th>
+                    <th id="search">Δράση</th>
                     {{-- <th id="">Πρακτικό</th> --}}
-                    <th>Ημερομηνία Υποβολής</th>
+                    <th id="search">Ημερομηνία Υποβολής</th>
                     <th>Διαγραφή εκδρομής</th>
                     <th id="">Κωδικός</th>
                 </tr>

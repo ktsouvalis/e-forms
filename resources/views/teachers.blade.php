@@ -12,7 +12,7 @@
         <script src="copycolumn.js"></script>
         <script src="copycolumn2.js"></script>
         <script src="copylink.js"></script>
-        <script src="datatable_init.js"></script>
+        <script src="datatable_init_teachers.js"></script>
     @endpush
     @push('title')
         <title>Εκπαιδευτικοί</title>
@@ -51,23 +51,27 @@
             @endif
         @endif
     </div>
+{{-- στον πίνακα πρέπει στην πρώτη στήλη (1) να είναι η αντιγραφή συνδέσμου, στην 4η στήλη (4) το e-mail και το ΑΦΜ στην 7η στήλη (7)  --}}
+{{-- Στις στήλες 2, 4, 5, 6, 7 και 11 μειώνεται το πλάτος του serch field με javascript  --}}
+{{-- Αν αλλαχτεί κάτι από τα παραπάνω στον πίνακα όπως σειρά στηλών κλπ θα πρέπει να αλλαχτεί και στα javascript: datatable_init_teachers.js, copycolumn.js, copycolumn2.js  --}}
+{{-- Τα copycolumn αρχεία είναι κοινά για τους πίνακες teachers και schools. Αλλαγή στο ένα θα επηρεάσει και το άλλο. --}}
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
                 <tr>
                     <th class="align-middle">Αντιγραφή συνδέσμου</th>
-                    <th class="align-middle">Αποστολή συνδέσμου</th>
-                    <th id="search">ΑΦΜ</th>
-                    <th id="search">AΜ</th>
-                    <th id="search">email</th>
+                    {{-- <th class="align-middle">Αποστολή συνδέσμου</th> --}}
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
+                    <th id="search">email</th>
+                    <th id="search">Τηλ.</th>
                     <th id="search">Κλάδος</th>
-                    <th id="search">Σχέση Εργασίας</th>
-                    <th id="search">email ΠΣΔ</th>
-                    <th id="search">Τηλέφωνο</th>
-                    <th id="search">Οργανική</th>
+                    <th id="search">ΑΦΜ</th>
+                    <th id="search">Οργ.</th>
                     <th id="search">Υπηρέτηση</th>
+                    <th id="search">AΜ</th>
+                    <th id="search">Σχ. Εργ.</th>
+                    <th id="search">email ΠΣΔ</th>
                     <th id="search">last login</th> 
                     <th id="search">Μαζική Αποστολή</th>
                 </tr>
@@ -88,29 +92,27 @@
                     <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
-                    <td style="text-align:center" >
+                    {{-- <td style="text-align:center" >
                         <form action="{{url("share_link/teacher/$teacher->id")}}" method="post">
                             @csrf
                             <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής συνδέσμου;')"> </button>
                         </form>
-                    </td> 
-                    <td>{{$teacher->afm}}</td>
-                    <td>{{$teacher->am}}</td>
-                    <td>{{$teacher->mail}}</td>
+                    </td>  --}}
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
-                    <td>{{$teacher->klados}}</td>
-                    <td>{{$teacher->sxesi_ergasias->name}}</td>
-                    <td>{{$teacher->sch_mail}}</td>
+                    <td>{{$teacher->mail}}</td>
                     <td>{{$teacher->telephone}}</td>
+                    <td>{{$teacher->klados}}</td>
+                    <td>{{$teacher->afm}}</td>
                     <td>{{$teacher->organiki->name}}</td>
-
                     @if($teacher->ypiretisi_id!=null)
                         <td>{{$teacher->ypiretisi->name}}</td>
                     @else
                         <td>-</td>
                     @endif
-
+                    <td>{{$teacher->am}}</td>
+                    <td>{{$teacher->sxesi_ergasias->name}}</td>
+                    <td>{{$teacher->sch_mail}}</td>
                     @if($date)
                         <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                     @else

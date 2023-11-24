@@ -1,7 +1,7 @@
 // Attach an event listener to the button or clickable element
 document.getElementById("copyMailButton").addEventListener("click", function () {
     // Iterate through the table rows and extract the values from the "mail" column
-    var mailColumn = document.querySelectorAll("#dataTable tbody td:nth-child(5)");
+    var mailColumn = document.querySelectorAll("#dataTable tbody td:nth-child(4)");
     var mailValues = Array.from(mailColumn).map(function (cell) {
         return cell.textContent.trim();
     });

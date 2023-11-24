@@ -19,8 +19,6 @@
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $fruits_schools = $microapp->stakeholders; 
     @endphp
-
-    <div class="mx-2">
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
 
     <div class="table-responsive py-2">
@@ -63,8 +61,6 @@
                 @endforeach   
             </tbody>  
         </table>    
-    </div>
+    </div> <!-- table responsive closure -->
     @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
-</div>
-
 </x-layout>

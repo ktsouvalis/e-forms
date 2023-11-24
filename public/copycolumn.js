@@ -1,7 +1,7 @@
 // Attach an event listener to the button or clickable element
 document.getElementById("copyCodeButton").addEventListener("click", function () {
     // Iterate through the table rows and extract the values from the "code" column
-    var codeColumn = document.querySelectorAll("#dataTable tbody td:nth-child(3)");
+    var codeColumn = document.querySelectorAll("#dataTable tbody td:nth-child(7)");
     var codeValues = Array.from(codeColumn).map(function (cell) {
         return cell.textContent.trim();
     });

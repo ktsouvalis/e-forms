@@ -61,7 +61,7 @@
     </div>
   @endauth
  
-  <div class="container-xl px-2"> <!-- Custom container --> 
+  <div class="mx-5"> <!-- Custom container --> 
   @include('components/messages')    <!-- Show Notifications --> 
   {{$slot}}
   </div> <!-- End of custom container --> 

@@ -12,7 +12,7 @@
         <script src="copycolumn.js"></script>
         <script src="copycolumn2.js"></script>
         <script src="copylink.js"></script>
-        <script src="datatable_init.js"></script>
+        <script src="datatable_init_schools.js"></script>
     @endpush
     @push('title')
         <title>Σχολεία</title>
@@ -53,16 +53,18 @@
                     <tr>
                         {{-- <th id="search">id</th> --}}
                         <th class="align-middle">Αντιγραφή συνδέσμου</th>
-                        <th class="align-middle">Αποστολή συνδέσμου</th>
-                        <th id="search">Κωδικός</th>
                         <th id="search">Ονομασία</th>
+                        <th id="search">Τηλ.</th>
                         <th id="search">email</th>
-                        <th id="search">tel</th>
+                        <th id="search">Οργ.</th>
+                        <th id="search">Λειτ.</th>
+                        <th id="search">Κωδικός</th>
                         <th id="search">Δήμος</th>
-                        <th id="search">Οργανικότητα</th>
-                        <th id="search">Λειτουργικότητα</th>
-                        <th id="search">Σύμβουλος Εκπαίδευσης</th>
+                        <th id="search">Διευθυντής</th>
+                        {{-- <th id="search">Τηλ. Δ/ντή</th> --}}
+                        {{-- <th class="align-middle">Αποστολή συνδέσμου</th> --}}
                         <th id="search">last login</th>
+                        <th id="search">Σύμβουλος Εκπαίδευσης</th>
                         <th id="search">Μαζική Αποστολή</th>
                     </tr>
                 </thead>
@@ -79,29 +81,37 @@
                         <td style="text-align:center">
                             <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                         </td>
-                        <td style="text-align:center;">
+                        <td >{{$school->name}}</td>
+                        <td >{{$school->telephone}}</td>
+                        <td >{{$school->mail}}</td>
+                        <td >{{$school->organikotita}}</td>
+                        <td >{{$school->leitourgikotita}}</td>
+                        <td >{{$school->code}}</td>
+                        <td >{{$school->municipality->name}}</td>
+                        @if($school->director)
+                        <td>{{$school->director->surname}} {{$school->director->name}}</td>
+                        {{-- <td>{{$school->director->telephone}}</td> --}}
+                        @else
+                        <td> - </td>
+                        {{-- <td> - </td> --}}
+                        @endif
+                        {{-- <td style="text-align:center;">
                             <form action="{{url("share_link/school/$school->id")}}" method="post">
                                 @csrf
                                 <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής συνδέσμου;')"> </button>
                             </form>
-                        </td>  
-                        <td >{{$school->code}}</td>
-                        <td >{{$school->name}}</td>
-                        <td >{{$school->mail}}</td>
-                        <td >{{$school->telephone}}</td>
-                        <td >{{$school->municipality->name}}</td>
-                        <td >{{$school->organikotita}}</td>
-                        <td >{{$school->leitourgikotita}}</td>
-                        @if($school->schregion)
-                            <td>{{$school->schregion->consultant->surname}} {{$school->schregion->consultant->name}}</td>
-                        @else
-                            <td>-</td>
-                        @endif
+                        </td>   --}}
                         @if($date)
                             <td >{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
                         @else
                             <td > - </td>
                         @endif
+                        @if($school->schregion)
+                            <td>{{$school->schregion->consultant->surname}} {{$school->schregion->consultant->name}}</td>
+                        @else
+                            <td>-</td>
+                        @endif
+                        
                         @if($school->sent_link_mail)
                             <td style="text-align:center"><i class="btn btn-success bi bi-check2-circle"></i></td>
                         @else

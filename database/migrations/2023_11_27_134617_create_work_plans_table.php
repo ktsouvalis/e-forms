@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('consultant_id');
             $table->string('yearWeek');
             $table->string('comments')->nullable();
-            $table->json('programm')->nullable();
+            $table->string('programm', 9000)->nullable();
             $table->timestamps();
         });
     }

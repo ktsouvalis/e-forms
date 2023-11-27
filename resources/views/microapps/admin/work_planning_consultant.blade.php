@@ -9,7 +9,7 @@
     @endphp
     <div class="container">
         <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div>
-        <div>Σημείωση: Δεν έχει ολοκληρωθεί η εξαγωγή σε excel καθώς και θέματα εμφάνισης. Οι λειτουργίες αποθήκευσης λειτουργούν κανονικά. Μπορείτε να προχωρήσετε σε αποθήκευση κανονικά ανά εβδομάδα.</div>
+        <div>Σημείωση: Δεν έχει ολοκληρωθεί η εξαγωγή σε excel καθώς και θέματα εμφάνισης. <br>Οι λειτουργίες αποθήκευσης λειτουργούν κανονικά και επιπλέον έχουν μεταφερθεί οι δηλώσεις που έχουν υποβληθεί στην παλιά Φόρμα. Μπορείτε να προχωρήσετε σε αποθήκευση κανονικά ανά εβδομάδα.</div>
         <span class="" id="basic-addon2">Ημερομηνία</span>
         <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
     

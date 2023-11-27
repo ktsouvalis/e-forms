@@ -31,6 +31,7 @@ use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
@@ -220,6 +221,10 @@ Route::post('/consultant_app/check_internal_rule/{internal_rule}', [InternalRule
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
 Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
+
+Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consultant');//->middleware('isConsultant')->middleware('canViewMicroapp');
+
+Route::post('/consultant_app/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan']);//->middleware('isConsultant')->middleware('canViewMicroapp');
 
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 

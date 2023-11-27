@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\microapps\WorkPlan;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Consultant extends Authenticatable
 {
@@ -17,5 +18,10 @@ class Consultant extends Authenticatable
     public function schregion()
     {
         return $this->hasOne(Schregion::class);
+    }
+
+    public function workplans()
+    {
+        return $this->hasMany(WorkPlan::class);
     }
 }

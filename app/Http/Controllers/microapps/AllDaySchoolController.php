@@ -64,10 +64,7 @@ class AllDaySchoolController extends Controller
                 $nosm=0;
                 while ($rowSumValue != "" && $row<400){
                     $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-                    // dd($time);
                     if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625 or $time=='15:00 ή 14:50' or $time=='15:00 ή 14:55' or $time=='15:00:00'){
-                        // dd('tsa');
-                        // dd($time);
                         $nos3++;
                     }
                     else if($time=='16:00' or $time=='4:00:00 μμ' or $time==0.6667 or $time=0.66666666666667 or $time=='16:00 ή 15:50' or $time='16:00:00') {
@@ -187,10 +184,17 @@ class AllDaySchoolController extends Controller
         return back()->with('success', 'Το αρχείο ενημερώθηκε');
     }
 
-    public function showPopup()
-    {
-        $message = 'Δοκιμαστικό Μήνυμα';
-        return view('microapps.all_day_school')->with('message', $message);
+    public function self_update(Request $request, AllDaySchool $all_day_school){
+        if($request->all()['nos3']!=null)
+            $all_day_school->update(['nr_of_pupils_3'=>$request->all()['nos3']]);
+        if($request->all()['nos4']!=null)
+            $all_day_school->update(['nr_of_pupils_4'=>$request->all()['nos4']]);
+        if($request->all()['nos5']!=null)
+            $all_day_school->update(['nr_of_pupils_5'=>$request->all()['nos5']]);
+
+            return back()->with('success', 'Τα στοιχεία ενημερώθηκαν');
     }
+
+
 
 }

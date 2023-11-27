@@ -321,6 +321,8 @@ Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, '
 
 Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
 
+Route::post('/self_update_all_day/{all_day_school}', [AllDaySchoolController::class, 'self_update']);
+
 Route::post('/save_immigrants/{school}', [ImmigrantsController::class, 'post_immigrants']);
 
 Route::post('/dl_immigrants_template', function(Request $request){

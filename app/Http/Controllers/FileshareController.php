@@ -184,11 +184,9 @@ class FileshareController extends Controller
                             'stakeholder_type' => 'App\Models\Teacher'
                         ],
                         [
-                            'fileshare_id' => $fileshare->id,
-                            'stakeholder_id' => $stakeholder->id,
-                            'stakeholder_type' => 'App\Models\Teacher',
                             'addedby_id' => Auth::user()->id,
-                            'addedby_type' => get_class(Auth::user())
+                            'addedby_type' => get_class(Auth::user()),
+                            'visited_fileshare' => 0
                         ]);
                         $check['stakeholder']=$stakeholder->surname.' '.$stakeholder->name;
                     }
@@ -223,11 +221,9 @@ class FileshareController extends Controller
                     'stakeholder_type' => 'App\Models\Teacher'
                 ],
                 [
-                    'fileshare_id' => $fileshare->id,
-                    'stakeholder_id' => $teacher->id,
-                    'stakeholder_type' => 'App\Models\Teacher',
                     'addedby_id' => $school->id,
-                    'addedby_type' => get_class($school)
+                    'addedby_type' => get_class($school),
+                    'visited_fileshare' => 0
                 ]);
                 $i++;
                 $check['stakeholder']=$i.'. '.$teacher->surname.' '.$teacher->name;

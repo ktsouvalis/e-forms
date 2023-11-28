@@ -58,7 +58,7 @@ class CanViewMicroapp
 
             $consultant = Auth::guard('consultant')->user();
             if($consultant){
-                if($microapp->url=="/internal_rules"){
+                if($microapp->url=="/internal_rules" or $microapp->url=="/work_planning"){
                         return $next($request);
                 }
             }

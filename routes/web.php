@@ -31,6 +31,7 @@ use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
@@ -221,6 +222,10 @@ Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant
 
 Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
 
+Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
+
+Route::post('/consultant_app/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
+
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');
@@ -317,7 +322,9 @@ Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
 
 Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
-Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file'])->middleware('auth'); //checking who is Auth inside the method
+Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
+
+Route::post('/self_update_all_day/{all_day_school}', [AllDaySchoolController::class, 'self_update']);
 
 Route::post('/save_immigrants', [ImmigrantsController::class, 'post_immigrants'])->middleware('isSchool');
 
@@ -357,19 +364,25 @@ Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::cl
 
 // FILESHARES ROUTES
 
-Route::get("/teacher_fileshare/{teacher}", function(Teacher $teacher){
-    if(Auth::guard('teacher')->id()!=$teacher->id){
+Route::get("/teacher_fileshare/{fileshare}", function(Fileshare $fileshare){
+    $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
+    if(!$stakeholder){
         abort(403);
     }
-    return view('teacher-fileshare', ['teacher' => $teacher]);
-});
+    $stakeholder->visited_fileshare=true;
+    $stakeholder->save();
+    return view('teacher-fileshare', ['fileshare' => $fileshare]);
+})->middleware('isTeacher');
 
-Route::get("/school_fileshare/{school}", function(School $school){
-    if(Auth::guard('school')->id()!=$school->id){
+Route::get("/school_fileshare/{fileshare}", function(Fileshare $fileshare){
+    $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
+    if(!$stakeholder){
         abort(403);
     }
-    return view('school-fileshare', ['school' => $school]);
-});
+    $stakeholder->visited_fileshare=true;
+    $stakeholder->save();
+    return view('school-fileshare', ['fileshare' => $fileshare]);
+})->middleware('isSchool');
 
 Route::view('/fileshares', 'fileshares')->middleware('auth');
 

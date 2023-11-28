@@ -10,7 +10,7 @@
         <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
+        <script src="../datatable_init_outings.js"></script>
         <script>
             $(document).ready(function() {
                 $('body').on('change', '.outing-checkbox', function() {
@@ -61,76 +61,73 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
         $outings = App\Models\microapps\Outing::orderBy('outing_date','desc')->get();
     @endphp
-    {{-- <div class="container"> --}}
-            @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-        
-            <div class="table-responsive py-2">
-                <table  id="dataTable" class="small display table table-sm table-striped table-hover text-center">
-                <thead>
-                    <tr>
-                        <th id="search">Σχολείο</th>
-                        <th id="search">Ημερομηνία (έτος/μήνας/μέρα)</th>
-                        <th id="">Αρχείο</th>
-                        <th id="search">Τύπος</th>
-                        <th id="search">Έλεγχος</th>
-                        <th id="">Τμήματα (πλήθος εκδρομών)</th>
-                        <th id="">Δράση</th>
-                        {{-- <th id="">Πρακτικό</th> --}}
-                        <th>Ημερομηνία Υποβολής</th>
-                        <th>Διαγραφή εκδρομής</th>
-                        <th id="search">Κωδικός</th>
-                    </tr>
-                </thead>
-                <tbody>
-                
-                    @foreach($outings as $outing)
-                        @php
-                            $my_date = Illuminate\Support\Carbon::parse($outing->outing_date)->isoFormat('YYYY-MM-DD');
-                        @endphp
-                        <tr> 
-                            <td>{{$outing->school->name}}</td>
-                            <td>{{$my_date}}</td>
-                            <td>
-                                <div class="vstack gap-2">
-                                
-                                <form action="{{url("/download_record/$outing->id")}}" method="post">
-                                    @csrf
-                                    <button class="btn btn-secondary bi bi-box-arrow-down"> </button>
-                                </form>
-                                {{$outing->school->telephone}}
-                                </div>
-                            </td>
-                            <td>{{$outing->type->description}}</td>
-                            @php
-                                $text = $outing->checked ? 'Ελέγχθηκε' : 'Προς έλεγχο';
-                            @endphp
-                            <td >
-                                <input type="checkbox" class="outing-checkbox" data-outing-id="{{ $outing->id }}" {{ $outing->checked ? 'checked' : '' }}>
-                                <div class="check_td_{{$outing->id}}"> {{$text}}</div>
-                            </td>
-                            <td>
-                                @foreach($outing->sections as $section)
-                                    {{$section->section->name}} (<b>{{$section->section->outings->count()}}</b>)<br>
-                                @endforeach
-                            </td>
-                            <td>{{$outing->destination}}</td>
-                            {{-- <td>{{$outing->record}} </td> --}}
-                            <td>{{$outing->updated_at}}</td>
-                            <td>
-                                <form action="{{url("/delete_outing/$outing->id")}}" method="post">
-                                    @csrf
-                                    <button class="bi bi-x-circle btn btn-danger" type="submit" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>
-                                </form>
-                            </td>
-                            <td>{{$outing->id}}</td>
+        @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
+    
+        <div class="table-responsive py-2">
+            <table  id="dataTable" class="small display table table-sm table-striped table-hover text-center">
+            <thead>
+                <tr>
+                    <th id="search">Σχολείο</th>
+                    <th id="search">Ημερομηνία (έτος/μήνας/μέρα)</th>
+                    <th id="">Αρχείο</th>
+                    <th id="search">Τύπος</th>
+                    <th id="search">Έλεγχος</th>
+                    <th id="">Τμήματα (πλήθος εκδρομών)</th>
+                    <th id="search">Δράση</th>
+                    {{-- <th id="">Πρακτικό</th> --}}
+                    <th id="search">Ημερομηνία Υποβολής</th>
+                    <th>Διαγραφή εκδρομής</th>
+                    <th id="">Κωδικός</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+                @foreach($outings as $outing)
+                    @php
+                        $my_date = Illuminate\Support\Carbon::parse($outing->outing_date)->isoFormat('YYYY-MM-DD');
+                    @endphp
+                    <tr> 
+                        <td>{{$outing->school->name}}</td>
+                        <td>{{$my_date}}</td>
+                        <td>
+                            <div class="vstack gap-2">
                             
-                        </tr> 
-                    @endforeach   
-                </tbody>  
-                </table>    
-            </div>
-    {{-- </div> --}}
-
+                            <form action="{{url("/download_record/$outing->id")}}" method="post">
+                                @csrf
+                                <button class="btn btn-secondary bi bi-box-arrow-down"> </button>
+                            </form>
+                            {{$outing->school->telephone}}
+                            </div>
+                        </td>
+                        <td>{{$outing->type->description}}</td>
+                        @php
+                            $text = $outing->checked ? 'Ελέγχθηκε' : 'Προς έλεγχο';
+                        @endphp
+                        <td >
+                            <input type="checkbox" class="outing-checkbox" data-outing-id="{{ $outing->id }}" {{ $outing->checked ? 'checked' : '' }}>
+                            <div class="check_td_{{$outing->id}}"> {{$text}}</div>
+                        </td>
+                        <td>
+                            @foreach($outing->sections as $section)
+                                {{$section->section->name}} (<b>{{$section->section->outings->count()}}</b>)<br>
+                            @endforeach
+                        </td>
+                        <td>{{$outing->destination}}</td>
+                        {{-- <td>{{$outing->record}} </td> --}}
+                        <td>{{$outing->updated_at}}</td>
+                        <td>
+                            <form action="{{url("/delete_outing/$outing->id")}}" method="post">
+                                @csrf
+                                <button class="bi bi-x-circle btn btn-danger" type="submit" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>
+                            </form>
+                        </td>
+                        <td>{{$outing->id}}</td>
+                        
+                    </tr> 
+                @endforeach   
+            </tbody>  
+            </table>    
+        </div> <!-- table responsive closure -->
     @push('scripts')
     
     @endpush

@@ -69,7 +69,6 @@
     @php
         $schools = App\Models\School::where('is_active',1)->get();
     @endphp
-    <div class="container">
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}} 
             <table  id="dataTable" class="small display align-middle table table-sm table-secondary table-striped table-bordered table-hover">
                 <thead>
@@ -197,5 +196,4 @@
                 @endforeach
                 </tbody>
             </table>
-    </div>
 </x-layout>

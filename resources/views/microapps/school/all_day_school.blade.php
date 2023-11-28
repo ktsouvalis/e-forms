@@ -102,15 +102,31 @@
         </div> 
         <div class="container px-5 py-2">
             @if($old_data)
-                    <div class="vstack gap-3">
-                    <div class="hstack gap-2"><label class="form-control  w-25"><strong> Καταμέτρηση πρωινής υποδοχής για τον μήνα {{$old_data->month->name}}: </strong></label><mytext class="text-primary">{{$old_data->nr_morning}}</mytext> </div> 
-                    {{-- <label class="form-control text-success"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}} </label> --}}
-                    <form action="{{url("/dl_all_day_file/$old_data->id")}}" method="post">
-                        @csrf
-                    <div class="hstack gap-2"><label class="form-control  w-25"><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> </div>
-                    </form>
-                    
+            <div class="vstack gap-3">
+                    <div class="vstack gap-2">
+                        <div class="hstack gap-2"><label><strong> Καταμέτρηση πρωινής υποδοχής για τον μήνα {{$old_data->month->name}}: </strong></label><mytext class="text-primary">{{$old_data->nr_morning}}</mytext> </div> 
+                        {{-- <label class="form-control text-success"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}} </label> --}}
+                        <form action="{{url("/dl_all_day_file/$old_data->id")}}" method="post">
+                            @csrf
+                        <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> </div>
+                        </form>
                     </div>
+                    <div style="">
+                        <div class="text-muted">Αν δεν συμφωνείτε με τα στοιχεία που καταμετρήθηκαν, συμπληρώστε εδώ τα σωστά και πατήστε <i>Ενημέρωση</i></div>
+                        <div><strong>Αριθμός μαθητών με ΩΡΑ ΑΠΟΧΩΡΗΣΗΣ <u>στο αρχείο</u>: </strong></div>
+                        <form action="{{url("/self_update_all_day/$old_data->id")}}" method="post">
+                            @csrf
+                            {{-- <div class="vstack"> --}}
+                            @if($school->primary)
+                                <input type="number" name="nos3" placeholder="15.00 ή 14.55" id="" required>
+                            @endif
+                            <input type="number" name="nos4" placeholder="16.00 ή 15.50" id="" required>
+                            <input type="number" name="nos5" placeholder="17.30" id="" required>
+                            <button class="btn btn-secondary fa-solid fa-arrows-rotate"> Ενημέρωση</button>
+                            {{-- </div> --}}
+                        </form>  
+                    </div>
+            </div>
                 @endif
         </div>
 

@@ -13,114 +13,70 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{url("/favicon/favicon-16x16.png")}}">
     <link rel="manifest" href="{{url('/favicon/site.webmanifest')}}">
     <link rel="mask-icon" href="{{url('/favicon/safari-pinned-tab.svg')}}" color="#5bbad5">
+    <link href="{{url('/fontawesome-free-6.4.2-web/css/fontawesome.css')}}" rel="stylesheet">
+    <link href="{{url('/fontawesome-free-6.4.2-web/css/brands.css')}}" rel="stylesheet">
+    <link href="{{url('/fontawesome-free-6.4.2-web/css/solid.css')}}" rel="stylesheet">
+    <link href="{{url('/fontawesome-free-6.4.2-web/css/regular.css')}}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 
     @stack('links')
-    
-    <!-- fontawesome -->
-    <script src="https://kit.fontawesome.com/5083d79d45.js" crossorigin="anonymous"></script>
-  
   </head> 
   @auth('consultant')
   
   @php
     $user = Auth::guard('consultant')->user();
   @endphp
-  <div class="row">
-  
-    
-    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
-      @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
-          <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
-          <div class="d-flex justify-content-center h6">{{$user->surname}} {{$user->name}}</div>
-          <hr>
-          <ul class="nav nav-pills flex-column mb-auto">
-            <p>
-            <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
-              <a href="{{url('/index_consultant')}}" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
-            </div>
-            </li>
-            </p>
-      
-            <li class="nav-item">
-              <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:mediumaquamarine; text-align:center;">
-                <div class="text-dark fa-solid fa-school"></div> 
-                <a href="{{url("/consultant_schools")}}" style=" text-decoration:none;" class="text-dark"> Σχολεία</a>
-              </div>
-            </li>
-
-            <li class="nav-item">
-              <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:skyblue; text-align:center;">
-                <div class="text-dark fa-solid fa-signature"></div> 
-                  <a href="{{url("/consultant_directors")}}" style=" text-decoration:none;" class="text-dark"> Διευθυντές</a>
-                </div>
-            </li>
-      
-            <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:#f1948a; text-align:center;">
-              <div class="text-dark fa-solid fa-file-signature"></div> 
-              <a href="{{url("/consultant_app/internal_rules")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
-            </div>
-            </li>
-               
-            <p>
-            <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:Gainsboro; text-align:center;">
-                <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-                <a href="{{url('/clogout')}}" style="text-decoration:none;" class="text-dark "> Αποσύνδεση</a>
-            </div>
-            </li>
-            </p>
-          </ul>
-          <hr>
-    @else
-        @push('app-icon')
-          <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
-          <div class="d-flex justify-content-center h4">{{$user->name}} {{$user->surname}}</div>
-        @endpush
-    @endif
-  </div>
-  <div class="col-8">
-  <div class="container ">
-    <div class="row justify-content-md-center">
-      <div class="col p-4">
-        @stack('app-icon')
-        {{-- <div class=" d-flex justify-content-center"><a href='/change_password' class="h4 text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αλλαγή κωδικού πρόσβασης"> {{$user->name}} {{$user->surname}}</a></div> --}}
+  <body>
+   <!--show a line containing: FrontPage, ProfileName, Logout-->
+   <div class="justify-content-auto" style="background-color: #fffde3;"> 
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <div class="col">
+          <div class="hstack justify-content-start gap-2">
+            @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
+              <div class=" d-flex px-2"><a href='{{url('/index_consultant')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
+            @endif
+              <div class=" d-flex px-2"><a href='{{url('/index_consultant')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} {{$user->surname}}</a></div>
+              <div class=" d-flex px-2"><a href='{{url('/clogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  @endauth
-  {{$slot}}
-        @if (session()->has('success'))
-          <div class='container container-narrow'>
-            <div class='alert alert-success text-center'>
-              {{session('success')}}
-            </div>
-          </div>
-        @endif
+    @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
+      <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
+          <div class="text-dark fa-solid fa-file-signature"></div> 
+            <a href="{{url("/consultant_app/internal_rules")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
+        </div>
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#ff8f00; text-align:center;">
+          <div class="text-dark fa-solid fa-file-signature"></div> 
+            <a href="{{url("/consultant_app/work_planning")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
+        </div>
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
+          <div class="text-dark fa-solid fa-school"></div> 
+            <a href="{{url("/consultant_schools")}}" style=" text-decoration:none;" class="text-dark"> Σχολεία</a>
+        </div>
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:skyblue; text-align:center;">
+          <div class="text-dark fa-solid fa-signature"></div> 
+            <a href="{{url("/consultant_directors")}}" style=" text-decoration:none;" class="text-dark"> Διευθυντές</a>
+        </div>
+      </nav>
+      @else
+          @push('app-icon')
+            <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
+            <div class="d-flex justify-content-center h4">{{$user->name}} {{$user->surname}}</div>
+          @endpush
+      @endif
     
-        @if(session()->has('failure'))
-          <div class='container container-narrow'>
-            <div class='alert alert-danger text-center'>
-                {{session('failure')}}
-            </div>
-          </div>
-        @endif
-        
-        @if(session()->has('warning'))
-          <div class='container container-narrow'>
-            <div class='alert alert-warning text-center'>
-                {{session('warning')}}
-            </div>
-          </div>
-        @endif 
-       <!-- footer begins -->
-</div>
-
-</div>
+    @endauth
+    <div class="px-4"> {{-- Custom container --}} 
+    @include('components/messages')
+    {{$slot}}
+    </div> {{-- End of custom container --}} 
+    <!-- footer begins -->
     <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_consultant")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>

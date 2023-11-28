@@ -19,9 +19,6 @@
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
-
-   
-    <div class="container">  
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
             <form action="{{url("/dl_immigrants_template")}}" method="post">
                 @csrf
@@ -45,12 +42,10 @@
                 </form>
             </nav>
             @endif
-    </div> 
         
         @php
             $immigrants = App\Models\microapps\Immigrant::all()->sortByDesc('month_id');
         @endphp
-        <div class="container py-5">
             <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
@@ -80,7 +75,6 @@
                 @endforeach
                 </tbody>
                 </table>
-            </div>
-            {{-- @include('microapps.microapps_admin_after') email to those who haven't submitted an answer --}}
-        </div>  
+            </div> <!-- table responsive closure -->
+            {{-- @include('microapps.microapps_admin_after') email to those who haven't submitted an answer --}} 
 </x-layout>

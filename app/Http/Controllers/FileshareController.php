@@ -13,6 +13,7 @@ use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 
 class FileshareController extends Controller
@@ -91,26 +92,19 @@ class FileshareController extends Controller
         $files1 = $request->file('fileshare_common_files');
         if($files1){     
             $update_common_files = $this->update_fileshare_files($fileshare, $files1, 'common');
-            if($update_common_files->getStatusCode() == 500){
+            if(isset($update_common_files->getData()->error)){
                 $error=true;
-                Log::channel('files')->error(Auth::user()->username." error update fileshare common files: ".$fileshare->id);
-            }
-            else if($update_common_files->getStatusCode() == 200){
-                Log::channel('files')->info(Auth::user()->username." update fileshare common files) $fileshare->id");
             }
         }
         
         $files2 = $request->file('fileshare_personal_files');
         if($files2){  
             $update_personal_files = $this->update_fileshare_files($fileshare, $files2, 'personal');
-            if($update_personal_files->getStatusCode() == 500){
+            if(isset($update_personal_files->getData()->error)){
                 $error=true;
-                Log::channel('files')->error(Auth::user()->username." error update fileshare personal files: ".$fileshare->id);
-            }
-            else if($update_personal_files->getStatusCode() == 200){
-                Log::channel('files')->info(Auth::user()->username." update fileshare personal files) $fileshare->id");
             }
         }
+
         if(!$error)
             return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Ο διαμοιρασμός αρχείων ενημερώθηκε');
         else
@@ -140,28 +134,29 @@ class FileshareController extends Controller
     }
 
     public function update_fileshare_files(Fileshare $fileshare, $files, $string){//string is 'common' or 'personal'
-        if($string == 'common'){
-            $directory = 'fileshare'.$fileshare->id;
-              
-        }
-        else if($string == 'personal'){
-            $directory = 'fileshare'.$fileshare->id.'/personal_files';
-            
-        }
+        $username = Auth::check() ? Auth::user()->username : "API";
+        $error=false;
+        $directory = $string == 'common' ? 'fileshare'.$fileshare->id : 'fileshare'.$fileshare->id.'/personal_files';
         // store  files
         foreach ($files as $file){
-            try {
-                $path = $file->storeAs($directory, $file->getClientOriginalName(), 'local');
-            } 
-            catch (\Exception $e) {
-                return response()->json([
-                    'error' => $e->getMessage()
-                ], 500);
+            $fileHandler = new FilesController();
+            $filename = $file->getClientOriginalName();
+            $upload  = $fileHandler->upload_file($directory, $file, 'local');
+            if($upload->getStatusCode() == 500){
+                Log::channel('files')->error($username." File $directory/$filename failed to upload: ".$upload->getData()->error);
+                $error=true;
             }
+            else
+                Log::channel('files')->info($username." File $directory/$filename uploaded successfully");
         }
-        return response()->json([
-            'success' => "Fileshare $string files updated"
-        ], 200);
+        if(!$error)
+            return response()->json([
+                'success' => "Fileshare $string files updated"
+            ]);
+        else
+            return response()->json([
+                'error' => "Some Fileshare $string files not updated"
+            ]);
     }
 
     /**
@@ -171,7 +166,7 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function delete_fileshare(Request $request, Fileshare $fileshare)
+    public function delete_fileshare(Fileshare $fileshare)
     {
         //delete files from disk
         Storage::disk('local')->deleteDirectory('fileshare'.$fileshare->id);

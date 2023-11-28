@@ -25,28 +25,47 @@ class FileshareController extends Controller
      */
     public function insert_fileshare(Request $request)
     {
+        $table = $this->validate_and_prepare($request);
+        $result = $this->create_fileshare($table);
+
+        if($result->getStatusCode() == 500){
+            Log::channel('throwable_db')->error(Auth::user()->username." insert_fileshare: ".$e->getMessage());
+            return redirect(url('/fileshares'))->with('failure', 'Κάποιο πρόβλημα προέκυψε, δείτε το log throwable_db');
+        }
+        else if($result->getStatusCode() == 200){  
+            $fileshare = Fileshare::find($result->getData()->fileshare);
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." insert_fileshare ".$fileshare->name." for ".$fileshare->department->name);
+            return redirect(url('/fileshares'))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.'); 
+        }
+    }
+
+    private function validate_and_prepare(Request $request){
         if($request->user()->can('chooseDepartment', Fileshare::class)){
             $department_id = $request->input('department');
         }
         else{
             $department_id = $request->user()->department->id;
         }
+        $table = array();
+        $table['name'] = $request->all()['fileshare_name'];
+        $table['department_id'] = $department_id;
 
-        $department_name = Department::find($department_id)->name;
-        // create a database record
+        return $table;
+    }
+
+    public function create_fileshare($table){
         try{
-            $newFileshare = Fileshare::create([
-                'name' => $request->all()['fileshare_name'],
-                'department_id' => $department_id
-            ]);   
+            $fileshare = Fileshare::create($table);
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::user()->username." insert_fileshare: ".$e->getMessage());
-            return redirect(url('/fileshares'))->with('failure', 'Κάποιο πρόβλημα προέκυψε, δείτε το log thorwable_db');
+            return response()->json([
+                'error' => 'Fileshare creation failed'
+            ], 500);
         }
-
-        Log::channel('user_memorable_actions')->info(Auth::user()->username." insert_fileshare ".$request->all()['fileshare_name']." for ".$department_name);
-        return redirect(url('/fileshares'))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.');
+        return response()->json([
+            'success' => 'Fileshare created successfully',
+            'fileshare' => $fileshare->id
+        ], 200);
     }
 
     /**
@@ -58,39 +77,91 @@ class FileshareController extends Controller
      */
     public function update_fileshare(Request $request, Fileshare $fileshare)
     {
+        $error=false;
+        $name = $request->all()['name'];
+        $update_name = $this->update_fileshare_name($name, $fileshare);
+        if($update_name->getStatusCode() == 500){
+            $error=true;
+            Log::channel('throwable_db')->error(Auth::user()->username." error update_fileshare: ".$fileshare->id);
+        }
+        else if($update_name->getStatusCode() == 200){
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." update_fileshare (rename) $fileshare->id to ".$fileshare->name);
+        }
+
+        $files1 = $request->file('fileshare_common_files');
+        if($files1){     
+            $update_common_files = $this->update_fileshare_files($fileshare, $files1, 'common');
+            if($update_common_files->getStatusCode() == 500){
+                $error=true;
+                Log::channel('files')->error(Auth::user()->username." error update fileshare common files: ".$fileshare->id);
+            }
+            else if($update_common_files->getStatusCode() == 200){
+                Log::channel('files')->info(Auth::user()->username." update fileshare common files) $fileshare->id");
+            }
+        }
+        
+        $files2 = $request->file('fileshare_personal_files');
+        if($files2){  
+            $update_personal_files = $this->update_fileshare_files($fileshare, $files2, 'personal');
+            if($update_personal_files->getStatusCode() == 500){
+                $error=true;
+                Log::channel('files')->error(Auth::user()->username." error update fileshare personal files: ".$fileshare->id);
+            }
+            else if($update_personal_files->getStatusCode() == 200){
+                Log::channel('files')->info(Auth::user()->username." update fileshare personal files) $fileshare->id");
+            }
+        }
+        if(!$error)
+            return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Ο διαμοιρασμός αρχείων ενημερώθηκε');
+        else
+            return redirect(url("/fileshare_profile/$fileshare->id"))->with('warning', 'Ο διαμοιρασμός αρχείων ενημερώθηκε με σφάλματα στα αρχεία throwable_db/files της ημέρας');   
+    }
+
+    public function update_fileshare_name($name, Fileshare $fileshare){
         $old_name = $fileshare->name;
         // Update name
-        $fileshare->name = $request->all()['name'];
-        if ($fileshare->isDirty('name')) {
-            Log::channel('user_memorable_actions')->info(Auth::user()->username." update_fileshare (rename) $old_name to ".$fileshare->name);
-            $fileshare->save();
-        }
-
-        // set the directories for common and personal files
-        $directory_common = 'fileshare'.$fileshare->id;
-        $directory_personal = $directory_common.'/personal_files';
-
-        $common_files = $request->file('fileshare_common_files');
-
-        // store common files if any
-        if ($common_files) {
-            foreach ($common_files as $file) {
-                $path = $file->storeAs($directory_common, $file->getClientOriginalName(), 'local');
+        $fileshare->name = $name;
+        if($fileshare->isDirty('name')){
+            try{
+                $fileshare->save();
             }
-            Log::channel('user_memorable_actions')->info(Auth::user()->username." update_fileshare (added common files) ".$fileshare->name);
-        }
-
-        $personal_files = $request->file('fileshare_personal_files');
-
-        // store personal files if any
-        if ($personal_files) {
-            foreach ($personal_files as $file) {
-                $path = $file->storeAs($directory_personal, $file->getClientOriginalName(), 'local');
+            catch(\Exception $e){
+                return response()->json([
+                    'error' => 'Fileshare name not updated'
+                ], 500);
             }
-            Log::channel('user_memorable_actions')->info(Auth::user()->username." update_fileshare (add personal files) ".$fileshare->name);
+            return response()->json([
+                'success' => 'Fileshare name updated'
+            ], 200);
         }
+        return response()->json([
+            'success' => 'Fileshare not changed'
+        ], 200);
+    }
 
-        return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Αποθηκεύτηκε');
+    public function update_fileshare_files(Fileshare $fileshare, $files, $string){//string is 'common' or 'personal'
+        if($string == 'common'){
+            $directory = 'fileshare'.$fileshare->id;
+              
+        }
+        else if($string == 'personal'){
+            $directory = 'fileshare'.$fileshare->id.'/personal_files';
+            
+        }
+        // store  files
+        foreach ($files as $file){
+            try {
+                $path = $file->storeAs($directory, $file->getClientOriginalName(), 'local');
+            } 
+            catch (\Exception $e) {
+                return response()->json([
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+        return response()->json([
+            'success' => "Fileshare $string files updated"
+        ], 200);
     }
 
     /**

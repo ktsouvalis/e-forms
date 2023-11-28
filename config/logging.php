@@ -115,6 +115,13 @@ return [
             'days' => 30,
         ],
 
+        'files' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/files.log'),
+            'level' => 'debug',
+            'days' => 30,
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

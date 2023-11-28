@@ -9,7 +9,7 @@
     @endphp
     <div class="container">
         <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div>
-        <div>Σημείωση: Δεν έχει ολοκληρωθεί η εξαγωγή σε excel καθώς και θέματα εμφάνισης. <br>Οι λειτουργίες αποθήκευσης λειτουργούν κανονικά και επιπλέον έχουν μεταφερθεί οι δηλώσεις που έχουν υποβληθεί στην παλιά Φόρμα. Μπορείτε να προχωρήσετε σε αποθήκευση κανονικά ανά εβδομάδα.</div>
+        <div>Σημείωση: <em>Δεν έχει ολοκληρωθεί η εξαγωγή σε excel<br>Οι λειτουργίες αποθήκευσης λειτουργούν κανονικά και επιπλέον έχουν μεταφερθεί οι δηλώσεις που έχουν υποβληθεί στην παλιά Φόρμα. Μπορείτε να προχωρήσετε σε αποθήκευση κανονικά ανά εβδομάδα.</em></div>
         <span class="" id="basic-addon2">Ημερομηνία</span>
         <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
     
@@ -28,30 +28,30 @@
         if($workplan)
             $programm = json_decode($workplan->programm);
     @endphp
-    <div class="row">
+    <div class="row h5">
         Εβδομάδα: {{$today->startOfWeek()->isoFormat('DD-MM-YYYY')}} έως {{$today->startOfWeek()->add(4, 'day')->isoFormat('DD-MM-YYYY')}}
     </div>
     <form action="{{url("/consultant_app/save_work_plan/$yearWeek")}}"  method="post">
         @csrf
         <div class="row">
             <div class="col">
-                <div>Δευτέρα {{$today->startOfWeek()->isoFormat('DD-MM-YYYY')}}</div>
+                <div class="fw-bold">Δευτέρα {{$today->startOfWeek()->isoFormat('DD-MM-YYYY')}}</div>
                 <div><textarea name="mon" id="mon" cols="28" rows="8">@if($workplan){{$programm->mon}}@endif</textarea></div>
             </div>
             <div class="col">
-                <div>Τρίτη {{$today->startOfWeek()->add(1, 'day')->isoFormat('DD-MM-YYYY')}}</div>
+                <div class="fw-bold">Τρίτη {{$today->startOfWeek()->add(1, 'day')->isoFormat('DD-MM-YYYY')}}</div>
                 <div><textarea name="tue" id="tue" cols="28" rows="8">@if($workplan){{$programm->tue}}@endif</textarea></div>
             </div>
             <div class="col">
-                <div>Τετάρτη {{$today->startOfWeek()->add(2, 'day')->isoFormat('DD-MM-YYYY')}}</div>
+                <div class="fw-bold">Τετάρτη {{$today->startOfWeek()->add(2, 'day')->isoFormat('DD-MM-YYYY')}}</div>
                 <div><textarea name="wed" id="wed" cols="28" rows="8">@if($workplan){{$programm->wed}}@endif</textarea></div>
             </div>
             <div class="col">
-                <div>Πέμπτη {{$today->startOfWeek()->add(3, 'day')->isoFormat('DD-MM-YYYY')}}</div>
+                <div class="fw-bold">Πέμπτη {{$today->startOfWeek()->add(3, 'day')->isoFormat('DD-MM-YYYY')}}</div>
                 <div><textarea name="thu" id="thu" cols="28" rows="8">@if($workplan){{$programm->thu}}@endif</textarea></div>
             </div>
             <div class="col">
-                <div>Παρασκευή {{$today->startOfWeek()->add(4, 'day')->isoFormat('DD-MM-YYYY')}}</div>
+                <div class="fw-bold">Παρασκευή {{$today->startOfWeek()->add(4, 'day')->isoFormat('DD-MM-YYYY')}}</div>
                 <div><textarea name="fri" id="fri" cols="28" rows="8">@if($workplan){{$programm->fri}}@endif</textarea></div>
             </div>
         </div>

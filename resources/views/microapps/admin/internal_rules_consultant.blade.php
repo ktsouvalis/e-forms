@@ -10,6 +10,7 @@
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
+        <script src="../toggle_signed_internal_rules.js"></script>
         <script>
             $(document).ready(function() {
                 $('body').on('change', '.internal-rule-checkbox', function() {
@@ -65,6 +66,9 @@
         $microapp = App\Models\Microapp::where('url', '/internal_rules')->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
+    <div class="container pt-2">
+        <div class="h4">Έλεγχος, επεξεργασία και έγκριση Εσωτερικού Κανονισμού Λειτουργίας Σχ. Μονάδων</div>
+    </div>
     @php
         $schools = App\Models\School::whereIn('id', $user->schregion->schools->pluck('id'))->get();
     @endphp
@@ -84,101 +88,103 @@
                 @php
                     $one = $one_school->internal_rule;
                 @endphp
-                <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
-                    <td><strong>{{$one->school->name}}</strong></td>
-                    @php
-                        $text = $one->approved_by_consultant ? 'Εγκρίθηκε' : 'Έγκριση';
-                    @endphp
-                    @if(!$one->approved_by_consultant)
-                        <td @if($one->approved_by_director) class="table-success" @endif>{{-- Έγκριση Διευθυντή Εκπαίδευσης --}}
+                    @if(!($one->director_signed_file and $one->consultant_signed_file))
+                    <tr @if($one->approved_by_consultant and $one->approved_by_director) class="table-success" @endif>
+                        <td id="thereAreUnsigned"><strong>{{$one->school->name}}</strong></td>
+                        @php
+                            $text = $one->approved_by_consultant ? 'Εγκρίθηκε' : 'Έγκριση';
+                        @endphp
+                        @if(!$one->approved_by_consultant)
+                            <td @if($one->approved_by_director) class="table-success" @endif>{{-- Έγκριση Διευθυντή Εκπαίδευσης --}}
 
-                            <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_consultant ? 'checked' : '' }}>
-                            <div class="check_td_{{$one->id}}"> {{$text}}</div>
-
-                            @if($one->approved_by_director) Εγκεκριμένος από Διευθυντή Εκπαίδευσης @endif
-                        </td>
-                    @else
-                        <td> 
-                            @if($one->approved_by_director) 
-                                <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
-                            @else 
                                 <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_consultant ? 'checked' : '' }}>
                                 <div class="check_td_{{$one->id}}"> {{$text}}</div>
+
+                                @if($one->approved_by_director) Εγκεκριμένος από Διευθυντή Εκπαίδευσης @endif
+                            </td>
+                        @else
+                            <td> 
+                                @if($one->approved_by_director) 
+                                    <br><strong>Εγκεκριμένος από Συμβ. Εκπ/σης & Δ/ντή Εκπ/σης</strong>
+                                @else 
+                                    <input type="checkbox" class="internal-rule-checkbox" data-internal-rule-id="{{ $one->id }}" {{ $one->approved_by_consultant ? 'checked' : '' }}>
+                                    <div class="check_td_{{$one->id}}"> {{$text}}</div>
+                                @endif
+                            </td>
+                        @endif
+                        <td>{{-- Αρχεία Σχολείου --}}
+                            <form action="{{url("/dl_internal_rules_file/$one->id/school_file")}}" method="post">
+                                @csrf
+                                <button class="btn btn-warning mb-2 bi bi-box-arrow-down">@if($one->school_file2 or $one->school_file3)<del> @endif  {{$one->school_file}}</del></button>
+                            </form>
+                
+                            @if($one->school_file2)
+                                <form action="{{url("/dl_internal_rules_file/$one->id/school_file2")}}" method="post">
+                                    @csrf
+                                    <button class="btn btn-warning mb-2 bi bi-box-arrow-down">@if($one->school_file3)<del> @endif  {{$one->school_file2}}</del></button>
+                                </form>
+                            @endif
+                            @if($one->school_file3)
+                                <form action="{{url("/dl_internal_rules_file/$one->id/school_file3")}}" method="post">
+                                    @csrf
+                                    <button class="btn btn-warning mb-2 bi bi-box-arrow-down">  {{$one->school_file3}}</button>
+                                </form>
                             @endif
                         </td>
+                        <td> {{-- Αρχεία Παρατηρήσεων --}}
+                            @if(!$one->consultant_comments_file)
+                                @if(!$one->approved_by_consultant)
+                                    <form action="{{url("/upload_consultant_comments_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                                        @csrf                           
+                                        <input name="consultant_comment_file" type="file" class="form-control" required>
+                                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                                    </form>
+                                @endif
+                            @else
+                                <form action="{{url("/dl_internal_rules_file/$one->id/consultant_comments_file")}}" method="post">
+                                    @csrf
+                                    <div class="mb-2">Σύμβ. Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down">  {{$one->consultant_comments_file}}</button></div>
+                                </form>   
+                            @endif
+                            
+                            @if($one->director_comments_file)
+                                <form action="{{url("/dl_internal_rules_file/$one->id/director_comments_file")}}" method="post">
+                                    @csrf
+                                    <div class="mb-2">Δ/ντης Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down">  {{$one->director_comments_file}}</button></div>
+                                </form>
+                            @endif
+                        </td>
+                        @php 
+                            $consultant_color = "btn-secondary"; $director_color = "btn-secondary";
+                            if($one->consultant_singed_at > $one->director_signed_at)
+                                $consultant_color = "btn-danger";
+                            else 
+                                $director_color = "btn-danger"; 
+                        @endphp
+                        <td>
+                            @if($one->approved_by_consultant and $one->approved_by_director) {{-- Αρχεία Υπογεγραμμένα--}}
+                                @if(!$one->consultant_signed_file)
+                                    <form action="{{url("/upload_consultant_signed_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                                        @csrf                           
+                                        <input name="consultant_signed_file" type="file" class="form-control" required>
+                                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                                    </form>
+                                @else {{-- Έχω υπογεγραμμένο αρχείο Συμβούλου--}}
+                                    <form action="{{url("/dl_internal_rules_file/$one->id/consultant_signed_file")}}" method="post">
+                                        @csrf
+                                        <div class="mb-2">Σύμβ. Εκπ/σης: <button class="btn {{$consultant_color}} bi bi-box-arrow-down">  {{$one->consultant_signed_file}}</button></div>
+                                    </form>
+                                @endif
+                                @if($one->director_signed_file)
+                                    <form action="{{url("/dl_internal_rules_file/$one->id/director_signed_file")}}" method="post">
+                                        @csrf
+                                        <div class="mb-2">Δ/ντη Εκπ/σης: <button class="btn {{$director_color}} bi bi-box-arrow-down">  {{$one->director_signed_file}}</button></div>
+                                    </form>
+                                @endif
+                            @endif
+                        </td>
+                    </tr>
                     @endif
-                    <td>{{-- Αρχεία Σχολείου --}}
-                        <form action="{{url("/dl_internal_rules_file/$one->id/school_file")}}" method="post">
-                            @csrf
-                            <button class="btn btn-warning mb-2 bi bi-box-arrow-down">@if($one->school_file2 or $one->school_file3)<del> @endif  {{$one->school_file}}</del></button>
-                        </form>
-            
-                        @if($one->school_file2)
-                            <form action="{{url("/dl_internal_rules_file/$one->id/school_file2")}}" method="post">
-                                @csrf
-                                <button class="btn btn-warning mb-2 bi bi-box-arrow-down">@if($one->school_file3)<del> @endif  {{$one->school_file2}}</del></button>
-                            </form>
-                        @endif
-                        @if($one->school_file3)
-                            <form action="{{url("/dl_internal_rules_file/$one->id/school_file3")}}" method="post">
-                                @csrf
-                                <button class="btn btn-warning mb-2 bi bi-box-arrow-down">  {{$one->school_file3}}</button>
-                            </form>
-                        @endif
-                    </td>
-                    <td> {{-- Αρχεία Παρατηρήσεων --}}
-                        @if(!$one->consultant_comments_file)
-                            @if(!$one->approved_by_consultant)
-                                <form action="{{url("/upload_consultant_comments_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                                    @csrf                           
-                                    <input name="consultant_comment_file" type="file" class="form-control" required>
-                                    <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                                </form>
-                            @endif
-                        @else
-                            <form action="{{url("/dl_internal_rules_file/$one->id/consultant_comments_file")}}" method="post">
-                                @csrf
-                                <div class="mb-2">Σύμβ. Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down">  {{$one->consultant_comments_file}}</button></div>
-                            </form>   
-                        @endif
-                        
-                        @if($one->director_comments_file)
-                            <form action="{{url("/dl_internal_rules_file/$one->id/director_comments_file")}}" method="post">
-                                @csrf
-                                <div class="mb-2">Δ/ντης Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down">  {{$one->director_comments_file}}</button></div>
-                            </form>
-                        @endif
-                    </td>
-                    @php 
-                        $consultant_color = "btn-secondary"; $director_color = "btn-secondary";
-                        if($one->consultant_singed_at > $one->director_signed_at)
-                            $consultant_color = "btn-danger";
-                        else 
-                            $director_color = "btn-danger"; 
-                    @endphp
-                    <td>
-                        @if($one->approved_by_consultant and $one->approved_by_director) {{-- Αρχεία Υπογεγραμμένα--}}
-                            @if(!$one->consultant_signed_file)
-                                <form action="{{url("/upload_consultant_signed_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                                    @csrf                           
-                                    <input name="consultant_signed_file" type="file" class="form-control" required>
-                                    <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                                </form>
-                            @else {{-- Έχω υπογεγραμμένο αρχείο Συμβούλου--}}
-                                <form action="{{url("/dl_internal_rules_file/$one->id/consultant_signed_file")}}" method="post">
-                                    @csrf
-                                    <div class="mb-2">Σύμβ. Εκπ/σης: <button class="btn {{$consultant_color}} bi bi-box-arrow-down">  {{$one->consultant_signed_file}}</button></div>
-                                </form>
-                            @endif
-                            @if($one->director_signed_file)
-                                <form action="{{url("/dl_internal_rules_file/$one->id/director_signed_file")}}" method="post">
-                                    @csrf
-                                    <div class="mb-2">Δ/ντη Εκπ/σης: <button class="btn {{$director_color}} bi bi-box-arrow-down">  {{$one->director_signed_file}}</button></div>
-                                </form>
-                            @endif
-                        @endif
-                    </td>
-                </tr>
                 @else
                 <tr>
                     <td><strong>{{$one_school->name}}</strong></td>
@@ -191,4 +197,30 @@
             @endforeach
             </tbody>
         </table>
+        <button class="btn btn-primary bi bi-arrows-expand mb-3" onClick="showSigned()" id="toggleSignedButton"></button>
+            <div class="container" id="signed">
+                <table  id="dataTable" class="small display align-middle table table-sm table-secondary table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th id="search">Σχολείο</th>
+                            <th>Τελικός Υπογεγραμμένος Εσωτερικός Κανονισμός</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($schools as $one_school)
+                        @if($one_school->internal_rule <>null)
+                        @php
+                            $one = $one_school->internal_rule;
+                        @endphp
+                            @if($one->director_signed_file and $one->consultant_signed_file)
+                                <tr><td><strong>{{$one->school->name}}</strong></td>
+                                <td><form action="{{url("/dl_internal_rules_file/$one->id/director_signed_file")}}" method="post">
+                                    @csrf
+                                    <div class="mb-2"> <button class="btn btn-success bi bi-box-arrow-down">  {{$one->director_signed_file}}</button></div>
+                                </form></td></tr>
+                            @endif
+                        @endif
+                    @endforeach
+                </table>
+            </div>
 </x-layout_consultant>

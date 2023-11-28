@@ -222,9 +222,9 @@ Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant
 
 Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
 
-Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consultant');//->middleware('isConsultant')->middleware('canViewMicroapp');
+Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
 
-Route::post('/consultant_app/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan']);//->middleware('isConsultant')->middleware('canViewMicroapp');
+Route::post('/consultant_app/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
 
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 

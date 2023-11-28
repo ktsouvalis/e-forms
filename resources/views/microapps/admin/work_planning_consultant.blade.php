@@ -1,8 +1,8 @@
 <x-layout_consultant>
     @php
         $user = Auth::guard('consultant')->user(); //check which user is logged in
-        if(!empty($_GET)){
-            $selected_day = Carbon\CarbonImmutable::parse($_GET['date']);
+        if(request()->has('date')){
+            $selected_day = Carbon\CarbonImmutable::parse(request()->input('date'));
         }else{
             $selected_day = Carbon\CarbonImmutable::now();
         }
@@ -17,11 +17,6 @@
     @php        
         $selected_day7 = $selected_day->add(7,'day');
         $day_array = [$selected_day,$selected_day7];
-        //έχουμε καταλήξει στην ημερομηνίa
-    
-        // $workplan = $user->workplans()->where('yearWeek', $yearWeek)->first();
-        // $programm = json_decode($workplan->programm);
-
     @endphp
     @foreach($day_array as $today)
     <hr>

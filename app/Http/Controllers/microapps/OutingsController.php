@@ -4,6 +4,7 @@ namespace App\Http\Controllers\microapps;
 
 use Throwable;
 use App\Models\School;
+use App\Models\Microapp;
 use Illuminate\Http\Request;
 use App\Models\microapps\Outing;
 use Illuminate\Support\Facades\Log;
@@ -96,7 +97,8 @@ class OutingsController extends Controller
     }
 
     public function download_record(Request $request, Outing $outing){
-        if((Auth::check() && (Auth::user()->microapps->where('url', '/outings')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){
+        $outings_microapp_id = Microapp::where('url', '/outings')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){
             $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
             $response = Storage::disk('local')->download($file, $outing->file);  
             ob_end_clean();
@@ -112,7 +114,8 @@ class OutingsController extends Controller
     }
 
     public function delete_outing(Request $request, Outing $outing){
-        if((Auth::check() && (Auth::user()->microapps->where('url', 'outings')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){    
+        $outings_microapp_id = Microapp::where('url', '/outings')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){    
             $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
 
             $outing->delete();
@@ -130,7 +133,8 @@ class OutingsController extends Controller
     }
 
     public function check_outing(Request $request, Outing $outing){
-        if((Auth::check() && (Auth::user()->microapps->where('url', '/outings')->count() or Auth::user()->isAdmin()))){
+        $outings_microapp_id = Microapp::where('url', '/outings')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin()))){
             if($request->input('checked')=='true')
                 $outing->checked = 1;
             else

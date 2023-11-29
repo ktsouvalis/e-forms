@@ -209,18 +209,18 @@
             <div class="vstack gap-2">
                 <strong>Αρχεία κοινά για διαμοιρασμό</strong>
                     @foreach($files_common as $file_c)
+                    <div class="hstack gap-1">
                         @php
-                            $fi = $fileshare->id
+                            $basename = basename($file_c);
                         @endphp
-                        <div class="hstack gap-1">
-                        <form action="{{url("/dl_file/$fi")}}" method="post">
+                        <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
-                            <input type="hidden" name="filename" value="{{$file_c}}">
-                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_c)}}</button>
+                            <input type="hidden" name="personal" value="0">
+                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{$basename}}</button>
                         </form>
-                        <form action="{{url("/x_file/$fi")}}" method="post">
+                        <form action="{{url("/del_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
-                            <input type="hidden" name="filename" value="{{$file_c}}">
+                            <input type="hidden" name="personal" value="0">
                             <button class="btn btn-danger bi bi-x-circle"></button>
                         </form>
                     </div>
@@ -231,21 +231,21 @@
             <div class="vstack gap-2">
                <strong>Αρχεία προσωπικά για διαμοιρασμό</strong>
                     @foreach($files_personal as $file_p)
+                    <div class="hstack gap-1">
                         @php
-                            $fi = $fileshare->id
+                            $basename = basename($file_p);
                         @endphp
-                        <div class="hstack gap-1">
-                        <form action="{{url("/dl_file/$fi")}}" method="post">
+                        <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
-                            <input type="hidden" name="filename" value="{{$file_p}}">
-                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_p)}}</button>
+                            <input type="hidden" name="personal" value="1">
+                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{$basename}}</button>
                         </form>
-                        <form action="{{url("/x_file/$fi")}}" method="post">
+                        <form action="{{url("/del_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
-                            <input type="hidden" name="filename" value="{{$file_p}}">
+                            <input type="hidden" name="personal" value="1">
                             <button class="btn btn-danger bi bi-x-circle"></button>
                         </form>
-                        </div>
+                    </div>
                     @endforeach
             </div>
             @endif

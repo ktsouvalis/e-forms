@@ -24,14 +24,14 @@ class FileshareController extends Controller
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function insert_fileshare(Request $request)
+    public function insert_fileshare(Request $request)//page use
     {
         $table = $this->validate_and_prepare($request);
         $result = $this->create_fileshare($table);
 
         if($result->getStatusCode() == 500){
             Log::channel('throwable_db')->error(Auth::user()->username." insert_fileshare: ".$e->getMessage());
-            return redirect(url('/fileshares'))->with('failure', 'Κάποιο πρόβλημα προέκυψε, δείτε το log throwable_db');
+            return redirect(url('/fileshares'))->with('failure', 'Κάποιο πρόβλημα προέκυψε (throwable_db)');
         }
         else if($result->getStatusCode() == 200){  
             $fileshare = Fileshare::find($result->getData()->fileshare);
@@ -40,7 +40,7 @@ class FileshareController extends Controller
         }
     }
 
-    private function validate_and_prepare(Request $request){
+    private function validate_and_prepare(Request $request){ //page use
         if($request->user()->can('chooseDepartment', Fileshare::class)){
             $department_id = $request->input('department');
         }
@@ -54,7 +54,7 @@ class FileshareController extends Controller
         return $table;
     }
 
-    public function create_fileshare($table){
+    public function create_fileshare($table){ //app use
         try{
             $fileshare = Fileshare::create($table);
         }
@@ -76,9 +76,10 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update_fileshare(Request $request, Fileshare $fileshare)
+    public function update_fileshare(Request $request, Fileshare $fileshare) //page use
     {
         $error=false;
+        // Update name
         $name = $request->all()['name'];
         $update_name = $this->update_fileshare_name($name, $fileshare);
         if($update_name->getStatusCode() == 500){
@@ -88,30 +89,38 @@ class FileshareController extends Controller
         else if($update_name->getStatusCode() == 200){
             Log::channel('user_memorable_actions')->info(Auth::user()->username." update_fileshare (rename) $fileshare->id to ".$fileshare->name);
         }
-
+        // Update common files
         $files1 = $request->file('fileshare_common_files');
         if($files1){     
             $update_common_files = $this->update_fileshare_files($fileshare, $files1, 'common');
             if(isset($update_common_files->getData()->error)){
+                Log::channel('files')->error(Auth::user()->username." error update_fileshare (common files): ".$fileshare->id);
                 $error=true;
             }
+            else{
+                Log::channel('files')->info(Auth::user()->username." success update_fileshare (common files): ".$fileshare->id);   
+            }
         }
-        
+        //update personal files
         $files2 = $request->file('fileshare_personal_files');
         if($files2){  
             $update_personal_files = $this->update_fileshare_files($fileshare, $files2, 'personal');
             if(isset($update_personal_files->getData()->error)){
+                Log::channel('files')->error(Auth::user()->username." error update_fileshare (personal files): ".$fileshare->id);
                 $error=true;
+            }
+            else{
+                Log::channel('files')->info(Auth::user()->username." success update_fileshare (personal files): ".$fileshare->id);   
             }
         }
 
         if(!$error)
             return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Ο διαμοιρασμός αρχείων ενημερώθηκε');
         else
-            return redirect(url("/fileshare_profile/$fileshare->id"))->with('warning', 'Ο διαμοιρασμός αρχείων ενημερώθηκε με σφάλματα στα αρχεία throwable_db/files της ημέρας');   
+            return redirect(url("/fileshare_profile/$fileshare->id"))->with('warning', 'Ο διαμοιρασμός αρχείων ενημερώθηκε με σφάλματα στα αρχεία (throwable_db/files)');   
     }
 
-    public function update_fileshare_name($name, Fileshare $fileshare){
+    public function update_fileshare_name($name, Fileshare $fileshare){ //app use
         $old_name = $fileshare->name;
         // Update name
         $fileshare->name = $name;
@@ -130,11 +139,10 @@ class FileshareController extends Controller
         }
         return response()->json([
             'success' => 'Fileshare not changed'
-        ], 200);
+        ], 201);
     }
 
-    public function update_fileshare_files(Fileshare $fileshare, $files, $string){//string is 'common' or 'personal'
-        $username = Auth::check() ? Auth::user()->username : "API";
+    public function update_fileshare_files(Fileshare $fileshare, $files, $string){//app_use. string is 'common' or 'personal'
         $error=false;
         $directory = $string == 'common' ? 'fileshare'.$fileshare->id : 'fileshare'.$fileshare->id.'/personal_files';
         // store  files
@@ -143,11 +151,8 @@ class FileshareController extends Controller
             $filename = $file->getClientOriginalName();
             $upload  = $fileHandler->upload_file($directory, $file, 'local');
             if($upload->getStatusCode() == 500){
-                Log::channel('files')->error($username." File $directory/$filename failed to upload: ".$upload->getData()->error);
                 $error=true;
             }
-            else
-                Log::channel('files')->info($username." File $directory/$filename uploaded successfully");
         }
         if(!$error)
             return response()->json([
@@ -166,17 +171,36 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function delete_fileshare(Fileshare $fileshare)
+    public function delete_fileshare(Fileshare $fileshare) //page_use
     {
-        //delete files from disk
-        Storage::disk('local')->deleteDirectory('fileshare'.$fileshare->id);
-
-        Log::channel('user_memorable_actions')->info(Auth::user()->username." delete_fileshare ".$fileshare->name);
-        
+        $username = Auth::check() ? Auth::user()->username : "API";
+        $error=false;
         // delete database record
-        Fileshare::destroy($fileshare->id);
-
-        return redirect(url('/fileshares'))->with('success', "Η κοινοποίηση αρχείων $fileshare->name διαγράφηκε");
+        try{
+            Fileshare::destroy($fileshare->id);
+        }
+        catch(\Exception $e){
+            Log::channel('throwable_db')->error($username."failed to delete_fileshare: ".$e->getMessage());
+            return back()->with('failure', 'Ο διαμοιρασμός αρχείων δεν διαγράφηκε (throwable_db)');
+        }
+        
+        //delete files from disk
+        $directoryHandler = new FilesController();
+        $directory = 'fileshare'.$fileshare->id;
+        $delete_directory = $directoryHandler->delete_directory($directory, 'local');
+        if($delete_directory->getStatusCode() == 500){
+            Log::channel('files')->error($username." Fileshare directory $directory failed to delete");
+            $error=true;
+        }
+        else
+            Log::channel('files')->info($username." Fileshare directory $directory deleted successfully");
+        Log::channel('user_memorable_actions')->info($username." delete_fileshare ".$fileshare->name);
+        if(!$error){
+            return redirect(url('/fileshares'))->with('success', "Η κοινοποίηση αρχείων $fileshare->name διαγράφηκε");
+        }
+        else{
+            return redirect(url('/fileshares'))->with('warning', "Η κοινοποίηση αρχείων $fileshare->name διαγράφηκε με σφάλματα (files)");
+        }
     }
 
     /**
@@ -186,16 +210,18 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function download_file(Request $request, Fileshare $fileshare)
+    public function download_file(Fileshare $fileshare,$original_filename) //page use
     {
-        //get filename from hidden input from the UI
-        $file = $request->input('filename');
-        
-        if(Auth::guard('school')->check())Log::channel('stakeholders_fileshares')->info(Auth::guard('school')->user()->code." download_file $file ".$fileshare->name);
-        if(Auth::guard('teacher')->check())Log::channel('stakeholders_fileshares')->info(Auth::guard('teacher')->user()->afm." download_file $file ".$fileshare->name);
-        $response = Storage::disk('local')->download($file);  
-        ob_end_clean();
-        return $response;
+        $username = Auth::check() ? Auth::user()->username : (Auth::guard('school')->check() ? Auth::guard('school')->user()->name : Auth::guard('teacher')->user()->afm);
+        $directory = request()->input('personal') == 1 ? 'fileshare'.$fileshare->id.'/personal_files' : 'fileshare'.$fileshare->id;
+        $fileHandler = new FilesController();
+        $download = $fileHandler->download_file($directory, $original_filename, 'local');
+        if($download->getStatusCode() == 500){
+            Log::channel('files')->error($username." File $original_filename failed to download");
+            return back()->with('failure', 'Δοκιμάστε ξανά');
+        }
+        Log::channel('files')->info($username." File $original_filename successfully downloaded");
+        return $download;
     }
 
     /**
@@ -205,16 +231,17 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function delete_file(Request $request, Fileshare $fileshare)
-    {
-        //get filename from hidden input from the UI
-        $file = $request->input('filename');
-        
-        Storage::disk('local')->delete($file);
-        $fn = basename($file);
-
-        Log::channel('user_memorable_actions')->info(Auth::user()->username." delete_file $fn from ".$fileshare->name);
-        return back()->with('success', "Το αρχείο $fn αφαιρέθηκε από τον διαμοιρασμό");
+    public function delete_file(Fileshare $fileshare, $original_filename){ //page use
+        $directory = request()->input('personal') == 1 ? 'fileshare'.$fileshare->id.'/personal_files' : 'fileshare'.$fileshare->id;
+        $fileHandler = new FilesController();
+        $delete = $fileHandler->delete_file($directory, $original_filename, 'local');
+        if($delete->getStatusCode() == 500){
+            Log::channel('files')->error(Auth::user()->username." File $original_filename failed to delete");
+            return back()->with('failure', 'Το αρχείο δεν διαγράφηκε');
+        }
+       
+        Log::channel('files')->info(Auth::user()->username." File $original_filename deleted successfully");
+        return back()->with('success', "Το αρχείο $original_filename αφαιρέθηκε από τον διαμοιρασμό");
     }
 
     public function auto_update_whocan(Fileshare $fileshare, Request $request){

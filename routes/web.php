@@ -396,9 +396,9 @@ Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
 
 Route::post("/delete_fileshare/{fileshare}", [FileshareController::class, 'delete_fileshare']);
 
-Route::post("/dl_file/{fileshare}", [FileshareController::class, 'download_file']);
+Route::post("/get_file/{fileshare}/{original_filename}", [FileshareController::class, 'download_file']);
 
-Route::post("/x_file/{fileshare}", [FileshareController::class, 'delete_file']);
+Route::post("/del_file/{fileshare}/{orginal_filename}", [FileshareController::class, 'delete_file'])->middleware('can:view,fileshare');
 
 Route::post('auto_update_fileshare_whocan/{fileshare}', [FileshareController::class, 'auto_update_whocan']);
 
@@ -414,7 +414,6 @@ Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'd
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
 
 Route::post('/import_whocan/{my_app}/{my_id}', [WhocanController::class, 'import_whocans']);
-
 
 
 // MAIL Routes

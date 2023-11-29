@@ -21,10 +21,13 @@
         <div class="hstack">
             <div class="vstack gap-2">
                     @foreach($files_common as $file_c)
-                        <form action="{{url("/dl_file/$ffi")}}" method="post">
+                        @php
+                            $basename = basename($file_c);
+                        @endphp
+                        <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
-                            <input type="hidden" name="filename" value="{{$file_c}}">
-                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_c)}}</button>
+                            <input type="hidden" name="personal" value="0">
+                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{$basename}}</button>
                         </form>
                     @endforeach
             </div>
@@ -47,11 +50,11 @@
                             $fieldOfInterest = $teacher->am;//else the number is am
                         }
                     @endphp
-                    @if(!empty($fieldOfInterest) && strpos(basename($file_p), $fieldOfInterest)!==false)
-                        <form action="{{url("/dl_file/$ffi")}}" method="post">
+                    @if(!empty($fieldOfInterest) && strpos($string, $fieldOfInterest)!==false)
+                        <form action="{{url("/get_file/$fileshare->id/$string")}}" method="post">
                         @csrf
-                            <input type="hidden" name="filename" value="{{$file_p}}">
-                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{basename($file_p)}}</button>
+                            <input type="hidden" name="personal" value="1">
+                            <button class="btn btn-secondary bi bi-box-arrow-down"> {{$string}}</button>
                         </form>
                     @endif
                 @endforeach

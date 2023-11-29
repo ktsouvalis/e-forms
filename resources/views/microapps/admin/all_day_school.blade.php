@@ -69,7 +69,19 @@
 
         
         @php
-            $all_day_schools = App\Models\microapps\AllDaySchool::all()->sortByDesc('month_id');
+            $all_day_schools = $microapp->stakeholders;
+            $months = [];
+            $number = App\Models\Month::getActiveMonth()->number;
+            $i=$number;
+            if($number >=9){
+                for($i; $i>=9; $i--)
+                    array_push($months, $i);
+            }
+            else{
+                for($i; $i>=1; $i--)
+                    array_push($months, $i);
+                array_push($months ,[12,11,10,9]);
+            }
         @endphp
         <div class="table-responsive py-2" style="align-self:flex-start">
             <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
@@ -91,28 +103,50 @@
                 </tr>
             </thead>
             <tbody>
-            
-            @foreach($all_day_schools as $one)
-                <tr>
-                <td> {{$one->month->name}}</td>
-                <td> {{$one->school->name}}</td>
-                <td> {{$one->functionality}}</td>
-                <td> {{$one->nr_morning}}</td>
-                <td> {{$one->nr_of_class_3}}</td>
-                <td> {{$one->nr_of_pupils_3 + $one->nr_of_pupils_4+ $one->nr_of_pupils_5}}</td>
-                <td> {{$one->nr_of_class_4}}</td>
-                <td> {{$one->nr_of_pupils_4+ $one->nr_of_pupils_5}}</td>
-                <td> {{$one->nr_of_class_5}}</td>
-                <td> {{$one->nr_of_pupils_5}}</td>
-                <td> {{$one->comments}}</td>
-                <td>
-                    <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
-                    @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
-                    </form>   
-                </td>
-                <td>{{$one->updated_at}}</td>
-                </tr>
+                @foreach($months as $month_number) 
+                    @foreach($all_day_schools as $one_stakeholder)
+                    @php
+                        $one_school = $one_stakeholder->stakeholder;
+                        $one = $one_school->all_day_schools->where('month_id', $month_number)->first();
+                    @endphp
+                        <tr>
+                        @if($one)
+                            <td> {{$one->month->name}}</td>
+                            <td> {{$one->school->name}}</td>
+                            <td> {{$one->functionality}}</td>
+                            <td> {{$one->nr_morning}}</td>
+                            <td> {{$one->nr_of_class_3}}</td>
+                            <td> {{$one->nr_of_pupils_3 + $one->nr_of_pupils_4+ $one->nr_of_pupils_5}}</td>
+                            <td> {{$one->nr_of_class_4}}</td>
+                            <td> {{$one->nr_of_pupils_4+ $one->nr_of_pupils_5}}</td>
+                            <td> {{$one->nr_of_class_5}}</td>
+                            <td> {{$one->nr_of_pupils_5}}</td>
+                            <td> {{$one->comments}}</td>
+                            <td>
+                                <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
+                                @csrf
+                                <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
+                                </form>   
+                            </td>
+                            <td>{{$one->updated_at}}</td>
+                        @else
+                            <td> {{App\Models\Month::find($month_number)->name}}</td>
+                            <td> {{$one_school->name}}</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        @endif
+                        </tr>
+                    {{-- @endforeach --}}
+                @endforeach
             @endforeach
             </tbody>
             </table>

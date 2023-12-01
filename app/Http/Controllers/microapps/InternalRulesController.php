@@ -236,8 +236,7 @@ class InternalRulesController extends Controller
     }
 
     public function upload_consultant_signed_file(InternalRule $internal_rule, Request $request){
-        $consultantSchoolIds = Auth::guard('consultant')->user()->schools->pluck('id');
-        if($consultantSchoolIds->contains($internal_rule->school->id)) {
+        if(Auth::guard('consultant')->user()->schregion->id == $internal_rule->school->schregion->id) {
             $microapp = Microapp::where('url', '/internal_rules')->first();
             if($microapp->accepts){
                 $rule = [
@@ -299,8 +298,7 @@ class InternalRulesController extends Controller
     }
 
     public function upload_consultant_comments_file(InternalRule $internal_rule, Request $request){
-        $consultantSchoolIds = Auth::guard('consultant')->user()->schools->pluck('id');
-        if($consultantSchoolIds->contains($internal_rule->school->id)) {    
+        if(Auth::guard('consultant')->user()->schregion->id == $internal_rule->school->schregion->id) {    
             $microapp = Microapp::where('url', '/internal_rules')->first();
             if($microapp->accepts){
                 $rule = [

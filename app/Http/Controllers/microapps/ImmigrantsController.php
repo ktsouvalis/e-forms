@@ -106,7 +106,8 @@ class ImmigrantsController extends Controller
     }
 
     public function download_file(Request $request, Immigrant $immigrant){
-        if((Auth::check() && (Auth::user()->microapps->where('url', '/immigrants')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $immigrant->school->id)){
+        $immigrants_id = Microapp::where('url', '/immigrants')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $immigrants_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $immigrant->school->id)){
             $file = 'immigrants/immigrants_'.$immigrant->school->code.'_month'.$immigrant->month->id.'.xlsx';
             $response = Storage::disk('local')->download($file, $immigrant->file);  
             ob_end_clean();

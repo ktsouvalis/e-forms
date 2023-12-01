@@ -154,7 +154,8 @@ class AllDaySchoolController extends Controller
     }
 
     public function download_file(Request $request, AllDaySchool $all_day_school){
-        if((Auth::check() && (Auth::user()->microapps->where('url', '/all_day_school')->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $all_day_school->school->id)){    
+        $all_day_school_id = Microapp::where('url', '/all_day_school')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $all_day_school_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $all_day_school->school->id)){    
             $file = 'all_day/all_day_'.$all_day_school->school->code.'_'.$all_day_school->month->id.'.xlsx';
             $response = Storage::disk('local')->download($file, $all_day_school->file);  
             ob_end_clean();

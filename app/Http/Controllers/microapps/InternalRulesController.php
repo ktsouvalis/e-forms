@@ -107,7 +107,8 @@ class InternalRulesController extends Controller
     }
 
     public function upload_director_comments_file(InternalRule $internal_rule, Request $request){
-        if((Auth::check() && (Auth::user()->microapps->where('url', '/internal_rules')->count() or Auth::user()->isAdmin()))){
+        $internal_rules_id = Microapp::where('url', '/internal_rules')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $internal_rules_id)->count() or Auth::user()->isAdmin()))){
             $microapp = Microapp::where('url', '/internal_rules')->first();
             if($microapp->accepts){
                 $rule = [
@@ -170,7 +171,8 @@ class InternalRulesController extends Controller
     }
 
     public function upload_director_signed_file(InternalRule $internal_rule, Request $request){
-        if((Auth::check() && (Auth::user()->microapps->where('url', '/internal_rules')->count() or Auth::user()->isAdmin()))){
+        $internal_rules_id = Microapp::where('url', '/internal_rules')->first()->id;
+        if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $internal_rules_id)->count() or Auth::user()->isAdmin()))){
             $microapp = Microapp::where('url', '/internal_rules')->first();
             if($microapp->accepts){
                 $rule = [

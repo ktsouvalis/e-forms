@@ -189,14 +189,12 @@ class AllDaySchoolController extends Controller
     }
 
     public function self_update(Request $request, AllDaySchool $all_day_school){
-        if($request->all()['nos3']!=null)
+        if(isset($request->all()['nos3']))
             $all_day_school->update(['nr_of_pupils_3'=>$request->all()['nos3']]);
-        if($request->all()['nos4']!=null)
-            $all_day_school->update(['nr_of_pupils_4'=>$request->all()['nos4']]);
-        if($request->all()['nos5']!=null)
-            $all_day_school->update(['nr_of_pupils_5'=>$request->all()['nos5']]);
+        $all_day_school->update(['nr_of_pupils_4'=>$request->all()['nos4']]);
+        $all_day_school->update(['nr_of_pupils_5'=>$request->all()['nos5']]);
 
-            return back()->with('success', 'Τα στοιχεία ενημερώθηκαν');
+        return back()->with('success', 'Τα στοιχεία ενημερώθηκαν');
     }
 
 

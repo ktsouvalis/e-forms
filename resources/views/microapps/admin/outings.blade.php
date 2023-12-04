@@ -64,7 +64,7 @@
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     
         <div class="table-responsive py-2">
-            <table  id="dataTable" class="small display table table-sm table-striped table-hover text-center">
+            <table  id="dataTable" class="small display table table-sm table-hover text-center">
             <thead>
                 <tr>
                     <th id="search">Σχολείο</th>

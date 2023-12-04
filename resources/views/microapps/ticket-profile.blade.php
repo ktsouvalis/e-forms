@@ -19,7 +19,6 @@
             placeholder: 'Απάντηση...',
             lang: 'el-GR' // Set language to Greek
         });
-        $('#comments').prop('width', '600px');
     });
     </script>
     <script>
@@ -85,7 +84,7 @@
                             <i>{{$ticket->created_at}}</i>, <u>Αρχικό Μήνυμα</u> από<b> {{$ticket->school->name}}</b>: <br>
                         </div>
                         <div class="card py-2" style="background-color:Gainsboro; text-decoration:none; font-size:small">
-                            <div class="m-1">{{$ticket->comments}}</div>
+                            <div class="m-1">{!!html_entity_decode($ticket->comments)!!}</div>
                         </div>  
                     </div>
                     <div class="col"></div>
@@ -125,7 +124,7 @@
             @csrf
             <span class="input-group-text"><strong>Προσθήκη Νέου Σχολίου </strong></span>
             <div class="input-group justify-content-center">
-                <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="width: 600px; resize: none;" placeholder="Απάντηση" required></textarea>
+                <textarea name="comments" id="comments" class="form-control" required></textarea>
             </div>
             </div>
             @if(!$accepts)

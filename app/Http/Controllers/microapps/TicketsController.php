@@ -22,11 +22,25 @@ class TicketsController extends Controller
     public function create_ticket(Request $request){
         $school = Auth::guard('school')->user();
         $mail_failure=false;
+
+        $validator = Validator::make($request->all(), [
+            'comments' => 'required|string|max:5000', // Adjust the max length as needed
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Sanitize the input (optional)
+        $sanitizedComments = strip_tags($request->input('comments'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
         try{
             $new_ticket = Ticket::create([
                 'school_id' => Auth::guard('school')->user()->id,
                 'subject' => $request->input('subject'),
-                'comments' => $request->input('comments'),
+                'comments' => $sanitizedComments,
                 'solved' => 0
             ]); 
         }

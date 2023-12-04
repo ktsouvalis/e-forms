@@ -2,12 +2,31 @@
     @push('title')
         <title>Τεχνική Υποστήριξη</title>
     @endpush
+    @push('links')
+        <link href="../summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
+    @endpush
+    @push('scripts')
+    <script src="../summernote-0.8.18-dist/summernote-lite.min.js"></script>
+    <script>
+       $(document).ready(function () {
+        $('#comments').summernote({
+            height: 200, // Adjust the height as needed
+            width:600,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['list', ['ul', 'ol']],
+                ['link', ['link']]
+            ],
+            placeholder: 'Περιγραφή...',
+            lang: 'el-GR' // Set language to Greek
+        });
+    });
+    </script>
+    @endpush
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
         $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
         $school_tickets = App\Models\School::find($school->id)->tickets;
-        // dd(Auth::guard('school')->user()->tickets);
-        //  dd(Auth::guard('school')->user() instanceof \App\Models\School)
     @endphp
 
     
@@ -21,15 +40,16 @@
                             <span class="input-group-text w-75"><strong>Καταχώρηση νέου αιτήματος Τεχνικής Υποστήριξης</strong></span>
                         </div>
                         
-                        <div class="input-group">
+                        <div class="input-group my-2">
                             
                             <span class="input-group-text w-25 text-wrap">Θέμα:</span>
-                            <input name="subject" id="subject" type="text" class="form-control" placeholder="Σύντομη Περιγραφή" aria-label="Θέμα" aria-describedby="basic-addon2" required><br>
+                            <input name="subject" id="subject" type="text" class="form-control" placeholder="Θέμα" aria-label="Θέμα" aria-describedby="basic-addon2" required><br>
                         </div>
                         
                         <div class="input-group">
-                            <span class="input-group-text w-25 text-wrap">Περιγραφή</span>
-                            <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="Σύντομη Περιγραφή" ></textarea>
+                            <div class="input-group justify-content-center">
+                            <textarea name="comments" id="comments" class="form-control" required></textarea>
+                            </div>
                         </div>
                         @if(!$accepts)
                             <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
@@ -60,13 +80,6 @@
                 <tbody>
                 
                     @foreach($school_tickets as $ticket)
-                    {{-- $school is MicroappStakeholder object so method ->stakeholder fetches School object attributes) --}}
-                        @php
-                            // if($school->stakeholder->fruit){ // if school has a fruit record, get timestamp
-                            //     $date = DateTime::createFromFormat('Y-m-d H:i:s', $school->stakeholder->fruit->updated_at);
-                            //     $timestamp = $date->getTimestamp();
-                            // }
-                        @endphp
                         <tr>
                             <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
                             <td>{{$ticket->subject}}</td> 

@@ -89,7 +89,7 @@
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th id="search">Έγκριση - ID Εκδρομής</th>
+                        <th id="search">Έλεγχος - ID Εκδρομής</th>
                         <th id="search">Τύπος</th>
                         <th id="">Ημερομηνία</th>
                         <th id="">Δράση</th>

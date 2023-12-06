@@ -287,6 +287,10 @@ Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_res
 
 Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
 
+Route::post('/update-post', [TicketsController::class, 'update_post']);
+
+Route::post('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])->middleware('canUpdateTicket');
+
 Route::post('/new_outing',[OutingsController::class, 'new_outing'])->middleware('isSchool');
 
 Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']); //checking Auth inside the method

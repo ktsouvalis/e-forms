@@ -71,7 +71,7 @@
                 var postId = $(this).data('id');
 
                 $.ajax({
-                    url: '/update-post',
+                    url: '../update-post',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',

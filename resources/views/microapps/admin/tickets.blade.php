@@ -44,7 +44,7 @@
                     $text = $ticket->posts->last()->created_at;
             @endphp
                 <tr> 
-                    <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
+                    <td><a href="{{url("/ticket_profile/$ticket->id#bottom")}}">{{$ticket->id}}</a></td>
                     <td>{{$ticket->subject}}</td> 
                     <td>{{$ticket->school->name}}</td>
                     @if($ticket->solved)

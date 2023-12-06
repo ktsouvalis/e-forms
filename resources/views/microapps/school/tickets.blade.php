@@ -79,7 +79,7 @@
                 
                     @foreach($school_tickets as $ticket)
                         <tr>
-                            <td><a href="{{url("/ticket_profile/$ticket->id")}}">{{$ticket->id}}</a></td>
+                            <td><a href="{{url("/ticket_profile/$ticket->id#bottom")}}">{{$ticket->id}}</a></td>
                             <td>{{$ticket->subject}}</td> 
                             <td>{{$ticket->created_at}} </td>
                             <td>{{$ticket->updated_at}} </td>

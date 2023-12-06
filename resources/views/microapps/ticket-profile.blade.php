@@ -202,6 +202,7 @@
             @endif
         </form>
     </nav>
+    
     @if(!$ticket->solved)
         <form action="{{url("/mark_as_resolved/$ticket->id")}}" method="post">
             @csrf
@@ -246,4 +247,5 @@
         @endif
     </div>
     </div>
+<div id="bottom"></div>    
 </div>

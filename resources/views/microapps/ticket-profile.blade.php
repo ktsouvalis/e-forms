@@ -202,7 +202,7 @@
             @endif
         </form>
     </nav>
-    
+    <hr>
     @if(!$ticket->solved)
         <form action="{{url("/mark_as_resolved/$ticket->id")}}" method="post">
             @csrf
@@ -224,13 +224,15 @@
             <div>Τελευταία ενημέρωση δελτίου <br><strong> {{$text}}</strong></div>
         </div>
     </div>
-    <div class="files">
+    
+    <div class="files m-2">
         @php
             $school = Auth::guard('school')->user();
             $directory = "/tickets/$ticket->id";
             $files=Storage::disk('local')->files($directory);          
         @endphp
         @if(count($files)>0)
+        <hr>
         Συνημμένα αρχεία δελτίου:<br>
         <div class="hstack gap-3">
         @foreach($files as $file)

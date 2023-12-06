@@ -84,9 +84,9 @@
                             <td>{{$ticket->created_at}} </td>
                             <td>{{$ticket->updated_at}} </td>
                             @if($ticket->solved)
-                                <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id")}}">Έχει επιλυθεί</a></td>
+                                <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Έχει επιλυθεί</a></td>
                             @else
-                                <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id")}}">Προς επίλυση</a></td>
+                                <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Προς επίλυση</a></td>
                             @endif
                         </tr> 
                     @endforeach   

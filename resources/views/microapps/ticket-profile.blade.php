@@ -16,7 +16,7 @@
                         ['list', ['ul', 'ol']],
                         ['link', ['link']],
                     ],
-                    lang: 'el-GR', // Set language to Greek
+                    lang: 'el-GR',
                 });
             });
         });
@@ -27,7 +27,6 @@
                 
                 const ticketId = $(this).data('ticket-id');
                 const isChecked = $(this).is(':checked');
-                // Get the CSRF token from the meta tag
                 const csrfToken = $('meta[name="csrf-token"]').attr('content');
                 
                 $.ajaxSetup({
@@ -40,16 +39,12 @@
                     url: '../ticket_needed_visit/'+ticketId,
                     type: 'POST',
                     data: {
-                        // _method: 'PATCH', // Laravel uses PATCH for updates
                         checked: isChecked
                     },
                     success: function(response) {
-                        // Handle the response here, update the page as needed
                         console.log("success");
-
                     },
                     error: function(error) {
-                        // Handle errors
                         console.log("An error occurred: " + error);
                     }
                 });
@@ -197,7 +192,7 @@
                     </div>
                     <div class="input-group ">
                     <span class="w-25"></span>
-                    <small>Μπορείτε να επισυνάψετε αρχεία jpeg, png, docx, pdf, xlsx</small>
+                    <small>Μπορείτε να επισυνάψετε αρχεία (jpeg, png, docx, pdf, xlsx) ή/και κάποιο σχόλιο</small>
                     </div>
             @endif
         </form>

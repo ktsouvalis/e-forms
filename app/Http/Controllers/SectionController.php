@@ -18,11 +18,11 @@ class SectionController extends Controller
     public function import_sections(Request $request){
         //validate the user's input
         $rule = [
-            'import_sections' => 'required|mimes:xlsx'
+            'import_sections' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
 
         //store the file

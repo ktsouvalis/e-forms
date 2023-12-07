@@ -27,11 +27,11 @@ class SchoolController extends Controller
 
         //validate the user's input
         $rule = [
-            'import_schools' => 'required|mimes:xlsx'
+            'import_schools' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
 
         //store the file
@@ -186,11 +186,11 @@ class SchoolController extends Controller
 
     public function importDirectors(Request $request){
         $rule = [
-            'import_directors' => 'required|mimes:xlsx'
+            'import_directors' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
 
         //store the file

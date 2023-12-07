@@ -25,7 +25,7 @@ class TicketsController extends Controller
         $mail_failure=false;
 
         $validator = Validator::make($request->all(), [
-            'comments' => 'required|string|max:5000', // Adjust the max length as needed
+            'comments' => 'string|max:5000', // Adjust the max length as needed
         ]);
 
         // Check if validation fails
@@ -69,7 +69,6 @@ class TicketsController extends Controller
 
         try{
             Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketCreated($new_ticket));
-            Mail::to("ktsouvalis@sch.gr")->send(new TicketCreated($new_ticket));
         }
         catch(Throwable $e){
             try{
@@ -117,13 +116,13 @@ class TicketsController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'comments' => 'required_without:attachment|max:5000',
-            'attachment' => 'required_without:comments|file|max:10240|mimes:xlsx,jpg,png,pdf,docx' 
+            'attachment' => 'required_without:comments|file|max:10240|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
         ]);
 
         // Check if validation fails
         if ($validator->fails()) {
             return back()
-                ->with('failure',$validator->errors()->first());
+                ->with('failure','Λάθος τύπος αρχείου (Επιτρεπτοί τύποι: docx, pdf, xlsx, png, jpg)');
         }
 
         //if validation passes, mark the ticket as not solved and add a post
@@ -188,7 +187,6 @@ class TicketsController extends Controller
         $mail_failure=false;
         try{
             Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
-            Mail::to("ktsouvalis@sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
         }
         catch(Throwable $e){
             $mail_failure=true;

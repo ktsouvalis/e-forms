@@ -32,11 +32,11 @@ class AllDaySchoolController extends Controller
             $month = Month::getActiveMonth();
             if($request->file('table_file')){
                 $rule = [
-                    'table_file' => 'mimes:xlsx'
+                    'table_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 ];
                 $validator = Validator::make($request->all(), $rule);
                 if($validator->fails()){ 
-                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
                 }
                 $file = $request->file('table_file')->getClientOriginalName();
                 //store the file
@@ -171,11 +171,11 @@ class AllDaySchoolController extends Controller
 
     public function update_all_day_template(Request $request, $type){
         $rule = [
-            'template_file' => 'required|mimes:xlsx'
+            'template_file' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
         
         try{

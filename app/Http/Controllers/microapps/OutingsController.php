@@ -20,11 +20,11 @@ class OutingsController extends Controller
     public function new_outing(Request $request){
         $school = Auth::guard('school')->user();
         $rule = [
-            'record_file' => 'mimes:pdf'
+            'record_file' => 'mimetypes:application/pdf'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/index_school'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: pdf)');
         }
         $directory = 'outings';
         $file = $request->file('record_file');
@@ -148,11 +148,11 @@ class OutingsController extends Controller
 
     public function save_outing_profile(Request $request, Outing $outing){// protected by middleware
         $rule = [
-            'record_file' => 'mimes:pdf'
+            'record_file' => 'mimetypes:application/pdf'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/index_school'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: pdf)');
         }
 
         // update the fields

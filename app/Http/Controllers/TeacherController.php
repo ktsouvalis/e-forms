@@ -51,11 +51,11 @@ class TeacherController extends Controller
     public function import_didaskalia_apousia(Request $request){
         //validate the input file type
         $rule = [
-            'import_teachers' => 'mimes:xlsx'
+            'import_teachers' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
 
         //prepare the variables
@@ -144,12 +144,12 @@ class TeacherController extends Controller
     public function importTeachers(Request $request){
 
         $rule = [
-            'organiki_file' => 'mimes:xlsx',
-            'apospasi_file' => 'mimes:xlsx'
+            'organiki_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'apospasi_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return redirect(url('/'))->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
 
         //store the files

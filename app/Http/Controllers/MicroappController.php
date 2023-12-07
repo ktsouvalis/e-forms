@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use Illuminate\Support\Facades\Validator;
 
 class MicroappController extends Controller
 {

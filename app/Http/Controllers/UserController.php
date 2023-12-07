@@ -39,12 +39,13 @@ class UserController extends Controller
     public function passwordChange(Request $request){
         $incomingFields = $request->all();
         $rules = [
-            'pass1' => 'min:6|required_with:pass1_confirmation|same:pass1_confirmation',
+            'pass1' => 'min:6|same:pass1_confirmation',
             'pass1_confirmation' => 'min:6'
         ];
         $validator = Validator::make($incomingFields, $rules);
         if($validator->fails()){
-            return redirect(url('/password_reset'))->with('failure', 'Οι κωδικοί πρέπει να ταιριάζουν και να είναι 6+ χαρακτήρες');
+            return back()
+                ->with('failure',$validator->errors()->first());
         }
         $user = Auth::user();
 

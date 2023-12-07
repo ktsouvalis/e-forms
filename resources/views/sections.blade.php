@@ -62,7 +62,7 @@
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url('/upload_sections_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
-                    <input type="file" name="import_sections" >    
+                    <input type="file" name="import_sections" required>    
                     <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Εισαγωγή Τμημάτων</button>
                 </form>
             </nav>

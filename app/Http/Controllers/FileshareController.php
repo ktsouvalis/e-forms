@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
-use Illuminate\Support\Facades\Validator;
 
 class FileshareController extends Controller
 {

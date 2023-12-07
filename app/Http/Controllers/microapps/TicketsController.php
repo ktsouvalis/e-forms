@@ -9,6 +9,7 @@ use App\Mail\TicketCreated;
 use App\Mail\TicketUpdated;
 use Illuminate\Http\Request;
 use App\Models\microapps\Ticket;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\microapps\TicketPost;
@@ -20,22 +21,36 @@ use Illuminate\Support\Facades\Validator;
 class TicketsController extends Controller
 {
     //
-    public function create_ticket(Request $request){
-        $school = Auth::guard('school')->user();
-        $mail_failure=false;
-
+    private function validate_request(Request $request){
+        $string="";
+        $error=false;
         $validator = Validator::make($request->all(), [
-            'comments' => 'string|max:5000', // Adjust the max length as needed
+            'comments' => 'required_without:attachment|max:5000',
+            'attachment' => 'required_without:comments|file|max:10240|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
         ]);
 
         // Check if validation fails
         if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
+            $error=true;
+            if($validator->errors()->has('comments')){
+                foreach($validator->errors()->get('comments') as $message){
+                    $string = $string.$message." ";
+                }
+            }
+            if($validator->errors()->has('attachment')){
+                foreach($validator->errors()->get('attachment') as $message){
+                    if(strpos($message, 'application'))
+                        $string = $string."Το αρχείο πρέπει να είναι τύπου xlsx, docx, pdf, jpg ή png ";
+                    else{
+                        $string = $string.$message." ";
+                    }
+                }
+            }
         }
+        return ['error'=>$error, 'message'=>$string];
+    }
 
-        // Sanitize the input (optional)
+    private function create_db_entry(Request $request){
         $sanitizedComments = strip_tags($request->input('comments'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
         try{
             $new_ticket = Ticket::create([
@@ -54,23 +69,24 @@ class TicketsController extends Controller
             }
             return redirect(url('/school_app/tickets'))->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
-        try{
-            Log::channel('stakeholders_microapps')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
-        }
-        catch(Throwable $e){
-    
-        }
+
         try{
             Log::channel('tickets')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
     
         }
+        return $new_ticket;    
+    }
+
+    private function send_creation_mails(Ticket $new_ticket){
+        $success=true;
 
         try{
             Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketCreated($new_ticket));
         }
         catch(Throwable $e){
+            $success=false;
             try{
                 Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to plinet ".$e->getMessage());
             }
@@ -83,7 +99,7 @@ class TicketsController extends Controller
             Mail::to($new_ticket->school->mail)->send(new TicketCreated($new_ticket));
         }
         catch(Throwable $e){
-            $mail_failure=true;
+            $success=false;
             try{  
                 Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to school ".$e->getMessage()); 
             }
@@ -91,12 +107,110 @@ class TicketsController extends Controller
     
             }
         }
+        return $success;
+    }
 
-        if(!$mail_failure)
+    private function send_update_mails(Ticket $ticket, $new_string){
+        $success=true;
+
+        try{
+            Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
+        }
+        catch(Throwable $e){
+            $success=false;
+            try{
+                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
+        }
+
+        try{
+             Mail::to($ticket->school->mail)->send(new TicketUpdated($ticket, $new_string, $ticket->school->name, $ticket->school->md5));;
+        }
+        catch(Throwable $e){
+            $success=false;
+            try{  
+                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to school ".$e->getMessage()); 
+            }
+            catch(Throwable $e){
+    
+            }
+        }
+        return $success;
+    }
+        
+    public function create_ticket(Request $request){
+        $validation = $this->validate_request($request);
+        if($validation['error']==true){
+            return back()->with('failure', $validation['message']);
+        }
+        $new_ticket = $this->create_db_entry($request);
+        if($new_ticket){
+            $mails = $this->send_creation_mails($new_ticket);
+        }
+
+        if($mails)
             return redirect(url("/ticket_profile/$new_ticket->id"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');  
         else
             return redirect(url("/ticket_profile/$new_ticket->id"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, κάποια mail απέτυχαν να σταλούν');       
         
+    }
+
+    private function resolve_in_db(Ticket $ticket){
+        $ticket->solved=1;
+        try{
+            $ticket->save();
+        }
+        catch(\Exception $e){
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' resolve ticket db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private function open_in_db(Ticket $ticket){
+        $ticket->solved=0;
+        try{
+            $ticket->save();
+        }
+        catch(\Exception $e){
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' resolve ticket db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private function add_post($ticket_id, $user_id, $type, $string){
+        try{
+            TicketPost::create([
+                'ticket_id' => $ticket_id,
+                'text' => $string,
+                'ticketer_id' => $user_id,
+                'ticketer_type' => $type
+            ]);
+        }
+        catch(Throwable $e){
+            try{
+                Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+    
+            }
+            return false;
+        }
+        return true;
     }
 
     public function update_ticket(Ticket $ticket, Request $request){
@@ -112,52 +226,43 @@ class TicketsController extends Controller
             $type = 'App\Models\School';
         }
         
-
-        // Validate the request
-        $validator = Validator::make($request->all(), [
-            'comments' => 'required_without:attachment|max:5000',
-            'attachment' => 'required_without:comments|file|max:10240|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/jpeg,image/png,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            return back()
-                ->with('failure','Λάθος τύπος αρχείου (Επιτρεπτοί τύποι: docx, pdf, xlsx, png, jpg)');
+        $validator = $this->validate_request($request);
+        if($validator['error']==true){
+            return back()->with('failure', $validator['message']);
         }
 
-        //if validation passes, mark the ticket as not solved and add a post
-        if($ticket->solved){
-            $ticket->solved=0;
-            $ticket->save();
-            TicketPost::create([
-                'ticket_id' => $ticket->id,
-                'text' => "Ο χρήστης $name άνοιξε το δελτίο",
-                'ticketer_id' => $user->id,
-                'ticketer_type' => $type
-            ]);
+        DB::beginTransaction();
+        try {
+            if($ticket->solved){
+                $open = $this->open_in_db($ticket);
+                if(!$open){
+                    throw new Exception('Failed to open ticket');
+                }
+
+                $new_post = $this->add_post($ticket->id, $user->id, $type, "Ο χρήστης $name άνοιξε το δελτίο");
+                if(!$new_post){
+                    throw new Exception('Failed to add post');
+                }
+            }
+
+            DB::commit();
+        } 
+        catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
 
+        $mails_upload = false;
+        $mails_comments = false;
         //check if there is a new post and add it
         if($request->input('comments')){
             $sanitizedComments = strip_tags($request->input('comments'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
-            try{
-                TicketPost::create([
-                    'ticket_id' => $ticket->id,
-                    'text' => $sanitizedComments,
-                    'ticketer_id' => $user->id,
-                    'ticketer_type' => $type
-                ]);
-            }
-            catch(Throwable $e){
-                try{
-                    Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
-                }
-                catch(Throwable $e){
-        
-                }
-                return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
-            }
-            $new_string = "\nΟ χρήστης ".$name." έγραψε:\n".$request->input('comments');
+            $new_post = $this->add_post($ticket->id, $user->id, $type, $sanitizedComments);
+            if($new_post){
+                $new_string = "\nΟ χρήστης ".$name." έγραψε:\n".$request->input('comments');
+                $mails_comments = $this->send_update_mails($ticket, $new_string);
+                Log::channel('tickets')->info($name." ticket $ticket->id updated comments");
+            }  
         }  
 
         //check if there is a new attachment and add a post for it
@@ -173,55 +278,23 @@ class TicketsController extends Controller
                 return back()->with('failure', 'Δεν ήταν δυνατή η αποθήκευση του συνημμένου, προσπαθήστε ξανά');
             }
             else{
-                TicketPost::create([
-                    'ticket_id' => $ticket->id,
-                    'text' => "Ο χρήστης $name πρόσθεσε το αρχείο $filename",
-                    'ticketer_id' => $user->id,
-                    'ticketer_type' => $type
-                ]);
-                $new_string = "\nΟ χρήστης ".$name." πρόσθεσε συνημμένο";  
+                Log::channel('tickets')->info($name." ticket $ticket->id uploaded file");
+                $new_post = $this->add_post($ticket->id, $user->id, $type, "Ο χρήστης $name πρόσθεσε το αρχείο $filename");
+                if($new_post){
+                    $new_string = "\nΟ χρήστης ".$name." πρόσθεσε συνημμένο";  
+                    $mails_upload = $this->send_update_mails($ticket, $new_string);
+                }
             }
         }
 
-        //send mails to us
-        $mail_failure=false;
-        try{
-            Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
-        }
-        catch(Throwable $e){
-            $mail_failure=true;
-            try{
-                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
-        }
-
-        //send mail to school
-        try{
-            Mail::to($ticket->school->mail)->send(new TicketUpdated($ticket, $new_string, $ticket->school->name, $ticket->school->md5));
-        }
-        catch(Throwable $e){
-            $mail_failure=true;  
-            try{
-                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to school ".$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            } 
-        }
-
-        Log::channel('tickets')->info($name." ticket $ticket->id updated comments");
-        if(!$mail_failure)
+        
+        if($mails_upload and $mails_comments)
             return back()->with('success', 'Το δελτίο ανανεώθηκε με την απάντησή σας'); 
         else
             return back()->with('warning', 'Το δελτίο ανανεώθηκε με την απάντησή σας, κάποια mail απέτυχαν να σταλούν'); 
     }
 
-    public function mark_as_resolved(Request $request, Ticket $ticket){
-        $ticket->solved=1;
-        $ticket->save();
+    public function mark_as_resolved(Ticket $ticket){
         if(Auth::user()){
             $user = Auth::user();
             $name = $user->username;
@@ -232,25 +305,26 @@ class TicketsController extends Controller
             $name = $user->name;
             $type='App\Models\School';
         }
-        $new_string = "Ο χρήστης ".$name." έκλεισε το δελτίο";
-        try{
-            TicketPost::create([
-                'ticket_id' => $ticket->id,
-                'text' => $new_string,
-                'ticketer_id' => $user->id,
-                'ticketer_type' => $type
-            ]);
-        }
-        catch(Throwable $e){
-            try{
-                Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
+
+        DB::beginTransaction();
+        try {
+            $resolve = $this->resolve_in_db($ticket);
+            if(!$resolve){
+                throw new Exception('Failed to resolve ticket');
             }
-            catch(Throwable $e){
-    
+
+            $new_post = $this->add_post($ticket->id, $user->id, $type, "Ο χρήστης $name έκλεισε το δελτίο");
+            if(!$new_post){
+                throw new Exception('Failed to add post');
             }
+
+            DB::commit();
+        } 
+        catch (\Exception $e) {
+            DB::rollback();
             return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
-       
+
         try{
             Log::channel('tickets')->info($name." ticket $ticket->id resolved");
         }
@@ -296,14 +370,8 @@ class TicketsController extends Controller
             $post->text = $request->input('text')."<p><em><small>Επεξεργασμένο</small></em></p>";
             $post->save();
             if($post->ticket->solved){
-                $post->ticket->solved=0;
-                $post->ticket->save();
-                TicketPost::create([
-                    'ticket_id' => $post->ticket->id,
-                    'text' => "Ο χρήστης $name άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)",
-                    'ticketer_id' => $ticketer->id,
-                    'ticketer_type' => $ticketer->getMorphClass()
-                ]);
+                $open = $this->open_in_db($post->ticket);
+                $new_post = add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Ο χρήστης $name άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
             }
             $id = $post->ticket->id;
             Log::channel('tickets')->info($name." ticket $id updated post");

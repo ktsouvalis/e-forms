@@ -1,4 +1,10 @@
 <x-layout_school>
+    @php
+        $school = Auth::guard('school')->user(); //check which school is logged in
+        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
+        $outings = $school->outings;
+    @endphp
     @push('links')
         <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
         <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
@@ -10,15 +16,14 @@
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
+        <script>
+            var appname = "{{ $appname }}";
+        </script>
+        <script src="../../inside_microapps_new_ticket.js"></script>
     @endpush
     @push('title')
         <title>Εκδρομές</title>
     @endpush
-    @php
-        $school = Auth::guard('school')->user(); //check which school is logged in
-        $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
-        $outings = $school->outings;
-    @endphp
         <div class="py-3">
             <nav class="navbar navbar-light bg-light">
                     <form action="{{url("/new_outing")}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -71,7 +76,7 @@
                             <input name="record_file" type="file" class="form-control" required><br>
                         </div>
                         @if(!$accepts)
-                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
+                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                                 Η εφαρμογή δε δέχεται υποβολές
                             </div>
                         @else
@@ -84,6 +89,9 @@
                     </form>
                 </nav>
             </div> 
+            <hr>
+            @include('microapps.new_ticket_button')
+            <hr>
             <div class=" py-3">
                 <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">

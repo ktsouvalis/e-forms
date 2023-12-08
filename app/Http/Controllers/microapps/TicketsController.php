@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\microapps;
 
+use Exception;
 use Throwable;
 use App\Models\School;
+use App\Models\Microapp;
 use App\Models\Superadmin;
 use App\Mail\TicketCreated;
 use App\Mail\TicketUpdated;
@@ -50,32 +52,23 @@ class TicketsController extends Controller
         return ['error'=>$error, 'message'=>$string];
     }
 
-    private function create_db_entry(Request $request){
-        $sanitizedComments = strip_tags($request->input('comments'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
+    private function create_db_entry($subject, $comments, $school_id=null){
+        if($school_id==null)
+            $school_id = Auth::guard('school')->user()->id;
+        $sanitizedComments = strip_tags($comments, '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
         try{
             $new_ticket = Ticket::create([
-                'school_id' => Auth::guard('school')->user()->id,
-                'subject' => $request->input('subject'),
+                'school_id' => $school_id,
+                'subject' => $subject,
                 'comments' => $sanitizedComments,
                 'solved' => 0
             ]); 
         }
         catch(Throwable $e){
-            try{
-                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create ticket db error '.$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
-            return redirect(url('/school_app/tickets'))->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
+            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create ticket db error '.$e->getMessage());
+            return 'error';
         }
-
-        try{
-            Log::channel('tickets')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
-        }
-        catch(\Exception $e){
-    
-        }
+        Log::channel('tickets')->info($new_ticket->school->name." ticket $new_ticket->id creation success");
         return $new_ticket;    
     }
 
@@ -87,12 +80,7 @@ class TicketsController extends Controller
         }
         catch(Throwable $e){
             $success=false;
-            try{
-                Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to plinet ".$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to plinet ".$e->getMessage());
         }
 
         try{
@@ -100,12 +88,7 @@ class TicketsController extends Controller
         }
         catch(Throwable $e){
             $success=false;
-            try{  
-                Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to school ".$e->getMessage()); 
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to school ".$e->getMessage()); 
         }
         return $success;
     }
@@ -118,12 +101,7 @@ class TicketsController extends Controller
         }
         catch(Throwable $e){
             $success=false;
-            try{
-                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
         }
 
         try{
@@ -131,12 +109,7 @@ class TicketsController extends Controller
         }
         catch(Throwable $e){
             $success=false;
-            try{  
-                Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to school ".$e->getMessage()); 
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to school ".$e->getMessage()); 
         }
         return $success;
     }
@@ -146,8 +119,12 @@ class TicketsController extends Controller
         if($validation['error']==true){
             return back()->with('failure', $validation['message']);
         }
-        $new_ticket = $this->create_db_entry($request);
-        if($new_ticket){
+
+        $subject = $request->input('subject');
+        $comments = $request->input('comments');
+        $new_ticket = $this->create_db_entry($subject, $comments);
+
+        if($new_ticket!='error'){
             $mails = $this->send_creation_mails($new_ticket);
         }
 
@@ -164,12 +141,7 @@ class TicketsController extends Controller
             $ticket->save();
         }
         catch(\Exception $e){
-            try{
-                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' resolve ticket db error '.$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' resolve ticket db error '.$e->getMessage());
             return false;
         }
         return true;
@@ -181,12 +153,7 @@ class TicketsController extends Controller
             $ticket->save();
         }
         catch(\Exception $e){
-            try{
-                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' resolve ticket db error '.$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' resolve ticket db error '.$e->getMessage());
             return false;
         }
         return true;
@@ -202,12 +169,7 @@ class TicketsController extends Controller
             ]);
         }
         catch(Throwable $e){
-            try{
-                Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
+            Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
             return false;
         }
         return true;
@@ -324,13 +286,8 @@ class TicketsController extends Controller
             DB::rollback();
             return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
+        Log::channel('tickets')->info($name." ticket $ticket->id resolved");
 
-        try{
-            Log::channel('tickets')->info($name." ticket $ticket->id resolved");
-        }
-        catch(Throwable $e){
-    
-        }
         return back()->with('success', 'Το δελτίο έκλεισε επιτυχώς');
     }
 
@@ -397,5 +354,32 @@ class TicketsController extends Controller
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του συνημμένου, προσπαθήστε ξανά');
         }
         return $download;
+    }
+
+    public function microapp_create_ticket($appname, $school_code=null){
+        $school_id = null;
+        if($school_code){
+            $school_id = School::where('code', $school_code)->first()->id;
+            
+            if(!$school_id){
+                return response()->json(['error' => 'Δεν βρέθηκε σχολείο με αυτόν τον κωδικό'], 404);
+            }
+        }
+        
+        $app = Microapp::where('url', '/'.$appname)->first()->name;
+        if(!$app){
+            return response()->json(['error' => 'Δεν βρέθηκε εφαρμογή με αυτό το url'], 404);
+        }
+        
+        $ticket = $this->create_db_entry("Αίτημα τεχνικής υποστήριξης από την εφαρμογή $app", "Αίτημα τεχνικής υποστήριξης από την εφαρμογή $app", $school_id);
+        if($ticket=='error'){   
+            return response()->json(['error' => 'Αποτυχία δημιουργίας δελτίου υποστήριξης, δοκιμάστε αργότερα'], 500);
+        }
+
+        $mails = $this->send_creation_mails($ticket);
+
+        return response()->json([
+            'success' => 'Το δελτίο δημιουργήθηκε με επιτυχία!',
+            'ticket_id'=> $ticket->id], 200, [], JSON_UNESCAPED_UNICODE);
     }
 }

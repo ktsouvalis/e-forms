@@ -291,6 +291,21 @@ Route::post('/update-post', [TicketsController::class, 'update_post']);
 
 Route::post('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])->middleware('canUpdateTicket');
 
+// Route::post('/microapp_create_ticket/{appname}/{school_code}', function($appname, $school_code){
+//     // return response()->json(['user'=>Auth::guard('school')->user()]);
+//     if(Auth::guard('school')->check()){
+//         $ticketHandler = New TicketsController();
+//         $result = $ticketHandler->microapp_create_ticket($appname, $school_code);
+        
+//         return response()->json($result->getData(), $result->getStatusCode(), [], JSON_UNESCAPED_UNICODE);
+//     }
+//     else{
+//         return response()->json(['message'=>'Unauthorized'], 401);
+//     }
+// });
+
+Route::post('/microapp_create_ticket/{appname}/{school_code?}', [TicketsController::class, 'microapp_create_ticket']);
+
 Route::post('/new_outing',[OutingsController::class, 'new_outing'])->middleware('isSchool');
 
 Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']); //checking Auth inside the method

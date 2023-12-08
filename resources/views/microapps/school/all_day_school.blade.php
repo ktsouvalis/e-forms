@@ -1,23 +1,25 @@
 <x-layout_school>
-    @push('links')
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
-    @endpush
+    @php
+        $school = Auth::guard('school')->user(); //check which school is logged in
+        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $active_month = App\Models\Month::getActiveMonth();
+        $accepts = $microapp->accepts; 
+        $name = $microapp->name;
+        $old_data = $school->all_day_schools->where('month_id', $active_month->id)->first(); 
+    @endphp
+    
 
     @push('scripts')
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        
+        <script>
+            var appname = "{{ $appname }}";
+        </script>
+        <script src="../../inside_microapps_new_ticket.js"></script>
     @endpush
+   
+    
     @push('title')
-        <title>Ολοήμερο και Πρωινή Υποδοχή</title>
+        <title>{{$name}}</title>
     @endpush
-@php
-    $school = Auth::guard('school')->user(); //check which school is logged in
-    $active_month = App\Models\Month::getActiveMonth();
-    $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
-    $old_data = $school->all_day_schools->where('month_id', $active_month->id)->first(); 
-@endphp
-
 <div class="container">
     <div class="container px-5">
         <div class="alert alert-warning text-center">
@@ -84,7 +86,7 @@
                         <input name="table_file" type="file" class="form-control" @if(!$old_data) {{"required"}} @endif><br>
                     </div>
                     @if(!$accepts)
-                        <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
+                        <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                             Η εφαρμογή δε δέχεται υποβολές
                         </div>
                     @else
@@ -126,9 +128,11 @@
                     </div>
             </div>
                 @endif
+                <hr>
+            @include('microapps.new_ticket_button')
         </div>
-
-        <div class="py-5">
+        {{-- <hr> --}}
+        <div class="py-3">
             <div class="table-responsive py-2">
                 <table  id="" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>

@@ -26,7 +26,7 @@
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
         $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
-        $school_tickets = App\Models\School::find($school->id)->tickets;
+        $school_tickets = App\Models\School::find($school->id)->tickets->sortByDesc('created_at');
     @endphp
     <div class="container">
         <div class="container px-5">   
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         @if(!$accepts)
-                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
+                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                                 Η εφαρμογή δε δέχεται υποβολές
                             </div>
                         @else
@@ -78,11 +78,15 @@
                 <tbody>
                 
                     @foreach($school_tickets as $ticket)
+                        @php
+                            $maxPostUpdate = $ticket->posts->isNotEmpty() ? $ticket->posts->max('updated_at') : null;
+                            $text = max($ticket->updated_at, $maxPostUpdate);
+                        @endphp
                         <tr>
                             <td><a href="{{url("/ticket_profile/$ticket->id#bottom")}}">{{$ticket->id}}</a></td>
                             <td>{{$ticket->subject}}</td> 
                             <td>{{$ticket->created_at}} </td>
-                            <td>{{$ticket->updated_at}} </td>
+                            <td>{{$text}} </td>
                             @if($ticket->solved)
                                 <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Έχει επιλυθεί</a></td>
                             @else

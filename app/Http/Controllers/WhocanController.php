@@ -239,6 +239,8 @@ class WhocanController extends Controller
                     }  
                 }
             }
+            $user = Auth::user();
+            Log::channel('mails')->info("Microapp $user->username, MailToThoseWhoOwe try");
         }
         if(!$mail_error)
             return back()->with('success', 'Ενημερώθηκαν όσοι ενδιαφερόμενοι δεν έχουν υποβάλλει απάντηση');

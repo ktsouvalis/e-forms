@@ -4,10 +4,16 @@
     @endpush
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
-        $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
+        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         $old_data = $school->internal_rule;
     @endphp
-
+    @push('scripts')
+        <script>
+            var appname = "{{ $appname }}";
+        </script>
+        <script src="../../inside_microapps_new_ticket.js"></script>
+    @endpush
     <div class="container">
     <div class="container px-5">  
             <nav class="navbar navbar-light bg-light">
@@ -23,7 +29,7 @@
                         <input name="int_rules_file" type="file" class="form-control" required><br>
                     </div>
                     @if(!$accepts)
-                        <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
+                        <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                             Η εφαρμογή δε δέχεται υποβολές
                         </div>
                     @else
@@ -50,7 +56,10 @@
                     @endif
                 </form> 
             </nav>
+            <hr>
+            @include('microapps.new_ticket_button')
         </div> 
+        
         <div class="container px-5 py-2">
             @if($old_data)
             {{-- <div class="vstack gap-2"> --}}

@@ -1,0 +1,2 @@
+<button id="createTicketButton" class="btn btn-warning"> <i class="fa-solid fa-headset"></i> Δημιουργία Δελτίου <b>Τεχνικής</b> Υποστήριξης για την υποβολή "{{$microapp->name}}" </button>
+<div><small>Όταν δημιουργηθεί το δελτίο, μπορείτε να προσθέστε λεπτομέρειες και συνημμένα</small></div>

@@ -209,10 +209,8 @@
         <label for="visit"> Πραγματοποιήθηκε επίσκεψη;</label>
     @endif
     @php
-        if($ticket->posts<>null)
-            $text = $ticket->updated_at;
-        else
-            $text = $ticket->posts->last()->created_at;
+        $maxPostUpdate = $ticket->posts->isNotEmpty() ? $ticket->posts->max('updated_at') : null;
+        $text = max($ticket->updated_at, $maxPostUpdate);
     @endphp
     <div class="col-md-4 py-3" style="max-width:15rem">
         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">

@@ -4,9 +4,16 @@
     @endpush
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
-        $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
+        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         $old_data = $school->fruit;
     @endphp
+    @push('scripts')
+        <script>
+            var appname = "{{ $appname }}";
+        </script>
+        <script src="../../inside_microapps_new_ticket.js"></script>
+    @endpush
     <div class="container">
         <div class="container px-5">
             
@@ -36,7 +43,7 @@
                             <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="π.χ. Δύο (2) μαθητές δυσανεξία στη λακτόζη" >@if($old_data){{$old_data->comments}}@endif</textarea>
                         </div>
                         @if(!$accepts)
-                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
+                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                                 Η εφαρμογή δε δέχεται υποβολές
                             </div>
                         @else
@@ -53,6 +60,8 @@
                         <div>Τελευταία ενημέρωση <br><strong> {{$old_data->updated_at}}</strong></div>
                     </div>
                 </div>
+                <hr>
+                @include('microapps.new_ticket_button')
             </div>       
     </div>
 </x-layout_school>

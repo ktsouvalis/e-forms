@@ -38,10 +38,8 @@
         <tbody>
             @foreach($tickets as $ticket)
             @php
-                if($ticket->posts<>null)
-                    $text = $ticket->updated_at;
-                else
-                    $text = $ticket->posts->last()->created_at;
+                $maxPostUpdate = $ticket->posts->isNotEmpty() ? $ticket->posts->max('updated_at') : null;
+                $text = max($ticket->updated_at, $maxPostUpdate);
             @endphp
                 <tr> 
                     <td><a href="{{url("/ticket_profile/$ticket->id#bottom")}}">{{$ticket->id}}</a></td>
@@ -55,7 +53,7 @@
                     <td>{{$ticket->created_at}} </td>
                     <td>{{$text}} </td>
                     @if($ticket->needed_visit)
-                        <td class="text-center">Ναι</td>
+                        <td class="text-center"><strong>Ναι</strong></td>
                     @else
                         <td class="text-center">Όχι</td>
                     @endif

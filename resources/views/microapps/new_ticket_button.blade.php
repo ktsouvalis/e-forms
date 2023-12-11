@@ -1,5 +1,5 @@
 <hr>
-<form action="/microapp_create_ticket/{{$appname}}" method="post">
+<form action="{{url("/microapp_create_ticket/{{$appname}}")}}" method="post">
     @csrf
     <strong>Δημιουργία Δελτίου Τεχνικής Δημιουργία Δελτίου <u>Τεχνικής</u> Υποστήριξης <br> για την ενότητα "{{$microapp->name}}"<br></strong>
     <input class="my-1" style="width:100%;" type="text" name="comments" placeholder="Περιγραφή" required><br>

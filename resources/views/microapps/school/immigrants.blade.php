@@ -9,12 +9,6 @@
     $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     $old_data = $school->immigrants->where('month_id', $active_month->id)->first(); 
 @endphp
-@push('scripts')
-    <script>
-        var appname = "{{ $appname }}";
-    </script>
-    <script src="../../inside_microapps_new_ticket.js"></script>
-@endpush
 <div class="container">
     <div class="container px-5">  
             <form action="{{url("/dl_immigrants_template")}}" method="post">
@@ -59,9 +53,7 @@
                    Αρχείο που έχετε υποβάλλει: <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> 
                 </form>   
             @endif
-            <hr>
-            @include('microapps.new_ticket_button')
-            <hr>
+            {{-- @include('microapps.new_ticket_button') --}}
         </div>
 
         <div class="py-3">

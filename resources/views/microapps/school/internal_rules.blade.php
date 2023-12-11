@@ -56,14 +56,11 @@
                     @endif
                 </form> 
             </nav>
-            <hr>
-            @include('microapps.new_ticket_button')
         </div> 
         
         <div class="container px-5 py-2">
             @if($old_data)
             {{-- <div class="vstack gap-2"> --}}
-                <hr>
                 <table class="table table-striped">
                     
                 <tbody>

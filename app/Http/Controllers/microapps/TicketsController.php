@@ -4,6 +4,7 @@ namespace App\Http\Controllers\microapps;
 
 use Exception;
 use Throwable;
+use App\Models\Month;
 use App\Models\School;
 use App\Models\Microapp;
 use App\Models\Superadmin;
@@ -17,6 +18,8 @@ use App\Http\Controllers\Controller;
 use App\Models\microapps\TicketPost;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\microapps\AllDaySchool;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 
@@ -201,7 +204,7 @@ class TicketsController extends Controller
                     throw new Exception('Failed to open ticket');
                 }
 
-                $new_post = $this->add_post($ticket->id, $user->id, $type, "Ο χρήστης $name άνοιξε το δελτίο");
+                $new_post = $this->add_post($ticket->id, $user->id, $type, "Άνοιξε το δελτίο");
                 if(!$new_post){
                     throw new Exception('Failed to add post');
                 }
@@ -241,7 +244,7 @@ class TicketsController extends Controller
             }
             else{
                 Log::channel('tickets')->info($name." ticket $ticket->id uploaded file");
-                $new_post = $this->add_post($ticket->id, $user->id, $type, "Ο χρήστης $name πρόσθεσε το αρχείο $filename");
+                $new_post = $this->add_post($ticket->id, $user->id, $type, "Προστέθηκε το αρχείο $filename");
                 if($new_post){
                     $new_string = "\nΟ χρήστης ".$name." πρόσθεσε συνημμένο";  
                     $mails_upload = $this->send_update_mails($ticket, $new_string);
@@ -275,7 +278,7 @@ class TicketsController extends Controller
                 throw new Exception('Failed to resolve ticket');
             }
 
-            $new_post = $this->add_post($ticket->id, $user->id, $type, "Ο χρήστης $name έκλεισε το δελτίο");
+            $new_post = $this->add_post($ticket->id, $user->id, $type, "Έκλεισε το δελτίο");
             if(!$new_post){
                 throw new Exception('Failed to add post');
             }
@@ -328,7 +331,7 @@ class TicketsController extends Controller
             $post->save();
             if($post->ticket->solved){
                 $open = $this->open_in_db($post->ticket);
-                $new_post = add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Ο χρήστης $name άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
+                $new_post = add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
             }
             $id = $post->ticket->id;
             Log::channel('tickets')->info($name." ticket $id updated post");
@@ -356,30 +359,35 @@ class TicketsController extends Controller
         return $download;
     }
 
-    public function microapp_create_ticket($appname, $school_code=null){
-        $school_id = null;
-        if($school_code){
-            $school_id = School::where('code', $school_code)->first()->id;
-            
-            if(!$school_id){
-                return response()->json(['error' => 'Δεν βρέθηκε σχολείο με αυτόν τον κωδικό'], 404);
-            }
-        }
-        
+    public function microapp_create_ticket(Request $request, $appname){
+        $school = Auth::guard('school')->user();
         $app = Microapp::where('url', '/'.$appname)->first()->name;
         if(!$app){
             return response()->json(['error' => 'Δεν βρέθηκε εφαρμογή με αυτό το url'], 404);
         }
         
-        $ticket = $this->create_db_entry("Αίτημα τεχνικής υποστήριξης από την εφαρμογή $app", "Αίτημα τεχνικής υποστήριξης από την εφαρμογή $app", $school_id);
-        if($ticket=='error'){   
-            return response()->json(['error' => 'Αποτυχία δημιουργίας δελτίου υποστήριξης, δοκιμάστε αργότερα'], 500);
+        $new_ticket = $this->create_db_entry("Αυτόματο δελτίο από την εφαρμογή $app", $request->input('comments'));
+
+        if($new_ticket!='error'){
+            $mails = $this->send_creation_mails($new_ticket);
         }
 
-        $mails = $this->send_creation_mails($ticket);
-
-        return response()->json([
-            'success' => 'Το δελτίο δημιουργήθηκε με επιτυχία!',
-            'ticket_id'=> $ticket->id], 200, [], JSON_UNESCAPED_UNICODE);
+        if($request->input('attachment')){
+            $code = $school->code;
+            $month = Month::getActiveMonth();
+            $original_filename = $school->all_day_schools()->where('month_id', $month->id)->first()->file;
+            Storage::makeDirectory("tickets/$new_ticket->id");
+            $sourcePath = "all_day/all_day_".$code."_".$month->id.".xlsx";
+            $destinationPath = "tickets/$new_ticket->id/$original_filename";
+            try{
+                $result = Storage::copy($sourcePath, $destinationPath);
+            }
+            catch(Throwable $e){
+                return redirect(url("/ticket_profile/$new_ticket->id"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, αλλά δεν ήταν δυνατή η αποθήκευση του συνημμένου');
+            }
+            Log::channel('tickets')->info($school->name." ticket $new_ticket->id uploaded file");
+            $new_post = $this->add_post($new_ticket->id, $school->id,'App\Models\School' , "Προστέθηκε το αρχείο $original_filename");
+        }
+        return redirect(url("/ticket_profile/$new_ticket->id"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
 }

@@ -8,15 +8,6 @@
         $old_data = $school->all_day_schools->where('month_id', $active_month->id)->first(); 
     @endphp
     
-
-    @push('scripts')
-        <script>
-            var appname = "{{ $appname }}";
-        </script>
-        <script src="../../inside_microapps_new_ticket.js"></script>
-    @endpush
-   
-    
     @push('title')
         <title>{{$name}}</title>
     @endpush
@@ -122,13 +113,13 @@
                             @endif
                             <input type="number" name="nos4" placeholder="16.00 ή 15.50" id="" required>
                             <input type="number" name="nos5" placeholder="17.30" id="" required>
-                            <button class="btn btn-secondary fa-solid fa-arrows-rotate"> Ενημέρωση</button>
+                            <button class="btn btn-secondary "><i class="fa-solid fa-arrows-rotate"></i> Ενημέρωση</button>
+                            {{-- <button class="btn btn-secondary fa-solid fa-arrows-rotate "> Ενημέρωση</button> --}}
                             {{-- </div> --}}
                         </form>  
                     </div>
             </div>
                 @endif
-                <hr>
             @include('microapps.new_ticket_button')
         </div>
         {{-- <hr> --}}

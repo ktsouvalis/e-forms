@@ -304,7 +304,7 @@ Route::post('/get_ticket_file/{ticket}/{original_filename}', [TicketsController:
 //     }
 // });
 
-Route::post('/microapp_create_ticket/{appname}/{school_code?}', [TicketsController::class, 'microapp_create_ticket']);
+Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
 
 Route::post('/new_outing',[OutingsController::class, 'new_outing'])->middleware('isSchool');
 

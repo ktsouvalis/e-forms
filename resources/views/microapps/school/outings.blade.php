@@ -16,10 +16,6 @@
         <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
         <script src="../datatable_init.js"></script>
-        <script>
-            var appname = "{{ $appname }}";
-        </script>
-        <script src="../../inside_microapps_new_ticket.js"></script>
     @endpush
     @push('title')
         <title>Εκδρομές</title>
@@ -89,9 +85,6 @@
                     </form>
                 </nav>
             </div> 
-            <hr>
-            @include('microapps.new_ticket_button')
-            <hr>
             <div class=" py-3">
                 <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">

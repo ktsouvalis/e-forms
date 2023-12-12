@@ -33,6 +33,7 @@ use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\ImmigrantsController;
+use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
 
@@ -268,6 +269,8 @@ Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'ch
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
+
+Route::post("/save_school_area", [SchoolAreaController::class, 'save_school_area'])->middleware('isSchool');
 
 Route::post("/create_ticket",[TicketsController::class, 'create_ticket'])->middleware('isSchool');
 

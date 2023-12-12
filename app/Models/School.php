@@ -8,6 +8,7 @@ use App\Models\microapps\Fruit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
 use App\Models\microapps\Immigrant;
+use App\Models\microapps\SchoolArea;
 use App\Models\microapps\AllDaySchool;
 use App\Models\microapps\InternalRule;
 use Illuminate\Database\Eloquent\Model;
@@ -70,6 +71,10 @@ class School extends Authenticatable
 
     public function fruit(){
         return $this->hasOne(Fruit::class);
+    }
+
+    public function school_area(){
+        return $this->hasOne(SchoolArea::class);
     }
 
     public function tickets(){

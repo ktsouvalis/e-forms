@@ -28,6 +28,9 @@ class SchoolAreaController extends Controller
             }
             for($i=1;$i<=$count;$i++){
                 $temp_array=[];
+                if($request->input('street'.$i)=="" and $request->input('comment'.$i)==""){
+                    continue;
+                }
                 $temp_array['street']= $request->input('street'.$i);
                 $temp_array['comment']= $request->input('comment'.$i);
                 array_push($data_array,$temp_array);

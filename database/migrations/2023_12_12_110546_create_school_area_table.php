@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('school_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->text('data', 9000);
-            $table->text('comments');
+            $table->text('comments')->nullable();
             $table->timestamps();
         });
     }

@@ -73,21 +73,22 @@
                         @php
                             $counter = 1;
                         @endphp
+                        <div id="fields" class="input-group">
                         @foreach ($data as $key=>$value)
-                            <div id="fields" class="input-group">
-                                <div id="choices{{$counter}}" class="input-group choices">
-                                    <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή {{$counter}}</span>
-                                    <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" value={{$value->street}}><br>
-                                    <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" value={{$value->comment}}><br>
-                                </div>
+                            
+                            <div id="choices{{$counter}}" class="input-group choices">
+                                <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή {{$counter}}</span>
+                                <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" value={{$value->street}}><br>
+                                <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" value={{$value->comment}}><br>
                             </div>
                             @php
                                 $counter++;
                             @endphp
                         @endforeach
+                        </div>
                     @else
                        <div id="fields" class="input-group">
-                            <div id="choices1" class="input-group">
+                            <div id="choices1" class="input-group choices">
                                 <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή 1</span>
                                 <input name="street1" id="street1" type="text" class="w-25" ><br>
                                 <input name="comment1" id="comment1" type="text" class="w-25"><br>

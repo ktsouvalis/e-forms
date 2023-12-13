@@ -14,6 +14,7 @@ class SchoolAreaController extends Controller
 {
     //
     public function save_school_area(Request $request){
+        // dd($request->all());
         $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/school_area')->first();
         if($microapp->accepts){
@@ -25,7 +26,7 @@ class SchoolAreaController extends Controller
                     $count++;
                 }
             }
-            for($i=0;$i<=$count-1;$i++){
+            for($i=1;$i<=$count;$i++){
                 $temp_array=[];
                 $temp_array['street']= $request->input('street'.$i);
                 $temp_array['comment']= $request->input('comment'.$i);

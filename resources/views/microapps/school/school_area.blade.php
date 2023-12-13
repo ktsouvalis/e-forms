@@ -7,12 +7,37 @@
         $data=array();
         $old_data = $school->school_area; 
         if($old_data){
-            $data = json_decode($old_data->data);
-            
+            $data = json_decode($old_data->data); 
         }
-        
     @endphp
-    
+    @push('scripts')
+    <script src="../addfields.js"></script>
+    {{-- <script>
+        function addStreet(id){
+            let cameFromId = parseInt(id.replace('street', '')); 
+            let allClasses = $('.streets').last().attr('class').split(' ');
+            let streetsClass = allClasses.find(className => className.startsWith('numberOfStreet'));
+            let streetsNumber = parseInt(streetsClass.replace('numberOfStreet', ''));  
+            var counter = streetsNumber;      
+            if(cameFromId == streetsNumber){
+                let clonedDiv = $('.'+streetsClass).clone();
+
+                clonedDiv.removeClass(streetsClass).addClass('numberOfStreet'+counter+1);
+
+                clonedDiv.find('input').each(function() {
+                    let name = $(this).attr('name').replace(counter, counter+1);
+                    let id = $(this).attr('id').replace(counter, counter+1);
+
+                    $(this).attr('name', name);
+                    $(this).attr('id', id);
+                    $(this).val(''); // Clear the value of the cloned inputs
+                });
+
+                clonedDiv.insertAfter('.'+streetsClass);
+            };
+        }
+    </script> --}}
+    @endpush
     @push('title')
         <title>{{$name}}</title>
     @endpush
@@ -27,7 +52,7 @@
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
-                        <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για τα γεωγραφικά όρια Σχολικής Περιφέρειας εγγραφής μαθητών.</strong></span>
+                        <span class="input-group-text w-75 text-wrap"><strong>Καταχώρηση στοιχείων για τα γεωγραφικά όρια Σχολικής Περιφέρειας εγγραφής μαθητών.</strong></span>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25 text-wrap">Γενική Παρατήρηση για τα όρια</span>
@@ -38,21 +63,41 @@
                         <span class="input-group-text w-25">Οδός ή Περιοχή</span>
                         <span class="input-group-text w-25">Παρατήρηση</span>
                     </div>
-                    @for($i=0;$i<=0;$i++)
-                    <div class="input-group">
+                   
+                    {{-- <div class="streets numberOfStreet0 input-group">
                         <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή 1</span>
-                        <input name="street.{{$i}}" id="street" type="text" class=" w-25" value="@if(sizeof($data)>0){{$data[$i]->street}}@endif"><br>
-                        <input name="comment.{{$i}}" id="comment1" type="text" class="w-25" value="@if(sizeof($data)>0){{$data[$i]->comment}}@endif"><br>
-                    </div>
-                    @endfor
-                    {{-- <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή 2</span>
-                        <input name="street2" id="street2" type="text" class=" w-25" value="@if(sizeof($data)>0){{$data[0][2]}}@endif"><br>
-                        <input name="comment2" id="comment2" type="text" class="w-25" value="@if(sizeof($data)>0){{$data[1][2]}}@endif"><br>
+                        <input name="street0" id="street0" type="text" class=" w-25" value="" onclick="addStreet(this.id)"><br>
+                        <input name="comment0" id="comment0" type="text" class="w-25" value=""><br>
                     </div> --}}
-                    {{-- @if(sizeof($data)>0)
-
-                    @endif --}}
+                    @if(sizeof($data)>0)
+                        @php
+                            $counter = 1;
+                        @endphp
+                        @foreach ($data as $key=>$value)
+                            <div id="fields" class="input-group">
+                                <div id="choices{{$counter}}" class="input-group choices">
+                                    <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή {{$counter}}</span>
+                                    <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" value={{$value->street}}><br>
+                                    <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" value={{$value->comment}}><br>
+                                </div>
+                            </div>
+                            @php
+                                $counter++;
+                            @endphp
+                        @endforeach
+                    @else
+                       <div id="fields" class="input-group">
+                            <div id="choices1" class="input-group">
+                                <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή 1</span>
+                                <input name="street1" id="street1" type="text" class="w-25" ><br>
+                                <input name="comment1" id="comment1" type="text" class="w-25"><br>
+                            </div>
+                        </div>
+                    @endif
+                    <button id="bn1" class="btn btn-primary bi bi-plus" type="button" onclick="addField()"></button>
+                    <br><br>
+                    
+                    
                     @if(!$accepts)
                         <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                             Η εφαρμογή δε δέχεται υποβολές

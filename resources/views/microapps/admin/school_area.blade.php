@@ -26,6 +26,7 @@
             <thead>
                 <tr>
                     <th id="search">Ονομασία Σχολείου</th>
+                    <th id="search">Δήμος</th>
                     <th id="">Γεωγραφικά Όρια</th>
                     <th id="">Σχόλια</th>
                     <th id="">Ημερομηνία Υποβολής</th>
@@ -47,6 +48,7 @@
                     @endphp
                     <tr>
                         <td>{{$school->stakeholder->name}} </td>
+                        <td>{{$school->stakeholder->municipality->name}} </td>
                         @if($school->stakeholder->school_area) {{-- if school has a school_area record, get record data --}}
                             <td>
                                 @php

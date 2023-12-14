@@ -50,8 +50,9 @@
                         @if($school->stakeholder->school_area) {{-- if school has a school_area record, get record data --}}
                             <td>
                                 @php
-                                print_r($school->stakeholder->school_area->data);
-                                // $data = json_decode($school->stakeholder->school_area->data);
+                                $data = json_decode($school->stakeholder->school_area->data);
+                                print_r($data);
+                                
                                 // foreach($data as $one_record){
                                 //     echo $one_record->street;
                                 //     if($one_record->comment != "")

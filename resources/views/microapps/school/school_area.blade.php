@@ -8,6 +8,8 @@
         $old_data = $school->school_area; 
         if($old_data){
             $data = json_decode($old_data->data); 
+        }else{
+            $data=array();
         }
     @endphp
     @push('scripts')

@@ -20,7 +20,15 @@
         $school_areas = $microapp->stakeholders; 
     @endphp
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-
+    <div class="container">
+      
+            <div class="alert alert-warning text-muted text-center">
+                Σύνδεσμος για δημοσίευση ορίων Σχολικών Μονάδων:
+                <strong><a href="{{url("/school_areas")}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>    
+                </strong><br><br> 
+            </div>
+     
+    </div>
     <div class="table-responsive py-2">
         <table  id="dataTable" class="display table table-sm table-striped table-hover">
             <thead>

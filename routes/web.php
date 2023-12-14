@@ -94,6 +94,10 @@ Route::post('/find_entity', function(Request $request){
 
 );
 
+//PUBLIC ROUTES
+
+Route::view('/school_areas', 'public/school_areas');
+
 //ADMIN Routes
 
 Route::get('/admin/{appname}', function($appname){

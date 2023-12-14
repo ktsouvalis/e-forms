@@ -17,11 +17,15 @@
         <title>{{$name}}</title>
     @endpush
 <div class="container">
-    <div class="container px-5">
-        {{-- σε αυτό το div μπορούμε να εμφανίσουμε κάποιο μήνυμα. 
-        <div class="alert alert-warning text-center">
-            <strong>ΣΗΜΑΝΤΙΚΟ</strong><br><br> 
-        </div>   --}}   
+    <div class="container px-5"> 
+        <div class="alert alert-warning text-muted text-center">
+            Στον ακόλουθο σύνδεσμο μπορείτε να δείτε τις περιοχές εγγραφής όλων των Σχολικών Μονάδων της ΔΠΕ Αχαΐας.<br>
+            Η σελίδα αυτή, όταν ολοκληρωθεί η διαδικασία καθορισμού των περιοχών εγγραφής, θα δημοσιευτεί στην ιστοσελίδα της Δ/νσης ώστε να έχουν πρόσβαση οι γονείς των μαθητών κατά
+            την περίοδο εγγραφών.<br><br>
+            Πατήστε 
+            <strong><a href="{{url("/school_areas")}}" class="text-dark" target="_blank"> εδώ: Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>    
+            </strong><br><br> 
+        </div>     
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/save_school_area")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf

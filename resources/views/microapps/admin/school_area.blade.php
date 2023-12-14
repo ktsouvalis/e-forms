@@ -50,15 +50,16 @@
                         @if($school->stakeholder->school_area) {{-- if school has a school_area record, get record data --}}
                             <td>
                                 @php
-                                $data = json_decode($school->stakeholder->school_area->data);
-                                print_r($data);
+                                if($school->stakeholder->school_area->data != ""){
+                                    $data = json_decode($school->stakeholder->school_area->data);
+                                    foreach($data as $one_record){
+                                        echo $one_record->street;
+                                        if($one_record->comment != "")
+                                            echo " (".$one_record->comment.")";
+                                        echo "<br>";
+                                    }
+                                }
                                 
-                                // foreach($data as $one_record){
-                                //     echo $one_record->street;
-                                //     if($one_record->comment != "")
-                                //         echo " (".$one_record->comment.")";
-                                //      echo "<br>";
-                                // }
                                 @endphp
                             </td> {{--$school(MicroappStakeholder)->stakeholder(belongsTo: School)->school_area(hasOne: school_area)->data --}}
                             <td class="text-wrap"  style="width: 12rem;">{{$school->stakeholder->school_area->comments}}</td>

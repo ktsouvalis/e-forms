@@ -4,12 +4,10 @@
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; 
         $name = $microapp->name;
+        $old_data = $school->school_area;
         $data=array();
-        $old_data = $school->school_area; 
         if($old_data){
             $data = json_decode($old_data->data); 
-        }else{
-            $data=array();
         }
     @endphp
     @push('scripts')
@@ -45,8 +43,7 @@
                         <span class="input-group-text w-25">Παρατήρηση</span>
                     </div>
                    
-                   
-                    @if(sizeof($data)>0)
+                    @if($data))
                         @php
                             $counter = 1;
                         @endphp
@@ -87,6 +84,7 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση αλλαγών</button>
+                            <button type="submit" class="btn btn-primary m-2 bi bi-check2-square"> Επιβεβαίωση ορίων</button>
                             <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                         </div>
                     @endif

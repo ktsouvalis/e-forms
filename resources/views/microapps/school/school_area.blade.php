@@ -52,8 +52,8 @@
                             
                             <div id="choices{{$counter}}" class="input-group choices">
                                 <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή {{$counter}}</span>
-                                <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" value="{{$value->street}}" disabled ><br>
-                                <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" value="{{$value->comment}}" disabled ><br>
+                                <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" disabled value="{{$value->street}}"><br>
+                                <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" disabled value="{{$value->comment}}"><br>
                             </div>
                             @php
                                 $counter++;

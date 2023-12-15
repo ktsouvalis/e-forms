@@ -52,8 +52,8 @@
                             
                             <div id="choices{{$counter}}" class="input-group choices">
                                 <span class="input-group-text w-25 text-wrap">Οδός ή Περιοχή {{$counter}}</span>
-                                <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" value={{$value->street}} disabled ><br>
-                                <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" value={{$value->comment}} disabled ><br>
+                                <input name="street{{$counter}}" id="street{{$counter}}" type="text" class="w-25" value="{{$value->street}}" disabled ><br>
+                                <input name="comment{{$counter}}" id="comment{{$counter}}" type="text" class="w-25" value="{{$value->comment}}" disabled ><br>
                             </div>
                             @php
                                 $counter++;
@@ -75,7 +75,9 @@
                     </div>
                     <br><br>
                     
-                    
+                    @php
+                        $accepts=0;
+                    @endphp
                     @if(!$accepts)
                         <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
                             Η εφαρμογή δε δέχεται υποβολές
@@ -84,7 +86,7 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             {{-- <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση αλλαγών</button> --}}
-                            <button type="submit" class="btn btn-primary m-2 bi bi-check2-square"> Επιβεβαίωση ορίων</button>
+                            {{-- <button type="submit" class="btn btn-primary m-2 bi bi-check2-square"> Επιβεβαίωση ορίων</button> --}}
                             <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                         </div>
                     @endif

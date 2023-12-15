@@ -43,7 +43,7 @@
                         <span class="input-group-text w-25">Παρατήρηση</span>
                     </div>
                    
-                    @if($data))
+                    @if($data)
                         @php
                             $counter = 1;
                         @endphp

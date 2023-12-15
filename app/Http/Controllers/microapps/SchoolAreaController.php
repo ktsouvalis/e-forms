@@ -18,6 +18,7 @@ class SchoolAreaController extends Controller
         // dd($request->all());
         $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/school_area')->first();
+        $microapp->accepts=true;
         if($microapp->accepts){
             $done=0;
             $data_array=array();

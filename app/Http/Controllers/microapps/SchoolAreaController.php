@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\microapps\SchoolArea;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\SchoolController;
 
 class SchoolAreaController extends Controller
 {
@@ -64,6 +65,13 @@ class SchoolAreaController extends Controller
         else{
             return redirect(url('/school_app/school_area'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
+    }
+
+    public function school_area_profile($school){
+        
+        $sch = new SchoolController;
+        $sch->login_from_admin($school);
+        return view('microapps/school/school_area_profile');
     }
 
 }

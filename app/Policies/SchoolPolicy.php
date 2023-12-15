@@ -16,6 +16,7 @@ class SchoolPolicy
     public function viewAny(User $user): bool
     {
         //
+        return true;
         if(Superadmin::where('user_id',$user->id)->exists()) return true;
         $operation = Operation::find(1); // schools operation is id 1 from the seeder
         if($operation->users->where('user_id', $user->id)->count()) return true;

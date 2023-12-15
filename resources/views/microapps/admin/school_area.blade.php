@@ -1,4 +1,5 @@
 <x-layout>
+   
     @push('links')
         <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
         <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
@@ -21,13 +22,11 @@
     @endphp
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     <div class="container">
-      
-            <div class="alert alert-warning text-muted text-center">
-                Σύνδεσμος για δημοσίευση ορίων Σχολικών Μονάδων:
-                <strong><a href="{{url("/school_areas")}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>    
-                </strong><br><br> 
-            </div>
-     
+        <div class="alert alert-warning text-muted text-center">
+            Σύνδεσμος για δημοσίευση ορίων Σχολικών Μονάδων:
+            <strong><a href="{{url("/school_areas")}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>    
+            </strong><br><br> 
+        </div>
     </div>
     <div class="table-responsive py-2">
         <table  id="dataTable" class="display table table-sm table-striped table-hover">
@@ -55,7 +54,12 @@
                         }
                     @endphp
                     <tr>
-                        <td>{{$school->stakeholder->name}} </td>
+                        @php
+                            $school_id = $school->stakeholder->id;
+                        @endphp
+                        <form action="{{url("/admin/edit_school_area/$school_id")}}" method="get" target="_blank">
+                            <td><button type="submit">{{$school->stakeholder->name}} </button></td>
+                        </form>
                         <td>{{$school->stakeholder->municipality->name}} </td>
                         @if($school->stakeholder->school_area) {{-- if school has a school_area record, get record data --}}
                             <td>
@@ -75,12 +79,12 @@
                             <td class="text-wrap"  style="width: 12rem;">{{$school->stakeholder->school_area->comments}}</td>
                             <td>{{date('d/m/Y H:i:s', $timestamp)}}</td>
                         @else
-                            <td>-</td>
+                            <td><em><small>Δεν έχουν δηλωθεί</small></em></td>
                             <td>-</td>
                             <td>-</td>
                         @endif
                         <td>{{$school->stakeholder->code}}</td> 
-                    </tr> 
+                    </tr>
                 @endforeach   
             </tbody>  
         </table>    

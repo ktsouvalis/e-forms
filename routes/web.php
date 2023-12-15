@@ -110,8 +110,7 @@ Route::get('/admin/{appname}', function($appname){
     }
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
-
-
+Route::get('admin/edit_school_area/{school}', [SchoolAreaController::class, 'school_area_profile']);
 
 //// USER ROUTES
 

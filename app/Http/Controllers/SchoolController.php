@@ -178,6 +178,12 @@ class SchoolController extends Controller
         return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
     }
 
+    public function login_from_admin($id){
+        $school = School::where('id', $id)->firstOrFail();
+        Auth::guard('school')->login($school);
+        return;
+    }
+
     public function logout(){
         
         auth()->guard('school')->logout();

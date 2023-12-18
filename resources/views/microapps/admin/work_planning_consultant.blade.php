@@ -18,6 +18,9 @@
         $selected_day7 = $selected_day->add(7,'day');
         $day_array = [$selected_day,$selected_day7];
     @endphp
+    @php
+        $user = App\Model\Consultant::get()->first;
+    @endphp
     @foreach($day_array as $today)
     <hr>
     @php

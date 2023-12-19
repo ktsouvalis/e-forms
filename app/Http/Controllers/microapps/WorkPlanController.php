@@ -210,6 +210,8 @@ class WorkPlanController extends Controller
         $writer->save($fileName);
         
         if (file_exists($fileName)) {
+            //$response = Storage::disk('local')->download($file, $all_day_school->file);  
+            ob_end_clean();
             return response()->download($fileName, 'Προγραμματισμός_Έργου_'.$selected_day->format('Y').'_'.$selected_day->format('m').'.xlsx');
         }
         return;

@@ -6,13 +6,25 @@
         }else{
             $selected_day = Carbon\CarbonImmutable::now();
         }
+        $year = $selected_day->year;
+        $week = $selected_day->isoFormat('W');
+        $yearWeek=$year.$week;
     @endphp
     <div class="container">
         <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div>
-        <div>Σημείωση: <em>Δεν έχει ολοκληρωθεί η εξαγωγή σε excel<br>Οι λειτουργίες αποθήκευσης λειτουργούν κανονικά και επιπλέον έχουν μεταφερθεί οι δηλώσεις που έχουν υποβληθεί στην παλιά Φόρμα. Μπορείτε να προχωρήσετε σε αποθήκευση κανονικά ανά εβδομάδα.</em></div>
-        <span class="" id="basic-addon2">Ημερομηνία</span>
-        <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
-    
+        <div class="row">
+            <div class="col">
+                <span class="" id="basic-addon2">Ημερομηνία</span>
+                <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
+            </div>
+            <div class="col">
+                Εξαγωγή προγράμματος μήνα σε excel:
+                <form action="{{url("/consultant_app/extract_work_plan/$yearWeek")}}" method="post">
+                @csrf
+                <input type="image" src="{{url('/favicon/xlsx.jpg')}}" alt="xlsx" width="20" height="20">
+                </form>
+            </div>
+        </div>
     </div>
     @php        
         $selected_day7 = $selected_day->add(7,'day');

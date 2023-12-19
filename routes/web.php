@@ -230,6 +230,8 @@ Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consu
 
 Route::post('/consultant_app/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
 
+Route::post('/consultant_app/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->middleware('isConsultant');
+
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');

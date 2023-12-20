@@ -43,8 +43,8 @@
                             <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" placeholder="π.χ. Δύο (2) μαθητές δυσανεξία στη λακτόζη" >@if($old_data){{$old_data->comments}}@endif</textarea>
                         </div>
                         @if(!$accepts)
-                            <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
-                                Η εφαρμογή δε δέχεται υποβολές
+                           <div class='alert alert-warning text-center my-2'>
+                               <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
                             </div>
                         @else
                             <div class="input-group">

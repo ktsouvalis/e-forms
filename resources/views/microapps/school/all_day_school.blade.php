@@ -77,8 +77,8 @@
                         <input name="table_file" type="file" class="form-control" @if(!$old_data) {{"required"}} @endif><br>
                     </div>
                     @if(!$accepts)
-                        <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-dark" style="text-align:center;">
-                            Η εφαρμογή δε δέχεται υποβολές
+                        <div class='alert alert-warning text-center my-2'>
+                            <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
                         </div>
                     @else
                         <div class="input-group">

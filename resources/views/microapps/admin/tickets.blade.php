@@ -75,36 +75,36 @@
             <button type="submit" class="btn btn-primary">Δημιουργία νέου δελτίου</button>
         </form> --}}
         <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                        @csrf
-                        <div class="input-group">
-                            <span class="input-group-text w-25"></span>
-                            <span class="input-group-text w-75"><strong>Καταχώρηση νέου αιτήματος Τεχνικής Υποστήριξης</strong></span>
-                        </div>
-                         
-                        <div class="input-group my-2">
-                            <span class="input-group-text w-25 text-wrap">Σχολείο:</span>
-                            <input name="school" id="school" type="text" class="form-control" placeholder="Επιλέξτε Σχολείο" aria-label="Σχολείο" aria-describedby="basic-addon2" required list="schoolOptions">
-                            <datalist id="schoolOptions">
-                                @foreach(App\Models\School::all() as $school)
-                                    <option value="{{ $school->id }}">{{ $school->name }}</option>
-                                @endforeach
-                            </datalist>
-                        </div>
-                        
-                        <div class="input-group my-2">
-                            <span class="input-group-text w-25 text-wrap">Θέμα:</span>
-                            <input name="subject" id="subject" type="text" class="form-control" placeholder="Θέμα" aria-label="Θέμα" aria-describedby="basic-addon2" required>
-                        </div>
-                        <div class="input-group">
-                            <div class="input-group justify-content-center">
-                            <textarea name="comments" id="comments" class="form-control" required></textarea>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <button type="submit" class="btn btn-primary m-2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
-                        </div>
-                    </form>
-                </nav>
+            <form action="{{url("/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                @csrf
+                <div class="input-group">
+                    <span class="input-group-text w-25"></span>
+                    <span class="input-group-text w-75"><strong>Καταχώρηση νέου αιτήματος Τεχνικής Υποστήριξης</strong></span>
+                </div>
+                    
+                <div class="input-group my-2">
+                    <span class="input-group-text w-25 text-wrap">Σχολείο:</span>
+                    <input name="school" id="school" type="text" class="form-control" placeholder="Επιλέξτε Σχολείο" aria-label="Σχολείο" aria-describedby="basic-addon2" required list="schoolOptions">
+                    <datalist id="schoolOptions">
+                        @foreach(App\Models\School::all() as $school)
+                            <option value="{{ $school->id }}">{{ $school->name }}</option>
+                        @endforeach
+                    </datalist>
+                </div>
+                
+                <div class="input-group my-2">
+                    <span class="input-group-text w-25 text-wrap">Θέμα:</span>
+                    <input name="subject" id="subject" type="text" class="form-control" placeholder="Θέμα" aria-label="Θέμα" aria-describedby="basic-addon2" required>
+                </div>
+                <div class="input-group">
+                    <div class="input-group justify-content-center">
+                    <textarea name="comments" id="comments" class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-primary m-2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
+                </div>
+            </form>
+        </nav>
     </div>
 </x-layout>

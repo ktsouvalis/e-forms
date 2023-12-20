@@ -92,7 +92,7 @@
 </script>
 @endpush
 @php
-    $accepts = App\Models\Microapp::where('url', '/'.$appname)->first()->accepts; //fetch microapp 'accepts' field
+    $accepts = App\Models\Microapp::where('url', '/tickets')->first()->accepts; //fetch microapp 'accepts' field
 @endphp
 <div class="container">
 <div class="container px-5">   
@@ -174,8 +174,8 @@
             </div>
             </div>
             @if(!$accepts)
-                <div class="col-sm-2 btn btn-warning bi bi-bricks rounded text-light" style="text-align:center;">
-                    Η εφαρμογή δε δέχεται υποβολές
+                <div class='alert alert-warning text-center my-2'>
+                    <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
                 </div>
             @else
                     <div class="hstack">

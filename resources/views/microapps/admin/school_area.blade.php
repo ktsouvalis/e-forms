@@ -17,7 +17,7 @@
     @endpush
     @php
         //fetch microapp data
-        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $microapp = App\Models\Microapp::where('url', '/school_area')->first();
         $school_areas = $microapp->stakeholders; 
     @endphp
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
@@ -36,7 +36,8 @@
                     <th id="search">Δήμος</th>
                     <th id="">Γεωγραφικά Όρια</th>
                     <th id="">Σχόλια</th>
-                    <th id="">Ημερομηνία Υποβολής</th>
+                    {{-- <th id="">Ημερομηνία Υποβολής</th> --}}
+                    <th id="">Επιβεβαίωση</th>
                     <th id="search">Κωδικός Σχολείου</th>
                 </tr>
             </thead>
@@ -44,7 +45,7 @@
             
                 @foreach($school_areas as $school)
                 {{-- $school is MicroappStakeholder object so method ->stakeholder fetches School object attributes) --}}
-                    @php
+                    {{-- @php
                         if($school->stakeholder->school_area AND $school->stakeholder->school_area->updated_at != ""){ // if school has a school_area record, get timestamp
                             $date = DateTime::createFromFormat('Y-m-d H:i:s', $school->stakeholder->school_area->updated_at);
                             $timestamp = $date->getTimestamp();
@@ -52,36 +53,47 @@
                             $date = DateTime::createFromFormat('Y-m-d H:i:s', '2021-03-01 10:00:00');
                             $timestamp = $date->getTimestamp();
                         }
-                    @endphp
+                    @endphp --}}
                     <tr>
                         @php
                             $school_id = $school->stakeholder->id;
                         @endphp
-                        <form action="{{url("/admin/edit_school_area/$school_id")}}" method="get" target="_blank">
-                            <td><button type="submit">{{$school->stakeholder->name}} </button></td>
-                        </form>
-                        <td>{{$school->stakeholder->municipality->name}} </td>
+                        <td>
+                        @if(App\Models\MicroappUser::where('user_id',Auth::user()->id)->where('microapp_id', $microapp->id)->where('can_edit', 1)->exists() or Auth::user()->isAdmin())
+                            <form action="{{url("/school_area_profile/$school_id")}}" method="get" target="_blank">
+                                <button type="submit">{{$school->stakeholder->name}} </button>
+                            </form>
+                        @else
+                            {{$school->stakeholder->name}}
+                        @endif
+                        </td>
+                        <td >{{$school->stakeholder->municipality->name}} </td>
                         @if($school->stakeholder->school_area) {{-- if school has a school_area record, get record data --}}
-                            <td>
-                                @php
-                                if($school->stakeholder->school_area->data != ""){
+                            @php
+                                if($school->stakeholder->school_area->data != "")
                                     $data = json_decode($school->stakeholder->school_area->data);
-                                    foreach($data as $one_record){
-                                        echo $one_record->street;
-                                        if($one_record->comment != "")
-                                            echo " (".$one_record->comment.")";
-                                        echo "<br>";
-                                    }
-                                }
-                                
-                                @endphp
+                            @endphp
+                            <td>
+                                @foreach($data as $one_record)
+                                    {{$one_record->street}}
+                                    @if($one_record->comment != "")
+                                        ({{$one_record->comment}})
+                                    @endif
+                                    <br>
+                                @endforeach
                             </td> {{--$school(MicroappStakeholder)->stakeholder(belongsTo: School)->school_area(hasOne: school_area)->data --}}
                             <td class="text-wrap"  style="width: 12rem;">{{$school->stakeholder->school_area->comments}}</td>
-                            <td>{{date('d/m/Y H:i:s', $timestamp)}}</td>
+                            {{-- <td>{{date('d/m/Y H:i:s', $timestamp)}}</td> --}}
+                            @if($school->stakeholder->school_area->confirmed)
+                                <td class=""><strong><i class="bi bi-check-circle text-success"></i></strong></td>
+                            @else
+                                <td class=""><i class="bi bi-hourglass-split text-danger"></i></td>
+                            @endif
                         @else
                             <td><em><small>Δεν έχουν δηλωθεί</small></em></td>
                             <td>-</td>
-                            <td>-</td>
+                            {{-- <td>-</td> --}}
+                            <td class="">-</td>
                         @endif
                         <td>{{$school->stakeholder->code}}</td> 
                     </tr>

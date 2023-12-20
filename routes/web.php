@@ -110,8 +110,6 @@ Route::get('/admin/{appname}', function($appname){
     }
 })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
-Route::get('admin/edit_school_area/{school}', [SchoolAreaController::class, 'school_area_profile']);
-
 //// USER ROUTES
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
@@ -275,7 +273,17 @@ Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
 
-Route::post("/save_school_area", [SchoolAreaController::class, 'save_school_area'])->middleware('isSchool');
+Route::post("/save_school_area/{school}", [SchoolAreaController::class, 'save_school_area'])->middleware('canUpdateSchoolArea');
+
+Route::get("/school_area_profile/{school?}", function(School $school=null){
+    if(Auth::check()){
+        $blade='admin';
+    }
+    else if (Auth::guard('school')->check()){
+        $blade='school';
+    }
+    return view("microapps.$blade.school_area_profile", ['school'=>$school]);
+})->middleware('canUpdateSchoolArea');
 
 Route::post("/create_ticket",[TicketsController::class, 'create_ticket'])->middleware('isSchool');
 
@@ -286,7 +294,7 @@ Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
     else if (Auth::guard('school')->user()){
         $blade='school';
     }
-    return view("microapps.$blade.ticket-profile", ['ticket'=>$ticket, 'appname'=>'tickets']);
+    return view("microapps.$blade.ticket-profile", ['ticket'=>$ticket]);
 })->middleware('canUpdateTicket');
 
 Route::post("/update_ticket/{ticket}", [TicketsController::class, 'update_ticket'])->middleware('canUpdateTicket');

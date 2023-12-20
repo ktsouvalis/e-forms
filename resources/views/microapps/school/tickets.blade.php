@@ -55,7 +55,6 @@
                             </div>
                         @else
                             <div class="input-group">
-                                <span class="w-25"></span>
                                 <button type="submit" class="btn btn-primary m-2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
                                 <div><small>Όταν δημιουργηθεί το δελτίο, μπορείτε να προσθέστε συνημμένα</small></div>
                             </div>

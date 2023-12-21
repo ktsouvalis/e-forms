@@ -11,7 +11,7 @@
         }
     @endphp
     @push('scripts')
-    <script src="../../addfields.js"></script>
+    <script src="../addfields.js"></script>
     @endpush
     @push('title')
         <title>{{$name}}</title>

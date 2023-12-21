@@ -24,6 +24,8 @@ class SchoolAreaController extends Controller
             if($microapp->accepts){
                 $school_area = $school->school_area;
                 $school_area->confirmed = 1;
+                if($request->input('general_com') != "")
+                    $school_area->comments = $request->input('general_com');
                 try{ 
                     $school_area->save(); 
                 }

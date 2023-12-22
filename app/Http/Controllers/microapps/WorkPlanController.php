@@ -203,18 +203,19 @@ class WorkPlanController extends Controller
         $activeWorksheet->getPageSetup()->setFitToHeight('0');
         // Create the spreadsheet writer object
         $writer = new Xlsx($spreadsheet);
-            // When creating the writer object, the first sheet is also created
-            // We will get the already created sheet
-        $fileName = '/opt/e-forms/public/'.$user->id.'consultant_programm.xlsx';
-        // Save the spreadsheet
+        // When creating the writer object, the first sheet is also created
+        // We will get the already created sheet
+        $directory = storage_path('app/consultant_programms');
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+        $fileName = $directory.'/'.$user->id.'consultant_programm.xlsx';
         $writer->save($fileName);
         
         if (file_exists($fileName)) {
-            //$response = Storage::disk('local')->download($file, $all_day_school->file);  
             ob_end_clean();
             return response()->download($fileName, 'Προγραμματισμός_Έργου_'.$selected_day->format('Y').'_'.$selected_day->format('m').'.xlsx');
         }
         return;
-
     }
 }

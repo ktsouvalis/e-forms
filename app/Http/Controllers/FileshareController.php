@@ -257,6 +257,10 @@ class FileshareController extends Controller
 
             // Regular expression for a 9-digit number
             $regex9 = '/(?<!\d)\d{9}(?!\d)/';
+
+            // Regular expression for a 7-digit number
+            $regex7 = '/(?<!\d)\d{7}(?!\d)/';
+
             $fieldOfInterest = '';
         
             if (preg_match($regex9, $string, $matches)) {
@@ -265,26 +269,54 @@ class FileshareController extends Controller
             else if (preg_match($regex6, $string, $matches)) {
                 $fieldOfInterest = 'am';//else the number is am
             }
+            else if (preg_match($regex7, $string, $matches)){
+                $fieldOfInterest = 'code';//else the number is code
+            }
             if(!empty($fieldOfInterest)){
-                $stakeholder = Teacher::where($fieldOfInterest, $matches[0])->first();
-                if($stakeholder){
-                    try{
-                        FileshareStakeholder::updateOrCreate(
-                        [
-                            'fileshare_id' => $fileshare->id,
-                            'stakeholder_id' => $stakeholder->id,
-                            'stakeholder_type' => 'App\Models\Teacher'
-                        ],
-                        [
-                            'addedby_id' => Auth::user()->id,
-                            'addedby_type' => get_class(Auth::user()),
-                            'visited_fileshare' => 0
-                        ]);
-                        $check['stakeholder']=$stakeholder->surname.' '.$stakeholder->name;
+                if($fieldOfInterest == 'am' or $fieldOfInterest == 'afm'){
+                    $stakeholder = Teacher::where($fieldOfInterest, $matches[0])->first();
+                    if($stakeholder){
+                        try{
+                            FileshareStakeholder::updateOrCreate(
+                            [
+                                'fileshare_id' => $fileshare->id,
+                                'stakeholder_id' => $stakeholder->id,
+                                'stakeholder_type' => 'App\Models\Teacher'
+                            ],
+                            [
+                                'addedby_id' => Auth::user()->id,
+                                'addedby_type' => get_class(Auth::user()),
+                                'visited_fileshare' => 0
+                            ]);
+                            $check['stakeholder']=$stakeholder->surname.' '.$stakeholder->name;
+                        }
+                        catch(Throwable $e){
+                            Log::channel('throwable_db')->error(Auth::user()->username." auto_update_whocan: ".$e->getMessage());
+                            $error=true;
+                        }
                     }
-                    catch(Throwable $e){
-                        Log::channel('throwable_db')->error(Auth::user()->username." auto_update_whocan: ".$e->getMessage());
-                        $error=true;
+                }
+                else{
+                    $stakeholder = School::where($fieldOfInterest, $matches[0])->first();
+                    if($stakeholder){
+                        try{
+                            FileshareStakeholder::updateOrCreate(
+                            [
+                                'fileshare_id' => $fileshare->id,
+                                'stakeholder_id' => $stakeholder->id,
+                                'stakeholder_type' => 'App\Models\School'
+                            ],
+                            [
+                                'addedby_id' => Auth::user()->id,
+                                'addedby_type' => get_class(Auth::user()),
+                                'visited_fileshare' => 0
+                            ]);
+                            $check['stakeholder']=$stakeholder->code.' '.$stakeholder->name;
+                        }
+                        catch(Throwable $e){
+                            Log::channel('throwable_db')->error(Auth::user()->username." auto_update_whocan: ".$e->getMessage());
+                            $error=true;
+                        }
                     }
                 }
             }

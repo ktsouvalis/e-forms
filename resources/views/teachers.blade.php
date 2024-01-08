@@ -81,23 +81,13 @@
             @foreach($all_teachers as $teacher)
             @if($teacher->active)
                 @php
-                    $date=null;
-                    if($teacher->logged_in_at) 
-                        $date = Illuminate\Support\Carbon::parse($teacher->logged_in_at);
                     $text = url("/teacher/$teacher->md5");
-                    
                 @endphp
                 
                 <tr>  
                     <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
-                    {{-- <td style="text-align:center" >
-                        <form action="{{url("share_link/teacher/$teacher->id")}}" method="post">
-                            @csrf
-                            <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής συνδέσμου;')"> </button>
-                        </form>
-                    </td>  --}}
                     <td>{{$teacher->surname}}</td>
                     <td>{{$teacher->name}}</td>
                     <td>{{$teacher->mail}}</td>
@@ -113,8 +103,8 @@
                     <td>{{$teacher->am}}</td>
                     <td>{{$teacher->sxesi_ergasias->name}}</td>
                     <td>{{$teacher->sch_mail}}</td>
-                    @if($date)
-                        <td>{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
+                    @if($teacher->logged_in_at)
+                        <td>{{Illuminate\Support\Carbon::parse($teacher->logged_in_at)}}</td>
                     @else
                         <td> - </td>
                     @endif 

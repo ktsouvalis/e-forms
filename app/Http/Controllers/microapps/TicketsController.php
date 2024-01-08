@@ -360,16 +360,17 @@ class TicketsController extends Controller
     }
 
     public function admin_create_ticket(Request $request){
-        $school = School::find($request->input('school'));
+        // $school = School::find($request->input('school'));
+        $school = School::where('name', $request->input('school'))->first();
         if(!$school){
-            return back()->with(['failure' => 'Δεν βρέθηκε σχολείο']);
+            return back()->with(['failure' => 'Το σχολείο δεν βρέθηκε']);
         }
         $new_ticket = $this->create_db_entry($request->input('comments'), $request->input('comments'), $school->id);
         if($new_ticket!='error'){
             $mails = $this->send_creation_mails($new_ticket);
         }
 
-        return redirect(url("/ticket_profile/$new_ticket->id"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
+        return redirect(url("/ticket_profile/$new_ticket->id#bottom"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
 
     public function microapp_create_ticket(Request $request, $appname){

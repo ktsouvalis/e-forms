@@ -87,7 +87,7 @@
                     <input name="school" id="school" type="text" class="form-control" placeholder="Επιλέξτε Σχολείο" aria-label="Σχολείο" aria-describedby="basic-addon2" required list="schoolOptions">
                     <datalist id="schoolOptions">
                         @foreach(App\Models\School::all() as $school)
-                            <option value="{{ $school->id }}">{{ $school->name }}</option>
+                            <option value="{{ $school->name }}">{{ $school->name }}</option>
                         @endforeach
                     </datalist>
                 </div>

@@ -35,6 +35,9 @@ class ChangeActiveMonth extends Command
             $current_active_month->active=0;
             $current_active_month->save();
             $get_month = Carbon::now()->month-1;
+            if($get_month==0){
+                $get_month=12;
+            }
             $new_active_month = Month::where('number',$get_month)->first();
             $new_active_month->active=1;
             $new_active_month->save();

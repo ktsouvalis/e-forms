@@ -365,7 +365,7 @@ class TicketsController extends Controller
         if(!$school){
             return back()->with(['failure' => 'Το σχολείο δεν βρέθηκε']);
         }
-        $new_ticket = $this->create_db_entry($request->input('comments'), $request->input('comments'), $school->id);
+        $new_ticket = $this->create_db_entry($request->input('subject'), $request->input('comments'), $school->id);
         if($new_ticket!='error'){
             $mails = $this->send_creation_mails($new_ticket);
         }

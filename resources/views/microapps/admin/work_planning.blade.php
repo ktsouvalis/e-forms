@@ -1,25 +1,31 @@
 <x-layout>
     @php
-    if(request()->has('date')){
-        $selected_day = Carbon\CarbonImmutable::parse(request()->input('date'));
-    }else{
-        $selected_day = Carbon\CarbonImmutable::now();
-    }
-@endphp
+        $consultants = App\Models\Consultant::all();
+        
+        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
+    @endphp
+    @push('title')
+        <title>{{$microapp->name}}</title>
+    @endpush    
+    @include('microapps.microapps_admin_before') {{--Visibility and acceptability buttons and messages--}} 
+    @php
+        if(request()->has('date')){
+            $selected_day = Carbon\CarbonImmutable::parse(request()->input('date'));
+        }else{
+            $selected_day = Carbon\CarbonImmutable::now();
+        }
+        $year = $selected_day->year;
+        $week = $selected_day->isoFormat('W');
+        $yearWeek=$year.$week;
+    @endphp
 <div class="container">
-    <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div>
+    {{-- <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div> --}}
     <span class="" id="basic-addon2">Ημερομηνία</span>
     <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
 
 </div>
-@php
-    $consultants = App\Models\Consultant::all();
-@endphp
-@php
-    $year = $selected_day->year;
-    $week = $selected_day->isoFormat('W');
-    $yearWeek=$year.$week;
-@endphp
+
 <div class="px-5">
     <div class="row h5">
         Εβδομάδα: {{$selected_day->startOfWeek()->isoFormat('DD-MM-YYYY')}} έως {{$selected_day->startOfWeek()->add(4, 'day')->isoFormat('DD-MM-YYYY')}}

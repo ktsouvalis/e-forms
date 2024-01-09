@@ -63,17 +63,6 @@
         </table>    
     </div> <!-- table responsive closure -->
     <div>
-        {{-- <form action="/admin_create_ticket" method="post">
-            @csrf
-            <div class="input-group my-1">
-                <input type="text" name="school_code" id="school_code" placeholder="Κωδικός Σχολείου" required>
-            </div>
-            <div class="input-group my-1">
-            <input type="text" name="subject" id="subject" placeholder="Θέμα" required><br>
-            </div>
-            <textarea name="comments" id="comments" placeholder="Περιγραφή" required></textarea><br>
-            <button type="submit" class="btn btn-primary">Δημιουργία νέου δελτίου</button>
-        </form> --}}
         <nav class="navbar navbar-light bg-light">
             <form action="{{url("/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                 @csrf

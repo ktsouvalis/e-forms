@@ -217,10 +217,11 @@ class TicketsController extends Controller
             return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
 
-        $mails_upload = false;
-        $mails_comments = false;
+        
+        
         //check if there is a new post and add it
         if($request->input('comments')){
+            $mails_comments = false;
             $sanitizedComments = strip_tags($request->input('comments'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
             $new_post = $this->add_post($ticket->id, $user->id, $type, $sanitizedComments);
             if($new_post){
@@ -233,6 +234,7 @@ class TicketsController extends Controller
         //check if there is a new attachment and add a post for it
         $error = false;
         if($request->hasFile('attachment')){
+            $mails_upload = false;
             $file = $request->file('attachment');
             $directory = "tickets/$ticket->id";
             $fileHandler = new FilesController();
@@ -252,8 +254,12 @@ class TicketsController extends Controller
             }
         }
 
+        if((isset($mails_comments) and !$mails_comments) or (isset($mails_upload) and !$mails_upload))
+            $mails = false;
+        else
+            $mails = true;
         
-        if($mails_upload and $mails_comments)
+        if($mails)
             return back()->with('success', 'Το δελτίο ανανεώθηκε με την απάντησή σας'); 
         else
             return back()->with('warning', 'Το δελτίο ανανεώθηκε με την απάντησή σας, κάποια mail απέτυχαν να σταλούν'); 

@@ -95,7 +95,7 @@
     $accepts = App\Models\Microapp::where('url', '/tickets')->first()->accepts; //fetch microapp 'accepts' field
 @endphp
 <div class="container">
-<div class="container px-5">   
+<div class="container px-5">
     <div class=" hstack gap-2"> 
         <div><b>Θέμα: </b>{{$ticket->subject}}</div>         
         <div><b>ID δελτίου: </b>{{$ticket->id}}</div>          
@@ -212,12 +212,23 @@
         $maxPostUpdate = $ticket->posts->isNotEmpty() ? $ticket->posts->max('updated_at') : null;
         $text = max($ticket->updated_at, $maxPostUpdate);
     @endphp
+    <div class="hstack gap-2">
     <div class="col-md-4 py-3" style="max-width:15rem">
         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
             <div>Τελευταία ενημέρωση δελτίου <br><strong> {{$text}}</strong></div>
         </div>
     </div>
-    
+
+     @if(Auth::check())
+        @push('scripts')
+            <script src="{{asset('copylink.js')}}"></script>
+        @endpush
+        @php
+            $url = $ticket->school->md5;    
+        @endphp
+        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{url("/school/$url")}}"> </button>
+    @endif
+    </div>
     <div class="files m-2">
         @php
             $school = Auth::guard('school')->user();

@@ -65,11 +65,12 @@ class AllDaySchoolController extends Controller
                 $nosm=0;
                 while ($rowSumValue != "" && $row<400){
                     $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-                    // echo $row.". ".$time." ".(abs($time-0.72916666666667< 0.00001)?'true':'false').'<br>';
+                    // echo $row.' '.$time.'<br>';
                     if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625 or $time=='15:00 ή 14:50' or $time=='15:00 ή 14:55' or $time=='15:00:00'){
                         $nos3++;
                     }
-                    else if($time=='16:00' or $time=='4:00:00 μμ' or abs(strtotime($time)/86400-0.66666666666667)< 0.00001 or $time=='16:00 ή 15:50' or $time=='16:00:00') {
+                    else if($time=='16:00' or $time=='4:00:00 μμ' or abs(strtotime($time)/86400-0.66666666666667)< 0.00001 or $time = 0.66666666666667 or $time=='16:00 ή 15:50' or $time=='16:00:00') {
+                        echo $time.'<br>';
                         $nos4++;
                     }
                     else if($time=='17:30' or $time=='5:30:00 μμ' or abs(strtotime($time)/86400-0.72916666666667)< 0.00001 or $time=='17:30:00'){
@@ -146,7 +147,7 @@ class AllDaySchoolController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
+            // return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
             return redirect(url('/school_app/all_day_school'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');

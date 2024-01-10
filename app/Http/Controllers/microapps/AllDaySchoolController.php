@@ -70,7 +70,7 @@ class AllDaySchoolController extends Controller
                         $nos3++;
                     }
                     else if($time=='16:00' or $time=='4:00:00 μμ' or abs(strtotime($time)/86400-0.66666666666667)< 0.00001 or $time = 0.66666666666667 or $time=='16:00 ή 15:50' or $time=='16:00:00') {
-                        echo $time.'<br>';
+                        // echo $time.'<br>';
                         $nos4++;
                     }
                     else if($time=='17:30' or $time=='5:30:00 μμ' or abs(strtotime($time)/86400-0.72916666666667)< 0.00001 or $time=='17:30:00'){
@@ -147,7 +147,7 @@ class AllDaySchoolController extends Controller
             catch(Throwable $e){
     
             }
-            // return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
+            return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
             return redirect(url('/school_app/all_day_school'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');

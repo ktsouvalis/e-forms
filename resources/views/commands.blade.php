@@ -30,6 +30,10 @@
                 <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan up</button>
             </form>
             @endif
+            <form action="{{url('/com_eDirecorate_update')}}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan update-e-directorate</button>
+            </form>
         </div>
     </div>
 </x-layout>

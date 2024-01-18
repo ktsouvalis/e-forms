@@ -70,28 +70,28 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/user_memorable_actions.log'),
             'level' => 'debug',
-            'days' => 30,
+            'days' => 90,
         ],
 
         'commands_executed' => [
             'driver' => 'daily',
             'path' => storage_path('logs/commands_executed.log'),
             'level' => 'debug',
-            'days' => 30,
+            'days' => 60,
         ],
 
         'stakeholders_microapps' => [
             'driver' => 'daily',
             'path' => storage_path('logs/stakeholders_microapps.log'),
             'level' => 'debug',
-            'days' => 30,
+            'days' => 180,
         ],
 
         'stakeholders_fileshares' => [
             'driver' => 'daily',
             'path' => storage_path('logs/stakeholders_fileshares.log'),
             'level' => 'debug',
-            'days' => 30,
+            'days' => 90,
         ],
 
         'throwable_db' => [

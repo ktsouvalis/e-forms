@@ -5,6 +5,7 @@ namespace App\Console;
 use Commands\EditSuperAdmins;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\ChangeMicroappAcceptStatus;
+use App\Console\Commands\UpdateEDirectorate;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -24,6 +25,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('change-active-month')
             ->monthly();
             // ->appendOutputTo(storage_path('logs/custom_cron_commands.log'));
+
+        $schedule->command('update-e-directorate')
+            ->dailyAt('16:00');
     }
 
     /**

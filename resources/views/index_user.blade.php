@@ -3,13 +3,13 @@
         <div class="row px-5 justify-content-evenly">
         @auth
             @push('title')
-                <title>Φόρμες Στοιχείων</title>
+                <title>Φόρμες Υποβολής Στοιχείων</title>
             @endpush
             @php
                 $user =  Illuminate\Support\Facades\Auth::user();
                 $fileshares = App\Models\Fileshare::all();
                
-                if(App\Models\Superadmin::where('user_id',$user->id)->exists()){
+                if($user->isAdmin()){
                     $operations=App\Models\Operation::all(); //$operations is Operation model
                     $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
                     $super_admin=true;
@@ -18,15 +18,14 @@
                     $operations=$user->operations; //$operations is UsersOperations model
                     $microapps=$user->microapps; // $microapps is MicroappUser model
                     $super_admin=false;
-                }
-                        
+                }      
             @endphp
 
             <div class="">
                 {{-- <div class="container"> --}}
                     
                     <div class="row hidden-md-up justify-content-left">
-                        @if(App\Models\Superadmin::where('user_id',$user->id)->exists())
+                        @if($user->isAdmin())
                             <div class="col-md-4 py-3" style="max-width:15rem">
                                 <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
                                     <a class="text-dark" style="text-decoration:none;" href="{{url("/manage_users")}}">
@@ -41,7 +40,7 @@
                      {{-- Μενού με βάση τα δικαιωματα πρόσβασης που έρχονται από τον πίνακα operations --}}
                     {{-- <hr> --}}
                     <div class="row hidden-md-up justify-content-left">
-                        @if(App\Models\Superadmin::where('user_id',$user->id)->exists())
+                        @if($user->isAdmin())
                         
                             <div class="col-md-4 py-3" style="max-width:15rem">
                                 <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">

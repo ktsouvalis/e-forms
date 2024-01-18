@@ -8,7 +8,7 @@
             @endphp
                             
             @push('title')
-                <title>Σελίδα Εκπαιδευτικού</title>
+                <title>Καρτέλα {{$teacher->surname}} {{$teacher->name}}</title>
             @endpush
             
 

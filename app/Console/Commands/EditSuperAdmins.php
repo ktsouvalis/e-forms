@@ -46,16 +46,10 @@ class EditSuperAdmins extends Command
             }
             $output = "User $u_n $string superadmins";
             Log::channel('commands_executed')->info("server: ".$output);
-            
-            // $this->info("User $u_n $string superadmins");
-            // return "User $u_n $string superadmins";
-
         }
         else{
             $output = "User $u_n not found";
             Log::channel('commands_executed')->warning("server: ".$output);
-            // $this->error("User $u_n not found");
-            // return "User $u_n not found";
         }
         session()->flash('command_output', $output);
     }

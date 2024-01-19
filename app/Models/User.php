@@ -3,6 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Department;
+use App\Models\MicroappUser;
+use App\Models\FilecollectUser;
+use App\Models\UsersOperations;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Notifications\Notifiable;
@@ -45,6 +49,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function filecollects(){
+        return $this->hasMany(FilecollectUser::class);
+    }
 
     public function department(){
         return $this->belongsTo(Department::class);

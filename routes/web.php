@@ -9,6 +9,7 @@ use App\Models\Microapp;
 use App\Models\Fileshare;
 use App\Models\Operation;
 use App\Models\Consultant;
+use App\Models\Filecollect;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
 use App\Models\microapps\Outing;
@@ -28,6 +29,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
+use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
@@ -385,7 +387,17 @@ Route::post("/dl_internal_rules_file/{internal_rule}/{file_type}", [InternalRule
 Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::class,'check_internal_rule']);
 
 
+// FILECOLLECTS ROUTES
 
+Route::view('/filecollects', 'filecollects')->middleware('auth');
+
+Route::post('/insert_filecollect', [FilecollectController::class, 'insert_filecollect']);
+
+Route::get('/filecollect_profile/{filecollect}', function(Filecollect $filecollect){
+    return view('filecollect-profile', ['filecollect'=> $filecollect]);
+});//->middleware('can:view,filecollect');
+
+Route::post('/filecollect_save/{filecollect}', [FilecollectController::class,'saveProfile']);
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{fileshare}", function(Fileshare $fileshare){

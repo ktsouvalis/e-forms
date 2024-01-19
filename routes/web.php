@@ -344,7 +344,7 @@ Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
     catch(Throwable $e){
         return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
     }
-})->middleware('isSchool');
+});
 
 Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
@@ -578,6 +578,18 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
 
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
+        $output = session()->get('command_output');
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
+        }
+        catch(Throwable $e){
+    
+        }
+        return redirect(url('/commands'))->with('command', $output);
+    });
+
+    Route::post('/com_eDirecorate_update', function () {
+        Artisan::call('update-e-directorate');
         $output = session()->get('command_output');
         try{
             Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);

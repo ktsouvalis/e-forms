@@ -55,7 +55,6 @@
             <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
                 <thead>
                     <tr>
-                        {{-- <th id="search">id</th> --}}
                         <th class="align-middle">Αντιγραφή συνδέσμου</th>
                         <th id="search">Ονομασία</th>
                         <th id="search">Τηλ.</th>
@@ -65,8 +64,6 @@
                         <th id="search">Κωδικός</th>
                         <th id="search">Δήμος</th>
                         <th id="search">Διευθυντής</th>
-                        {{-- <th id="search">Τηλ. Δ/ντή</th> --}}
-                        {{-- <th class="align-middle">Αποστολή συνδέσμου</th> --}}
                         <th id="search">last login</th>
                         <th id="search">Σύμβουλος Εκπαίδευσης</th>
                         <th id="search">Μαζική Αποστολή</th>
@@ -75,13 +72,9 @@
                 <tbody>
                 @foreach($all_schools as $school)
                     @php
-                        $date=null;
-                        if($school->logged_in_at) 
-                            $date = Illuminate\Support\Carbon::parse($school->logged_in_at);
                         $text = url("/school/$school->md5");
                     @endphp
                     <tr>
-                        {{-- <td >{{$school->id}}</td> --}}
                         <td style="text-align:center">
                             <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                         </td>
@@ -92,21 +85,15 @@
                         <td >{{$school->leitourgikotita}}</td>
                         <td >{{$school->code}}</td>
                         <td >{{$school->municipality->name}}</td>
+
                         @if($school->director)
                         <td>{{$school->director->surname}} {{$school->director->name}}</td>
-                        {{-- <td>{{$school->director->telephone}}</td> --}}
                         @else
                         <td> - </td>
-                        {{-- <td> - </td> --}}
                         @endif
-                        {{-- <td style="text-align:center;">
-                            <form action="{{url("share_link/school/$school->id")}}" method="post">
-                                @csrf
-                                <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής συνδέσμου;')"> </button>
-                            </form>
-                        </td>   --}}
-                        @if($date)
-                            <td >{{$date->day}}/{{$date->month}}/{{$date->year}}</td>
+                        
+                        @if($school->logged_in_at)
+                            <td>{{Illuminate\Support\Carbon::parse($school->logged_in_at)}}</td>
                         @else
                             <td > - </td>
                         @endif

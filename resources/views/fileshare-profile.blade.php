@@ -107,7 +107,7 @@
                 </form>
             </nav> 
             <input type="checkbox" id="allow" class="fileshare-checkbox" data-fileshare-id="{{ $fileshare->id }}" {{ $fileshare->allow_school ? 'checked' : '' }}>
-            <label for="allow"> <strong> Τα σχολεία μπορούν να προσθέτουν τους εκαιδευτικούς στους ενδιαφερόμενους του fileshare;</strong></label> 
+            <label for="allow"> <strong> Τα σχολεία μπορούν να προσθέτουν τους εκπαιδευτικούς στους ενδιαφερόμενους του fileshare;</strong></label> 
         </div>
         <div class="container px-5 vstack gap-2 py-3">
             

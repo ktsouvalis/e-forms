@@ -209,7 +209,7 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function download_file(Fileshare $fileshare,$original_filename) //page use
+    public function download_file(Fileshare $fileshare, $original_filename) //page use
     {
         $username = Auth::check() ? Auth::user()->username : (Auth::guard('school')->check() ? Auth::guard('school')->user()->name : Auth::guard('teacher')->user()->afm);
         $directory = request()->input('personal') == 1 ? 'fileshare'.$fileshare->id.'/personal_files' : 'fileshare'.$fileshare->id;

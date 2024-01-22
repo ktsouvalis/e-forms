@@ -38,9 +38,10 @@ class FilecollectController extends Controller
     public function upload_file($file, $filecollect_id){//app_use
         $error=false;
         $directory = 'file_collects/'.$filecollect_id;
+        $fileName = "original_file_for_".$filecollect_id."_file_collect.xlsx";
         // store  file
         $fileHandler = new FilesController();
-        $upload  = $fileHandler->upload_file($directory, $file, 'local');
+        $upload  = $fileHandler->upload_file($directory, $file, 'local', $fileName);
         if($upload->getStatusCode() == 500){
             $error=true;
         }

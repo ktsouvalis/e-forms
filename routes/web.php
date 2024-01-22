@@ -398,6 +398,26 @@ Route::get('/filecollect_profile/{filecollect}', function(Filecollect $filecolle
 });//->middleware('can:view,filecollect');
 
 Route::post('/filecollect_save/{filecollect}', [FilecollectController::class,'saveProfile']);
+
+Route::post('/dl_filecollect_template/{filecollect}', function(Filecollect $filecollect){
+    $file_collect_id = $filecollect->id;
+    $file = "file_collects/$file_collect_id/original_file.xlsx";
+    if(Storage::disk('local')->exists($file)){
+        $response = Storage::disk('local')->download($file);  
+        ob_end_clean();
+        try{
+            return $response;
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
+    } else {
+        return back()->with('failure', 'Το αρχείο δεν υπάρχει.'); 
+    }
+    
+});
+
+
 // FILESHARES ROUTES
 
 Route::get("/teacher_fileshare/{fileshare}", function(Fileshare $fileshare){

@@ -38,6 +38,7 @@ use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
+use App\Http\Controllers\microapps\DefibrillatorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -369,6 +370,22 @@ Route::post('/dl_immigrants_template', function(Request $request){
 Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template'])->middleware('boss');
 
 Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
+
+Route::post('/dl_defibrillators_document', function(Request $request){
+    $file = 'defibrillators/Διαδικασία_Προμήθειας_Απινιδωτών.pdf';
+    $response = Storage::disk('local')->download($file);  
+    ob_end_clean();
+    try{
+        return $response;
+    }
+    catch(Throwable $e){
+        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+    }
+});
+
+Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defibrillators'])->middleware('isSchool');
+
+Route::post('/dl_defibrillators_file/{defibrillator}', [DefibrillatorsController::class, 'download_file']);
 
 Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules'])->middleware('isSchool');
 

@@ -14,7 +14,7 @@ class FilesController extends Controller
         $filename = $file->getClientOriginalName();
         
         if($desiredFilename){
-            if(strpos(substr($desiredFilename, -5), ".")){//there is an extension to given filename
+            if(strpos(substr($desiredFilename, -5), ".")){//if there is an extension to given filename
                 $filename = $desiredFilename;
             } else {//find the extension and add it to the given filename
                 $extension = pathinfo($file, PATHINFO_EXTENSION);

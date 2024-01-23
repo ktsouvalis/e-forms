@@ -39,11 +39,17 @@
                         <div class='alert alert-warning text-center my-2'>
                             <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
                         </div>
+                        <div>
+                            <span class="input-group-text w-100">Η δυνατότητα υποβολής απενεργοποιήθηκε 29 Ιανουαρίου 2024 και ώρα 12:00</span>
+                        </div>
                     @else
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
                             <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        </div>
+                        <div>
+                            <span class="input-group-text w-100">Η φόρμα θα είναι ενεργή για υποβολές/τροποποιήσεις μέχρι 29 Ιανουαρίου 2024 και ώρα 12:00</span>
                         </div>
                     @endif
                 </form>
@@ -58,6 +64,6 @@
                 </form>   
             @endif
             {{-- @include('microapps.new_ticket_button') --}}
-            </div>  
+        </div>  
 </div>
 </x-layout_school>

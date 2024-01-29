@@ -9,6 +9,7 @@ use App\Models\Microapp;
 use App\Models\Fileshare;
 use App\Models\Operation;
 use App\Models\Consultant;
+use App\Models\Filecollect;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
 use App\Models\microapps\Outing;
@@ -28,6 +29,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
+use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
@@ -36,6 +38,7 @@ use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
+use App\Http\Controllers\microapps\DefibrillatorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -368,6 +371,22 @@ Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update
 
 Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
 
+Route::post('/dl_defibrillators_document', function(Request $request){
+    $file = 'defibrillators/Διαδικασία_Προμήθειας_Απινιδωτών.pdf';
+    $response = Storage::disk('local')->download($file);  
+    ob_end_clean();
+    try{
+        return $response;
+    }
+    catch(Throwable $e){
+        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+    }
+});
+
+Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defibrillators'])->middleware('isSchool');
+
+Route::post('/dl_defibrillators_file/{defibrillator}', [DefibrillatorsController::class, 'download_file']);
+
 Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules'])->middleware('isSchool');
 
 Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further
@@ -384,6 +403,36 @@ Route::post("/dl_internal_rules_file/{internal_rule}/{file_type}", [InternalRule
 
 Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::class,'check_internal_rule']);
 
+
+// FILECOLLECTS ROUTES
+
+Route::view('/filecollects', 'filecollects')->middleware('auth');
+
+Route::post('/insert_filecollect', [FilecollectController::class, 'insert_filecollect']);
+
+Route::get('/filecollect_profile/{filecollect}', function(Filecollect $filecollect){
+    return view('filecollect-profile', ['filecollect'=> $filecollect]);
+});//->middleware('can:view,filecollect');
+
+Route::post('/filecollect_save/{filecollect}', [FilecollectController::class,'saveProfile']);
+
+Route::post('/dl_filecollect_template/{filecollect}', function(Filecollect $filecollect){
+    $file_collect_id = $filecollect->id;
+    $file = "file_collects/$file_collect_id/original_file.xlsx";
+    if(Storage::disk('local')->exists($file)){
+        $response = Storage::disk('local')->download($file);  
+        ob_end_clean();
+        try{
+            return $response;
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
+    } else {
+        return back()->with('failure', 'Το αρχείο δεν υπάρχει.'); 
+    }
+    
+});
 
 
 // FILESHARES ROUTES

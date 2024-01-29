@@ -29,52 +29,19 @@
         $school_tickets = App\Models\School::find($school->id)->tickets->sortByDesc('created_at');
     @endphp
     <div class="container">
-        <div class="container px-5">   
-                <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                        @csrf
-                        <div class="input-group">
-                            <span class="input-group-text w-25"></span>
-                            <span class="input-group-text w-75"><strong>Καταχώρηση νέου αιτήματος Τεχνικής Υποστήριξης</strong></span>
-                        </div>
-                        
-                        <div class="input-group my-2">
-                            
-                            <span class="input-group-text w-25 text-wrap">Θέμα:</span>
-                            <input name="subject" id="subject" type="text" class="form-control" placeholder="Θέμα" aria-label="Θέμα" aria-describedby="basic-addon2" required><br>
-                        </div>
-                        
-                        <div class="input-group">
-                            <div class="input-group justify-content-center">
-                            <textarea name="comments" id="comments" class="form-control" required></textarea>
-                            </div>
-                        </div>
-                        @if(!$accepts)
-                            <div class='alert alert-warning text-center my-2'>
-                               <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
-                            </div>
-                        @else
-                            <div class="input-group">
-                                <button type="submit" class="btn btn-primary m-2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
-                                <div><small>Όταν δημιουργηθεί το δελτίο, μπορείτε να προσθέστε συνημμένα</small></div>
-                            </div>
-                        @endif
-                    </form>
-                </nav>
-            </div>
             <div class="container px-5">
                 <div class="table-responsive py-2">
-                <table  id="dataTable" class="display table table-sm table-striped table-hover">
-                <thead>
+                <table  id="" class="display table table-sm table-striped">
+                {{-- <thead> --}}
                     <tr>
-                        <th id="search">Κωδικός</th>
-                        <th id="search">Θέμα</th>
-                        <th id="search">Ημερομηνία Δημιουργίας</th>
-                        <th id="search">Τελευταία ενημέρωση</th>
-                        <th id="search">Κατάσταση</th>
+                        <th>Κωδικός</th>
+                        <th>Θέμα</th>
+                        <th>Ημερομηνία Δημιουργίας</th>
+                        <th>Τελευταία ενημέρωση</th>
+                        <th>Κατάσταση</th>
                     </tr>
-                </thead>
-                <tbody>
+                {{-- </thead> --}}
+                {{-- <tbody> --}}
                 
                     @foreach($school_tickets as $ticket)
                         @php
@@ -93,9 +60,43 @@
                             @endif
                         </tr> 
                     @endforeach   
-                </tbody>  
+                {{-- </tbody>   --}}
                 </table>    
             </div>
         </div>
+        <hr>
+        <div class="container px-5">   
+            <nav class="navbar navbar-light bg-light">
+                <form action="{{url("/create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    @csrf
+                    <div class="input-group">
+                        <span class="input-group-text w-25"></span>
+                        <span class="input-group-text w-75"><strong>Καταχώρηση νέου αιτήματος Τεχνικής Υποστήριξης</strong></span>
+                    </div>
+                    
+                    <div class="input-group my-2">
+                        
+                        <span class="input-group-text w-25 text-wrap">Θέμα:</span>
+                        <input name="subject" id="subject" type="text" class="form-control" placeholder="Θέμα" aria-label="Θέμα" aria-describedby="basic-addon2" required><br>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-group justify-content-center">
+                        <textarea name="comments" id="comments" class="form-control" required></textarea>
+                        </div>
+                    </div>
+                    @if(!$accepts)
+                        <div class='alert alert-warning text-center my-2'>
+                           <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
+                        </div>
+                    @else
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-primary m-2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
+                            <div><small>Όταν δημιουργηθεί το δελτίο, μπορείτε να προσθέστε συνημμένα</small></div>
+                        </div>
+                    @endif
+                </form>
+            </nav>
+    </div>
     </div>
 </x-layout_school>

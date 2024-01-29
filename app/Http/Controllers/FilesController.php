@@ -10,8 +10,18 @@ class FilesController extends Controller
 {
     //
 
-    public function upload_file($directory, $file, $driver){
+    public function upload_file($directory, $file, $driver, $desiredFilename = null){
         $filename = $file->getClientOriginalName();
+        
+        if($desiredFilename){
+            if(strpos(substr($desiredFilename, -5), ".")){//if there is an extension to given filename
+                $filename = $desiredFilename;
+            } else {//find the extension and add it to the given filename
+                $extension = pathinfo($file, PATHINFO_EXTENSION);
+                $filename = $desiredFilename.$extension;
+            }
+            dd($filename);
+        }
         try{
             Storage::disk($driver)->putFileAs($directory, $file, $filename);
         }

@@ -11,6 +11,7 @@ use App\Models\microapps\Immigrant;
 use App\Models\microapps\SchoolArea;
 use App\Models\microapps\AllDaySchool;
 use App\Models\microapps\InternalRule;
+use App\Models\microapps\Defibrillator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -65,6 +66,10 @@ class School extends Authenticatable
         return $this->morphMany(MicroappStakeholder::class, 'stakeholder');
     }
 
+    public function filecollects(){
+        return $this->morphMany(FilecollectStakeholder::class, 'stakeholder');
+    }
+
     public function fileshares(){
         return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
     }
@@ -91,6 +96,10 @@ class School extends Authenticatable
 
     public function immigrants(){
         return $this->hasMany(Immigrant::class);
+    }
+
+    public function defibrillators(){
+        return $this->hasOne(Defibrillator::class);
     }
 
     public function sections(){

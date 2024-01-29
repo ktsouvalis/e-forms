@@ -16,6 +16,7 @@
 
     @push('title')
     <title>Επεξεργασία χαρακτηριστικών {{$microapp->name}}</title>
+    @endpush
     @include('microapps.microapps_admin_before')
     <div class="container">
         @if(Auth::user()->isAdmin())

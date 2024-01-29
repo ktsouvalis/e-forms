@@ -417,8 +417,8 @@ Route::get('/filecollect_profile/{filecollect}', function(Filecollect $filecolle
 Route::post('/filecollect_save/{filecollect}', [FilecollectController::class,'saveProfile']);
 
 Route::post('/dl_filecollect_template/{filecollect}', function(Filecollect $filecollect){
-    $file_collect_id = $filecollect->id;
-    $file = "file_collects/$file_collect_id/original_file.xlsx";
+
+    $file = "file_collects/".$filecollect->id."/ORIGINAL_FILE_for_".$filecollect->id."_file_collect.xlsx";
     if(Storage::disk('local')->exists($file)){
         $response = Storage::disk('local')->download($file);  
         ob_end_clean();

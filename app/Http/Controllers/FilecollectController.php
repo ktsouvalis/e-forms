@@ -38,7 +38,7 @@ class FilecollectController extends Controller
     public function upload_file($file, $filecollect_id){//app_use
         $error=false;
         $directory = 'file_collects/'.$filecollect_id;
-        $fileName = "original_file_for_".$filecollect_id."_file_collect.xlsx";
+        $fileName = "ORIGINAL_FILE_for_".$filecollect_id."_file_collect.xlsx";
         // store  file
         $fileHandler = new FilesController();
         $upload  = $fileHandler->upload_file($directory, $file, 'local', $fileName);
@@ -138,6 +138,7 @@ class FilecollectController extends Controller
         // if there is a file to upload -> update file
         if($request->file('filecollect_original_file'))
             $file_upload_result = $this->upload_file($request->file('filecollect_original_file'), $filecollect->id);
+            
         // check if changes happened to microapp table
         if($filecollect->isDirty()){
             // if name has changed

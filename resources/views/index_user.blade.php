@@ -103,14 +103,17 @@
                             </div>
                         </div>
                         @endforeach
-                        <div class="col-md-4 py-3" style="max-width:15rem">
-                            <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/filecollects")}}">
-                                <div class="h5 card-title bi bi-filetype-xls"></div>
-                                <div>Συλλογή Αρχείων</div>
-                                </a> 
-                            </div>
+                        
+                    </div>
+                    <div class="row hidden-md-up justify-content-left">
+                    <div class="col-md-4 py-3" style="max-width:15rem">
+                        <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
+                            <a class="text-dark" style="text-decoration:none;" href="{{url("/filecollects")}}">
+                            <div class="h5 card-title bi bi-filetype-xls"></div>
+                            <div>Συλλογή Αρχείων</div>
+                            </a> 
                         </div>
+                    </div>
                     </div>
 
                     {{-- Μενού με βάση τα δικαιωματα πρόσβασης που έρχονται από τον πίνακα microapps --}}

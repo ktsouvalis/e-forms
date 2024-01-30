@@ -1,16 +1,43 @@
 <x-layout>
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('summernote-0.8.18-dist/summernote-lite.min.css')}}" rel="stylesheet">
     @endpush
-
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
-        <script src="../copylink.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init.js')}}"></script>
+        <script src="{{asset('copylink.js')}}"></script>
+        <script src="{{asset('summernote-0.8.18-dist/summernote-lite.min.js')}}"></script>
+        <script>
+            $(document).ready(function () {
+                // Get the maximum character limit
+                var maxChars = 5000;
+                // Initialize Summernote with callback
+                $('.summernote').summernote({
+                    width: "100%",
+                    toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['list', ['ul', 'ol']],
+                        ['link', ['link']],
+                    ],
+                    lang: 'el-GR',
+                    callbacks: {
+                        onChange: function(contents, $editable) {
+                            var currentChars = contents.length;
+                            var remainingChars = maxChars - currentChars;
+
+                            // Display the remaining characters
+                            $('#charCount').text(remainingChars);
+                        }
+                    }
+                });
+            });
+        </script>
+        <script src="{{asset('charcount.js')}}"></script>
         <script>
             $(document).ready(function() {
                 $('body').on('change', '.fileshare-checkbox', function() {
@@ -81,6 +108,29 @@
                     
                 </form>
             </nav> 
+        <hr>
+        <form action="{{url("/save_fileshare_comment/$fileshare->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+            @csrf
+            <span class="input-group-text"><strong>Προσθήκη μηνύματος για ενδιαφερόμενους</strong></span>
+            <div class="input-group justify-content-center">
+                <textarea class="summernote" name="comment"  class="form-control"></textarea>
+            </div>
+            <span id="charCount">5000</span>
+            <div class="input-group">
+                <button type="submit" class="btn btn-primary m-2"> <i class="fa-regular fa-comment-dots"></i> Υποβολή</button>
+            </div>
+        </form>
+        @if($fileshare->comment)
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                <div class="card py-2" style="background-color: Gainsboro; text-decoration: none; font-size: small">
+                    <div class="m-1 post-text">{!!html_entity_decode($fileshare->comment)!!}</div>
+                </div>
+                </div>
+                <div class="col"></div>
+            </div>
+        @endif
         <hr>
         <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/import_whocan/fileshare/$fileshare->id")}}" method="post" class="container-fluid">

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
+use Illuminate\Support\Facades\Validator;
 
 class FileshareController extends Controller
 {
@@ -377,5 +378,20 @@ class FileshareController extends Controller
         $fileshare->save();
 
         return response()->json(['message' => 'Fileshare updated successfully']);
+    }
+
+    public function add_comment(Fileshare $fileshare, Request $request){
+        $validator = Validator::make($request->all(), [
+            'comment' => 'max:5000',
+        ]);
+        if($validator->fails()){
+            return back()->with('warning', 'Το σχόλιό σας ξεπερνάει το όριο των 5000 χαρακτήρων');
+        }
+        $comment= $request->input('comment');
+        $sanitizedComment = strip_tags($comment, '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
+        $fileshare->comment = $sanitizedComment;
+        $fileshare->save();
+
+        return back()->with('success', 'Το σχόλιο αποθηκεύτηκε');
     }
 }

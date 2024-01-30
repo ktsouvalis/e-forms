@@ -16,8 +16,20 @@
             $ffi = $fileshare->id
         @endphp
         
-        <hr>
+        
         <strong>{{$fileshare->department->name}}: {{$fileshare->name}}</strong>
+        @if($fileshare->comment)
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                <div class="card py-2" style="background-color: Gainsboro; text-decoration: none; font-size: small">
+                    <div class="m-1 post-text">{!!html_entity_decode($fileshare->comment)!!}</div>
+                </div>
+                </div>
+                <div class="col"></div>
+            </div>
+            
+        @endif
         <div class="hstack">
             <div class="vstack gap-2">
                     @foreach($files_common as $file_c)

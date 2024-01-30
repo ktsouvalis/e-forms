@@ -467,6 +467,8 @@ Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
     return view('fileshare-profile', ['fileshare'=> $fileshare]);
 })->middleware('can:view,fileshare');
 
+Route::post('/save_fileshare_comment/{fileshare}', [FileshareController::class, 'add_comment']);
+
 Route::post("/delete_fileshare/{fileshare}", [FileshareController::class, 'delete_fileshare']);
 
 Route::post("/get_file/{fileshare}/{original_filename}", [FileshareController::class, 'download_file']);

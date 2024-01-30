@@ -14,13 +14,12 @@ class FilesController extends Controller
         $filename = $file->getClientOriginalName();
         
         if($desiredFilename){
-            if(strpos(substr($desiredFilename, -5), ".")){//if there is an extension to given filename
+            if(strpos(substr($desiredFilename, -6), ".")){//if there is an extension to given filename
                 $filename = $desiredFilename;
             } else {//find the extension and add it to the given filename
-                $extension = pathinfo($file, PATHINFO_EXTENSION);
+                $extension = $file->extension();
                 $filename = $desiredFilename.$extension;
             }
-            dd($filename);
         }
         try{
             Storage::disk($driver)->putFileAs($directory, $file, $filename);

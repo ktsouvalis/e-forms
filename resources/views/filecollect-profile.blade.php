@@ -25,19 +25,20 @@
                     <span class="input-group-text w-75"><strong>Επεξεργασία Στοιχείων Συλλογής Αρχείων</strong></span>
                 </div>
                 <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">Πρότυπο αρχείο (υπάρχον): </span>
-                        <form action="{{url("/dl_filecollect_template/$filecollect->id")}}" method="post">
-                            @csrf
-                            <button class="btn btn-secondary bi bi-box-arrow-down"> Πρότυπο αρχείο </button>
-                        </form>
+                    <span class="input-group-text w-25" id="basic-addon2">Πρότυπο αρχείο (υπάρχον): </span>
+                    <form action="{{url("/dl_filecollect_template/$filecollect->id")}}" method="post">
+                    @csrf
+                        <button class="btn btn-secondary bi bi-box-arrow-down"> Πρότυπο αρχείο </button>
+                    </form>
+                    <form action="{{url("/filecollect_save/$filecollect->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                    @csrf
                         <span class="input-group-text w-10">Ανανέωση Προτύπου: </span>
                         <input name="filecollect_original_file" type="file" class="form-control">
                         
                         {{-- <a href="{{url('app/filecollects/42/12consultant_programm.xlsx')}}">Πρότυπο αρχείο</a> --}}
                         <br>
                     </div>
-                <form action="{{url("/filecollect_save/$filecollect->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
-                    @csrf
+                
                     <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon2">Τίτλος</span>

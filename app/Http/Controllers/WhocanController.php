@@ -247,4 +247,77 @@ class WhocanController extends Controller
         else
             return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν');   
     }
+
+    public function mail_to_those_who_visited_fileshare(Fileshare $fileshare, Request $request){
+        $stakeholders = $fileshare->stakeholders->where('visited_fileshare',1);
+        $mail_error = false;
+        if($stakeholders->count())
+            foreach($stakeholders as $stakeholder){
+                $mail = $stakeholder->stakeholder->mail;
+                try{
+                    Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+                    try{
+                        Log::channel('mails')->info("Fileshare $fileshare->id, MailToStakeholders success: $mail");  
+                    }
+                    catch(Throwable $e){
+                    }
+                }
+                catch(Throwable $e){
+                    $mail_error = true;
+                    Log::channel('mails')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                }
+            }
+        else{
+            return back()->with('warning','Δεν υπάρχουν αποδέκτες');
+        }
+        if(!$mail_error)
+            return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι που έχουν επισκεφθεί το fileshare');
+        else
+            return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν');
+    }
+
+    public function mail_to_those_who_not_visited_fileshare(Fileshare $fileshare, Request $request){
+        $stakeholders = $fileshare->stakeholders->where('visited_fileshare',0);
+        $mail_error = false;
+        if($stakeholders->count())
+            foreach($stakeholders as $stakeholder){
+                $mail = $stakeholder->stakeholder->mail;
+                try{
+                    Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+                    try{
+                        Log::channel('mails')->info("Fileshare $fileshare->id, MailToStakeholders success: $mail");  
+                    }
+                    catch(Throwable $e){
+                    }
+                }
+                catch(Throwable $e){
+                    $mail_error = true;
+                    Log::channel('mails')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                }
+            }
+        else{
+            return back()->with('warning','Δεν υπάρχουν αποδέκτες');
+        }
+        if(!$mail_error)
+            return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι που δεν έχουν επισκεφθεί το fileshare');
+        else
+            return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν');
+    }
+
+    public function personal_fileshare_mail(Fileshare $fileshare, Request $request, FileshareStakeholder $stakeholder){
+        $mail = $stakeholder->stakeholder->mail;
+        try{
+            Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+            try{
+                Log::channel('mails')->info("Fileshare $fileshare->id, personal MailToStakeholder success: $mail");  
+            }
+            catch(Throwable $e){
+            }
+        }
+        catch(Throwable $e){
+            Log::channel('mails')->error("Fileshare $fileshare->id, personal MailToStakeholder error: $mail ".$e->getMessage());
+            return back()->with('failure', 'Η αποστολή υπενθύμισης απέτυχε. Δείτε στο σημερινό log mails τον λόγο');
+        }
+        return back()->with('success', 'Ενημερώθηκε ο ενδιαφερόμενος');
+    }
 }

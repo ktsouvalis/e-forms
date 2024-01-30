@@ -159,6 +159,7 @@
             <input type="checkbox" id="allow" class="fileshare-checkbox" data-fileshare-id="{{ $fileshare->id }}" {{ $fileshare->allow_school ? 'checked' : '' }}>
             <label for="allow"> <strong> Τα σχολεία μπορούν να προσθέτουν τους εκπαιδευτικούς στους ενδιαφερόμενους του fileshare;</strong></label> 
         </div>
+        <hr>
         <div class="container px-5 vstack gap-2 py-3">
             
             @if($fileshare->stakeholders->count())
@@ -166,7 +167,10 @@
                 <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>
                     <tr>
+                        @if(Auth::user()->isAdmin())
                         <th>Σύνδεσμος</th>
+                        @endif
+                        <th>Αποστολή υπενθύμισης</th>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
                         <th id="search">mail</th>
@@ -185,8 +189,17 @@
                         $text = url("/teacher/$md");
                 @endphp
                 <tr>
+                    @if(Auth::user()->isAdmin())
                     <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
+                    </td>
+                    @endif
+                      
+                    <td style="text-align:center">
+                        <form action="{{url("/fileshare_personal_mail/$fileshare->id/$one_stakeholder->id")}}" method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> </button>
+                        </form>
                     </td>
                     @if($one_stakeholder->stakeholder_type=="App\Models\School")
                         <td>{{$one_stakeholder->stakeholder->code}}</td>
@@ -221,6 +234,14 @@
                 <form action="{{url("/send_mail_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όλους</button>
+                </form>
+                <form action="{{url("/mail_visited/$fileshare->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όσους έχουν επισκεφθεί</button>
+                </form>
+                <form action="{{url("/mail_not_visited/$fileshare->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όσους <strong>δεν</strong> έχουν επισκεφθεί</button>
                 </form>
                 <form action="{{url("/delete_all_whocans/fileshare/$fileshare->id")}}" method="post">
                     @csrf

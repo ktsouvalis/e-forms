@@ -499,6 +499,12 @@ Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanCon
 
 Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);
 
+Route::post('/mail_not_visited/{fileshare}',[WhocanController::class, 'mail_to_those_who_not_visited_fileshare']);
+
+Route::post('/mail_visited/{fileshare}',[WhocanController::class, 'mail_to_those_who_visited_fileshare']);
+
+Route::post('/fileshare_personal_mail/{fileshare}/{stakeholder}',[WhocanController::class, 'personal_fileshare_mail']);
+
 Route::match(array('GET','post'), "/share_link/{type}/{my_id}", function($type, $my_id){
     if($type=="school"){
         $school = School::findOrFail($my_id);

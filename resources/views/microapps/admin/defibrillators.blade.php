@@ -50,6 +50,7 @@
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
                     <tr>
+                        <th>Κωδικός</th>
                         <th id="search">Σχολείο</th>
                         <th id="">Σχόλια</th>
                         <th>Αρχείο</th>
@@ -60,6 +61,7 @@
                 
                 @foreach($defibrillators as $one)
                     <tr>
+                    <td> {{$one->school->code}}</td>
                     <td> {{$one->school->name}}</td>
                     <td> {{$one->comments}}</td>
                     <td>

@@ -121,7 +121,16 @@
     </div>
         
     @can('upload', App\Models\Teacher::class)
-        <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill my-2"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
+        @php
+            $dir_info = DB::table('directorate_info')->find(1);
+        @endphp
+        @if($dir_info)
+            <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill my-2"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
+        @else
+        <div class='alert alert-danger text-center'>
+            Ο Διαχειριστής πρέπει να ενημερώσει τις πληροφορίες της Διεύθυνσης από τη λειτουργία Εντολές Laravel <br> για να μπορείτε να ανανεώσετε στοιχεία εκππαιδευτικών
+        </div>
+        @endif
     @endcan
 
 </x-layout>

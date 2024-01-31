@@ -217,9 +217,10 @@ class TeacherController extends Controller
                 $check['organiki_type'] = "App\Models\Directory";    
             }
             else{
-                //if no school and no directory found, save fixed ΑΧΑΪΑ
-                $check['organiki'] = Directory::where('code', 9906101)->first()->id;
-                $check['organiki_name'] = Directory::where('code', 9906101)->first()->name;
+                //if no school and no directory found, save the code from the directorate_info table 
+                $dir_code = DB::table('directorate_info')->find(1)->code;
+                $check['organiki'] = Directory::where('code', $dir_code)->first()->id;
+                $check['organiki_name'] = Directory::where('code', $dir_code)->first()->name;
                 $check['organiki_type'] = "App\Models\Directory"; 
             }
             array_push($teachers_array, $check);
@@ -275,7 +276,7 @@ class TeacherController extends Controller
             //fix  directories to match database and then cross check
             $organiki = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(24, $row)->getValue();
             $newString = $organiki;
-            if($organiki!="ΔΙΕΥΘΥΝΣΗ Π.Ε. ΑΧΑΪΑΣ"){
+            if($organiki!=DB::table('directorate_info')->find(1)->name){//if teacher does not belong to my directorate
                 if(Directory::where('name', $newString)->count()){
                     $check['organiki'] = Directory::where('name', $newString)->first()->id;
                     $check['organiki_name'] = Directory::where('name', $newString)->first()->name;

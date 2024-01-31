@@ -692,6 +692,32 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         }
         return redirect(url('/'))->with('success', 'Maintenance Mode OFF');
     });
+
+    Route::post('/com_directorate_name_update', function(Request $request){
+        $name_parameter = $request->input('dir_name');
+        Artisan::call("app:udn",['d_n'=> $name_parameter]);
+        $output = session()->get('command_output');
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);   
+        }
+        catch(\Exception $e){
+
+        }
+        return back()->with('command',$output);
+    });
+
+    Route::post('/com_directorate_code_update', function(Request $request){
+        $code_parameter = $request->input('dir_code');
+        Artisan::call("app:udc",['d_c'=> $code_parameter]);
+        $output = session()->get('command_output');
+        try{
+            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);   
+        }
+        catch(\Exception $e){
+
+        }
+        return back()->with('command',$output);
+    });
 });
 
 //Sections Routes

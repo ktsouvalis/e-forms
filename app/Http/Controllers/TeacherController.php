@@ -273,34 +273,9 @@ class TeacherController extends Controller
             }
 
             //fix  directories to match database and then cross check
-            $organiki = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
-            if($organiki!="ΑΧΑΪΑΣ (Π.Ε.) 2018"){
-                
-                // Extract the parts using regular expressions
-                preg_match('/^(\S+[^ \d])?(.*?) \((.*?)\)/', $organiki, $matches);
-                // Check if matches[1] is in the format of "Α'", "Β'", etc., and matches[2] is "ΑΘΗΝΑΣ"
-                
-                if ($matches[2]!=''){
-                    if($matches[2] == ' ΑΘΗΝΑΣ') {
-                    // Rearrange the parts to the desired format
-                    $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' ' . trim($matches[1] . $matches[2]);
-                    }
-                    else{
-                        if($matches[2]==" ΘΕΣΣΑΛΟΝΙΚΗΣ"){
-                            // echo 'true';
-                            if($matches[1]=="Α΄")$matches[2]="ΑΝΑΤ. ΘΕΣ/ΝΙΚΗΣ";
-                            if($matches[1]=="Β΄")$matches[2]="ΔΥΤ. ΘΕΣ/ΝΙΚΗΣ";
-                        }
-                        if($matches[2]==" ΑΤΤΙΚΗΣ")$matches[2]="ΔΥΤΙΚΗΣ ΑΤΤΙΚΗΣ";
-                        if($matches[2]==" ΑΝΑΤ. ΑΤΤΙΚΗΣ")$matches[2]="ΑΝΑΤΟΛΙΚΗΣ ΑΤΤΙΚΗΣ";
-                        $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' '. trim($matches[2]);    
-                    }
-                }
-                else {
-                    // Rearrange the parts to the desired format without keeping matches[2]
-                    $newString = 'ΔΙΕΥΘΥΝΣΗ ' . $matches[3] . ' '. $matches[1];
-                }
-                
+            $organiki = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(24, $row)->getValue();
+            $newString = $organiki;
+            if($organiki!="ΔΙΕΥΘΥΝΣΗ Π.Ε. ΑΧΑΪΑΣ"){
                 if(Directory::where('name', $newString)->count()){
                     $check['organiki'] = Directory::where('name', $newString)->first()->id;
                     $check['organiki_name'] = Directory::where('name', $newString)->first()->name;

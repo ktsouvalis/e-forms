@@ -43,15 +43,17 @@
             @endphp
             <form class="col-md py-2" action="{{url('/com_directorate_name_update')}}" method="post">
                 @csrf
+                <label style="font-size:12px">@isset($dname){{$dname}}@endisset</label>
                 <div class="input-group my-2">
-                    <input name="dir_name" type="text" class="form-control" placeholder="π.χ. ΔΙΕΥΘΥΝΣΗ Π.Ε. ΑΧΑΪΑΣ"  value="@isset($dname) {{$dname}}@endisset" required>
+                    <input name="dir_name" type="text" class="form-control" placeholder="π.χ. ΔΙΕΥΘΥΝΣΗ Π.Ε. ΑΧΑΪΑΣ" required>
                 </div>
                 <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan app:udn</button>
             </form>
             <form class="col-md py-2" action="{{url('/com_directorate_code_update')}}" method="post">
                 @csrf
+                <label style="font-size:14px">@isset($dcode){{$dcode}}@endisset</label>
                 <div class="input-group my-2">
-                    <input name="dir_code" type="text" class="form-control" placeholder="π.χ. 9906101" value="@isset($dcode) {{$dcode}}@endisset" required>
+                    <input name="dir_code" type="text" class="form-control" placeholder="π.χ. 9906101" required>
                 </div>
                 <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan app:udc</button>
             </form>

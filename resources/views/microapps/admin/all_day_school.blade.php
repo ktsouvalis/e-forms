@@ -80,7 +80,7 @@
             else{
                 for($i; $i>=1; $i--)
                     array_push($months, $i);
-                array_push($months ,[12,11,10,9]);
+                array_push($months,12,11,10,9);
             }
         @endphp
         <div class="table-responsive py-2" style="align-self:flex-start">
@@ -103,6 +103,10 @@
                 </tr>
             </thead>
             <tbody>
+                @php
+                    // dd($months);   
+                @endphp
+                
                 @foreach($months as $month_number) 
                     @foreach($all_day_schools as $one_stakeholder)
                     @php

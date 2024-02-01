@@ -18,19 +18,11 @@ class AdminsSeeder extends Seeder
     {
         //CREATE ADMINS
         User::create([
-            'username' => 'ktsouvalis',
-            'display_name' => 'Κωνσταντίνος Τσούβαλης',
-            'email' => 'ktsouvalis@sch.gr',
+            'username' => 'admin',
+            'display_name' => 'Διαχειριστής',
+            'email' => 'something@somewhere.gr',
             'password' => bcrypt('123456'),
             'department_id' => 5
-        ]);
-
-        User::create([
-            'username' => 'test',
-            'display_name' => 'Δοκιμαστικός Χρήστης',
-            'email' => 'it@dipe.ach.sch.gr',
-            'password' => bcrypt('123456'),
-            'department_id' => 3
         ]);
 
         Superadmin::create([

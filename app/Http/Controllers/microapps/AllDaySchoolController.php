@@ -30,6 +30,12 @@ class AllDaySchoolController extends Controller
             $comments= $request->all()['comments'];
             $functionality = $request->all()['functionality'];
             $month = Month::getActiveMonth();
+            if(!$school->vmonth){
+                $month_to_store = $month->id;
+            }
+            else{
+                $month_to_store = $school->vmonth;
+            }
             if($request->file('table_file')){
                 $rule = [
                     'table_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -93,7 +99,7 @@ class AllDaySchoolController extends Controller
                 try{
                     AllDaySchool::updateOrCreate(
                     [
-                        'month_id'=>$month->id,
+                        'month_id'=>$month_to_store,
                         'school_id'=>$school->id
                     ],
                     [
@@ -123,7 +129,7 @@ class AllDaySchoolController extends Controller
                 try{    
                     AllDaySchool::updateOrCreate(
                     [
-                        'month_id'=>$month->id,
+                        'month_id'=>$month_to_store,
                         'school_id'=>$school->id
                     ],
                     [

@@ -88,4 +88,11 @@ class OperationPolicy
         if(Superadmin::where('user_id',$user->id)->exists()) return true;
         return false;   
     }
+
+    public function changeVirtualMonth(User $user){
+        if($user->isAdmin()) return true;
+        $operation = Operation::where('url','/virtual_month')->first();
+        return ($operation->users->where('user_id', $user->id)->count());
+        return false;
+    }
 }

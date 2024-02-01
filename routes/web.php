@@ -612,6 +612,15 @@ Route::group(['middleware' => 'can:changeActiveMonth,'.Operation::class], functi
     Route::post('/set_active_month', [MonthController::class,'setActiveMonth']);
 });
 
+Route::group(['middleware' => 'can:changeVirtualMonth,'.Operation::class], function () {
+
+    Route::view('/virtual_month','virtual_month');
+
+    Route::post('/set_vmonth/{school}', [MonthController::class,'setVirtualMonth']);
+
+    Route::post('/reset_active_month/{school}', [MonthController::class,'resetActiveMonth']);
+});
+
 //  COMMANDS Routes
 
 Route::group(['middleware' => "can:executeCommands," .Operation::class], function () {

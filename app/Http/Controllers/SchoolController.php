@@ -137,7 +137,8 @@ class SchoolController extends Controller
                         'mail' => $school['mail'],
                         'experimental' => $school['experimental'],
                         'special_needs' => $school['special_needs'],
-                        'international' => $school['international']
+                        'international' => $school['international'],
+                        'vmonth' => 0
                     ]
                 );
                 $record = School::where('code', $school['code'])->first(); //η εντολή θα επιστρέψει μια εγγραφή που βρέθηκε στο excel ΚΑΙ στη βάση

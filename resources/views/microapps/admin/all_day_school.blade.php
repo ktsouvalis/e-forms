@@ -156,4 +156,5 @@
             </table>
         </div> <!-- table responsive closure -->
         @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
+        <p class="fw-bold">Σημ: Με την επιλογή αυτή αποστέλλεται mail σε όλα τα Σχολεία που δεν έχουν κάνει υποβολή πίνακα τον τρέχοντα / ενεργό Μήνα</p>
 </x-layout>

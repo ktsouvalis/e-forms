@@ -47,7 +47,7 @@
                         @php
                             $months = [];
                             $number = App\Models\Month::getActiveMonth()->number;
-                            $i=$number;
+                            $i=$number-1;
                             if($number >=9){
                                 for($i; $i>=9; $i--)
                                     array_push($months, $i);

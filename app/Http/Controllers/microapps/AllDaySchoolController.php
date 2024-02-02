@@ -150,13 +150,14 @@ class AllDaySchoolController extends Controller
                     return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
+            $show = Month::where('number', $month_to_store)->first()->name;
             try{
-                Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update all_day success $month->name");
+                Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." create/update all_day success $show");
             }
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
+            return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $show ενημερώθηκαν");
         }
         else{
             return redirect(url('/school_app/all_day_school'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');

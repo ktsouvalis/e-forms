@@ -43,7 +43,7 @@ class MonthController extends Controller
                     array_push($months, $i);
                 array_push($months,12,11,10,9);
             }
-            if(!in_array($new_vmonth->number, $months) or in_array($new_vmonth->number, [7,8]) ){
+            if(!in_array($new_vmonth->number, $months) or in_array($new_vmonth->number, [Month::getActiveMonth()->number, 7, 8]) ){
                 return back()->with('failure','Μόνο προηγούμενοι μήνες της σχολικής χρονιάς επιτρέπονται');
             }
             try{

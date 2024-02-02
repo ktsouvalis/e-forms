@@ -111,7 +111,7 @@
                     </div>
                     <div style="">
                         <div class="text-muted">Αν δεν συμφωνείτε με τα στοιχεία που καταμετρήθηκαν, συμπληρώστε εδώ τα σωστά και πατήστε <i>Ενημέρωση</i></div>
-                        <div><strong>Αριθμός μαθητών με ΩΡΑ ΑΠΟΧΩΡΗΣΗΣ <u>στο αρχείο</u>: </strong></div>
+                        <div><strong>Αριθμός μαθητών</strong> που αποχωρούν στις: </div>
                         <form action="{{url("/self_update_all_day/$old_data->id")}}" method="post">
                             @csrf
                             {{-- <div class="vstack"> --}}

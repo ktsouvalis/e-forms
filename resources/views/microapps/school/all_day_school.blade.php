@@ -6,11 +6,11 @@
         $vmonth = $school->vmonth;
         $accepts = $microapp->accepts; 
         $name = $microapp->name;
-        if(!$school->vmonth){
+        if(!$school->vmonth or $school->vmonth->vmonth == 0){
             $month_to_store = $active_month->id;
         }
         else{
-            $month_to_store = $vmonth;
+            $month_to_store = $vmonth->vmonth;
         }
         $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first(); 
     @endphp

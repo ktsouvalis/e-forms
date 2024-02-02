@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('schools', function($table){
-            $table->integer('vmonth')->nullable()->default(0);
+        Schema::create('virtual_months', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('school_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->integer('vmonth')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('virtual_months');
     }
 };

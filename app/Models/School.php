@@ -82,6 +82,10 @@ class School extends Authenticatable
         return $this->hasOne(SchoolArea::class);
     }
 
+    public function vmonth(){
+        return $this->hasOne(VirtualMonth::class);
+    }
+
     public function tickets(){
         return $this->hasMany(Ticket::class);
     }

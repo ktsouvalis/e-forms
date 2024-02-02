@@ -30,11 +30,11 @@ class AllDaySchoolController extends Controller
             $comments= $request->all()['comments'];
             $functionality = $request->all()['functionality'];
             $month = Month::getActiveMonth();
-            if(!$school->vmonth){
+            if(!$school->vmonth or $school->vmonth->vmonth == 0){
                 $month_to_store = $month->id;
             }
             else{
-                $month_to_store = $school->vmonth;
+                $month_to_store = $school->vmonth->vmonth;
             }
             if($request->file('table_file')){
                 $rule = [
@@ -46,7 +46,7 @@ class AllDaySchoolController extends Controller
                 }
                 $file = $request->file('table_file')->getClientOriginalName();
                 //store the file
-                $filename = "all_day_".$school->code."_".$month->id.".xlsx";
+                $filename = "all_day_".$school->code."_".$month_to_store.".xlsx";
                 try{
                     $path = $request->file('table_file')->storeAs('all_day', $filename);
                 }

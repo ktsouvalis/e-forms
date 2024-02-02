@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\Month;
 use App\Models\School;
+use App\Models\VirtualMonth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -28,12 +29,28 @@ class MonthController extends Controller
 
     public function setVirtualMonth(Request $request, School $school){
         $new_vmonth = Month::where('name', $request->input('month'))->first();
-        // dd($new_vmonth);
+        
         if($new_vmonth){
+            $months = [];
+            $number = Month::getActiveMonth()->number;
+            $i=$number;
+            if($number >=9){
+                for($i; $i>=9; $i--)
+                    array_push($months, $i);
+            }
+            else{
+                for($i; $i>=1; $i--)
+                    array_push($months, $i);
+                array_push($months,12,11,10,9);
+            }
+            if(!in_array($new_vmonth->number, $months) or in_array($new_vmonth->number, [7,8]) ){
+                return back()->with('failure','Μόνο προηγούμενοι μήνες της σχολικής χρονιάς επιτρέπονται');
+            }
             try{
-                $school->vmonth = $new_vmonth->number;
-                $school->save();
-                
+                VirtualMonth::updateOrCreate(
+                    ['school_id'=>$school->id],
+                    ['vmonth' => $new_vmonth->number]
+                );
             }
             catch(Exception $e){
                 Log::channel('throwable_db')->error(Auth::user()->username." tried to change virtual month: ".$e->getMessage());
@@ -43,18 +60,22 @@ class MonthController extends Controller
         else{
             return back()->with('failure', 'Ο εικονικός μήνας πρέπει να επιλεγεί από τη λίστα');    
         }
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." change virtual month of $school->name to $new_vmonth->name");
         return back()->with('success',"Το $school->name έχει ενεργό εικονικά τον μήνα $new_vmonth->name");
     }
 
     public function resetActiveMonth(Request $request, School $school){
         try{
-            $school->vmonth = 0;
-            $school->save();
+            VirtualMonth::updateOrCreate(
+                ['school_id'=>$school->id],
+                ['vmonth' => 0]
+            );
         }
         catch(\Exception $e){
             Log::channel('throwable_db')->error(Auth::user()->username." tried to change virtual month: ".$e->getMessage());
             return back()->with('failure', 'Κάποιο σφάλμα προέκυψε (throwable_db');   
         }
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." reset virtual month of $school->name");
         return back()->with('success',"Έγινε επαναφορά για το $school->name");
     }
 }

@@ -39,18 +39,35 @@
                         @else
                         <td> - </td>
                         @endif
-                        @if($school->vmonth)
-                        <td style="color:red"><strong>{{App\Models\Month::where('number',$school->vmonth)->first()->name}}</strong></td>
+                        @if($school->vmonth and $school->vmonth->vmonth != 0)
+                        <td style="color:red"><strong>{{App\Models\Month::where('number',$school->vmonth->vmonth)->first()->name}}</strong></td>
                         @else
                         <td>{{App\Models\Month::getActiveMonth()->name}}</td>
                         @endif
+                        @php
+                            $months = [];
+                            $number = App\Models\Month::getActiveMonth()->number;
+                            $i=$number;
+                            if($number >=9){
+                                for($i; $i>=9; $i--)
+                                    array_push($months, $i);
+                            }
+                            else{
+                                for($i; $i>=1; $i--)
+                                    array_push($months, $i);
+                                array_push($months,12,11,10,9);
+                            }
+                        @endphp
                         <td>
                             <form action="{{url("/set_vmonth/$school->id")}}" method="post">
                             @csrf
                             <input name="month" id="month" type="text" class="form-control" placeholder="Επιλέξτε Μήνα" aria-label="Μήνας" aria-describedby="basic-addon2" required list="monthOptions">
                             <datalist id="monthOptions">
-                                @foreach(App\Models\Month::all() as $month)
-                                    <option value="{{ $month->name }}">{{ $month->name }}</option>
+                                @foreach($months as $month)
+                                    @php
+                                        $show = App\Models\Month::where('number', $month)->first()->name;
+                                    @endphp
+                                    <option value="{{ $show }}">{{ $show }}</option>
                                 @endforeach
                             </datalist>
                             <button type="submit" class="btn btn-warning m-2"><div class="fa-regular fa-calendar-plus"></div> </button>

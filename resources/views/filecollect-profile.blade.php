@@ -168,6 +168,7 @@
                         <th id="search">name</th>
                         <th id="search">mail</th>
                         <th id="search">Έχει υποβάλλει</th>
+                        <th>Σχόλιο</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
@@ -192,11 +193,15 @@
                         <td>
                             <form action="{{url("/dl_stake_file/$one_stakeholder->id")}}" method="post">
                                 @csrf
-                                <div class="input-group">
-                                    <span class="input-group-text"></span>
-                                </div>
                                 <button class="btn btn-success bi bi-box-arrow-down"> {{$one_stakeholder->file}} </button>
                             </form>
+                        </td>
+                    @else
+                        <td> - </td>
+                    @endif
+                    @if($one_stakeholder->stake_comment)
+                        <td>
+                            {{$one_stakeholder->stake_comment}}
                         </td>
                     @else
                         <td> - </td>

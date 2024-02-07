@@ -38,7 +38,7 @@
         <div class="text-dark fa-solid fa-file-pdf"></div>
         <a href="{{url('/fileshares')}}" style="color:black; text-decoration:none;" class=""> Αποστολή Αρχείων </a>
     </div>
-    <div class="badge text-wrap py-2" style="width: 10rem; background-color:#5980ff; text-align:center;">
+    <div class="badge text-wrap py-2" style="width: 10rem; background-color:#4bac97; text-align:center;">
         <div class="text-dark fa-solid fa-file"></div>
         <a href="{{url('/filecollects')}}" style="color:black; text-decoration:none;" class=""> Συλλογή Αρχείων </a>
     </div>

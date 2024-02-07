@@ -36,7 +36,7 @@ class FileshareController extends Controller
         else if($result->getStatusCode() == 200){  
             $fileshare = Fileshare::find($result->getData()->fileshare);
             Log::channel('user_memorable_actions')->info(Auth::user()->username." insert_fileshare ".$fileshare->name." for ".$fileshare->department->name);
-            return redirect(url('/fileshares'))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.'); 
+            return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.'); 
         }
     }
 
@@ -392,6 +392,7 @@ class FileshareController extends Controller
         $fileshare->comment = $sanitizedComment;
         $fileshare->save();
 
+        Log::channel('user_memorable_actions')->info(Auth::user()." updated fileshare $fileshare->id comment");
         return back()->with('success', 'Το σχόλιο αποθηκεύτηκε');
     }
 }

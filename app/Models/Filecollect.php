@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\FilecollectUser;
+
+use App\Models\Department;
 use App\Models\FilecollectStakeholder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,8 +18,8 @@ class Filecollect extends Model
         'id'
     ];
 
-    public function users(){
-        return $this->hasMany(FilecollectUser::class);
+    public function department(){
+        return $this->belongsTo(Department::class);
     }
 
     public function stakeholders(){

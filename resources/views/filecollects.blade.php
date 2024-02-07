@@ -21,6 +21,7 @@
     <div class="container">
             @php      
                 $all_filecollects = App\Models\Filecollect::all();
+                $all_departments = App\Models\Department::all();
             @endphp
             <div class="table-responsive">
             <table  id="dataTable" class="align-middle table table-striped table-hover">
@@ -28,7 +29,7 @@
                 <tr >
                     <th id="search">ID</th>
                     <th id="search">Name</th>
-                    <th id="search">WhoHasAccess</th>
+                    <th id="search">Τμήμα</th>
                     <th id="search">Ορατή</th>
                     <th id="search">Δέχεται</th>
                 </tr>
@@ -38,21 +39,11 @@
                         @can('view', $one_filecollect)
                             <tr >  
                                 <td>{{$one_filecollect->id}}</td>
-                                @can('update', $one_filecollect)
+                                
                                 <td><div class="badge text-wrap" style="background-color:{{$one_filecollect->color}};"><a href="{{url("/filecollect_profile/$one_filecollect->id")}}" style="color:black; text-decoration:none;">{{$one_filecollect->name}}</a></div></td>
-                                @else
-                                <td>{{$one_filecollect->name}}</td>
-                                @endcan
+                               
                                 <td>
-                                    <table class="table table-sm table-striped table-hover">
-                                        @foreach($one_filecollect->users as $one_user)
-                                            <tr>
-                                                <td>
-                                                    @if($one_user->can_edit) <strong> @endif {{$one_user->user->display_name}}</strong>  
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </table>
+                                    {{$one_filecollect->department->name}}
                                 </td>
                                 @php
                                     
@@ -77,7 +68,7 @@
                                     $tooltip_vis = "Άνοιγμα ορατότητας";
                                 }
                                 @endphp
-                            @can('update', $one_filecollect)
+                            
                             <td >
                                 <form action="{{url("/change_filecollect_status/$one_filecollect->id")}}" method="post">
                                 @csrf
@@ -92,11 +83,6 @@
                                 <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
                                 </form>
                             </td>
-                            @else
-                            <td> - </td>
-                            <td> - </td>
-                            
-                            @endcan
                         @endcan
                         
                         </tr>
@@ -104,7 +90,7 @@
                 </tbody>
             </table>
         </div>
-        @can('create', App\Models\Filecollect::class)
+        
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
@@ -120,10 +106,6 @@
                     <input name="filecollect_name" type="text" class="form-control" placeholder="π.χ. Τμήμα Ένταξης, Εργαστήριο Πληροφορικής, κ.α." aria-label="filecollectname" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['filecollect_name']}}@endisset"><br>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Πρότυπο Αρχείο</span>
-                    <input name="filecollect_original_file" type="file" class="form-control"><br>
-                </div>
-                <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Τύπος Δεκτών Αρχείων</span>
                     <select name="filecollect_mime" class="form-control" required>
                         <option value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">Excel (.xlsx)</option>
@@ -131,34 +113,21 @@
                         <option value="application/vnd.openxmlformats-officedocument.wordprocessingml.document">Word (.docx)</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon5">Χρήστες</span>
-                    @php
-                        $users = App\Models\User::all();   
-                    @endphp
-                    <table>
-                    @foreach($users as $user)
-                    @if(!App\Models\Superadmin::where('user_id',$user->id)->exists())
-                        <tr>
-                            <td>
-                            <div class="hstack gap-2">
-                                <div class="form-check form-switch">
-  
-
-                                <input class="form-check-input" role="switch" type="checkbox" name="user{{$user->id}}" value="{{$user->id}}" id="user{{$user->id}}" onChange="show_edit_option({{$user->id}})">
-                                <label for="user{{$user->id}}"> {{$user->display_name}} </label>
-                            
-                                <div id="space{{$user->id}}">
-
-                                </div>
-                                </div>
-                            </div>
-                            </td>
-                        </tr>
-                    @endif
-                    @endforeach
-                    </table>
-                </div>
+                @can('chooseDepartment',App\Models\Filecollect::class)
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>
+                        <select name="department" class="form-select" aria-label="Default select example">
+                            @foreach($all_departments as $department)
+                            @php
+                                $selected=null;
+                                if($department->id == 5)
+                                    $selected="selected";   
+                            @endphp
+                            <option {{$selected}} value="{{$department->id}}">{{$department->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endcan
                 <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
@@ -167,6 +136,6 @@
             </form>
         </nav>
         </div></div>
-        @endcan
+        
     </div>
 </x-layout>

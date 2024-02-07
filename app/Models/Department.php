@@ -22,4 +22,8 @@ class Department extends Model
     public function fileshares(){
         return $this->hasMany(Fileshare::class);
     }
+
+    public function filecollects(){
+        return $this->hasMany(Filecollect::class);
+    }
 }

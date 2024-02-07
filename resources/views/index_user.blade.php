@@ -7,7 +7,8 @@
             @endpush
             @php
                 $user =  Illuminate\Support\Facades\Auth::user();
-                $fileshares = App\Models\Fileshare::all();
+                // $fileshares = App\Models\Fileshare::all();
+                // $filecollects = App\Models\Filecollect::all();
                
                 if($user->isAdmin()){
                     $operations=App\Models\Operation::all(); //$operations is Operation model
@@ -114,6 +115,19 @@
                             </a> 
                         </div>
                     </div>
+                     @foreach($user->department->filecollects as $filecollect)
+                        <div class="col-md-4 py-3" style="max-width:15rem">
+                            <div class="card py-3" style="background-color:#4bac97; text-decoration:none; text-align:center; font-size:small">
+                                @php
+                                    $fi = $filecollect->id;
+                                @endphp
+                                <a class="text-dark" style="text-decoration:none;" href="{{url("/filecollect_profile/$fi")}}">
+                                <div class="h5 card-title fa-solid fa-file-pdf"></div>
+                                <div>{{$filecollect->name}}</div>
+                                </a> 
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
 
                     {{-- Μενού με βάση τα δικαιωματα πρόσβασης που έρχονται από τον πίνακα microapps --}}
@@ -148,7 +162,7 @@
                                     <div class="py-2" style="text-align:center">
                                         <a class="text-dark" style="text-decoration:none;" href="{{ url("/admin".$one_microapp->url) }}">
                                             <div class="h5 card-title {{ $one_microapp->icon }}"></div>
-                                            <div @if (!$one_microapp->active) style="color:red" @endif>@if (!$one_microapp->active) <strong> @endif{{ $one_microapp->name }}</strong></div>
+                                            <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>
                                         </a>
                                     </div>
                                 </div>

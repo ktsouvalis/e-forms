@@ -2,26 +2,27 @@
 
 namespace App\Mail;
 
-use App\Models\Fileshare;
+use App\Models\Filecollect;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use App\Models\FileshareStakeholder;
+use App\Models\FilecollectStakeholder;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class FilesToReceive extends Mailable implements ShouldQueue
+class FilesToUpload extends Mailable implements ShouldQueue
 {
+
     use Queueable, SerializesModels;
     protected $name;
     /**
      * Create a new message instance.
      */
-    public function __construct(public Fileshare $fileshare, public FileshareStakeholder $stakeholder)
+    public function __construct(public Filecollect $filecollect, public FilecollectStakeholder $stakeholder)
     {
         //
-        $this->name = $this->fileshare->name;
+        $this->name = $this->filecollect->name;
     }
 
     /**
@@ -30,10 +31,10 @@ class FilesToReceive extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Αρχεία για παραλαβή: $this->name",
-            tags:['new-fileshare'],
+            subject: "Αρχείο για αποστολή: $this->name",
+            tags:['new-filecollect'],
             metadata:[
-                'fileshare_id' => $this->fileshare->id
+                'filecollect_id' => $this->filecollect->id
             ],
         );
     }
@@ -44,7 +45,7 @@ class FilesToReceive extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.files-to-receive',
+            view: 'emails.files-to-upload',
         );
     }
 

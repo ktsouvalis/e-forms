@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('filecollects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('user_id');
+            $table->foreignId('department_id');
+            $table->longText('comment')->nullable();
+            $table->string('base_file')->nullable();
+            $table->string('template_file')->nullable();
             $table->string('fileMime');
             $table->boolean('visible'); // visible for stakeholders
             $table->boolean('accepts'); // accepts submissions from stakeholders

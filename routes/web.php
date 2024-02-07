@@ -408,31 +408,61 @@ Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::cl
 
 Route::view('/filecollects', 'filecollects')->middleware('auth');
 
-Route::post('/insert_filecollect', [FilecollectController::class, 'insert_filecollect']);
+Route::post('/insert_filecollect', [FilecollectController::class, 'insert_filecollect'])->middleware('auth');
 
 Route::get('/filecollect_profile/{filecollect}', function(Filecollect $filecollect){
     return view('filecollect-profile', ['filecollect'=> $filecollect]);
-});//->middleware('can:view,filecollect');
+})->middleware('can:view,filecollect');
 
-Route::post('/filecollect_save/{filecollect}', [FilecollectController::class,'saveProfile']);
+Route::post('/filecollect_save/{filecollect}', [FilecollectController::class,'saveProfile'])->middleware('can:view,filecollect');
 
-Route::post('/dl_filecollect_template/{filecollect}', function(Filecollect $filecollect){
-
-    $file = "file_collects/".$filecollect->id."/ORIGINAL_FILE_for_".$filecollect->id."_file_collect.xlsx";
+Route::post('/dl_filecollect_file/{filecollect}/{type}', function(Filecollect $filecollect, $type){
+    if($type == 'base'){
+        $filename = $filecollect->base_file;
+    }
+    else if($type=='template'){
+        $filename = $filecollect->template_file;
+    }
+    $file = "file_collects/".$filecollect->id."/".$filename;
     if(Storage::disk('local')->exists($file)){
         $response = Storage::disk('local')->download($file);  
         ob_end_clean();
         try{
             return $response;
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
         }
-    } else {
-        return back()->with('failure', 'Το αρχείο δεν υπάρχει.'); 
+    } 
+    else 
+        return back()->with('failure', 'Το αρχείο δεν υπάρχει.');  
+});//->middleware('can:view,filecollect');
+
+Route::post('/dl_stake_file/{old_data}', [FilecollectController::class,'getSchoolFile']);
+
+Route::post('/update_filecollect_file/{filecollect}/{type}', [FilecollectController::class, 'update_file'])->middleware('can:view,filecollect');
+
+Route::post('/update_filecollect_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
+
+Route::post('/change_filecollect_status/{filecollect}', [FilecollectController::class, 'changeFilecollectStatus'])->middleware('can:view,filecollect');
+
+Route::get("/teacher_filecollect/{filecollect}", function(Filecollect $filecollect){
+    $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
+    if(!$stakeholder){
+        abort(403);
     }
-    
-});
+    return view('teacher-filecollect', ['filecollect' => $filecollect]);
+})->middleware('isTeacher');
+
+Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollect){
+    $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
+    if(!$stakeholder){
+        abort(403);
+    }
+    return view('school-filecollect', ['filecollect' => $filecollect]);
+})->middleware('isSchool');
+
+Route::post("/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
 
 
 // FILESHARES ROUTES
@@ -499,11 +529,17 @@ Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanCon
 
 Route::get('/preview_mail_all_whocans/{my_app}/{my_id}', [WhocanController::class,'preview_mail_to_all']);
 
-Route::post('/mail_not_visited/{fileshare}',[WhocanController::class, 'mail_to_those_who_not_visited_fileshare']);
+Route::post('/mail_not_visited/{fileshare}',[WhocanController::class, 'mail_to_those_who_not_visited_fileshare'])->middleware('can:view,fileshare');
 
-Route::post('/mail_visited/{fileshare}',[WhocanController::class, 'mail_to_those_who_visited_fileshare']);
+Route::post('/mail_visited/{fileshare}',[WhocanController::class, 'mail_to_those_who_visited_fileshare'])->middleware('can:view,fileshare');
 
-Route::post('/fileshare_personal_mail/{fileshare}/{stakeholder}',[WhocanController::class, 'personal_fileshare_mail']);
+Route::post('/fileshare_personal_mail/{fileshare}/{stakeholder}',[WhocanController::class, 'personal_fileshare_mail'])->middleware('can:view,fileshare');
+
+Route::post('/mail_submitted/{filecollect}',[WhocanController::class, 'mail_to_those_who_uploaded_filecollect'])->middleware('can:view,filecollect');
+
+Route::post('/mail_not_submitted/{filecollect}',[WhocanController::class, 'mail_to_those_who_not_uploaded_filecollect'])->middleware('can:view,filecollect');
+
+Route::post('/filecollect_personal_mail/{filecollect}/{stakeholder}',[WhocanController::class, 'personal_filecollect_mail'])->middleware('can:view,filecollect');
 
 Route::match(array('GET','post'), "/share_link/{type}/{my_id}", function($type, $my_id){
     if($type=="school"){

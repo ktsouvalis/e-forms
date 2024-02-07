@@ -1,17 +1,17 @@
 
 <div class="hstack gap-2">
-<div class="h4">{{$filecollect->name}}</div>
+<div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div>
 @php
     $currentUrl = request()->url();
 @endphp
 
-@if (Str::contains($currentUrl, 'filecollect_profile'))
+{{-- @if (Str::contains($currentUrl, 'filecollect_profile'))
     <a class="btn btn-primary bi bi-eye px-1" data-toggle="tooltip" data-placement="top" title="Απαντήσεις" style="text-decoration: none;" href="{{ url("/admin".$filecollect->url) }}"></a>
 @elseif (Str::contains($currentUrl, 'admin'))
     @can('update', $filecollect)
         <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ url("/filecollect_profile/$filecollect->id") }}"></a>
     @endcan
-@endif
+@endif --}}
 </div>
 <hr>
 @php
@@ -37,14 +37,14 @@
 <div class="hstack gap-3 py-2">
     @if(!$filecollect->visible)
         <div class='alert alert-warning text-center'>
-            Η εφαρμογή δεν είναι ορατή
+            Η συλλογή δεν είναι ορατή
         </div>
     @else
         <div class='alert alert-success text-center'>
-            Η εφαρμογή είναι ορατή
+            Η συλλογή είναι ορατή
         </div>
     @endif  
-    @can('update', $filecollect)
+    @can('view', $filecollect)
     <form action="{{url("/change_filecollect_status/$filecollect->id")}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_vis_status">
@@ -59,11 +59,11 @@
     @endcan
     @if(!$filecollect->accepts)
         <div class='alert alert-warning text-center'>
-            Η εφαρμογή δε δέχεται υποβολές
+            Η συλλογή δε δέχεται υποβολές
         </div>
     @else
         <div class='alert alert-success text-center'>
-            Η εφαρμογή δέχεται υποβολές
+            Η συλλογή δέχεται υποβολές
         </div>
     @endif        
 </div>

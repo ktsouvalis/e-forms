@@ -16,34 +16,23 @@ class FilecollectPolicy
     public function view(User $user, Filecollect $filecollect): bool
     {
         //
-        if(Superadmin::where('user_id',$user->id)->exists()) return true;
-        if($user->filecollects->where('filecollect_id', $filecollect->id)->first()) return true;
+        if($user->isAdmin()) return true;
+        if($user->department->filecollects->find($filecollect->id)) return true;
         return false;
     }
 
     public function create(User $user): bool
     {
         //
-        return Superadmin::where('user_id',$user->id)->exists();
+        // return $user->isAdmin();
     }
 
     public function update(User $user, Filecollect $filecollect): bool
     {
-        if(Superadmin::where('user_id',$user->id)->exists()){
-            return true;
-        }
-        else{
-            if(!$user->filecollects->where('filecollect_id', $filecollect->id)->isEmpty()){
-                if($user->filecollects->where('filecollect_id', $filecollect->id)->first()->can_edit){
-                    return true;
-                }  
-                else{
-                    return false;
-                } 
-            }
-            else{
-                return false;
-            }
-        }
+       
+    }
+
+    public function chooseDepartment(User $user): bool{
+        return $user->isAdmin();
     }
 }

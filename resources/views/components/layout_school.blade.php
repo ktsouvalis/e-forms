@@ -89,4 +89,3 @@
     @stack('copy_script')
    </body>
 </html>
-3

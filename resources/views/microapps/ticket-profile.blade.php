@@ -201,6 +201,7 @@
     @if(!$ticket->solved)
         <form action="{{url("/mark_as_resolved/$ticket->id")}}" method="post">
             @csrf
+            <strong>Αν θεωρείτε ότι λύθηκε το πρόβλημα: </strong>
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
         </form>
     @endif

@@ -50,10 +50,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function filecollects(){
-        return $this->hasMany(FilecollectUser::class);
-    }
-
     public function department(){
         return $this->belongsTo(Department::class);
     }

@@ -7,13 +7,12 @@
     } 
 @endphp
 
-Σας ενημερώνουμε ότι στην εφαρμογή <strong>Ηλεκτρονικές Φόρμες</strong> της Διεύθυνσης Π.Ε. Αχαΐας, στην ενότητα <strong>Διαμοιρασμός Αρχείων</strong>: <b>{{$stakeholder->fileshare->department->name}}, {{$stakeholder->fileshare->name}} </b> έχουν προστεθεί αρχεία που σας αφορούν.
+Σας ενημερώνουμε ότι μέσω της εφαρμογής <strong>Ηλεκτρονικές Φόρμες</strong> της Διεύθυνσης Π.Ε. Αχαΐας, στην ενότητα <strong>Συλλογή Αρχείων</strong>: <b>{{$stakeholder->filecollect->name}} </b>, πρέπει να μας αποστείλετε ένα αρχείο που αφορά το <strong>{{$stakeholder->filecollect->department->name}}</strong>.
 <br><br>
 Παρακαλούμε επισκεφτείτε την <a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank">εφαρμογή</a> προκειμένου να παραλάβετε τα αρχεία.
 <br>
 <div>
     <p><b>Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας - Ηλεκτρονικές Υπηρεσίες</b></p>
-    
 </div>
 <small>
 <em>

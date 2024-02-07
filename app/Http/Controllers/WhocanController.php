@@ -8,6 +8,8 @@ use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Microapp;
 use App\Models\Fileshare;
+use App\Mail\FilesToUpload;
+use App\Models\Filecollect;
 use App\Mail\FilesToReceive;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\FilecollectStakeholder;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -74,18 +77,28 @@ class WhocanController extends Controller
                     [
                     'hasAnswer'=> 0
                     ]
-                );
-                
+                ); 
+            }
+            else if($my_app=="filecollect"){
+                if(!FilecollectStakeholder::where('filecollect_id', $my_id)->where('stakeholder_id' , $stakeholder->id)->where('stakeholder_type' , get_class($stakeholder))->count())
+                    FilecollectStakeholder::create([
+                        'filecollect_id' => $my_id,
+                        'stakeholder_id' => $stakeholder->id,
+                        'stakeholder_type' => get_class($stakeholder)
+                    ]);
             }      
         }
 
         Session::put('not_found', $not_found);
-        if($found)
+        if($found){
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." imported whocans $my_app $my_id");
             return redirect(url("/".$my_app."_profile/$my_id"))
                 ->with('success', "Η ενημέρωση των ενδιαφερόμενων έγινε επιτυχώς");
-        else
+        }
+        else{
             return redirect(url("/".$my_app."_profile/$my_id"))
                 ->with('warning', "Δεν βρέθηκε σχολείο ή εκπαιδευτικός για να προστεθεί στους ενδιαφερόμενους");   
+        }
     }
 
     /**
@@ -105,7 +118,11 @@ class WhocanController extends Controller
             $microapp = Microapp::find($my_id);
             $microapp->stakeholders()->delete();
         }
-
+        else if($my_app=='filecollect'){
+            $filecollect = Filecollect::find($my_id);
+            $filecollect->stakeholders()->delete();
+        }
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." deleted all whocans $my_app $my_id");
         return back()->with('success', 'Επιτυχής διαγραφή');
     }
 
@@ -124,7 +141,11 @@ class WhocanController extends Controller
         else if($my_app=='microapp'){
             MicroappStakeholder::destroy($my_id);
         }
+        else if($my_app=='filecollect'){
+            FilecollectStakeholder::destroy($my_id);
+        }
 
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." deleted one $my_id whocan from stakeholders table of $my_app");
         return back()->with('success', 'Ο χρήστης διαγράφηκε');
     }
 
@@ -144,6 +165,11 @@ class WhocanController extends Controller
             $fileshare = Fileshare::find($my_id);
             $stakeholder = $fileshare->stakeholders->first();
             return new FilesToReceive($fileshare, $stakeholder);
+        }
+        else if($my_app=="filecollect"){
+            $filecollect = Filecollect::find($my_id);
+            $stakeholder = $filecollect->stakeholders->first();  
+            return new FilesToUpload($filecollect, $stakeholder);
         }
     }
     
@@ -165,14 +191,14 @@ class WhocanController extends Controller
                 try{
                     Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
                     try{
-                        Log::channel('mails')->info("Fileshare $fileshare->id, MailToStakeholders success: $mail");  
+                        Log::channel('mails')->info(Auth::user()->username. " Fileshare $fileshare->id, MailToStakeholders success: $mail");  
                     }
                     catch(Throwable $e){
                     }
                 }
                 catch(Throwable $e){
                     $mail_error = true;
-                    Log::channel('mails')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                    Log::channel('mails')->error(Auth::user()->username." Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
                 }
             }
         }
@@ -184,14 +210,33 @@ class WhocanController extends Controller
                 try{ 
                     Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
                     try{
-                        Log::channel('mails')->info("Microapp $microapp->name, MailToStakeholders success: $mail");
+                        Log::channel('mails')->info(Auth::user()->username." Microapp $microapp->name, MailToStakeholders success: $mail");
                     }
                     catch(Throwable $e){
                     }
                 }
                 catch(Throwable $e){
                     $mail_error = true;
-                    Log::channel('mails')->error("Microapp $microapp->name, MailToStakeholders error: $mail ".$e->getMessage());   
+                    Log::channel('mails')->error(Auth::user()->username." Microapp $microapp->name, MailToStakeholders error: $mail ".$e->getMessage());   
+                }
+            }
+        }
+        else if($my_app=='filecollect'){
+            $filecollect = Filecollect::find($my_id);
+            $stakeholders = $filecollect->stakeholders;
+            foreach($stakeholders as $stakeholder){
+                $mail = $stakeholder->stakeholder->mail;
+                try{
+                    Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));
+                    try{
+                        Log::channel('mails')->info(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders success: $mail");  
+                    }
+                    catch(\Exception $e){
+                    }
+                }
+                catch(\Exception $e){
+                    $mail_error = true;
+                    Log::channel('mails')->error(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders error: $mail ".$e->getMessage());
                 }
             }
         }
@@ -223,7 +268,7 @@ class WhocanController extends Controller
                         }
                         catch(Throwable $e){
                             $mail_error=true;
-                            Log::channel('mails')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage()); 
+                            Log::channel('mails')->error(Auth::user()->username." Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage()); 
                         }
                     }
                 }
@@ -234,13 +279,13 @@ class WhocanController extends Controller
                         }
                         catch(Throwable $e){
                             $mail_error=true;
-                            Log::channel('mails')->error("Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage());
+                            Log::channel('mails')->error(Auth::user()->username." Microapp $microapp->name, MailToThoseWhoOwe error: $mail ".$e->getMessage());
                         }
                     }  
                 }
             }
             $user = Auth::user();
-            Log::channel('mails')->info("Microapp $user->username, MailToThoseWhoOwe try");
+            Log::channel('mails')->info("$my_app $my_id $user->username, MailToThoseWhoOwe try");
         }
         if(!$mail_error)
             return back()->with('success', 'Ενημερώθηκαν όσοι ενδιαφερόμενοι δεν έχουν υποβάλλει απάντηση');
@@ -257,14 +302,14 @@ class WhocanController extends Controller
                 try{
                     Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
                     try{
-                        Log::channel('mails')->info("Fileshare $fileshare->id, MailToStakeholders success: $mail");  
+                        Log::channel('mails')->info(Auth::user()->username." Fileshare $fileshare->id, MailToStakeholders success: $mail");  
                     }
                     catch(Throwable $e){
                     }
                 }
                 catch(Throwable $e){
                     $mail_error = true;
-                    Log::channel('mails')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                    Log::channel('mails')->error(Auth::user()->username." Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
                 }
             }
         else{
@@ -285,14 +330,14 @@ class WhocanController extends Controller
                 try{
                     Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
                     try{
-                        Log::channel('mails')->info("Fileshare $fileshare->id, MailToStakeholders success: $mail");  
+                        Log::channel('mails')->info(Auth::user()->username." Fileshare $fileshare->id, MailToStakeholders success: $mail");  
                     }
                     catch(Throwable $e){
                     }
                 }
                 catch(Throwable $e){
                     $mail_error = true;
-                    Log::channel('mails')->error("Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
+                    Log::channel('mails')->error(Auth::user()->username." Fileshare $fileshare->id, MailToStakeholders error: $mail ".$e->getMessage());
                 }
             }
         else{
@@ -309,13 +354,86 @@ class WhocanController extends Controller
         try{
             Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
             try{
-                Log::channel('mails')->info("Fileshare $fileshare->id, personal MailToStakeholder success: $mail");  
+                Log::channel('mails')->info(Auth::user()->username." Fileshare $fileshare->id, personal MailToStakeholder success: $mail");  
             }
             catch(Throwable $e){
             }
         }
         catch(Throwable $e){
-            Log::channel('mails')->error("Fileshare $fileshare->id, personal MailToStakeholder error: $mail ".$e->getMessage());
+            Log::channel('mails')->error(Auth::user()->username." Fileshare $fileshare->id, personal MailToStakeholder error: $mail ".$e->getMessage());
+            return back()->with('failure', 'Η αποστολή υπενθύμισης απέτυχε. Δείτε στο σημερινό log mails τον λόγο');
+        }
+        return back()->with('success', 'Ενημερώθηκε ο ενδιαφερόμενος');
+    }
+
+    public function mail_to_those_who_uploaded_filecollect(Filecollect $filecollect, Request $request){
+        $stakeholders = $filecollect->stakeholders->whereNotNull('file');
+        $mail_error = false;
+        if($stakeholders->count())
+            foreach($stakeholders as $stakeholder){
+                $mail = $stakeholder->stakeholder->mail;
+                try{
+                    Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));
+                    try{
+                        Log::channel('mails')->info(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders success: $mail");  
+                    }
+                    catch(\Exception $e){
+                    }
+                }
+                catch(\Exception $e){
+                    $mail_error = true;
+                    Log::channel('mails')->error(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders error: $mail ".$e->getMessage());
+                }
+            }
+        else{
+            return back()->with('warning','Δεν υπάρχουν αποδέκτες');
+        }
+        if(!$mail_error)
+            return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι που έχουν υποβάλλει αρχείο για τη συλλογή');
+        else
+            return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν');
+    }
+
+    public function mail_to_those_who_not_uploaded_filecollect(Filecollect $filecollect, Request $request){
+        $stakeholders = $filecollect->stakeholders->where('file',null);
+        $mail_error = false;
+        if($stakeholders->count())
+            foreach($stakeholders as $stakeholder){
+                $mail = $stakeholder->stakeholder->mail;
+                try{
+                    Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));
+                    try{
+                        Log::channel('mails')->info(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders success: $mail");  
+                    }
+                    catch(\Exception $e){
+                    }
+                }
+                catch(\Exception $e){
+                    $mail_error = true;
+                    Log::channel('mails')->error(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders error: $mail ".$e->getMessage());
+                }
+            }
+        else{
+            return back()->with('warning','Δεν υπάρχουν αποδέκτες');
+        }
+        if(!$mail_error)
+            return back()->with('success', 'Ενημερώθηκαν όλοι οι ενδιαφερόμενοι που δεν έχουν υποβάλλει αρχείο για τη συλλογή');
+        else
+            return back()->with('warning', 'Δείτε στο σημερινό log mails ποιοι δεν ενημερώθηκαν');
+    }
+
+    public function personal_filecollect_mail(Filecollect $filecollect, Request $request, FilecollectStakeholder $stakeholder){
+        $mail = $stakeholder->stakeholder->mail;
+        try{
+            Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));
+            try{
+                Log::channel('mails')->info(Auth::user()->username." Filecollect $filecollect->id, personal MailToStakeholder success: $mail");  
+            }
+            catch(\Exception $e){
+            }
+        }
+        catch(\Exception $e){
+            Log::channel('mails')->error(Auth::user()->username." Filecollect $filecollect->id, personal MailToStakeholder error: $mail ".$e->getMessage());
             return back()->with('failure', 'Η αποστολή υπενθύμισης απέτυχε. Δείτε στο σημερινό log mails τον λόγο');
         }
         return back()->with('success', 'Ενημερώθηκε ο ενδιαφερόμενος');

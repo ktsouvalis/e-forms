@@ -464,6 +464,8 @@ Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollec
 
 Route::post("/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
 
+Route::post("filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']);
+
 
 // FILESHARES ROUTES
 

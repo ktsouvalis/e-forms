@@ -161,71 +161,75 @@ class FilecollectController extends Controller
     }
 
     public function post_filecollect(Request $request, Filecollect $filecollect){
-        $record_to_update=null;
-        //identify stakeholder
-        if(Auth::guard('school')->check()){
-            $record_to_update = Auth::guard('school')->user()->filecollects->where('filecollect_id', $filecollect->id)->first();
-            $identifier = Auth::guard('school')->user()->code;
-        }
-        else if(Auth::guard('teacher')->check()){
-            $record_to_update = Auth::guard('teacher')->user()->filecollects->where('filecollect_id', $filecollect->id)->first(); 
-            $identifier = Auth::guard('school')->user()->afm;   
-        }
-    
-        if(!$record_to_update){
-            abort(403);
-        }
-        else{
-            //prepare extension for file based on the fileMime
-            if($request->file('the_file')){
-                $extension="";
-                if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
-                    $extension ='.xlsx';
-                }
-                else if($filecollect->fileMime == "application/pdf"){
-                    $extension = ".pdf";
-                }
-                else if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                    $extension = ".doc";
-                }
+        if($filecollect->visible and $filecollect->accepts){
+            $record_to_update=null;
+            //identify stakeholder
+            if(Auth::guard('school')->check()){
+                $record_to_update = Auth::guard('school')->user()->filecollects->where('filecollect_id', $filecollect->id)->first();
+                $identifier = Auth::guard('school')->user()->code;
+            }
+            else if(Auth::guard('teacher')->check()){
+                $record_to_update = Auth::guard('teacher')->user()->filecollects->where('filecollect_id', $filecollect->id)->first(); 
+                $identifier = Auth::guard('teacher')->user()->afm;   
+            }
+        
+            if(!$record_to_update){
+                abort(403);
+            }
+            else{
+                //prepare extension for file based on the fileMime
+                if($request->file('the_file')){
+                    $extension="";
+                    if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+                        $extension ='.xlsx';
+                    }
+                    else if($filecollect->fileMime == "application/pdf"){
+                        $extension = ".pdf";
+                    }
+                    else if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                        $extension = ".doc";
+                    }
 
-                //validate the input file
-                $rule = [
-                    'the_file' => "mimetypes:$filecollect->fileMime"
-                ];
-                $validator = Validator::make($request->all(), $rule);
-                if($validator->fails()){ 
-                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
-                }
+                    //validate the input file
+                    $rule = [
+                        'the_file' => "mimetypes:$filecollect->fileMime"
+                    ];
+                    $validator = Validator::make($request->all(), $rule);
+                    if($validator->fails()){ 
+                        return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                    }
 
-                //$file is for the file field of the database
-                $file = $request->file('the_file')->getClientOriginalName();
+                    //$file is for the file field of the database
+                    $file = $request->file('the_file')->getClientOriginalName();
 
-                //$filename is the name with which the file will be saved. save the file
-                $filename = $identifier.'_filecollect_'.$filecollect->id.$extension;
-                try{
-                    $path = $request->file('the_file')->storeAs("file_collects/$filecollect->id", $filename);
-                }
-                catch(\Exception $e){
-                    Log::channel('files')->error($identifier.' failure to upload file for filecollect '. $filecollect->id.' '.$e.getMessage());
-                    return back()->with('failure', 'Η ενέργεια απέτυχε (files). Επικοινωνήστε με τον διαχειριστή του συστήματος');
-                }
-                Log::channel('files')->info($identifier.' success to upload file for filecollect '. $filecollect->id);
+                    //$filename is the name with which the file will be saved. save the file
+                    $filename = $identifier.'_filecollect_'.$filecollect->id.$extension;
+                    try{
+                        $path = $request->file('the_file')->storeAs("file_collects/$filecollect->id", $filename);
+                    }
+                    catch(\Exception $e){
+                        Log::channel('files')->error($identifier.' failure to upload file for filecollect '. $filecollect->id.' '.$e.getMessage());
+                        return back()->with('failure', 'Η ενέργεια απέτυχε (files). Επικοινωνήστε με τον διαχειριστή του συστήματος');
+                    }
+                    Log::channel('files')->info($identifier.' success to upload file for filecollect '. $filecollect->id);
 
-                //prepare the record to update and save it
-                $record_to_update->file = $file;
+                    //prepare the record to update and save it
+                    $record_to_update->file = $file;
                     if($request->input('stake_comment'))
                         $record_to_update->stake_comment = $request->input('stake_comment');
-                try{
-                    $record_to_update->save();
+                    try{
+                        $record_to_update->save();
+                    }
+                    catch(Exception $e){
+                        Log::channel('throwable_db')->error($identifier.' failure to update database for filecollect '. $filecollect->id.' '.$e.getMessage()); 
+                        return back()->with('failure', 'Η ενέργεια απέτυχε (throwable_db). Επικοινωνήστε με τον διαχειριστή του συστήματος');  
+                    }
+                    return back()->with('success', 'Η ενέργεια ολοκληρώθηκε!');  
                 }
-                catch(Exception $e){
-                    Log::channel('throwable_db')->error($identifier.' failure to update database for filecollect '. $filecollect->id.' '.$e.getMessage()); 
-                    return back()->with('failure', 'Η ενέργεια απέτυχε (throwable_db). Επικοινωνήστε με τον διαχειριστή του συστήματος');  
-                }
-                return back()->with('success', 'Η ενέργεια ολοκληρώθηκε!');  
             }
         }
+        else
+            abort('403');
     }
 
     public function getSchoolFile(Request $request, FilecollectStakeholder $old_data){
@@ -260,4 +264,14 @@ class FilecollectController extends Controller
         else 
             return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
         }
+    
+    public function check_uncheck(Request $request, FilecollectStakeholder $stakeholder){
+        if($request->input('checked')=='true')
+            $stakeholder->checked = 1;
+        else
+            $stakeholder->checked = 0;
+        $stakeholder->save();
+
+        return response()->json(['message' => 'Filecollect updated successfully']);
+    }
 }

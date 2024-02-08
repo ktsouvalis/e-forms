@@ -37,6 +37,36 @@
                 });
             });
         </script>
+        <script>
+            $(document).ready(function() {
+                $('body').on('change', '.check-checkbox', function() {
+                    
+                    const stakeholderId = $(this).data('stakeholder-id');
+                    const isChecked = $(this).is(':checked');
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+    
+                    $.ajax({
+                        url: '../filecollect_checked/'+stakeholderId,
+                        type: 'POST',
+                        data: {
+                            checked: isChecked
+                        },
+                        success: function(response) {
+                            console.log("success");
+                        },
+                        error: function(error) {
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
         <script src="{{asset('charcount.js')}}"></script>
     @endpush
     @push('title')
@@ -169,6 +199,7 @@
                         <th id="search">mail</th>
                         <th id="search">Έχει υποβάλλει</th>
                         <th>Σχόλιο</th>
+                        <th>Έλεγχος</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
@@ -206,6 +237,9 @@
                     @else
                         <td> - </td>
                     @endif
+                    <td style="text-align:center;">
+                        <input type="checkbox" class="check-checkbox" data-stakeholder-id="{{ $one_stakeholder->id }}" {{ $one_stakeholder->checked ? 'checked' : '' }}>
+                    </td>
                     <td> 
                         <form action="{{url("/delete_one_whocan/filecollect/$one_stakeholder->id")}}" method="post">
                             @csrf

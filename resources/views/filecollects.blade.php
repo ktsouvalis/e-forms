@@ -99,7 +99,7 @@
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
-                    <span class="input-group-text w-75"><strong>Εισαγωγή νέας Συλογής Αρχείου</strong></span>
+                    <span class="input-group-text"><strong>Εισαγωγή νέας Συλογής Αρχείου</strong></span>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Ονομασία</span>

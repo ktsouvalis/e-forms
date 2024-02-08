@@ -307,7 +307,7 @@ class TicketsController extends Controller
             $ticket->needed_visit = 0;
         $ticket->save();
 
-        return response()->json(['message' => 'Fileshare updated successfully']);
+        return response()->json(['message' => 'Ticket updated successfully']);
     }
 
     public function update_post(Request $request){

@@ -470,6 +470,8 @@ Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 
 
 Route::post("/delete_filecollect/{filecollect}", [FilecollectController::class, 'delete_filecollect']);
 
+Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);
+
 
 // FILESHARES ROUTES
 

@@ -186,7 +186,7 @@
             </div>
         </form>
         </div>
-        <div class="container px-5 vstack gap-2 py-3">
+        <div class="vstack gap-2 py-3">
             
             @if($filecollect->stakeholders->count())
             <div class="table-responsive">
@@ -199,6 +199,7 @@
                         <th id="search">mail</th>
                         <th id="search">Έχει υποβάλλει</th>
                         <th>Σχόλιο</th>
+                        <th>Ημερομηνία Υποβολής</th>
                         <th>Έλεγχος</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
@@ -236,6 +237,11 @@
                         </td>
                     @else
                         <td> - </td>
+                    @endif
+                    @if($one_stakeholder->uploaded_at)
+                    <td>{{$one_stakeholder->uploaded_at}}</td>
+                    @else
+                    <td>-</td>
                     @endif
                     <td style="text-align:center;">
                         <input type="checkbox" class="check-checkbox" data-stakeholder-id="{{ $one_stakeholder->id }}" {{ $one_stakeholder->checked ? 'checked' : '' }}>

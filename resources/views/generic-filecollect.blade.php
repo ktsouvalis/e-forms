@@ -1,4 +1,36 @@
-
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
+                $('body').on('blur', '#stake_comment', function() {
+                    
+                    const textarea = document.getElementById('stake_comment');
+                    const comment = textarea.value;
+                    const stakeholderId = $(this).data('stakeholder-id');
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+    
+                    $.ajax({
+                        url: '../save_filecollect_stake_comment/'+stakeholderId,
+                        type: 'POST',
+                        data: {
+                            stake_comment: comment
+                        },
+                        success: function(response) {
+                            console.log("success");
+                        },
+                        error: function(error) {
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
     <div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div>
     <div class="container">
         @push('title')
@@ -65,10 +97,7 @@
             <div class="input-group">
                 <span class="input-group-text"><strong>Αποστολή αρχείου για τη συλλογή {{$filecollect->name}} </strong></span>
             </div>
-            <div class="input-group">
-                <span class="input-group-text w-25 text-wrap">Παρατηρήσεις</span>
-                <textarea name="stake_comment" id="stake_comment" class="form-control" cols="30" rows="5" style="resize: none;" >@if($old_data){{$old_data->stake_comment}}@endif</textarea>
-            </div>
+           
             <div class="input-group">
                 <span class="input-group-text w-25" id="basic-addon4">Αρχείο</span>
                 <input name="the_file" type="file" class="form-control" required><br>
@@ -84,6 +113,10 @@
                 </div>
             @endif
         </form>
+        <div class="input-group">
+            <span class="input-group-text w-25 text-wrap">Παρατηρήσεις</span>
+            <textarea name="stake_comment" id="stake_comment" class="form-control" data-stakeholder-id="{{ $old_data->id }}" cols="30" rows="5" style="resize: none;" >@if($old_data){{$old_data->stake_comment}}@endif</textarea>
+        </div>
         @if($old_data->file)
             @if($old_data->checked)
                 <div class='alert alert-success text-center'>
@@ -94,4 +127,9 @@
                     Το αρχείο σας δεν έχει ελεγχθεί
                 </div>
             @endif
+            <div class="col-md-4 py-3" style="max-width:15rem">
+                <div class="card py-3" style="background-color:rgb(144, 187, 226); text-decoration:none; text-align:center; font-size:small">
+                    <div>Τελευταία ενημέρωση αρχείου <br><strong> {{$old_data->uploaded_at}}</strong></div>
+                </div>
+            </div>
         @endif

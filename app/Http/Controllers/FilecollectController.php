@@ -218,6 +218,7 @@ class FilecollectController extends Controller
                 $record_to_update->file = $file;
                 $record_to_update->uploaded_at = Carbon::now();
                 $record_to_update->checked = false;
+                $record_to_update->stake_comment = null;
                 try{
                     $record_to_update->save();
                 }

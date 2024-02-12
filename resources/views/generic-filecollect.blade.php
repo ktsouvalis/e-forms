@@ -1,3 +1,4 @@
+@if($old_data->file)
     @push('scripts')
         <script>
             $(document).ready(function() {
@@ -31,6 +32,7 @@
             });
         </script>
     @endpush
+@endif
     <div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div>
     <div class="container">
         @push('title')
@@ -113,10 +115,7 @@
                 </div>
             @endif
         </form>
-        <div class="input-group">
-            <span class="input-group-text w-25 text-wrap">Παρατηρήσεις</span>
-            <textarea name="stake_comment" id="stake_comment" class="form-control" data-stakeholder-id="{{ $old_data->id }}" cols="30" rows="5" style="resize: none;" >@if($old_data){{$old_data->stake_comment}}@endif</textarea>
-        </div>
+        
         @if($old_data->file)
             @if($old_data->checked)
                 <div class='alert alert-success text-center'>
@@ -127,9 +126,16 @@
                     Το αρχείο σας δεν έχει ελεγχθεί
                 </div>
             @endif
+            <div class="hstack gap-3">
             <div class="col-md-4 py-3" style="max-width:15rem">
                 <div class="card py-3" style="background-color:rgb(144, 187, 226); text-decoration:none; text-align:center; font-size:small">
                     <div>Τελευταία ενημέρωση αρχείου <br><strong> {{$old_data->uploaded_at}}</strong></div>
                 </div>
             </div>
+
+            <div class="input-group">
+                <span class="input-group-text w-25 text-wrap">Μπορείτε να γράψετε σχόλιο. Αποθηκεύεται αν κάνετε κλικ έξω από το πλαίσιο κειμένου</span>
+                <textarea name="stake_comment" id="stake_comment" class="form-control" data-stakeholder-id="{{ $old_data->id }}" cols="30" rows="5" style="resize: none;" >@if($old_data){{$old_data->stake_comment}}@endif</textarea>
+            </div>
+        </div>
         @endif

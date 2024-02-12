@@ -38,25 +38,37 @@
                     @if($school->primary)
                         <div class="input-group">
                             <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως 14:50 ή 15:00</span>
-                            <input name="nr_class_3" id="nr_class_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_3}}@endif"><br>
+                            <input name="nr_class_3" id="nr_class_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_3}}@endif"><br> 
                             @if($old_data)
-                                <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_3 + $old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές</label>
+                                <label class="form-control text-muted">{{$old_data->nr_of_pupils_3 + $old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές</label>
                             @endif
+                        </div>
+                         <div class="input-group">
+                            <span class="input-group-text w-25 text-wrap">Αριθμός μαθητών που αποχωρούν στις 14:50 ή 15:00</span>
+                            <input name="nr_pupils_3" id="nr_pupils_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_pupils_3}}@endif"><br>
                         </div>
                     @endif
                     <div class="input-group">
                         <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως 15:50 ή 16:00</span>
                         <input name="nr_class_4" id="nr_class_4" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_4}}@endif"><br>
                         @if($old_data)
-                            <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές</label>
+                            <label class="form-control text-muted">{{$old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές</label>
                         @endif
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25 text-wrap">Αριθμός μαθητών που αποχωρούν στις 15:50 ή 16:00</span>
+                        <input name="nr_pupils_4" id="nr_pupils_4" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_pupils_4}}@endif"><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων Διευρυμένου Ολοήμερου</span>
                         <input name="nr_class_5" id="nr_class_5" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_5}}@endif"><br>
                         @if($old_data)
-                            <label class="form-control text-muted">Καταμετρήθηκαν {{$old_data->nr_of_pupils_5}} μαθητές</label>
+                            <label class="form-control text-muted">{{$old_data->nr_of_pupils_5}} μαθητές</label>
                         @endif
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25 text-wrap">Αριθμός μαθητών που αποχωρούν στις 17:30</span>
+                        <input name="nr_pupils_5" id="nr_pupils_5" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_pupils_5}}@endif"><br>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25 text-wrap">Παρατηρήσεις</span>
@@ -100,36 +112,18 @@
         </div> 
         <div class="container px-5 py-2">
             @if($old_data)
-            <div class="vstack gap-3">
+                <div class="vstack gap-3">
                     <div class="vstack gap-2">
                         <div class="hstack gap-2"><label><strong> Καταμέτρηση πρωινής υποδοχής για τον μήνα {{$old_data->month->name}}: </strong></label><mytext class="text-primary">{{$old_data->nr_morning}}</mytext> </div> 
-                        {{-- <label class="form-control text-success"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}} </label> --}}
                         <form action="{{url("/dl_all_day_file/$old_data->id")}}" method="post">
                             @csrf
                         <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> </div>
                         </form>
                     </div>
-                    <div style="">
-                        <div class="text-muted">Αν δεν συμφωνείτε με τα στοιχεία που καταμετρήθηκαν, συμπληρώστε εδώ τα σωστά και πατήστε <i>Ενημέρωση</i></div>
-                        <div><strong>Αριθμός μαθητών</strong> που αποχωρούν στις: </div>
-                        <form action="{{url("/self_update_all_day/$old_data->id")}}" method="post">
-                            @csrf
-                            {{-- <div class="vstack"> --}}
-                            @if($school->primary)
-                                <input type="number" name="nos3" placeholder="15.00 ή 14.55" id="" required>
-                            @endif
-                            <input type="number" name="nos4" placeholder="16.00 ή 15.50" id="" required>
-                            <input type="number" name="nos5" placeholder="17.30" id="" required>
-                            <button class="btn btn-secondary "><i class="fa-solid fa-arrows-rotate"></i> Ενημέρωση</button>
-                            {{-- <button class="btn btn-secondary fa-solid fa-arrows-rotate "> Ενημέρωση</button> --}}
-                            {{-- </div> --}}
-                        </form>  
-                    </div>
-            </div>
-                @endif
+                </div>
+            @endif
             @include('microapps.new_ticket_button')
         </div>
-        {{-- <hr> --}}
         <div class="py-3">
             <div class="table-responsive py-2">
                 <table  id="" class="small text-center display table table-sm table-striped table-bordered table-hover">

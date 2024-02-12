@@ -13,7 +13,7 @@
     <div class="container px-5">  
             <form action="{{url("/dl_immigrants_template")}}" method="post">
                 @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
+                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/save_immigrants")}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -50,7 +50,7 @@
             @if($old_data)
                 <form action="{{url("/dl_immigrants_file/$old_data->id")}}" method="post">
                     @csrf
-                   Αρχείο που έχετε υποβάλλει: <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> 
+                   Αρχείο που έχετε υποβάλλει: <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> 
                 </form>   
             @endif
             {{-- @include('microapps.new_ticket_button') --}}
@@ -75,7 +75,7 @@
                     <td>
                         <form action="{{url("/dl_immigrants_file/$one->id")}}" method="post">
                         @csrf
-                        <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
+                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   
                     </td>
                     <td>{{$one->updated_at}}</td>

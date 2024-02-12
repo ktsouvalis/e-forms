@@ -91,7 +91,7 @@
                 @if($filecollect->base_file)
                 <form action="{{url("/dl_filecollect_file/$filecollect->id/base")}}" method="post">
                     @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> {{$filecollect->base_file}} </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
                 </form>
                 @endif
             </div>
@@ -112,7 +112,7 @@
                 @if($filecollect->template_file)
                 <form action="{{url("/dl_filecollect_file/$filecollect->id/template")}}" method="post">
                     @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> {{$filecollect->template_file}} </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
                 </form>
                 @endif
                 </div>
@@ -224,7 +224,7 @@
                         <td>
                             <form action="{{url("/dl_stake_file/$one_stakeholder->id")}}" method="post">
                                 @csrf
-                                <button class="btn btn-success bi bi-box-arrow-down"> {{$one_stakeholder->file}} </button>
+                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$one_stakeholder->file}} </button>
                             </form>
                         </td>
                     @else

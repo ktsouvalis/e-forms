@@ -26,19 +26,25 @@
                         <div class="input-group">
                             <span class="input-group-text"><b>Συνημμένο Αρχείο</b></span>
                         </div>
-                        <button class="btn btn-secondary bi bi-box-arrow-down"> {{$filecollect->base_file}} </button>
+                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
                     </form>
                 @endif
             </div>
             <div class="col">
                 @if($old_data->file)
+                <div class="input-group">
+                    <span class="input-group-text"><b>Αρχείο που έχετε υποβάλλει</b></span>
+                </div>
+                <div class="hstack gap-2">
                     <form action="{{url("/dl_stake_file/$old_data->id")}}" method="post">
                         @csrf
-                        <div class="input-group">
-                            <span class="input-group-text"><b>Αρχείο που έχετε υποβάλλει</b></span>
-                        </div>
-                        <button class="btn btn-success bi bi-box-arrow-down"> {{$old_data->file}} </button>
+                        <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$old_data->file}} </button>
                     </form>
+                    <form action="{{url("/delete_stake_file/$old_data->id")}}" method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-danger bi bi-x-circle" title="Διαγραφή αρχείου" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφεί το αρχείο σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> </button>
+                    </form>
+                </div>
                 @endif
             </div>
             <div class="col">
@@ -48,7 +54,7 @@
                         <div class="input-group">
                             <span class="input-group-text"><b>Πρότυπο Αρχείο</b></span>
                         </div>
-                        <button class="btn btn-secondary bi bi-box-arrow-down"> {{$filecollect->template_file}} </button>
+                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
                     </form>
                 @endif
             </div>

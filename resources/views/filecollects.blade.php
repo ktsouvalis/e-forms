@@ -32,6 +32,7 @@
                     <th id="search">Τμήμα</th>
                     <th id="search">Ορατή</th>
                     <th id="search">Δέχεται</th>
+                    <th>Διαγραφή</th>
                 </tr>
             </thead>
                 <tbody>
@@ -81,6 +82,12 @@
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_acc_status">
                                 <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{{url("/delete_filecollect/$one_filecollect->id")}}" method="post">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('ΠΡΟΣΟΧΗ! ΘΑ ΔΙΑΓΡΑΦΟΥΝ ΟΛΑ τα στοιχεία της συλλογής καθώς ΚΑΙ ΤΑ ΑΡΧΕΙΑ που έχουν ανεβάσει οι ενδιαφερόμενοι')"> </button>
                                 </form>
                             </td>
                         @endcan

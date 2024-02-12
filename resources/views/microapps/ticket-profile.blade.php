@@ -247,7 +247,7 @@
             @endphp
             <form action="{{url("/get_ticket_file/$ticket->id/$basename")}}" method="post">
             @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> {{$basename}}</button>
+                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
             </form> 
         @endforeach
         </div>

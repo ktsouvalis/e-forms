@@ -67,9 +67,14 @@
                             {{$school->stakeholder->name}}
                         @endif
                         </td>
+
+                        @php
+                            
+                        @endphp
                         <td >{{$school->stakeholder->municipality->name}} </td>
                         @if($school->stakeholder->school_area) {{-- if school has a school_area record, get record data --}}
                             @php
+                                $data=array();
                                 if($school->stakeholder->school_area->data != "")
                                     $data = json_decode($school->stakeholder->school_area->data);
                             @endphp

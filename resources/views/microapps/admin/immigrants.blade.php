@@ -22,7 +22,7 @@
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
             <form action="{{url("/dl_immigrants_template")}}" method="post">
                 @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
+                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>
             @if(Auth::user()->isAdmin())      
             <nav class="navbar navbar-light bg-light">
@@ -67,7 +67,7 @@
                     <td>
                         <form action="{{url("/dl_immigrants_file/$one->id")}}" method="post">
                         @csrf
-                        <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
+                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   
                     </td>
                     <td>{{$one->updated_at}}</td>

@@ -94,7 +94,7 @@
                             
                             <form action="{{url("/download_record/$outing->id")}}" method="post">
                                 @csrf
-                                <button class="btn btn-secondary bi bi-box-arrow-down"> </button>
+                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
                             </form>
                             {{$outing->school->telephone}}
                             </div>

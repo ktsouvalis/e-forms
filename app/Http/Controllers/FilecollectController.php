@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\Filecollect;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FilecollectStakeholder;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 
 class FilecollectController extends Controller
@@ -161,23 +163,23 @@ class FilecollectController extends Controller
     }
 
     public function post_filecollect(Request $request, Filecollect $filecollect){
-        $record_to_update=null;
-        //identify stakeholder
-        if(Auth::guard('school')->check()){
-            $record_to_update = Auth::guard('school')->user()->filecollects->where('filecollect_id', $filecollect->id)->first();
-            $identifier = Auth::guard('school')->user()->code;
-        }
-        else if(Auth::guard('teacher')->check()){
-            $record_to_update = Auth::guard('teacher')->user()->filecollects->where('filecollect_id', $filecollect->id)->first(); 
-            $identifier = Auth::guard('school')->user()->afm;   
-        }
-    
-        if(!$record_to_update){
-            abort(403);
-        }
-        else{
-            //prepare extension for file based on the fileMime
-            if($request->file('the_file')){
+        if($filecollect->visible and $filecollect->accepts){
+            $record_to_update=null;
+            //identify stakeholder
+            if(Auth::guard('school')->check()){
+                $record_to_update = Auth::guard('school')->user()->filecollects->where('filecollect_id', $filecollect->id)->first();
+                $identifier = Auth::guard('school')->user()->code;
+            }
+            else if(Auth::guard('teacher')->check()){
+                $record_to_update = Auth::guard('teacher')->user()->filecollects->where('filecollect_id', $filecollect->id)->first(); 
+                $identifier = Auth::guard('teacher')->user()->afm;   
+            }
+        
+            if(!$record_to_update){
+                abort(403);
+            }
+            else{
+                //prepare extension for file based on the fileMime
                 $extension="";
                 if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
                     $extension ='.xlsx';
@@ -214,8 +216,9 @@ class FilecollectController extends Controller
 
                 //prepare the record to update and save it
                 $record_to_update->file = $file;
-                    if($request->input('stake_comment'))
-                        $record_to_update->stake_comment = $request->input('stake_comment');
+                $record_to_update->uploaded_at = Carbon::now();
+                $record_to_update->checked = false;
+                $record_to_update->stake_comment = null;
                 try{
                     $record_to_update->save();
                 }
@@ -226,6 +229,8 @@ class FilecollectController extends Controller
                 return back()->with('success', 'Η ενέργεια ολοκληρώθηκε!');  
             }
         }
+        else
+            abort('403');
     }
 
     public function getSchoolFile(Request $request, FilecollectStakeholder $old_data){
@@ -260,4 +265,92 @@ class FilecollectController extends Controller
         else 
             return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
         }
+    
+    public function check_uncheck(Request $request, FilecollectStakeholder $stakeholder){
+        if($request->input('checked')=='true')
+            $stakeholder->checked = 1;
+        else
+            $stakeholder->checked = 0;
+        $stakeholder->save();
+
+        return response()->json(['message' => 'Filecollect updated successfully']);
+    }
+
+    public function delete_filecollect(Request $request, Filecollect $filecollect){
+        $username = Auth::check() ? Auth::user()->username : "API";
+        $error=false;
+        // delete database record
+        try{
+            Filecollect::destroy($filecollect->id);
+        }
+        catch(\Exception $e){
+            Log::channel('throwable_db')->error($username."failed to delete_filecollect: ".$e->getMessage());
+            return back()->with('failure', 'Ο διαμοιρασμός αρχείων δεν διαγράφηκε (throwable_db)');
+        }
+        
+        //delete files from disk
+        $directoryHandler = new FilesController();
+        $directory = 'file_collects/'.$filecollect->id;
+        $delete_directory = $directoryHandler->delete_directory($directory, 'local');
+        if($delete_directory->getStatusCode() == 500){
+            Log::channel('files')->error($username." Filecollect directory $directory failed to delete");
+            $error=true;
+        }
+        else
+            Log::channel('files')->info($username." Filecollect directory $directory deleted successfully");
+        Log::channel('user_memorable_actions')->info($username." delete_filecollect ".$filecollect->name);
+        if(!$error){
+            return redirect(url('/filecollects'))->with('success', "Η κοινοποίηση αρχείων $filecollect->name διαγράφηκε");
+        }
+        else{
+            return redirect(url('/filecollects'))->with('warning', "Η κοινοποίηση αρχείων $filecollect->name διαγράφηκε με σφάλματα (files)");
+        }
+    }
+
+    public function delete_stakeholder_file(Request $request, FilecollectStakeholder $stakeholder){
+        if(Auth::guard('school')->check()){
+            $identifier = Auth::guard('school')->user()->code;
+        }
+        else if (Auth::guard('teacher')->check()){
+            $identifier = Auth::guard('school')->user()->afm;
+        }
+
+        $extension="";
+        if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+            $extension ='.xlsx';
+        }
+        else if($stakeholder->filecollect->fileMime == "application/pdf"){
+            $extension = ".pdf";
+        }
+        else if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+            $extension = ".doc";
+        }
+
+        $directory = "file_collects/$stakeholder->filecollect_id";
+        $original_filename = $identifier.'_filecollect_'.$stakeholder->filecollect_id.$extension;
+
+        $fileHandler = New FilesController;
+        try{
+            $fileHandler->delete_file($directory, $original_filename, 'local');
+        }
+        catch(\Exception $e){
+            Log::channel('files')->error($identifier." failed to delete file from filecollect $stakeholder->filecollect_id ".$e->getMessage());
+            return back()->with('failure', 'Το αρχείο δε διαγράφηκε, προσπαθήστε αργότερα ή επικοινωνήστε με τον διαχειριστή του συστήματος');
+        }
+        $stakeholder->uploaded_at = null;
+        $stakeholder->file = null;
+        $stakeholder->checked = null;
+        $stakeholder->save();
+
+        Log::channel('files')->info($identifier." successfully deleted file from filecollect $stakeholder->filecollect_id");
+        return back()->with('success', 'Το αρχείο διαγράφηκε');
+    }
+
+    public function save_filecollect_comment(Request $request, FilecollectStakeholder $stakeholder){
+        $sanitizedComments = strip_tags($request->input('stake_comment'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
+        $stakeholder->stake_comment = $sanitizedComments;
+        $stakeholder->save();
+
+        return response()->json(['success'=>'comments saved'], 200);
+    }
 }

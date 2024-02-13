@@ -40,7 +40,7 @@
                 </form>
                 <form action="{{url("/dl_all_day_template/1")}}" method="post">
                     @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας δημοτικών προς συμπλήρωση </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας δημοτικών προς συμπλήρωση </button>
                 </form>
                 </div>
                 <div class="hstack gap-3">
@@ -60,7 +60,7 @@
                 </form>
                 <form action="{{url("/dl_all_day_template/0")}}" method="post">
                     @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
                 </form>
             </div>
             </div>
@@ -129,7 +129,7 @@
                             <td>
                                 <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
                                 @csrf
-                                <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
+                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                                 </form>   
                             </td>
                             <td>{{$one->updated_at}}</td>

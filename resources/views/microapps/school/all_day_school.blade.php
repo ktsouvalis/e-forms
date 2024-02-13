@@ -26,7 +26,7 @@
         </div>  
             <form action="{{url("/dl_all_day_template/$school->primary")}}" method="post">
                 @csrf
-                <button class="btn btn-secondary bi bi-box-arrow-down"> Πίνακας προς συμπλήρωση </button>
+                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url("/save_all_day_school")}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -106,7 +106,7 @@
                         {{-- <label class="form-control text-success"> Αρχείο που έχετε υποβάλλει: {{$old_data->file}} </label> --}}
                         <form action="{{url("/dl_all_day_file/$old_data->id")}}" method="post">
                             @csrf
-                        <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down">  {{$old_data->file}}</button> </div>
+                        <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> </div>
                         </form>
                     </div>
                     <div style="">
@@ -169,7 +169,7 @@
                     <td>
                         <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
                         @csrf
-                        <button class="btn btn-secondary bi bi-box-arrow-down"> </button> 
+                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   
                     </td>
                     <td>{{$one->updated_at}}</td>

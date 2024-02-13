@@ -440,6 +440,8 @@ Route::post('/dl_filecollect_file/{filecollect}/{type}', function(Filecollect $f
 
 Route::post('/dl_stake_file/{old_data}', [FilecollectController::class,'getSchoolFile']);
 
+Route::post('/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
+
 Route::post('/update_filecollect_file/{filecollect}/{type}', [FilecollectController::class, 'update_file'])->middleware('can:view,filecollect');
 
 Route::post('/update_filecollect_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
@@ -463,6 +465,12 @@ Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollec
 })->middleware('isSchool');
 
 Route::post("/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
+
+Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck'])->middleware('can:view,filecollect');
+
+Route::post("/delete_filecollect/{filecollect}", [FilecollectController::class, 'delete_filecollect'])->middleware('can:view,filecollect');
+
+Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);
 
 
 // FILESHARES ROUTES

@@ -32,6 +32,7 @@
                     <th id="search">Τμήμα</th>
                     <th id="search">Ορατή</th>
                     <th id="search">Δέχεται</th>
+                    <th>Διαγραφή</th>
                 </tr>
             </thead>
                 <tbody>
@@ -83,6 +84,12 @@
                                 <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
                                 </form>
                             </td>
+                            <td>
+                                <form action="{{url("/delete_filecollect/$one_filecollect->id")}}" method="post">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('ΠΡΟΣΟΧΗ! ΘΑ ΔΙΑΓΡΑΦΟΥΝ ΟΛΑ τα στοιχεία της συλλογής καθώς ΚΑΙ ΤΑ ΑΡΧΕΙΑ που έχουν ανεβάσει οι ενδιαφερόμενοι')"> </button>
+                                </form>
+                            </td>
                         @endcan
                         
                         </tr>
@@ -99,7 +106,7 @@
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
-                    <span class="input-group-text w-75"><strong>Εισαγωγή νέας Συλογής Αρχείου</strong></span>
+                    <span class="input-group-text"><strong>Εισαγωγή νέας Συλογής Αρχείου</strong></span>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Ονομασία</span>

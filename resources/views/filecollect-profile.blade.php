@@ -37,6 +37,36 @@
                 });
             });
         </script>
+        <script>
+            $(document).ready(function() {
+                $('body').on('change', '.check-checkbox', function() {
+                    
+                    const stakeholderId = $(this).data('stakeholder-id');
+                    const isChecked = $(this).is(':checked');
+                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                    
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+    
+                    $.ajax({
+                        url: '../filecollect_checked/'+stakeholderId,
+                        type: 'POST',
+                        data: {
+                            checked: isChecked
+                        },
+                        success: function(response) {
+                            console.log("success");
+                        },
+                        error: function(error) {
+                            console.log("An error occurred: " + error);
+                        }
+                    });
+                });
+            });
+        </script>
         <script src="{{asset('charcount.js')}}"></script>
     @endpush
     @push('title')
@@ -61,7 +91,7 @@
                 @if($filecollect->base_file)
                 <form action="{{url("/dl_filecollect_file/$filecollect->id/base")}}" method="post">
                     @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> {{$filecollect->base_file}} </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
                 </form>
                 @endif
             </div>
@@ -82,7 +112,7 @@
                 @if($filecollect->template_file)
                 <form action="{{url("/dl_filecollect_file/$filecollect->id/template")}}" method="post">
                     @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down"> {{$filecollect->template_file}} </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
                 </form>
                 @endif
                 </div>
@@ -156,7 +186,7 @@
             </div>
         </form>
         </div>
-        <div class="container px-5 vstack gap-2 py-3">
+        <div class="vstack gap-2 py-3">
             
             @if($filecollect->stakeholders->count())
             <div class="table-responsive">
@@ -169,6 +199,8 @@
                         <th id="search">mail</th>
                         <th id="search">Έχει υποβάλλει</th>
                         <th>Σχόλιο</th>
+                        <th>Ημερομηνία Υποβολής</th>
+                        <th>Έλεγχος</th>
                         <th class="align-middle">Διαγραφή</th>
                     </tr>
                 </thead>
@@ -193,7 +225,7 @@
                         <td>
                             <form action="{{url("/dl_stake_file/$one_stakeholder->id")}}" method="post">
                                 @csrf
-                                <button class="btn btn-success bi bi-box-arrow-down"> {{$one_stakeholder->file}} </button>
+                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$one_stakeholder->file}} </button>
                             </form>
                         </td>
                     @else
@@ -206,6 +238,14 @@
                     @else
                         <td> - </td>
                     @endif
+                    @if($one_stakeholder->uploaded_at)
+                    <td>{{$one_stakeholder->uploaded_at}}</td>
+                    @else
+                    <td>-</td>
+                    @endif
+                    <td style="text-align:center;">
+                        <input type="checkbox" class="check-checkbox" data-stakeholder-id="{{ $one_stakeholder->id }}" {{ $one_stakeholder->checked ? 'checked' : '' }}>
+                    </td>
                     <td> 
                         <form action="{{url("/delete_one_whocan/filecollect/$one_stakeholder->id")}}" method="post">
                             @csrf

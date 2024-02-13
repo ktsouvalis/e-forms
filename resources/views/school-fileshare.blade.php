@@ -36,7 +36,7 @@
                                 <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
                                 @csrf
                                     <input type="hidden" name="personal" value="0">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down"> {{$basename}}</button>
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                                 </form>
                             @endforeach
                             @if($fileshare->allow_school)
@@ -55,7 +55,7 @@
                                     <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
                                     @csrf
                                         <input type="hidden" name="personal" value="1">
-                                        <button class="btn btn-secondary bi bi-box-arrow-down"> {{$basename}}</button>
+                                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                                     </form>
                                 @endif
                             @endforeach

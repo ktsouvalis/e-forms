@@ -66,32 +66,32 @@
                 <tbody>
                 <form action="{{url("/dl_internal_rules_file/$old_data->id/school_file")}}" method="post">
                     @csrf
-                    <tr><td>Αρχείο που έχετε υποβάλλει:</td><td> <button class="btn btn-secondary bi bi-box-arrow-down">@if($old_data->school_file2 or $old_data->school_file3)<del> @endif  {{$old_data->school_file}}</del></button> </td></tr>
+                    <tr><td>Αρχείο που έχετε υποβάλλει:</td><td> <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">@if($old_data->school_file2 or $old_data->school_file3)<del> @endif  {{$old_data->school_file}}</del></button> </td></tr>
                 </form>
                 @if($old_data->school_file2)
                     <form action="{{url("/dl_internal_rules_file/$old_data->id/school_file2")}}" method="post">
                         @csrf
-                        <tr><td>Διορθωμένο αρχείο: </td><td><button class="btn btn-secondary bi bi-box-arrow-down">@if($old_data->school_file3)<del> @endif  {{$old_data->school_file2}}</del></button> </td></tr>
+                        <tr><td>Διορθωμένο αρχείο: </td><td><button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">@if($old_data->school_file3)<del> @endif  {{$old_data->school_file2}}</del></button> </td></tr>
                     </form>
                 @endif
                 @if($old_data->school_file3)
                     <form action="{{url("/dl_internal_rules_file/$old_data->id/school_file3")}}" method="post">
                         @csrf
-                       <tr><td> Τελικό αρχείο: </td><td><button class="btn btn-secondary bi bi-box-arrow-down">  {{$old_data->school_file3}}</button> </td></tr>
+                       <tr><td> Τελικό αρχείο: </td><td><button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->school_file3}}</button> </td></tr>
                     </form>
                 @endif
                 
                 @if($old_data->consultant_comments_file)
                     <form action="{{url("/dl_internal_rules_file/$old_data->id/consultant_comments_file")}}" method="post">
                         @csrf
-                       <tr><td> Παρατηρήσεις Συμβούλου Εκπαίδευσης: </td><td><button class="btn btn-warning bi bi-box-arrow-down">  {{$old_data->consultant_comments_file}}</button> </td></tr>
+                       <tr><td> Παρατηρήσεις Συμβούλου Εκπαίδευσης: </td><td><button class="btn btn-warning bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->consultant_comments_file}}</button> </td></tr>
                     </form>
                     
                 @endif
                 @if($old_data->director_comments_file)
                     <form action="{{url("/dl_internal_rules_file/$old_data->id/director_comments_file")}}" method="post">
                         @csrf
-                       <tr><td> Παρατηρήσεις Διευθυντή Εκπαίδευσης:</td><td> <button class="btn btn-warning bi bi-box-arrow-down">  {{$old_data->director_comments_file}}</button> </td></tr>
+                       <tr><td> Παρατηρήσεις Διευθυντή Εκπαίδευσης:</td><td> <button class="btn btn-warning bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->director_comments_file}}</button> </td></tr>
                     </form>  
                 @endif
 
@@ -105,12 +105,12 @@
                         @if($old_data->consultant_singed_at > $old_data->director_signed_at)
                             <form action="{{url("/dl_internal_rules_file/$old_data->id/consultant_signed_file")}}" method="post">
                                 @csrf
-                                <button class="btn btn-success bi bi-box-arrow-down"> {{$old_data->consultant_signed_file}}</button>
+                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$old_data->consultant_signed_file}}</button>
                             </form>
                         @else 
                             <form action="{{url("/dl_internal_rules_file/$old_data->id/director_signed_file")}}" method="post">
                                 @csrf
-                                <button class="btn btn-success bi bi-box-arrow-down"> {{$old_data->director_signed_file}}</button>
+                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$old_data->director_signed_file}}</button>
                             </form>
                         @endif
                     @endif

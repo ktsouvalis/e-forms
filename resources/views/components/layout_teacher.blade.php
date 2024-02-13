@@ -46,10 +46,10 @@
 
   @if(count($user->microapps)==0 AND count($user->fileshares)==0 AND count($user->filecollects)==0)
     <div class='container container-narrow pt-4'>
-    <div class='alert alert-info text-center'>
-    Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για σας. Ευχαριστούμε για την επίσκεψη!
+      <div class='alert alert-info text-center'>
+      Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για σας. Ευχαριστούμε για την επίσκεψη!
+      </div>
     </div>
-</div>
   @endif
   @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
     <nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: rgb(13, 37, 54);">

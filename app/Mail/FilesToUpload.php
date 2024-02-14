@@ -31,7 +31,7 @@ class FilesToUpload extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Αρχείο για αποστολή: $this->name",
+            subject: "Υποβολή Αρχείου '$this->name'",
             tags:['new-filecollect'],
             metadata:[
                 'filecollect_id' => $this->filecollect->id

@@ -1,29 +1,50 @@
 @php
     if($stakeholder->stakeholder_type=="App\Models\School"){
         $type="school";
+        $show_name = $stakeholder->stakeholder->name;
     }
     else if($stakeholder->stakeholder_type=="App\Models\Teacher"){
         $type="teacher";
-    } 
+        $show_name = "κ. ".$stakeholder->stakeholder->surname." ".$stakeholder->stakeholder->name;
+    }
 @endphp
-Σας ενημερώνουμε ότι στην εφαρμογή <a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank">"Φόρμα Υποβολής"</a> της Διεύθυνσης Π.Ε. Αχαΐας υπάρχει μια νέα ενότητα <a href="{{env('APP_URL')."/".$type."_app".$stakeholder->microapp->url}}" target="_blank"><b> {{$stakeholder->microapp->name}} </b></a> προς συμπλήρωση από εσάς.<br>
+<p>
+Αποδέκτης: {{$show_name}}
+</p>
+Σας ενημερώνουμε ότι μέσω της εφαρμογής <strong>Ηλεκτρονικές Φόρμες</strong> της Διεύθυνσης Π.Ε. Αχαΐας, έχει ανοίξει η δυνατότητα υποβολής στοιχείων στην ενότητα <b>{{$stakeholder->microapp->name}}</b>.
 <br><br>
+Πατώντας στον παρακάτω σύνδεσμο μπορείτε να συνδεθείτε για περαιτέρω ενέργειες 
+@if($type=="school")
+    στη <strong>μοναδική καρτέλα </strong>του σχολείου.
+@else
+    στην <strong>προσωπική σας καρτέλα</strong>.
+@endif
+
+<p><a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank"> {{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}</a></p>
+<br>
+
+</div>
+
+<small>
+<em>
+    Μπορείτε κάθε στιγμή να αποκτήσετε πρόσβαση @if($type=="school")
+    στη μοναδική καρτέλα του Σχολείου 
+@else
+    στην προσωπική σας καρτέλα 
+@endif
+για τις "Ηλεκτρονικές Φόρμες" με τους εξής τρόπους:
+    <ul>
+        <li>
+            Μέσω της Ιστοσελίδας της Δ/νσης <a href="https://dipe.ach.sch.gr" target="_blank">https://dipe.ach.sch.gr</a> στην ενότητα Ηλεκτρονικές Υπηρεσίες -> Υπηρεσίες για Εκπαιδευτικούς
+        </li>    
+        <li>
+            Απευθείας <a href="https://dipeach.ddns.net/e-forms" target="_blank">https://dipeach.ddns.net/e-forms</a>
+        </li>
+    </ul> 
+</em>
+</small>
+
+<hr>
 <div>
-    <em>Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας</em>
-    <hr>
-    <b> Πληροφορίες </b><br>
-    
-    @foreach($stakeholder->microapp->users as $user)
-        @if($user->user->id!=1 and $user->user->id!=2)
-            <div>{{$user->user->display_name}} {{$user->user->telephone}}</div>
-        @endif
-    @endforeach
-    <hr>
-    <div class="text-muted">
-    <small>
-    Για τεχνικά θέματα της Φόρμας Υποβολής:<br>
-    Κωνσταντίνος Στεφανόπουλος 2610229262<br>
-    Κωνσταντίνος Τσούβαλης 26100229209<br>
-    </small>
-    </div>
+    <p><b>Από τη Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας</b></p>
 </div>

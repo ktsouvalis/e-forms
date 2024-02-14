@@ -1,28 +1,39 @@
 @php
     if($stakeholder->stakeholder_type=="App\Models\School"){
         $type="school";
+        $show_name = $stakeholder->stakeholder->name;
     }
     else if($stakeholder->stakeholder_type=="App\Models\Teacher"){
         $type="teacher";
-    } 
+        $show_name = "κ. ".$stakeholder->stakeholder->surname." ".$stakeholder->stakeholder->name;
+    }
 @endphp
-
-Σας ενημερώνουμε ότι μέσω της εφαρμογής <strong>Ηλεκτρονικές Φόρμες</strong> της Διεύθυνσης Π.Ε. Αχαΐας, στην ενότητα <strong>Συλλογή Αρχείων</strong>: <b>{{$stakeholder->filecollect->name}} </b>, πρέπει να μας αποστείλετε ένα αρχείο που αφορά το <strong>{{$stakeholder->filecollect->department->name}}</strong>.
+<p>
+Αποδέκτης: {{$show_name}}
+</p>
+Σας ενημερώνουμε ότι μέσω της εφαρμογής <strong>Ηλεκτρονικές Φόρμες</strong> της Διεύθυνσης Π.Ε. Αχαΐας, έχει ανοίξει η δυνατότητα υποβολής αρχείου στην ενότητα <b>{{$stakeholder->filecollect->name}}</b>.
 <br><br>
-Παρακαλούμε επισκεφτείτε την <a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank">εφαρμογή</a> προκειμένου να παραλάβετε τα αρχεία.
+Πατώντας στον παρακάτω σύνδεσμο μπορείτε να συνδεθείτε για περαιτέρω ενέργειες 
+@if($type=="school")
+    στη <strong>μοναδική καρτέλα </strong>του σχολείου.
+@else
+    στην <strong>προσωπική σας καρτέλα</strong>.
+@endif
+
+<p><a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank"> {{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}</a></p>
 <br>
-<div>
-    <p><b>Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας - Ηλεκτρονικές Υπηρεσίες</b></p>
+
 </div>
+
 <small>
 <em>
-    Μπορείτε κάθε στιγμή να αποκτήσετε πρόσβαση στις "Ηλεκτρονικές Φόρμες" με τους εξής τρόπους:
+    Μπορείτε κάθε στιγμή να αποκτήσετε πρόσβαση @if($type=="school")
+    στη μοναδική καρτέλα του Σχολείου 
+@else
+    στην προσωπική σας καρτέλα 
+@endif
+για τις "Ηλεκτρονικές Φόρμες" με τους εξής τρόπους:
     <ul>
-        <li>
-            Μέσω <a href="{{env('APP_URL')."/".$type."/".$stakeholder->stakeholder->md5}}" target="_blank">προσωποποιημένου συνδέσμου</a> που αποστέλλεται με mail αποκλειστικά για εσάς.
-        </li>
-        
-        <p>Να ανακτήσετε τον προσωποποιημένο σύνδεσμο:</p>
         <li>
             Μέσω της Ιστοσελίδας της Δ/νσης <a href="https://dipe.ach.sch.gr" target="_blank">https://dipe.ach.sch.gr</a> στην ενότητα Ηλεκτρονικές Υπηρεσίες -> Υπηρεσίες για Εκπαιδευτικούς
         </li>    
@@ -32,4 +43,8 @@
     </ul> 
 </em>
 </small>
+
 <hr>
+<div>
+    <p><b>Από τη Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Ν. Αχαΐας</b></p>
+</div>

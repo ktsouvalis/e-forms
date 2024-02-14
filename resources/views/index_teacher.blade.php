@@ -1,10 +1,30 @@
 <x-layout_teacher>
+    
     <body class="bg-light">
     
     <div class="row hidden-md-up justify-content-center">
         @auth('teacher')
             @php 
                 $teacher = Illuminate\Support\Facades\Auth::guard('teacher')->user(); 
+                $active_microapp=false;
+                if($teacher->microapps->count()){
+                    foreach($teacher->microapps as $microapp){
+                        if($microapp->microapp->visible){
+                        $active_microapp = true;
+                        break;
+                        }
+                    } 
+                }
+                
+                $active_filecollect=false;
+                if($teacher->filecollects->count()){
+                    foreach($teacher->filecollects as $filecollect){
+                        if($filecollect->filecollect->visible){
+                        $active_filecollect=true;
+                        break;
+                        }
+                    } 
+                }
             @endphp
                             
             @push('title')
@@ -30,7 +50,7 @@
                         </div>  
                         @endforeach
                         <hr> --}}
-                        @if(!(count($teacher->microapps)==0 AND count($teacher->filecollects)==0))
+                        @if($active_microapp or $active_filecollect)
                         <div class="container h-100">
                             <div class="row h-100 align-items-center">
                             <div class="col-12 text-center">

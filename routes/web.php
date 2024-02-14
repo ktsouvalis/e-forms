@@ -450,7 +450,7 @@ Route::post('/change_filecollect_status/{filecollect}', [FilecollectController::
 
 Route::get("/teacher_filecollect/{filecollect}", function(Filecollect $filecollect){
     $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
-    if(!$stakeholder){
+    if(!$stakeholder or !$filecollect->visible){
         abort(403);
     }
     return view('teacher-filecollect', ['filecollect' => $filecollect]);
@@ -458,7 +458,7 @@ Route::get("/teacher_filecollect/{filecollect}", function(Filecollect $filecolle
 
 Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollect){
     $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
-    if(!$stakeholder){
+    if(!$stakeholder or !$filecollect->visible){
         abort(403);
     }
     return view('school-filecollect', ['filecollect' => $filecollect]);

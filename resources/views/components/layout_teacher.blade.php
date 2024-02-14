@@ -45,7 +45,29 @@
     </div>
   </div>
 
-  @if(count($user->microapps)==0 AND count($user->fileshares)==0 AND count($user->filecollects)==0)
+  @php
+    $active_microapp=false;
+    if($user->microapps->count()){
+      foreach($user->microapps as $microapp){
+        if($microapp->microapp->visible){
+          $active_microapp = true;
+          break;
+        }
+      } 
+    }
+    
+    $active_filecollect=false;
+    if($user->filecollects->count()){
+      foreach($user->filecollects as $filecollect){
+        if($filecollect->filecollect->visible){
+          $active_filecollect=true;
+          break;
+        }
+      } 
+    }
+  @endphp
+  
+  @if(!$active_microapp AND count($user->fileshares)==0 AND !$active_filecollect)
     <div class='container container-narrow pt-4'>
       <div class='alert alert-info text-center'>
       Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για σας. Ευχαριστούμε για την επίσκεψη!

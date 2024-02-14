@@ -243,9 +243,14 @@
                     @else
                     <td>-</td>
                     @endif
+                    
+                    @if($one_stakeholder->file and Auth::user()->department->filecollects->find($one_stakeholder->filecollect_id))
                     <td style="text-align:center;">
                         <input type="checkbox" class="check-checkbox" data-stakeholder-id="{{ $one_stakeholder->id }}" {{ $one_stakeholder->checked ? 'checked' : '' }}>
                     </td>
+                    @else
+                    <td style="text-align:center;">-</td>
+                    @endif
                     <td> 
                         <form action="{{url("/delete_one_whocan/filecollect/$one_stakeholder->id")}}" method="post">
                             @csrf

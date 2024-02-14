@@ -267,13 +267,17 @@ class FilecollectController extends Controller
         }
     
     public function check_uncheck(Request $request, FilecollectStakeholder $stakeholder){
-        if($request->input('checked')=='true')
-            $stakeholder->checked = 1;
-        else
-            $stakeholder->checked = 0;
-        $stakeholder->save();
+        $filecollect = Filecollect::find($stakeholder->filecollect_id);
+        if(Auth::user()->department->filecollects->find($filecollect->id)){
+            if($request->input('checked')=='true')
+                $stakeholder->checked = 1;
+            else
+                $stakeholder->checked = 0;
+            $stakeholder->save();
 
-        return response()->json(['message' => 'Filecollect updated successfully']);
+            return response()->json(['message' => 'Filecollect updated successfully']);
+        }
+        else abort(403);
     }
 
     public function delete_filecollect(Request $request, Filecollect $filecollect){
@@ -347,10 +351,20 @@ class FilecollectController extends Controller
     }
 
     public function save_filecollect_comment(Request $request, FilecollectStakeholder $stakeholder){
-        $sanitizedComments = strip_tags($request->input('stake_comment'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
-        $stakeholder->stake_comment = $sanitizedComments;
-        $stakeholder->save();
+        if(Auth::guard('school')->check()){
+            $user = Auth::guard('school')->user();
+        }
+        else if(Auth::guard('teacher')->check()){
+            $user = Auth::guard('teacher')->user();
+        }
+        if($user->filecollects->find($stakeholder->id)){
+            $sanitizedComments = strip_tags($request->input('stake_comment'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
+            $stakeholder->stake_comment = $sanitizedComments;
+            if($stakeholder->isDirty('stake_comment'))
+                $stakeholder->save();
 
-        return response()->json(['success'=>'comments saved'], 200);
+            return response()->json(['success'=>'comments saved'], 200);
+        }
+        else abort(403);
     }
 }

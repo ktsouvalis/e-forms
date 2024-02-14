@@ -466,11 +466,12 @@ Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollec
 
 Route::post("/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
 
-Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck'])->middleware('can:view,filecollect');
+Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']); //access is checked inside the controller
+// ->middleware('can:check,filecollectStakeholder');
 
 Route::post("/delete_filecollect/{filecollect}", [FilecollectController::class, 'delete_filecollect'])->middleware('can:view,filecollect');
 
-Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);
+Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);//access is checked inside the controller
 
 
 // FILESHARES ROUTES

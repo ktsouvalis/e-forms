@@ -33,6 +33,9 @@ class SchoolAreaController extends Controller
                     Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' update school area db error '.$e->getMessage());
                     return redirect(url("/school_area_profile/$school->id"))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
                 }
+                $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+                $stakeholder->hasAnswer = 1;
+                $stakeholder->save();
                 Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name.' confirmed school area '.Carbon::now());
                 return redirect(url("/school_area_profile/$school->id"))->with('success', 'Η εγγραφή αποθηκεύτηκε.');  
             }
@@ -41,7 +44,6 @@ class SchoolAreaController extends Controller
             }
         }
         else if(Auth::guard('web')->check()){
-            $done=0;
             $data_array=array();
             $count=0;
             foreach($request->all() as $key=>$value){
@@ -71,18 +73,12 @@ class SchoolAreaController extends Controller
                         'confirmed' => 0,
                     ]
                 );
-                $done=1;
             }
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' create school area db error '.$e->getMessage());
                 return redirect(url("/school_area_profile/$school->id"))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
 
-            if($done){
-                $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
-                $stakeholder->hasAnswer = 1;
-                $stakeholder->save();
-            }
             Log::channel('stakeholders_microapps')->info(Auth::guard('web')->user()->username.' updated school area '.Carbon::now());
             return redirect(url("/school_area_profile/$school->id"))->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }

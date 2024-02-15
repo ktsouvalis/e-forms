@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use ZipArchive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class FilesController extends Controller
 {
@@ -59,4 +61,37 @@ class FilesController extends Controller
         }
         return response()->json(['success'=>'Directory deleted successfully'], 200);   
     }
+
+    public function download_directory_as_zip($directory){
+        set_time_limit(0);//maximum execution of the script unlimited
+        $tempZipFile = tempnam(sys_get_temp_dir(), 'dir_zip_');
+        $zip = new ZipArchive();
+        if ($zip->open($tempZipFile, ZipArchive::CREATE) !== true) {
+            abort(500, 'Failed to create zip archive');
+        }
+
+        ini_set('max_execution_time', 0);//maximum execution time to php configuration unlimited (for large archives)
+        $files = Storage::allFiles($directory);
+        foreach ($files as $file) {
+            $relativePath = str_replace($directory . '/', '', $file); // Remove the directory prefix
+            $zip->addFile(Storage::path($file), $relativePath);
+        }
+        $zip->close();
+
+        ini_restore('max_execution_time');
+        $zipFileName = $directory === '/' ? 'root_directory' : basename($directory);
+
+        $headers = [
+            'Content-Type' => 'application/zip',
+            'Content-Disposition' => 'attachment; filename="' . $zipFileName . '.zip"',
+        ];
+
+        ob_end_clean();
+        try {
+            return Response::download($tempZipFile, $zipFileName . '.zip', $headers)->deleteFileAfterSend(true);
+        } 
+        catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }     
 }

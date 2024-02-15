@@ -17,6 +17,7 @@
     <link href="{{url('/fontawesome-free-6.4.2-web/css/brands.css')}}" rel="stylesheet">
     <link href="{{url('/fontawesome-free-6.4.2-web/css/solid.css')}}" rel="stylesheet">
     <link href="{{url('/fontawesome-free-6.4.2-web/css/regular.css')}}" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     @stack('links')
@@ -44,7 +45,29 @@
     </div>
   </div>
 
-  @if(count($user->microapps)==0 AND count($user->fileshares)==0 AND count($user->filecollects)==0)
+  @php
+    $active_microapp=false;
+    if($user->microapps->count()){
+      foreach($user->microapps as $microapp){
+        if($microapp->microapp->visible){
+          $active_microapp = true;
+          break;
+        }
+      } 
+    }
+    
+    $active_filecollect=false;
+    if($user->filecollects->count()){
+      foreach($user->filecollects as $filecollect){
+        if($filecollect->filecollect->visible){
+          $active_filecollect=true;
+          break;
+        }
+      } 
+    }
+  @endphp
+  
+  @if(!$active_microapp AND count($user->fileshares)==0 AND !$active_filecollect)
     <div class='container container-narrow pt-4'>
       <div class='alert alert-info text-center'>
       Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για σας. Ευχαριστούμε για την επίσκεψη!
@@ -78,7 +101,7 @@
         @if($filecollect->filecollect->visible)
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#4bac97; text-align:center;">
           <div class="text-dark fa-solid fa-file-pdf"></div> 
-          <a href="{{url("/school_filecollect/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$filecollect->filecollect->name}}</a>
+          <a href="{{url("/teacher_filecollect/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$filecollect->filecollect->name}}</a>
         </div>
         @endif
       @endforeach

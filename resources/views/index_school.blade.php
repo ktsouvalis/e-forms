@@ -1,9 +1,33 @@
 <x-layout_school>
+    @php
+    
+  @endphp
     <body class="bg-light">
     
     <div class="row hidden-md-up justify-content-center">
         @auth('school')
-        @php $school = Illuminate\Support\Facades\Auth::guard('school')->user(); @endphp
+        @php 
+            $school = Illuminate\Support\Facades\Auth::guard('school')->user();
+            $active_microapp=false;
+            if($school->microapps->count()){
+                foreach($school->microapps as $microapp){
+                    if($microapp->microapp->visible){
+                    $active_microapp = true;
+                    break;
+                    }
+                } 
+            }
+            
+            $active_filecollect=false;
+            if($school->filecollects->count()){
+                foreach($school->filecollects as $filecollect){
+                    if($filecollect->filecollect->visible){
+                    $active_filecollect=true;
+                    break;
+                    }
+                } 
+            }
+        @endphp
                         
             @push('title')
                 <title>Καρτέλα {{$school->name}}</title>
@@ -28,7 +52,7 @@
                         </div>  
                         <hr>
                         @endforeach --}}
-                        @if(!(count($school->microapps)==0 AND count($school->filecollects)==0))
+                        @if($active_microapp or $active_filecollect)
                         <div class="container h-100">
                             <div class="row h-100 align-items-center">
                             <div class="col-12 text-center">

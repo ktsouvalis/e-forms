@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\WhocanController;
@@ -450,7 +451,7 @@ Route::post('/change_filecollect_status/{filecollect}', [FilecollectController::
 
 Route::get("/teacher_filecollect/{filecollect}", function(Filecollect $filecollect){
     $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
-    if(!$stakeholder){
+    if(!$stakeholder or !$filecollect->visible){
         abort(403);
     }
     return view('teacher-filecollect', ['filecollect' => $filecollect]);
@@ -458,7 +459,7 @@ Route::get("/teacher_filecollect/{filecollect}", function(Filecollect $filecolle
 
 Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollect){
     $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
-    if(!$stakeholder){
+    if(!$stakeholder or !$filecollect->visible){
         abort(403);
     }
     return view('school-filecollect', ['filecollect' => $filecollect]);
@@ -466,11 +467,14 @@ Route::get("/school_filecollect/{filecollect}", function(Filecollect $filecollec
 
 Route::post("/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
 
-Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']);//->middleware('can:view,filecollect');
+Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']); //access is checked inside the controller
+// ->middleware('can:check,filecollectStakeholder');
 
 Route::post("/delete_filecollect/{filecollect}", [FilecollectController::class, 'delete_filecollect'])->middleware('can:view,filecollect');
 
-Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);
+Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);//access is checked inside the controller
+
+Route::post("/download_filecollect_directory/{filecollect}", [FilecollectController::class, 'download_filecollect_directory'])->middleware('can:view,filecollect');
 
 
 // FILESHARES ROUTES

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FilecollectStakeholder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 
@@ -188,16 +189,16 @@ class FilecollectController extends Controller
                     $extension = ".pdf";
                 }
                 else if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                    $extension = ".doc";
+                    $extension = ".docx";
                 }
 
                 //validate the input file
                 $rule = [
-                    'the_file' => "mimetypes:$filecollect->fileMime"
+                    'the_file' => "file|max:5000|mimetypes:$filecollect->fileMime"
                 ];
                 $validator = Validator::make($request->all(), $rule);
                 if($validator->fails()){ 
-                    return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+                    return back()->with('failure', $validator->errors()->first());
                 }
 
                 //$file is for the file field of the database
@@ -242,7 +243,7 @@ class FilecollectController extends Controller
             $extension = ".pdf";
         }
         else if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-            $extension = ".doc";
+            $extension = ".docx";
         }
 
         if(get_class($old_data->stakeholder) == 'App\Models\School')
@@ -267,13 +268,17 @@ class FilecollectController extends Controller
         }
     
     public function check_uncheck(Request $request, FilecollectStakeholder $stakeholder){
-        if($request->input('checked')=='true')
-            $stakeholder->checked = 1;
-        else
-            $stakeholder->checked = 0;
-        $stakeholder->save();
+        $filecollect = Filecollect::find($stakeholder->filecollect_id);
+        if(Auth::user()->department->filecollects->find($filecollect->id)){
+            if($request->input('checked')=='true')
+                $stakeholder->checked = 1;
+            else
+                $stakeholder->checked = 0;
+            $stakeholder->save();
 
-        return response()->json(['message' => 'Filecollect updated successfully']);
+            return response()->json(['message' => 'Filecollect updated successfully']);
+        }
+        else abort(403);
     }
 
     public function delete_filecollect(Request $request, Filecollect $filecollect){
@@ -308,49 +313,77 @@ class FilecollectController extends Controller
     }
 
     public function delete_stakeholder_file(Request $request, FilecollectStakeholder $stakeholder){
-        if(Auth::guard('school')->check()){
-            $identifier = Auth::guard('school')->user()->code;
-        }
-        else if (Auth::guard('teacher')->check()){
-            $identifier = Auth::guard('school')->user()->afm;
-        }
+        if($stakeholder->filecollect->accepts){
+            if(Auth::guard('school')->check()){
+                $identifier = Auth::guard('school')->user()->code;
+            }
+            else if (Auth::guard('teacher')->check()){
+                $identifier = Auth::guard('teacher')->user()->afm;
+            }
 
-        $extension="";
-        if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
-            $extension ='.xlsx';
-        }
-        else if($stakeholder->filecollect->fileMime == "application/pdf"){
-            $extension = ".pdf";
-        }
-        else if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-            $extension = ".doc";
-        }
+            $extension="";
+            if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+                $extension ='.xlsx';
+            }
+            else if($stakeholder->filecollect->fileMime == "application/pdf"){
+                $extension = ".pdf";
+            }
+            else if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
+                $extension = ".docx";
+            }
 
-        $directory = "file_collects/$stakeholder->filecollect_id";
-        $original_filename = $identifier.'_filecollect_'.$stakeholder->filecollect_id.$extension;
+            $directory = "file_collects/$stakeholder->filecollect_id";
+            $original_filename = $identifier.'_filecollect_'.$stakeholder->filecollect_id.$extension;
 
-        $fileHandler = New FilesController;
-        try{
-            $fileHandler->delete_file($directory, $original_filename, 'local');
-        }
-        catch(\Exception $e){
-            Log::channel('files')->error($identifier." failed to delete file from filecollect $stakeholder->filecollect_id ".$e->getMessage());
-            return back()->with('failure', 'Το αρχείο δε διαγράφηκε, προσπαθήστε αργότερα ή επικοινωνήστε με τον διαχειριστή του συστήματος');
-        }
-        $stakeholder->uploaded_at = null;
-        $stakeholder->file = null;
-        $stakeholder->checked = null;
-        $stakeholder->save();
+            $fileHandler = New FilesController;
+            try{
+                $fileHandler->delete_file($directory, $original_filename, 'local');
+            }
+            catch(\Exception $e){
+                Log::channel('files')->error($identifier." failed to delete file from filecollect $stakeholder->filecollect_id ".$e->getMessage());
+                return back()->with('failure', 'Το αρχείο δε διαγράφηκε, προσπαθήστε αργότερα ή επικοινωνήστε με τον διαχειριστή του συστήματος');
+            }
+            $stakeholder->uploaded_at = null;
+            $stakeholder->file = null;
+            $stakeholder->checked = null;
+            $stakeholder->stake_comment = null;
+            $stakeholder->save();
 
-        Log::channel('files')->info($identifier." successfully deleted file from filecollect $stakeholder->filecollect_id");
-        return back()->with('success', 'Το αρχείο διαγράφηκε');
+            Log::channel('files')->info($identifier." successfully deleted file from filecollect $stakeholder->filecollect_id");
+            return back()->with('success', 'Το αρχείο διαγράφηκε');
+        }
+        else abort(403);
     }
 
     public function save_filecollect_comment(Request $request, FilecollectStakeholder $stakeholder){
-        $sanitizedComments = strip_tags($request->input('stake_comment'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
-        $stakeholder->stake_comment = $sanitizedComments;
-        $stakeholder->save();
+        if(Auth::guard('school')->check()){
+            $user = Auth::guard('school')->user();
+        }
+        else if(Auth::guard('teacher')->check()){
+            $user = Auth::guard('teacher')->user();
+        }
+        if($user->filecollects->find($stakeholder->id)){
+            $sanitizedComments = strip_tags($request->input('stake_comment'), '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
+            $stakeholder->stake_comment = $sanitizedComments;
+            if($stakeholder->isDirty('stake_comment'))
+                $stakeholder->save();
 
-        return response()->json(['success'=>'comments saved'], 200);
+            return response()->json(['success'=>'comments saved'], 200);
+        }
+        else abort(403);
+    }
+
+    public function download_filecollect_directory(Request $request, Filecollect $filecollect){
+        $directory = 'file_collects/' . $filecollect->id;
+        $helper = new FilesController;
+        $files = $helper->download_directory_as_zip($directory);
+
+        if($files->getStatusCode()=='500'){
+            Log::channel('files')->error(Auth::user()->username." failed to download filecollect $filecollect->id: ".json_decode($files->getContent(),true)['error']);
+            return back()->with('failure', json_decode($files->getContent(),true)['error'].'. Επικοινωνήστε με τον διαχειριστή. ');
+        }
+
+        Log::channel('files')->info(Auth::user()->username." successfully downloaded filecollect $filecollect->id");
+        return $files;
     }
 }

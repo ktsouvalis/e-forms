@@ -21,6 +21,7 @@ class AuthServiceProvider extends ServiceProvider
         Microapp::class => MicroappPolicy::class,
         Fileshare::class => FilesharePolicy::class,
         Filecollect::class => FilecollectPolicy::class,
+        // FilecollectStakeholder::class => FilecollectPolicy::class,
         Ticket::class => TicketPolicy::class,
         Consultant::class => ConsultantPolicy::class,
     ];

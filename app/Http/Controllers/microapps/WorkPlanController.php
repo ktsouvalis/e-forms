@@ -137,12 +137,16 @@ class WorkPlanController extends Controller
             
         // Insert data      
         $row=8;
-           
-        for($w=$start_week;$w<=$end_week;$w++){
-           $yw=$year.$w;
-                
-            $monday = date( "d/m/Y", strtotime($year."W".$w."1") );
-            $friday = date( "d/m/Y", strtotime($year."W".$w."5") );
+        $start_week_int = intval($start_week);
+        $end_week_int = intval($end_week);
+        for($w=$start_week_int;$w<=$end_week_int;$w++){
+            // Create a DateTime object for the first day of the desired week
+            $firstDayOfWeek = Carbon::create()->setISODate(date('Y'), $w, 1);
+            // Format the DateTime object to get the week format
+            $week_format = $firstDayOfWeek->format('W'); 
+            $yw=$year.$w;
+            $monday = date( "d/m/Y", strtotime($year."W".$week_format."1") );
+            $friday = date( "d/m/Y", strtotime($year."W".$week_format."5") );
             $activeWorksheet->getCell('A'.$row)->setValue($monday." έως ".$friday);
             $activeWorksheet->getStyle('A'.$row)->getAlignment()->setVertical('center');
             $activeWorksheet->getStyle('B'.$row.':G'.$row)->getAlignment()->setVertical('top');

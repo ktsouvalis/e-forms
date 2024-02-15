@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FilecollectStakeholder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 
@@ -370,5 +371,19 @@ class FilecollectController extends Controller
             return response()->json(['success'=>'comments saved'], 200);
         }
         else abort(403);
+    }
+
+    public function download_filecollect_directory(Request $request, Filecollect $filecollect){
+        $directory = 'file_collects/' . $filecollect->id;
+        $helper = new FilesController;
+        $files = $helper->download_directory_as_zip($directory);
+
+        if($files->getStatusCode()=='500'){
+            Log::channel('files')->error(Auth::user()->username." failed to download filecollect $filecollect->id: ".json_decode($files->getContent(),true)['error']);
+            return back()->with('failure', json_decode($files->getContent(),true)['error'].'. Επικοινωνήστε με τον διαχειριστή. ');
+        }
+
+        Log::channel('files')->info(Auth::user()->username." successfully downloaded filecollect $filecollect->id");
+        return $files;
     }
 }

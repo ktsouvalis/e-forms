@@ -276,6 +276,10 @@
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όσους <strong>δεν</strong> έχουν στείλει αρχείο</button>
                 </form>
+                <form action="{{url("/download_filecollect_directory/$filecollect->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-success bi bi-cloud-download" > Λήψη αρχείων</button>
+                </form>
                 <form action="{{url("/delete_all_whocans/filecollect/$filecollect->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή όλων</button>

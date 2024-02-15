@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\WhocanController;
@@ -473,6 +474,8 @@ Route::post("/delete_filecollect/{filecollect}", [FilecollectController::class, 
 
 Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);//access is checked inside the controller
 
+Route::post("/download_filecollect_directory/{filecollect}", [FilecollectController::class, 'download_filecollect_directory'])->middleware('can:view,filecollect');
+
 
 // FILESHARES ROUTES
 
@@ -771,6 +774,21 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
 
         }
         return back()->with('command',$output);
+    });
+
+    Route::post('/app_files_backup', function(Request $request){
+        $directory = '/';
+        $helper = new FilesController;
+        $files = $helper->download_directory_as_zip($directory);
+
+        if($files->getStatusCode()=='500'){
+            Log::channel('files')->error(Auth::user()->username." failed to download app files: ".json_decode($files->getContent(),true)['error']);
+            return back()->with('failure', json_decode($files->getContent(),true)['error'].'. Επικοινωνήστε με τον διαχειριστή. ');
+        }
+
+        Log::channel('files')->info(Auth::user()->username." successfully downloaded app files");
+        
+        return $files;
     });
 });
 

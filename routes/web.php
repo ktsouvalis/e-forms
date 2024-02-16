@@ -783,7 +783,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $database = env('DB_DATABASE');
         $backupFilePath = date('Y-m-d_H-i-s') . '_backup.sql';
         $sudoRequired = env('BACKUP_SUDO_REQUIRED', false);
-        $command = "mysqldump -h $host -u $username -p$password $database > " . storage_path('app/' . $backupFilePath);
+        $command = "mysqldump -h $host -u $username -p$password --databases $database > " . storage_path('app/' . $backupFilePath);
         if ($sudoRequired) {
             $command = 'sudo ' . $command;
         }

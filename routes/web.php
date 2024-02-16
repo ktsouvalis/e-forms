@@ -775,6 +775,35 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         }
         return back()->with('command',$output);
     });
+
+    Route::post('/db_backup', function(Request $request){
+        $host = env('DB_HOST');
+        $username = env('DB_USERNAME');
+        $password = env('DB_PASSWORD');
+        $database = env('DB_DATABASE');
+        $backupFilePath = date('Y-m-d_H-i-s') . '_backup.sql';
+        $sudoRequired = env('BACKUP_SUDO_REQUIRED', false);
+        $command = "mysqldump -h $host -u $username -p$password $database > " . storage_path('app/' . $backupFilePath);
+        if ($sudoRequired) {
+            $command = 'sudo ' . $command;
+        }
+        try{
+             exec($command);
+        }
+        catch(\Exception $e){
+            Log::channel('user_memorable_actions')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
+            return back()->with('failure', $e->getMessage());
+        }
+
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." successfully backup db");
+        try {
+            return response()->download(storage_path('app/' . $backupFilePath))->deleteFileAfterSend();
+        }
+        catch(\Exception $e) {
+            Log::channel('files')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
+            return back()->with('failure', $e->getMessage());
+        }
+    });
 });
 
 //Sections Routes

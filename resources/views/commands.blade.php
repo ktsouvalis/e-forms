@@ -1,6 +1,10 @@
 <x-layout>
     <div class="container">
         <div class="row">
+            <form class="col-md py-2" action="{{url('/db_backup')}}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-success bi bi-database-down"> Database Backup</button>
+            </form>
             <form class="col-md py-2" action="{{url('/com_change_active_month')}}" method="post">
                 @csrf
                 <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan change-active-month</button>

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\MonthController;
@@ -52,6 +53,8 @@ use App\Http\Controllers\microapps\DefibrillatorsController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::resource('tests', TestController::class);
 
 ///// INDEX ////////////////////////////////////
 

@@ -21,6 +21,6 @@ class isBoss
             return $next($request);
         } 
 
-        return redirect(url('/'))->with('failure','Δεν έχετε δικαίωμα πρόσβασης σε αυτό τον πόρο');
+        return redirect(url('/index_user'))->with('failure','Δεν έχετε δικαίωμα πρόσβασης σε αυτό τον πόρο');
     }
 }

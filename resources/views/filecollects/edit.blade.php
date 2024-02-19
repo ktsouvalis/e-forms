@@ -72,7 +72,7 @@
     @push('title')
         <title>{{$filecollect->name}}</title>
     @endpush
-    @include('filecollect_admin_before')
+    @include('filecollects.filecollect_admin_before')
         
         <div class="container">
             <div class="hstack gap-3">
@@ -117,8 +117,9 @@
                 @endif
                 </div>
                 <hr>
-                <form action="{{url("/filecollect_save/$filecollect->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                <form action="{{url("/filecollects/$filecollect->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
+                @method('put')
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
                     <span class="input-group-text w-75"><strong>Επεξεργασία Στοιχείων Συλλογής Αρχείων</strong></span>

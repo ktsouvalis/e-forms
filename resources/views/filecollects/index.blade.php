@@ -1,16 +1,15 @@
 <x-layout>
     @push('links')
-        <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
     @endpush
-
     @push('scripts')
-        <script src="DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="canedit.js"></script>
-        <script src="datatable_init.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init.js')}}"></script>
+        <script src="{{asset('copylink.js')}}"></script>
     @endpush
 
     @push('title')
@@ -41,7 +40,7 @@
                             <tr >  
                                 <td>{{$one_filecollect->id}}</td>
                                 
-                                <td><div class="badge text-wrap" style="background-color:{{$one_filecollect->color}};"><a href="{{url("/filecollect_profile/$one_filecollect->id")}}" style="color:black; text-decoration:none;">{{$one_filecollect->name}}</a></div></td>
+                                <td><div class="badge text-wrap" style="background-color:{{$one_filecollect->color}};"><a href="{{url("/filecollects/$one_filecollect->id/edit")}}" style="color:black; text-decoration:none;">{{$one_filecollect->name}}</a></div></td>
                                
                                 <td>
                                     {{$one_filecollect->department->name}}
@@ -85,8 +84,9 @@
                                 </form>
                             </td>
                             <td>
-                                <form action="{{url("/delete_filecollect/$one_filecollect->id")}}" method="post">
+                                <form action="{{url("/filecollects/$one_filecollect->id")}}" method="post">
                                     @csrf
+                                    @method('delete')
                                     <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('ΠΡΟΣΟΧΗ! ΘΑ ΔΙΑΓΡΑΦΟΥΝ ΟΛΑ τα στοιχεία της συλλογής καθώς ΚΑΙ ΤΑ ΑΡΧΕΙΑ που έχουν ανεβάσει οι ενδιαφερόμενοι')"> </button>
                                 </form>
                             </td>
@@ -101,7 +101,7 @@
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/insert_filecollect")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+            <form action="{{url("/filecollects")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                 @csrf
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">

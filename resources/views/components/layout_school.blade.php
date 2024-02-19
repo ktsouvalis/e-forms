@@ -104,7 +104,7 @@
           @if($filecollect->filecollect->visible)
           <div class="badge text-wrap py-2" style="width: 10rem; background-color:#4bac97; text-align:center;">
             <div class="text-dark fa-solid fa-file-pdf"></div> 
-            <a href="{{url("/school_filecollect/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$filecollect->filecollect->name}}</a>
+            <a href="{{url("/filecollects/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$filecollect->filecollect->name}}</a>
           </div>
           @endif
         @endforeach

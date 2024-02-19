@@ -4,5 +4,5 @@
         $old_data = $teacher->filecollects->where('filecollect_id', $filecollect->id)->first();
         $accepts = $filecollect->accepts;
     @endphp
-    @include('generic-filecollect')
+    @include('filecollects.generic-filecollect')
 </x-layout_teacher>

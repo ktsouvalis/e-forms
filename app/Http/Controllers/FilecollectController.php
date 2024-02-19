@@ -17,14 +17,49 @@ use Illuminate\Support\Facades\Validator;
 class FilecollectController extends Controller
 {
     //
-    public function insert_filecollect(Request $request)
+    public function __construct(){
+        $this->middleware('auth')->only(['index','store']);
+    }
+
+    public function index(){
+        return view('filecollects.index');
+    }
+
+    public function edit(Filecollect $filecollect){
+        $this->authorize('view', $filecollect);
+        return view('filecollects.edit', [
+            'filecollect' => $filecollect
+        ]);
+    }
+
+    public function show(Filecollect $filecollect){
+        if(Auth::guard('teacher')->check()){
+            $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
+            if(!$stakeholder or !$filecollect->visible){
+                abort(403);
+            }
+            return view('filecollects.teacher-filecollect', ['filecollect' => $filecollect]);
+        }
+        else if(Auth::guard('school')->check()){
+            $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
+            if(!$stakeholder or !$filecollect->visible){
+                abort(403);
+            }
+            return view('filecollects.school-filecollect', ['filecollect' => $filecollect]);
+        }
+        else{
+            abort(403);
+        }
+    }
+
+    public function store(Request $request)
     {
         $filecollect_table = $this->validate_and_prepare($request);
         $result = $this->create_filecollect($filecollect_table);
         if($result->getStatusCode() == 200){
             $filecollect = Filecollect::find($result->getData()->filecollect);
             Log::channel('user_memorable_actions')->info(Auth::user()->username." insert_filecollect ".$filecollect->name);
-            return redirect(url("/filecollect_profile/$filecollect->id"))->with('success', 'Η συλλογή αρχείων δημιουργήθηκε με επιτυχία. Μπορείτε να προσθέσετε ενδιαφερόμενους στη συνέχεια. Μην ξεχάσετε να "ανοίξετε" την υποβολή!'); 
+            return redirect(url("/filecollects/$filecollect->id/edit"))->with('success', 'Η συλλογή αρχείων δημιουργήθηκε με επιτυχία. Μπορείτε να προσθέσετε ενδιαφερόμενους στη συνέχεια. Μην ξεχάσετε να "ανοίξετε" την υποβολή!'); 
         }
         else{
             Log::channel('throwable_db')->error(Auth::user()->username." insert_filecollect: ".$e->getMessage());
@@ -122,8 +157,8 @@ class FilecollectController extends Controller
         ], 200);
     }
 
-    public function saveProfile(Filecollect $filecollect, Request $request){
-
+    public function update(Filecollect $filecollect, Request $request){
+        $this->authorize('view', $filecollect);
         $incomingFields = $request->all();
 
         $filecollect->name = $incomingFields['name'];
@@ -138,14 +173,14 @@ class FilecollectController extends Controller
 
                 // if there is already a filecollect with the newly given name
                 if(Filecollect::where('name', $given_name)->count()){
-                    return redirect(url("/filecollect_profile/$filecollect->id"))->with('failure',"Υπάρχει ήδη συλλογή αρχείων με όνομα $given_name.");
+                    return back()->with('failure',"Υπάρχει ήδη συλλογή αρχείων με όνομα $given_name.");
                 } 
             }
             $filecollect->save();
             $edited = true;
         }
         Log::channel('user_memorable_actions')->info(Auth::user()." updated filecollect $filecollect->id basic info");
-        return redirect(url("/filecollect_profile/$filecollect->id"))->with('success',"Επιτυχής αποθήκευση των στοιχείων της Συλλογής $filecollect->name");
+        return back()->with('success',"Επιτυχής αποθήκευση των στοιχείων της Συλλογής $filecollect->name");
     }
 
     public function changeFilecollectStatus(Request $request, Filecollect $filecollect){
@@ -281,7 +316,8 @@ class FilecollectController extends Controller
         else abort(403);
     }
 
-    public function delete_filecollect(Request $request, Filecollect $filecollect){
+    public function destroy(Filecollect $filecollect){
+        $this->authorize('view', $filecollect);
         $username = Auth::check() ? Auth::user()->username : "API";
         $error=false;
         // delete database record

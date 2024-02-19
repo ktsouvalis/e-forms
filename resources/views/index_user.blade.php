@@ -120,7 +120,7 @@
                                 @php
                                     $fi = $filecollect->id;
                                 @endphp
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/filecollect_profile/$fi")}}">
+                                <a class="text-dark" style="text-decoration:none;" href="{{url("/filecollects/$fi/edit")}}">
                                 <div class="h5 card-title fa-solid fa-file-pdf"></div>
                                 <div>{{$filecollect->name}}</div>
                                 </a> 

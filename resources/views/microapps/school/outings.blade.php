@@ -90,7 +90,7 @@
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th id="search">Έλεγχος Δ/νσης-ID</th>
+                        <th id="search">ID</th>
                         <th id="search">Τύπος</th>
                         <th id="">Ημερομηνία</th>
                         <th id="">Δράση</th>
@@ -111,14 +111,7 @@
                         @endphp
                         <tr>
                             <td>
-                                
-                                @if($outing->checked)
-                                    <div class="bi bi-check-circle btn btn-success"  style="color:white"> </div>
-                                @else
-                                    <div class="bi bi-hourglass-split btn btn-warning"> </div>
-                                @endif
                                 <div>{{$outing->id}}</div>
-                    
                             </td>
                             <td>{{$outing->type->description}}</td> 
                             <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>

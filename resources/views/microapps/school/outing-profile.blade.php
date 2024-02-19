@@ -75,7 +75,7 @@
                                 <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση</button>
                                 
                                 <a href="{{url("/outing_profile/$outing->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Ακύρωση</a>
-                                <label class="p-3 text-muted small">Με την αποθήκευση η εκδρομή θα σημανθεί ως μη ελεγμένη</label>
+                                {{-- <label class="p-3 text-muted small">Με την αποθήκευση η εκδρομή θα σημανθεί ως μη ελεγμένη</label> --}}
                             </div>
                         @endif
                     </form>

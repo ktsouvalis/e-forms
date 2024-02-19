@@ -27,6 +27,7 @@
                     
                     <div class="row hidden-md-up justify-content-left">
                         @if($user->isAdmin())
+                        test success!!!
                             <div class="col-md-4 py-3" style="max-width:15rem">
                                 <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
                                     <a class="text-dark" style="text-decoration:none;" href="{{url("/manage_users")}}">

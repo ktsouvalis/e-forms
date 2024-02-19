@@ -81,8 +81,9 @@
         
         <div class="container">
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/fileshare_save/$fileshare->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                <form action="{{url("/fileshares/$fileshare->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
+                    @method('PATCH')
                     <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>

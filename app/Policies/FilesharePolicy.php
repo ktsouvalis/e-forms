@@ -25,7 +25,7 @@ class FilesharePolicy
     public function view(User $user, Fileshare $fileshare): bool
     {
         //
-        if(Superadmin::where('user_id',$user->id)->exists()) return true;
+        if($user->isAdmin()) return true;
         if($user->department->fileshares->find($fileshare->id)) return true;
         return false;
     }

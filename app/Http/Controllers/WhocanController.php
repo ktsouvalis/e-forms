@@ -90,13 +90,14 @@ class WhocanController extends Controller
         }
 
         Session::put('not_found', $not_found);
+        
         if($found){
             Log::channel('user_memorable_actions')->info(Auth::user()->username." imported whocans $my_app $my_id");
-            return redirect(url("/".$my_app."_profile/$my_id"))
+            return back()
                 ->with('success', "Η ενημέρωση των ενδιαφερόμενων έγινε επιτυχώς");
         }
         else{
-            return redirect(url("/".$my_app."_profile/$my_id"))
+            return back()
                 ->with('warning', "Δεν βρέθηκε σχολείο ή εκπαιδευτικός για να προστεθεί στους ενδιαφερόμενους");   
         }
     }

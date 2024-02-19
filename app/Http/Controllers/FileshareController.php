@@ -7,10 +7,12 @@ use App\Models\Teacher;
 use App\Models\Fileshare;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Policies\FilesharePolicy;
 use App\Models\FileshareDepartment;
 use Illuminate\Support\Facades\Log;
 use App\Models\FileshareStakeholder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
@@ -18,13 +20,43 @@ use Illuminate\Support\Facades\Validator;
 
 class FileshareController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth')->only(['index']);
+    }
+
+    public function show(Fileshare $fileshare){
+        if(Auth::guard('school')->check()){
+            $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
+            if(!$stakeholder){
+                abort(403);
+            }
+            $stakeholder->visited_fileshare=true;
+            $stakeholder->save();
+            return view('fileshares.school-fileshare', ['fileshare' => $fileshare]);
+        }
+        else if(Auth::guard('teacher')->check()){
+            $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
+            if(!$stakeholder){
+                abort(403);
+            }
+            $stakeholder->visited_fileshare=true;
+            $stakeholder->save();
+            return view('fileshares.teacher-fileshare', ['fileshare' => $fileshare]);
+        }
+    }
+
+    public function index(){
+        return view('fileshares.index');
+    }
     /**
      * Insert a new fileshare into database.
      *
      * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function insert_fileshare(Request $request)//page use
+    public function store(Request $request)//page use
     {
         $table = $this->validate_and_prepare($request);
         $result = $this->create_fileshare($table);
@@ -36,7 +68,7 @@ class FileshareController extends Controller
         else if($result->getStatusCode() == 200){  
             $fileshare = Fileshare::find($result->getData()->fileshare);
             Log::channel('user_memorable_actions')->info(Auth::user()->username." insert_fileshare ".$fileshare->name." for ".$fileshare->department->name);
-            return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.'); 
+            return redirect(url("/fileshares/$fileshare->id/edit"))->with('success', 'Ο διαμοιρασμός αρχείων δημιουργήθηκε. Μπορείτε να προσθέσετε αρχεία, ενδιαφερόμενους στη συνέχεια.'); 
         }
     }
 
@@ -69,6 +101,10 @@ class FileshareController extends Controller
         ], 200);
     }
 
+    public function edit(Fileshare $fileshare){
+        $this->authorize('view', $fileshare);
+        return view('fileshares.edit', ['fileshare' => $fileshare]);
+    }
     /**
      * Update an existing fileshare.
      *
@@ -76,8 +112,9 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update_fileshare(Request $request, Fileshare $fileshare) //page use
+    public function update(Request $request, Fileshare $fileshare) //page use
     {
+        $this->authorize('view', $fileshare);
         $error=false;
         // Update name
         $name = $request->all()['name'];
@@ -115,9 +152,9 @@ class FileshareController extends Controller
         }
 
         if(!$error)
-            return redirect(url("/fileshare_profile/$fileshare->id"))->with('success', 'Ο διαμοιρασμός αρχείων ενημερώθηκε');
+            return redirect(url("/fileshares/$fileshare->id/edit"))->with('success', 'Ο διαμοιρασμός αρχείων ενημερώθηκε');
         else
-            return redirect(url("/fileshare_profile/$fileshare->id"))->with('warning', 'Ο διαμοιρασμός αρχείων ενημερώθηκε με σφάλματα στα αρχεία (throwable_db/files)');   
+            return redirect(url("/fileshares/$fileshare->id/edit"))->with('warning', 'Ο διαμοιρασμός αρχείων ενημερώθηκε με σφάλματα στα αρχεία (throwable_db/files)');   
     }
 
     public function update_fileshare_name($name, Fileshare $fileshare){ //app use
@@ -171,8 +208,9 @@ class FileshareController extends Controller
      * @param  Fileshare  $fileshare
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function delete_fileshare(Fileshare $fileshare) //page_use
+    public function destroy(Fileshare $fileshare) //page_use
     {
+        $this->authorize('view', $fileshare);
         $username = Auth::check() ? Auth::user()->username : "API";
         $error=false;
         // delete database record

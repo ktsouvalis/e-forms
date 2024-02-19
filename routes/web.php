@@ -809,13 +809,13 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
     Route::post('/update_app', function(){
         $sudoRequired = env('SUDO_REQUIRED', false);
         if($sudoRequired){
-            $fetch = Process::path($directory)->run('git fetch');
+            $fetch = Process::path('/opt/e-forms')->run('git fetch');
             if($fetch->successful()){
                 Log::channel('commands_executed')->info(Auth::user()->username.": ".$fetch->output());
-                $pull = Process::run('git pull');
+                $pull = Process::path('/opt/e-forms')->run('git pull');
                 if($pull->successful()){
                     Log::channel('commands_executed')->info(Auth::user()->username.": ".$pull->output());
-                    $migrate = Process::run('php artisan migrate');
+                    $migrate = Process::path('/opt/e-forms')->run('php artisan migrate');
                     if($migrate->successful()){
                         Log::channel('commands_executed')->info(Auth::user()->username.": ".$migrate->output());
                         return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');

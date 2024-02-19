@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Process;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\MonthController;
@@ -782,7 +783,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $password = env('DB_PASSWORD');
         $database = env('DB_DATABASE');
         $backupFilePath = date('Y-m-d_H-i-s') . '_backup.sql';
-        $sudoRequired = env('BACKUP_SUDO_REQUIRED', false);
+        $sudoRequired = env('SUDO_REQUIRED', false);
         $command = "mysqldump -h $host -u $username -p$password --databases $database > " . storage_path('app/' . $backupFilePath);
         if ($sudoRequired) {
             $command = 'sudo ' . $command;
@@ -802,6 +803,40 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         catch(\Exception $e) {
             Log::channel('files')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
             return back()->with('failure', $e->getMessage());
+        }
+    });
+
+    Route::post('/update_app', function(){
+        $sudoRequired = env('SUDO_REQUIRED', false);
+        if($sudoRequired){
+            $fetch = Process::path($directory)->run('git fetch');
+            if($fetch->successful()){
+                Log::channel('commands_executed')->info(Auth::user()->username.": ".$fetch->output());
+                $pull = Process::run('git pull');
+                if($pull->successful()){
+                    Log::channel('commands_executed')->info(Auth::user()->username.": ".$pull->output());
+                    $migrate = Process::run('php artisan migrate');
+                    if($migrate->successful()){
+                        Log::channel('commands_executed')->info(Auth::user()->username.": ".$migrate->output());
+                        return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');
+                    }
+                    else{
+                        Log::channel('commands_executed')->error(Auth::user()->username.": ".$migrate->errorOutput());
+                        return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων');
+                    }
+                }
+                else{
+                    Log::channel('commands_executed')->error(Auth::user()->username.": ".$pull->errorOutput());
+                    return back()->with('failure', 'Αποτυχία ενημέρωσης κώδικα');
+                }
+            }    
+            else{
+                Log::channel('commands_executed')->error(Auth::user()->username.": ".$fetch->errorOutput());
+                return back()->with('failure', 'Αποτυχία ενημέρωσης της εφαρμογής');
+            }
+        }
+        else{
+            return back()->with('warning', 'Production mode only');
         }
     });
 });

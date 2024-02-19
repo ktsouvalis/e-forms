@@ -1,6 +1,10 @@
 <x-layout>
     <div class="container">
         <div class="row">
+            <form class="col-md py-2" action="{{url('/update_app')}}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-success bi bi-arrow-repeat"> Ενημέρωση Εφαρμογής</button>
+            </form>
             <form class="col-md py-2" action="{{url('/db_backup')}}" method="post">
                 @csrf
                 <button type="submit" class="btn btn-success bi bi-database-down"> Database Backup</button>

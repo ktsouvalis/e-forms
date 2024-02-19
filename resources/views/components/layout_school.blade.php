@@ -94,7 +94,7 @@
           @endphp
           <div class="badge text-wrap py-2" style="width: 10rem; background-color:#00bfff; text-align:center;">
             <div class="text-dark fa-solid fa-file-pdf"></div> 
-            <a href="{{url("/school_fileshare/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$fileshare->fileshare->name}}</a>
+            <a href="{{url("/fileshares/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$fileshare->fileshare->name}}</a>
           </div>
         @endforeach
         @foreach($user->filecollects as $filecollect)

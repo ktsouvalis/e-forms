@@ -483,39 +483,9 @@ Route::post("/download_filecollect_directory/{filecollect}", [FilecollectControl
 
 // FILESHARES ROUTES
 
-Route::get("/teacher_fileshare/{fileshare}", function(Fileshare $fileshare){
-    $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
-    if(!$stakeholder){
-        abort(403);
-    }
-    $stakeholder->visited_fileshare=true;
-    $stakeholder->save();
-    return view('teacher-fileshare', ['fileshare' => $fileshare]);
-})->middleware('isTeacher');
-
-Route::get("/school_fileshare/{fileshare}", function(Fileshare $fileshare){
-    $stakeholder = $fileshare->stakeholders->where('stakeholder_id', Auth::guard('school')->id())->where('stakeholder_type', 'App\Models\School')->first();
-    if(!$stakeholder){
-        abort(403);
-    }
-    $stakeholder->visited_fileshare=true;
-    $stakeholder->save();
-    return view('school-fileshare', ['fileshare' => $fileshare]);
-})->middleware('isSchool');
-
-Route::view('/fileshares', 'fileshares')->middleware('auth');
-
-Route::post('/insert_fileshare', [FileshareController::class, 'insert_fileshare']);
-
-Route::post('/fileshare_save/{fileshare}', [FileshareController::class, 'update_fileshare']);
-
-Route::get('/fileshare_profile/{fileshare}', function(Fileshare $fileshare){
-    return view('fileshare-profile', ['fileshare'=> $fileshare]);
-})->middleware('can:view,fileshare');
+Route::resource('fileshares', FileshareController::class);
 
 Route::post('/save_fileshare_comment/{fileshare}', [FileshareController::class, 'add_comment']);
-
-Route::post("/delete_fileshare/{fileshare}", [FileshareController::class, 'delete_fileshare']);
 
 Route::post("/get_file/{fileshare}/{original_filename}", [FileshareController::class, 'download_file']);
 

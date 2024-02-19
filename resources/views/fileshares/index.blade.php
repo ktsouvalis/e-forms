@@ -38,13 +38,14 @@
                     @can('view', $one_fileshare)
                         <tr>  
                             <td>{{$one_fileshare->id}}</td>
-                            <td><div class="text-wrap" ><a href="{{url("/fileshare_profile/$one_fileshare->id")}}" style="color:black; ">{{$one_fileshare->name}}</a></div></td>
+                            <td><div class="text-wrap" ><a href="{{url("/fileshares/$one_fileshare->id/edit")}}" style="color:black; ">{{$one_fileshare->name}}</a></div></td>
                             <td>
                                 {{$one_fileshare->department->name}}
                             </td>
                             <td>
-                                <form action="{{url("/delete_fileshare/$one_fileshare->id")}}" method="post">
+                                <form action="{{url("/fileshares/$one_fileshare->id")}}" method="post">
                                     @csrf
+                                    @method('delete')
                                     <button type="submit" class="btn btn-danger bi bi-x-circle"> </button>
                                 </form>
                             </td>
@@ -58,7 +59,7 @@
         <div class="container py-5">
             <div class="container px-5">
                 <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/insert_fileshare")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/fileshares")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <input type="hidden" name="asks_to" value="insert">
                         <div class="input-group">

@@ -783,11 +783,8 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $password = env('DB_PASSWORD');
         $database = env('DB_DATABASE');
         $backupFilePath = date('Y-m-d_H-i-s') . '_backup.sql';
-        $sudoRequired = env('SUDO_REQUIRED', false);
+        $sudoRequired = env('SUDO_REQUIRED');
         $command = "mysqldump -h $host -u $username -p$password --databases $database > " . storage_path('app/' . $backupFilePath);
-        if ($sudoRequired) {
-            $command = 'sudo ' . $command;
-        }
         try{
              exec($command);
         }
@@ -797,6 +794,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         }
 
         Log::channel('user_memorable_actions')->info(Auth::user()->username." successfully backup db");
+        ob_end_clean();
         try {
             return response()->download(storage_path('app/' . $backupFilePath))->deleteFileAfterSend();
         }
@@ -807,7 +805,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
     });
 
     Route::post('/update_app', function(){
-        $sudoRequired = env('SUDO_REQUIRED', false);
+        $sudoRequired = env('SUDO_REQUIRED');
         if($sudoRequired){
             $fetch = Process::path('/opt/e-forms')->run('git fetch');
             if($fetch->successful()){

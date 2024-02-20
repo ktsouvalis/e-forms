@@ -38,22 +38,35 @@ class WhocanController extends Controller
         $identifiers = explode(',', $request->input('afmscodes'));
         $found=0;
         $not_found=[];
+        // Regular expression for a 6-digit number
+        $regex6 = '/(?<!\d)\d{6}(?!\d)/';
+        // Regular expression for a 9-digit number
+        $regex9 = '/(?<!\d)\d{9}(?!\d)/';
+        // Regular expression for a 7-digit number
+        $regex7 = '/(?<!\d)\d{7}(?!\d)/';
+
         //iterating through identifiers
         foreach($identifiers as $identifier){
-            if(School::where('code', trim($identifier))->count()){ //if identifier is school code
-                $stakeholder = School::where('code', trim($identifier))->first();
+            $fieldOfInterest = '';
+            if (preg_match($regex9, $identifier, $matches)) {
+                $stakeholder = Teacher::where('afm', $matches[0])->first();//the number is teacher afm
+            } 
+            else if (preg_match($regex6, $identifier, $matches)) {
+                $stakeholder = Teacher::where('am', $matches[0])->first();//the number is teacher am
+            }
+            else if (preg_match($regex7, $identifier, $matches)) {
+                $stakeholder = School::where('code', $matches[0])->first();//the number is school code
+            }
+            
+            if($stakeholder){
                 $found=1;
             }
-            else if(Teacher::where('afm', trim($identifier))->count()){//if identifier is teacher afm
-                $stakeholder = Teacher::where('afm', trim($identifier))->first();
-                $found=1;   
-            }
-            else{ // if is neither school code nor teacher afm
+            else{
                 array_push($not_found, trim($identifier));
                 continue;
             }
+
             if($my_app=="fileshare"){ //fileshare
-                // dd($stakeholder);
                 FileshareStakeholder::updateOrCreate(
                     [
                     'fileshare_id' => $my_id,

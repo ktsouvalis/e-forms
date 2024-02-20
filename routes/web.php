@@ -759,13 +759,13 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
                 $pull = Process::path('/opt/e-forms')->run('git pull');
                 if($pull->successful()){
                     Log::channel('commands_executed')->info(Auth::user()->username.":git pull: ".$pull->output());
-                    $migrate = Process::path('/opt/e-forms')->run('php artisan migrate');
-                    if($migrate->successful()){
-                        Log::channel('commands_executed')->info(Auth::user()->username.":php artisan migrate ".$migrate->output());
+                    $migrate = Artisan::call('migrate');
+                    if ($migrate === 0) {
+                        Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".$migrate->output());
                         return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');
                     }
                     else{
-                        Log::channel('commands_executed')->error(Auth::user()->username.":php artisan migrate ".$migrate->errorOutput());
+                        Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".$migrate->errorOutput());
                         return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων');
                     }
                 }

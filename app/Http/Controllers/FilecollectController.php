@@ -420,7 +420,9 @@ class FilecollectController extends Controller
         }
 
         Log::channel('files')->info(Auth::user()->username." successfully downloaded filecollect $filecollect->id");
-        ob_end_clean();
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
         return $files;
     }
 }

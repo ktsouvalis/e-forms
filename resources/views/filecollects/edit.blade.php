@@ -52,7 +52,7 @@
                     });
     
                     $.ajax({
-                        url: '../filecollect_checked/'+stakeholderId,
+                        url: '/filecollect_checked/'+stakeholderId,
                         type: 'POST',
                         data: {
                             checked: isChecked

@@ -464,7 +464,6 @@ class FilecollectController extends Controller
         $regex6 = '/(?<!\d)\d{6}(?!\d)/';
         $regex9 = '/(?<!\d)\d{9}(?!\d)/';
         $regex7 = '/(?<!\d)\d{7}(?!\d)/';
-
         foreach ($excelFiles as $excelFile) {
             if ($excelFile !== $filecollect->base_file && $excelFile !== $filecollect->template_file) {
                 $filePath = "$directory/$excelFile";
@@ -477,31 +476,36 @@ class FilecollectController extends Controller
                 else if (preg_match($regex7, $filePath, $matches)) {
                     $stakeholder = School::where('code', $matches[0])->first();//the number is school code
                 }
-                $reader = IOFactory::createReader('Xlsx');
-                $spreadsheetInput = $reader->load($filePath);
-                $worksheet = $spreadsheetInput->getActiveSheet();
+                try{
+                    $reader = IOFactory::createReader('Xlsx');
+                    $spreadsheetInput = $reader->load($filePath);
+                    $worksheet = $spreadsheetInput->getActiveSheet();
 
-                $linesToExtract = $filecollect->lines_to_extract;
+                    $linesToExtract = $filecollect->lines_to_extract;
+                    // Copy the specified number of lines to the new spreadsheet
+                    for ($row = 2; $row <= $linesToExtract + 1; $row++) {
+                        $rowData = [];
 
-                // Copy the specified number of lines to the new spreadsheet
-                for ($row = 2; $row <= $linesToExtract + 1; $row++) {
-                    $rowData = [];
+                        if ($stakeholder instanceof Teacher) {
+                            $rowData[] = 'Εκπαιδευτικός';
+                            $rowData[] = $stakeholder->afm;
+                            $rowData[] = $stakeholder->name.' '.$stakeholder->surname;
+                        } 
+                        else if ($stakeholder instanceof School) {
+                            $rowData[] = 'Σχολείο';
+                            $rowData[] = $stakeholder->code;
+                            $rowData[] = $stakeholder->name;
+                        }
 
-                    if ($stakeholder instanceof Teacher) {
-                        $rowData[] = 'Εκπαιδευτικός';
-                        $rowData[] = $stakeholder->afm;
-                        $rowData[] = $stakeholder->name.' '.$stakeholder->surname;
-                    } 
-                    else if ($stakeholder instanceof School) {
-                        $rowData[] = 'Σχολείο';
-                        $rowData[] = $stakeholder->code;
-                        $rowData[] = $stakeholder->name;
+                        $rowData = array_merge($rowData, $worksheet->rangeToArray("A{$row}:Z{$row}")[0]);
+
+                        $sheetOutput->fromArray($rowData, null, "A{$new_sheet_row}");
+                        $new_sheet_row++;
                     }
-
-                    $rowData = array_merge($rowData, $worksheet->rangeToArray("A{$row}:Z{$row}")[0]);
-
-                    $sheetOutput->fromArray($rowData, null, "A{$new_sheet_row}");
-                    $new_sheet_row++;
+                }
+                catch(\Exception $e){
+                    Log::channel('files')->error(Auth::user()->username." failed to extract file $filePath: ".$e->getMessage());
+                    continue;
                 }
             }
         }

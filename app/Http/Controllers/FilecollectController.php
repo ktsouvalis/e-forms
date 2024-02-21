@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\School;
+use App\Models\Teacher;
 use App\Models\Filecollect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -10,9 +12,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FilecollectStakeholder;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class FilecollectController extends Controller
 {
@@ -171,10 +176,13 @@ class FilecollectController extends Controller
             if($filecollect->isDirty('name')){
                 $given_name = $incomingFields['name'];
 
-                // if there is already a filecollect with the newly given name
+                // if there is already a filecollect with the new given name
                 if(Filecollect::where('name', $given_name)->count()){
                     return back()->with('failure',"Υπάρχει ήδη συλλογή αρχείων με όνομα $given_name.");
                 } 
+            }
+            if($filecollect->isDirty('fileMime')){
+                $filecollect->lines_to_extract = null;
             }
             $filecollect->save();
             $edited = true;
@@ -422,5 +430,85 @@ class FilecollectController extends Controller
         Log::channel('files')->info(Auth::user()->username." successfully downloaded filecollect $filecollect->id");
         ob_end_clean();
         return $files;
+    }
+
+    public function add_num_of_lines(Request $request, Filecollect $filecollect){
+        $validator = Validator::make($request->all(), [
+            'lines' => 'integer|min:0|'
+        ]);
+        if($validator->fails()){
+            return back()->with('failure', 'Ο αριθμός γραμμών πρέπει να είναι ακέραιος αριθμός μεγαλύτερος του 0');
+        }
+        $filecollect->lines_to_extract = $request->input('lines');
+        $filecollect->save();
+
+        return back()->with('success', 'Ο αριθμός γραμμών αποθηκεύτηκε');
+    }
+
+        
+
+    public function extract_xlsx_file(Request $request, Filecollect $filecollect){
+        $directory = storage_path("app/file_collects/$filecollect->id");
+        $files = scandir($directory);
+        $excelFiles = array_filter($files, function ($file) {
+            return pathinfo($file, PATHINFO_EXTENSION) === 'xlsx';
+        });
+
+        $spreadsheetOutput = new Spreadsheet();
+        $sheetOutput = $spreadsheetOutput->getActiveSheet();
+        $new_sheet_row = 1;
+
+        //regural expressions to identify the stakeholder from the file name
+        $regex6 = '/(?<!\d)\d{6}(?!\d)/';
+        $regex9 = '/(?<!\d)\d{9}(?!\d)/';
+        $regex7 = '/(?<!\d)\d{7}(?!\d)/';
+
+        foreach ($excelFiles as $excelFile) {
+            if ($excelFile !== $filecollect->base_file && $excelFile !== $filecollect->template_file) {
+                $filePath = "$directory/$excelFile";
+                if (preg_match($regex9, $filePath, $matches)) {
+                    $stakeholder = Teacher::where('afm', $matches[0])->first();//the number is teacher afm
+                } 
+                else if (preg_match($regex6, $filePath, $matches)) {
+                    $stakeholder = Teacher::where('am', $matches[0])->first();//the number is teacher am
+                }
+                else if (preg_match($regex7, $filePath, $matches)) {
+                    $stakeholder = School::where('code', $matches[0])->first();//the number is school code
+                }
+                $reader = IOFactory::createReader('Xlsx');
+                $spreadsheetInput = $reader->load($filePath);
+                $worksheet = $spreadsheetInput->getActiveSheet();
+
+                $linesToExtract = $filecollect->lines_to_extract;
+
+                // Copy the specified number of lines to the new spreadsheet
+                for ($row = 2; $row <= $linesToExtract + 1; $row++) {
+                    $rowData = [];
+
+                    if ($stakeholder instanceof Teacher) {
+                        $rowData[] = 'Εκπαιδευτικός';
+                        $rowData[] = $stakeholder->afm;
+                        $rowData[] = $stakeholder->name.' '.$stakeholder->surname;
+                    } 
+                    else if ($stakeholder instanceof School) {
+                        $rowData[] = 'Σχολείο';
+                        $rowData[] = $stakeholder->code;
+                        $rowData[] = $stakeholder->name;
+                    }
+
+                    $rowData = array_merge($rowData, $worksheet->rangeToArray("A{$row}:Z{$row}")[0]);
+
+                    $sheetOutput->fromArray($rowData, null, "A{$new_sheet_row}");
+                    $new_sheet_row++;
+                }
+            }
+        }
+
+        $writer = new Xlsx($spreadsheetOutput);
+        $newFilePath = "{$directory}/filecollect".$filecollect->id."_extracted_data.xlsx";
+        $writer->save($newFilePath);
+
+        ob_end_clean();
+        return response()->download($newFilePath)->deleteFileAfterSend(true);
     }
 }

@@ -52,7 +52,7 @@
                     });
     
                     $.ajax({
-                        url: '../filecollect_checked/'+stakeholderId,
+                        url: '../filecollects/filecollect_checked/'+stakeholderId,
                         type: 'POST',
                         data: {
                             checked: isChecked
@@ -76,7 +76,7 @@
         
         <div class="container">
             <div class="hstack gap-3">
-                <form action="{{url("/update_filecollect_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/filecollects/update_filecollect_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75"><strong>Ενημέρωση εγκυκλίου συλλογής</strong></span>
@@ -85,11 +85,11 @@
                         <input name="base_file" type="file" class="form-control"><br>
                     </div>
                     <div class="input-group">
-                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
                     </div>
                 </form>
                 @if($filecollect->base_file)
-                <form action="{{url("/dl_filecollect_file/$filecollect->id/base")}}" method="post">
+                <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/base")}}" method="post">
                     @csrf
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
                 </form>
@@ -97,7 +97,7 @@
             </div>
                 <hr>
                 <div class="hstack gap-3">
-                <form action="{{url("/update_filecollect_file/$filecollect->id/template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/filecollects/update_filecollect_file/$filecollect->id/template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου συλλογής</strong></span>
@@ -106,11 +106,11 @@
                         <input name="template_file" type="file" class="form-control"><br>
                     </div>
                     <div class="input-group">
-                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
                     </div>
                 </form>
                 @if($filecollect->template_file)
-                <form action="{{url("/dl_filecollect_file/$filecollect->id/template")}}" method="post">
+                <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/template")}}" method="post">
                     @csrf
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
                 </form>
@@ -144,11 +144,27 @@
                 </div>
                 <div class="input-group">
                     <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
-                    <a href="{{url("/filecollect_profile/$filecollect->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
+                    <a href="{{url("/filecollects/$filecollect->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                 </div>
                 </form>
         <hr>
-        <form action="{{url("/update_filecollect_comment/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+        @if(Auth::user()->isAdmin() and $filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                <form action="{{url("/filecollects/num_of_lines/$filecollect->id")}}" method="post" class="container-fluid">
+                    @csrf
+                    <div class="input-group">
+                        <span class="input-group-text w-50"><strong>Εξαγωγή συγκεντρωτικού αρχείου</strong></span>
+                    </div>
+                    <div class="input-group w-50">
+                        <span class="input-group-text" id="basic-addon2">Αριθμός γραμμών για εξαγωγή</span>
+                        <input name="lines" type="number" value="@if($filecollect->lines_to_extract){{$filecollect->lines_to_extract}}@endif" class="form-control" required>
+                    </div>
+                    <div class="input-group">
+                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                    </div>
+                </form>
+                <hr>
+        @endif
+        <form action="{{url("/filecollects/update_filecollect_comment/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @csrf
             <span class="input-group-text"><strong>Προσθήκη μηνύματος για ενδιαφερόμενους</strong></span>
             <div class="input-group justify-content-center">
@@ -224,7 +240,7 @@
                     
                     @if($one_stakeholder->file)
                         <td>
-                            <form action="{{url("/dl_stake_file/$one_stakeholder->id")}}" method="post">
+                            <form action="{{url("/filecollects/dl_stake_file/$one_stakeholder->id")}}" method="post">
                                 @csrf
                                 <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$one_stakeholder->file}} </button>
                             </form>
@@ -277,10 +293,16 @@
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όσους <strong>δεν</strong> έχουν στείλει αρχείο</button>
                 </form>
-                <form action="{{url("/download_filecollect_directory/$filecollect->id")}}" method="post">
+                <form action="{{url("/filecollects/download_filecollect_directory/$filecollect->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-cloud-download" > Λήψη αρχείων</button>
                 </form>
+                @if(Auth::user()->isAdmin() and $filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' and $filecollect->lines_to_extract)
+                <form action="{{url("/filecollects/extract_xlsx_file/$filecollect->id")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-success bi bi-filetype-xlsx" > Εξαγωγή συγκεντρωτικού αρχείου</button>
+                </form>
+                @endif
                 <form action="{{url("/delete_all_whocans/filecollect/$filecollect->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής stakeholders!')"> Διαγραφή όλων</button>

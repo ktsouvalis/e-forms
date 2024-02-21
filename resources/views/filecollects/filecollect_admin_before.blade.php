@@ -45,13 +45,13 @@
         </div>
     @endif  
     @can('view', $filecollect)
-    <form action="{{url("/change_filecollect_status/$filecollect->id")}}" method="post">
+    <form action="{{url("/filecollects/change_filecollect_status/$filecollect->id")}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_vis_status">
         <button type="submit" class="btn btn-secondary bi bi-binoculars"  onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> {{$tooltip_vis}}</button>
     </form>
 
-    <form action="{{url("/change_filecollect_status/$filecollect->id")}}" method="post">
+    <form action="{{url("/filecollects/change_filecollect_status/$filecollect->id")}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_acc_status">
         <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down"  {{$hidden_acc}}> {{$tooltip_acc}}</button>

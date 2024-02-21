@@ -412,7 +412,7 @@ Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::cl
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);
 
-Route::post('/dl_filecollect_file/{filecollect}/{type}', function(Filecollect $filecollect, $type){
+Route::post('/filecollects/dl_filecollect_file/{filecollect}/{type}', function(Filecollect $filecollect, $type){
     if($type == 'base'){
         $filename = $filecollect->base_file;
     }
@@ -434,24 +434,28 @@ Route::post('/dl_filecollect_file/{filecollect}/{type}', function(Filecollect $f
         return back()->with('failure', 'Το αρχείο δεν υπάρχει.');  
 });//->middleware('can:view,filecollect');
 
-Route::post('/dl_stake_file/{old_data}', [FilecollectController::class,'getSchoolFile']);
+Route::post('/filecollects/dl_stake_file/{old_data}', [FilecollectController::class,'getSchoolFile']);
 
-Route::post('/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
+Route::post('/filecollects/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
 
-Route::post('/update_filecollect_file/{filecollect}/{type}', [FilecollectController::class, 'update_file'])->middleware('can:view,filecollect');
+Route::post('/filecollects/update_filecollect_file/{filecollect}/{type}', [FilecollectController::class, 'update_file'])->middleware('can:view,filecollect');
 
-Route::post('/update_filecollect_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
+Route::post('/filecollects/update_filecollect_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
 
-Route::post('/change_filecollect_status/{filecollect}', [FilecollectController::class, 'changeFilecollectStatus'])->middleware('can:view,filecollect');
+Route::post('/filecollects/change_filecollect_status/{filecollect}', [FilecollectController::class, 'changeFilecollectStatus'])->middleware('can:view,filecollect');
 
-Route::post("/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
+Route::post("/filecollects/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
 
-Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']); //access is checked inside the controller
+Route::post("/filecollects/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']); //access is checked inside the controller
 // ->middleware('can:check,filecollectStakeholder');
 
-Route::post("/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);//access is checked inside the controller
+Route::post("/filecollects/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);//access is checked inside the controller
 
-Route::post("/download_filecollect_directory/{filecollect}", [FilecollectController::class, 'download_filecollect_directory'])->middleware('can:view,filecollect');
+Route::post("/filecollects/download_filecollect_directory/{filecollect}", [FilecollectController::class, 'download_filecollect_directory'])->middleware('can:view,filecollect');
+
+Route::post('/filecollects/num_of_lines/{filecollect}', [FilecollectController::class, 'add_num_of_lines'])->middleware('boss');
+
+Route::post("/filecollects/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
 
 
 // FILESHARES ROUTES

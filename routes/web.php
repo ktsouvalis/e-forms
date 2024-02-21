@@ -739,17 +739,30 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
              exec($command);
         }
         catch(\Exception $e){
-            Log::channel('user_memorable_actions')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
+            try{
+                Log::channel('user_memorable_actions')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
+            }
+            catch(\Exception $e){
+    
+            }
             return back()->with('failure', $e->getMessage());
         }
-
-        Log::channel('user_memorable_actions')->info(Auth::user()->username." successfully backup db");
+        try{
+            Log::channel('user_memorable_actions')->info(Auth::user()->username." successfully backup db");
+        }
+        catch(\Exception $e){
+    
+        }
         ob_end_clean();
         try {
             return response()->download(storage_path('app/' . $backupFilePath))->deleteFileAfterSend();
         }
         catch(\Exception $e) {
-            Log::channel('files')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
+            try{
+                Log::channel('files')->error(Auth::user()->username." failed to backup db ".$e->getMessage());
+            }
+            catch(\Exception $e){
+            }
             return back()->with('failure', $e->getMessage());
         }
     });
@@ -759,27 +772,57 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         if($sudoRequired){
             $fetch = Process::path('/opt/e-forms')->run('git fetch');
             if($fetch->successful()){
-                Log::channel('commands_executed')->info(Auth::user()->username.":git fetch: ".$fetch->output());
+                try{
+                    Log::channel('commands_executed')->info(Auth::user()->username.":git fetch: ".$fetch->output());
+                }
+                catch(\Exception $e){
+        
+                }
                 $pull = Process::path('/opt/e-forms')->run('git pull');
                 if($pull->successful()){
-                    Log::channel('commands_executed')->info(Auth::user()->username.":git pull: ".$pull->output());
+                    try{
+                        Log::channel('commands_executed')->info(Auth::user()->username.":git pull: ".$pull->output());
+                    }
+                    catch(\Exception $e){
+        
+                    }
                     $migrate = Artisan::call('migrate');
                     if ($migrate === 0) {
-                        Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".Artisan::output());
+                        try{
+                            Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".Artisan::output());
+                        }
+                        catch(\Exception $e){
+        
+                        }
                         return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');
                     }
                     else{
-                        Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".Artisan::output());
+                        try{
+                            Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".Artisan::output());
+                        }
+                        catch(\Exception $e){
+        
+                        }
                         return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων');
                     }
                 }
                 else{
-                    Log::channel('commands_executed')->error(Auth::user()->username.":git pull ".$pull->errorOutput());
+                    try{
+                        Log::channel('commands_executed')->error(Auth::user()->username.":git pull ".$pull->errorOutput());
+                    }
+                    catch(\Exception $e){
+        
+                    }
                     return back()->with('failure', 'Αποτυχία ενημέρωσης κώδικα');
                 }
             }    
             else{
-                Log::channel('commands_executed')->error(Auth::user()->username.":git fetch ".$fetch->errorOutput());
+                try{
+                    Log::channel('commands_executed')->error(Auth::user()->username.":git fetch ".$fetch->errorOutput());
+                }
+                catch(\Exception $e){
+        
+                }
                 return back()->with('failure', 'Αποτυχία ενημέρωσης της εφαρμογής');
             }
         }

@@ -765,11 +765,11 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
                     Log::channel('commands_executed')->info(Auth::user()->username.":git pull: ".$pull->output());
                     $migrate = Artisan::call('migrate');
                     if ($migrate === 0) {
-                        Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".$migrate->output());
+                        Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".Artisan::output());
                         return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');
                     }
                     else{
-                        Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".$migrate->errorOutput());
+                        Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".Artisan::output());
                         return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων');
                     }
                 }

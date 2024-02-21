@@ -44,7 +44,7 @@
                     const stakeholderId = $(this).data('stakeholder-id');
                     const isChecked = $(this).is(':checked');
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
-                    
+                    var address = "{{url('/filecollect_checked')}}" + '/' + stakeholderId;
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': csrfToken

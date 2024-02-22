@@ -9,6 +9,12 @@
                 @csrf
                 <button type="submit" class="btn btn-success bi bi-database-down"> Database Backup</button>
             </form>
+            <form class="col-md py-2" method="GET" action="{{ url('/get_logs') }}">
+                <div class="input-group my-2">
+                    <input type="date" id="date" name="date" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary bi bi-journal-text"> Download Logs</button>
+            </form>
             <form class="col-md py-2" action="{{url('/com_change_active_month')}}" method="post">
                 @csrf
                 <button type="submit" class="btn btn-warning"><div class="fa-brands fa-laravel"></div>  artisan change-active-month</button>

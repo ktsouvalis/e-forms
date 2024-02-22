@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\School;
 use App\Mail\ShareLink;
@@ -830,6 +831,41 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
             return back()->with('warning', 'Production mode only');
         }
     });
+
+    Route::get('/get_logs', function(Request $request){
+        $date = $request->query('date');
+        // dd($date);
+        $formattedDate = Carbon::parse($date)->format('Y-m-d');
+        // dd($formattedDate);
+        $logDirectory = storage_path('logs');
+        // dd($logDirectory);
+        $logFiles = glob($logDirectory . '/*' . $formattedDate . '.log');
+        // dd($logFiles);
+        if (empty($logFiles)) {
+            return back()->with('failure', 'Δεν υπάρχουν αρχεία καταγραφής για την επιλεγμένη ημερομηνία');
+        }
+    
+        $zipFile = tempnam(sys_get_temp_dir(), 'logs') . '.zip';
+        $zip = new ZipArchive;
+        if ($zip->open($zipFile, ZipArchive::CREATE) !== TRUE) {
+            return back()->with('failure', 'Αποτυχία δημιουργίας αρχείου zip');
+        }
+    
+        foreach ($logFiles as $logFile) {
+            $zip->addFile($logFile, basename($logFile));
+        }
+    
+        if ($zip->close() !== TRUE) {
+            return back()->with('failure', 'Αποτυχία κλεισίματος αρχείου zip');
+        }
+    
+        if (!file_exists($zipFile)) {
+            return back()->with('failure', 'Δεν υπάρχει το αρχείο zip');
+        }
+        $filename = 'logs_' . $formattedDate . '.zip';
+        ob_end_clean();
+        return response()->download($zipFile, $filename)->deleteFileAfterSend();
+    });
 });
 
 //Sections Routes
@@ -844,5 +880,31 @@ Route::post('/delete_sections', [SectionController::class, function(Request $req
 }]);
 
 //misc routes
+Route::get('/get_logs/{date}', function($date){
+    // Convert the date to the format used in your log filenames
+    $formattedDate = Carbon::parse($date)->format('Y-m-d');
+
+    // Get the path to the log directory
+    $logDirectory = storage_path('logs');
+
+    // Get all log files for the given date
+    $logFiles = glob($logDirectory . '/' . $formattedDate . '*.log');
+
+    // Create a new zip file
+    $zipFile = tempnam(sys_get_temp_dir(), 'logs') . '.zip';
+    $zip = new ZipArchive;
+    $zip->open($zipFile, ZipArchive::CREATE);
+
+    // Add each log file to the zip file
+    foreach ($logFiles as $logFile) {
+        $zip->addFile($logFile, basename($logFile));
+    }
+
+    // Close the zip file
+    $zip->close();
+
+    // Return the zip file for download
+    return response()->download($zipFile);
+})->middleware('boss');
 
 Route::view('/anaplirotes','anaplirotes');

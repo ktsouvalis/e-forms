@@ -1,6 +1,6 @@
 
 <div class="hstack gap-2">
-<div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div>
+<div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div> <small class="text-muted">(Απαντήσεις: {{$filecollect->stakeholders->whereNotNull('file')->count()}} από {{$filecollect->stakeholders->count()}})</small>
 @php
     $currentUrl = request()->url();
 @endphp

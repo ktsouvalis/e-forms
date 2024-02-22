@@ -31,6 +31,7 @@
                     <th id="search">Τμήμα</th>
                     <th id="search">Ορατή</th>
                     <th id="search">Δέχεται</th>
+                    <th>Απαντήσεις</th>
                     <th>Διαγραφή</th>
                 </tr>
             </thead>
@@ -82,6 +83,9 @@
                                 <input name="asks_to" type="hidden" value="ch_acc_status">
                                 <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
                                 </form>
+                            </td>
+                            <td>
+                                {{$one_filecollect->stakeholders->whereNotNull('file')->count()}}/{{$one_filecollect->stakeholders->count()}} 
                             </td>
                             <td>
                                 <form action="{{url("/filecollects/$one_filecollect->id")}}" method="post">

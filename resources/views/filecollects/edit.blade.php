@@ -12,6 +12,17 @@
         <script src="{{asset('datatable_init.js')}}"></script>
         <script src="{{asset('copylink.js')}}"></script>
         <script src="{{asset('summernote-0.8.18-dist/summernote-lite.min.js')}}"></script>
+        {{-- <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+        <script>
+            $(document).ready(function() {
+                $('a[data-toggle="modal"]').on('click', function (event) {
+                    event.preventDefault();
+                    var stakeholderId = $(this).data('stakeholder-id');
+                    $('#stakeholderId').val(stakeholderId);
+                    $('#messageModal').modal('show');
+                });
+            });
+        </script> --}}
         <script>
             $(document).ready(function () {
                 // Get the maximum character limit
@@ -206,6 +217,31 @@
         <div class="vstack gap-2 py-3">
             
             @if($filecollect->stakeholders->count())
+            {{-- <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="messageModalLabel">Αποστολή μηνύματος</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{url("/filecollects/send_personal_message")}}" method="post">
+                            @csrf
+                            <div class="modal-body">
+                                <input type="hidden" id="stakeholderId" name="stakeholder_id">
+                                <div class="form-group">
+                                    <label for="message" class="py-2">Μήνυμα </label>
+                                    <textarea class="form-control" id="message" name="message"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary bi bi-send"> Αποστολή</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> --}}
             <div class="table-responsive">
                 <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>
@@ -235,7 +271,11 @@
                     @else
                         <td>{{$one_stakeholder->stakeholder->afm}}</td>
                     @endif
-                    <td>{{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}</td>
+                    <td>
+                        {{-- <a href="#" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}"> --}}
+                            {{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}
+                        {{-- </a> --}}
+                    </td>
                     <td>{{$one_stakeholder->stakeholder->mail}}</td>
                     
                     @if($one_stakeholder->file)

@@ -458,6 +458,8 @@ Route::post('/filecollects/num_of_lines/{filecollect}', [FilecollectController::
 
 Route::post("/filecollects/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
 
+// Route::post("/filecollects/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
+
 
 // FILESHARES ROUTES
 

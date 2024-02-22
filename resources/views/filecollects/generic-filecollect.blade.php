@@ -133,7 +133,7 @@
         </form>
         
         @if($old_data->file)
-            @if($old_data->checked)
+            {{-- @if($old_data->checked)
                 <div class='alert alert-success text-center'>
                     Το αρχείο σας έχει ελεγχθεί
                 </div>
@@ -141,7 +141,7 @@
                 <div class='alert alert-warning text-center'>
                     Το αρχείο σας δεν έχει ελεγχθεί
                 </div>
-            @endif
+            @endif --}}
             <div class="hstack gap-3">
             <div class="col-md-4 py-3" style="max-width:15rem">
                 <div class="card py-3" style="background-color:rgb(144, 187, 226); text-decoration:none; text-align:center; font-size:small">

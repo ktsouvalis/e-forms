@@ -98,7 +98,7 @@
             </div>
             <div class="col">
                 @if($filecollect->template_file)
-                    <form action="{{url("/dl_filecollect_file/$filecollect->id/template")}}" method="post">
+                    <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/template")}}" method="post">
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text"><b>Πρότυπο Αρχείο</b></span>

@@ -12,7 +12,7 @@
         <script src="{{asset('datatable_init.js')}}"></script>
         <script src="{{asset('copylink.js')}}"></script>
         <script src="{{asset('summernote-0.8.18-dist/summernote-lite.min.js')}}"></script>
-        {{-- <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+        <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script>
             $(document).ready(function() {
                 $('a[data-toggle="modal"]').on('click', function (event) {
@@ -22,7 +22,7 @@
                     $('#messageModal').modal('show');
                 });
             });
-        </script> --}}
+        </script>
         <script>
             $(document).ready(function () {
                 // Get the maximum character limit
@@ -217,7 +217,7 @@
         <div class="vstack gap-2 py-3">
             
             @if($filecollect->stakeholders->count())
-            {{-- <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -241,7 +241,7 @@
                         </form>
                     </div>
                 </div>
-            </div> --}}
+            </div>
             <div class="table-responsive">
                 <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>
@@ -272,9 +272,9 @@
                         <td>{{$one_stakeholder->stakeholder->afm}}</td>
                     @endif
                     <td>
-                        {{-- <a href="#" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}"> --}}
+                        <a href="#" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}">
                             {{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}
-                        {{-- </a> --}}
+                        </a>
                     </td>
                     <td>{{$one_stakeholder->stakeholder->mail}}</td>
                     

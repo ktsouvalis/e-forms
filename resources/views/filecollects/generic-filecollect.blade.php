@@ -165,11 +165,16 @@
             @endif
               
         </div>
-        {{-- @if($old_data->message_from_admin)
-        <div class="col-md-4 py-3" style="max-width:15rem">
-            <div class="card py-3" style="background-color:rgb(46, 157, 81); text-decoration:none; text-align:center; font-size:small">
-                <div>Σχόλιο από διαχειριστή στις {{$old_data->message_from_admin_at}}: <br><strong> {{$old_data->message_from_admin}}</strong></div>
-            </div>
-        </div>
-        @endif  --}}
+        
         @endif
+        @if($old_data->message_from_admin)
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-md-4 py-3" style="max-width:15rem">
+                    <div class="card py-3" style="background-color:rgb(46, 157, 81); text-decoration:none; text-align:center; font-size:small">
+                        <div>Σχόλιο από διαχειριστή στις {{$old_data->message_from_admin_at}}: <br><strong> {{$old_data->message_from_admin}}</strong></div>
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+        @endif 

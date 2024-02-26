@@ -458,7 +458,7 @@ Route::post('/filecollects/num_of_lines/{filecollect}', [FilecollectController::
 
 Route::post("/filecollects/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
 
-// Route::post("/filecollects/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
+Route::post("/filecollects/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
 
 
 // FILESHARES ROUTES
@@ -882,31 +882,5 @@ Route::post('/delete_sections', [SectionController::class, function(Request $req
 }]);
 
 //misc routes
-Route::get('/get_logs/{date}', function($date){
-    // Convert the date to the format used in your log filenames
-    $formattedDate = Carbon::parse($date)->format('Y-m-d');
-
-    // Get the path to the log directory
-    $logDirectory = storage_path('logs');
-
-    // Get all log files for the given date
-    $logFiles = glob($logDirectory . '/' . $formattedDate . '*.log');
-
-    // Create a new zip file
-    $zipFile = tempnam(sys_get_temp_dir(), 'logs') . '.zip';
-    $zip = new ZipArchive;
-    $zip->open($zipFile, ZipArchive::CREATE);
-
-    // Add each log file to the zip file
-    foreach ($logFiles as $logFile) {
-        $zip->addFile($logFile, basename($logFile));
-    }
-
-    // Close the zip file
-    $zip->close();
-
-    // Return the zip file for download
-    return response()->download($zipFile);
-})->middleware('boss');
 
 Route::view('/anaplirotes','anaplirotes');

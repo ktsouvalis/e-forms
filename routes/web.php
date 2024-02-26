@@ -458,6 +458,8 @@ Route::post('/filecollects/num_of_lines/{filecollect}', [FilecollectController::
 
 Route::post("/filecollects/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
 
+Route::post("/filecollects/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
+
 
 // FILESHARES ROUTES
 
@@ -606,9 +608,6 @@ Route::post("/reset_links_to_all/{type}", function($type){
 //MONTH Routes
 
 Route::group(['middleware' => 'can:changeActiveMonth,'.Operation::class], function () {
-
-    Route::view('/month','month');
-
     Route::post('/set_active_month', [MonthController::class,'setActiveMonth']);
 });
 
@@ -625,11 +624,6 @@ Route::group(['middleware' => 'can:changeVirtualMonth,'.Operation::class], funct
 
 Route::group(['middleware' => "can:executeCommands," .Operation::class], function () {
 
-    Route::get('/commands', function(){
-        $maintenanceMode = app()->isDownForMaintenance();
-        return view('commands', ['maintenanceMode' => $maintenanceMode]);
-    });
-
     Route::post('/com_change_active_month', function () {
         Artisan::call('change-active-month');
         $output = session()->get('command_output');
@@ -639,7 +633,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         catch(Throwable $e){
     
         }
-        return redirect(url('/commands'))->with('command', $output);
+        return back()->with('command', $output);
     });
 
     Route::post('/com_eDirecorate_update', function () {
@@ -651,7 +645,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         catch(Throwable $e){
     
         }
-        return redirect(url('/commands'))->with('command', $output);
+        return back()->with('command', $output);
     });
 
     Route::post('/com_change_microapp_accept_status', function () {
@@ -663,7 +657,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         catch(Throwable $e){
     
         }
-        return redirect(url('/commands'))->with('command', $output);
+        return back()->with('command', $output);
     });
 
     Route::post('/com_edit_super_admins', function (Request $request) {
@@ -676,7 +670,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         catch(Throwable $e){
     
         }
-        return redirect(url('/commands'))->with('command',$output);
+        return back()->with('command',$output);
     });
 
     Route::post('/app_down', function (Request $request){
@@ -699,7 +693,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         catch(Throwable $e){
     
         }
-        return redirect(url('/'))->with('success', 'Maintenance Mode OFF');
+        return back()->with('success', 'Maintenance Mode OFF');
     });
 
     Route::post('/com_directorate_name_update', function(Request $request){
@@ -834,13 +828,9 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
 
     Route::get('/get_logs', function(Request $request){
         $date = $request->query('date');
-        // dd($date);
         $formattedDate = Carbon::parse($date)->format('Y-m-d');
-        // dd($formattedDate);
         $logDirectory = storage_path('logs');
-        // dd($logDirectory);
         $logFiles = glob($logDirectory . '/*' . $formattedDate . '.log');
-        // dd($logFiles);
         if (empty($logFiles)) {
             return back()->with('failure', 'Δεν υπάρχουν αρχεία καταγραφής για την επιλεγμένη ημερομηνία');
         }

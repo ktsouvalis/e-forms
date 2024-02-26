@@ -5,13 +5,6 @@
     $currentUrl = request()->url();
 @endphp
 
-{{-- @if (Str::contains($currentUrl, 'filecollect_profile'))
-    <a class="btn btn-primary bi bi-eye px-1" data-toggle="tooltip" data-placement="top" title="Απαντήσεις" style="text-decoration: none;" href="{{ url("/admin".$filecollect->url) }}"></a>
-@elseif (Str::contains($currentUrl, 'admin'))
-    @can('update', $filecollect)
-        <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ url("/filecollect_profile/$filecollect->id") }}"></a>
-    @endcan
-@endif --}}
 </div>
 <hr>
 @php

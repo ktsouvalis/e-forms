@@ -162,6 +162,19 @@
                     </div>
                 </div>
                 @endif  
-            @endif    
+            @endif
+              
         </div>
+        
         @endif
+        @if($old_data->message_from_admin)
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-md-4 py-3" style="max-width:20rem">
+                    <div class="card py-3 bg bg-warning" style="text-decoration:none; text-align:center; font-size:small">
+                        <div><strong>Σχόλιο από διαχειριστή</strong> στις {{$old_data->message_from_admin_at}}: <br> {{$old_data->message_from_admin}}</div>
+                    </div>
+                </div>
+                <div class="col"></div>
+            </div>
+        @endif 

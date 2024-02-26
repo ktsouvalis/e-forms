@@ -517,4 +517,14 @@ class FilecollectController extends Controller
         ob_end_clean();
         return response()->download($newFilePath)->deleteFileAfterSend(true);
     }
+
+    public function send_personal_message(Request $request){
+        $stakeholder = FilecollectStakeholder::find($request->input('stakeholder_id'));
+        $stakeholder->message_from_admin = $request->input('message');
+        $stakeholder->message_from_admin_at = Carbon::now();
+        $stakeholder->save();
+
+        return back()->with('success', 'Το μήνυμα εστάλη');
+        // return back()->with('success', $stakeholder->stakeholder->name);
+    }
 }

@@ -220,19 +220,12 @@
         <div class="vstack gap-2 py-3">
             
             @if($filecollect->stakeholders->count())
-            <script>
-                $(document).ready(function() {
-                    
-                });
-            </script>
             <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="messageModalLabel">Αποστολή μηνύματος</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                {{-- <span aria-hidden="true">&times;</span> --}}
-                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{{url("/filecollects/send_personal_message")}}" method="post">
                             @csrf
@@ -251,14 +244,6 @@
                     </div>
                 </div>
             </div>
-
-            <script>
-                $(document).ready(function() {
-                    $('#messageModal').on('shown.bs.modal', function() {
-                        $('#message').focus();
-                    });
-                });
-            </script>
             <div class="table-responsive">
                 <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>

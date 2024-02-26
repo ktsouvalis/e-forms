@@ -29,10 +29,13 @@
                 $one_operation = $operation;
             }
         @endphp
+        @if($one_operation->url!='/month' and $one_operation->url!='/commands')
+        
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_operation->color}}; text-align:center;">
             <div class="text-dark {{$one_operation->icon}}"></div>
             <a href="{{url($one_operation->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_operation->name}}</a>
         </div>
+        @endif
     @endforeach
     <div class="badge text-wrap py-2" style="width: 10rem; background-color:#00bfff; text-align:center;">
         <div class="text-dark fa-solid fa-file-pdf"></div>

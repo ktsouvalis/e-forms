@@ -24,7 +24,7 @@ class MonthController extends Controller
         $new_active_month->active = 1;
         $new_active_month->save();
         Log::channel('user_memorable_actions')->info(Auth::user()->username." set Active month to ".Month::getActiveMonth()->name);
-        return redirect(url('/month'))->with('success', "Ενεργός μήνας: ". Month::getActiveMonth()->name);
+        return back()->with('success', "Ενεργός μήνας: ". Month::getActiveMonth()->name);
     }
 
     public function setVirtualMonth(Request $request, School $school){

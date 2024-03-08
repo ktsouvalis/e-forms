@@ -478,6 +478,7 @@ class FilecollectController extends Controller
                 }
                 try{
                     $reader = IOFactory::createReader('Xlsx');
+                    $reader->setReadDataOnly(true);
                     $spreadsheetInput = $reader->load($filePath);
                     $worksheet = $spreadsheetInput->getActiveSheet();
 
@@ -501,6 +502,8 @@ class FilecollectController extends Controller
 
                         $sheetOutput->fromArray($rowData, null, "A{$new_sheet_row}");
                         $new_sheet_row++;
+                        $spreadsheetInput->disconnectWorksheets();
+                        unset($spreadsheetInput);
                     }
                 }
                 catch(\Exception $e){

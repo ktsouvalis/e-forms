@@ -516,7 +516,7 @@ class FilecollectController extends Controller
         $writer = new Xlsx($spreadsheetOutput);
         $newFilePath = "{$directory}/filecollect".$filecollect->id."_extracted_data.xlsx";
         $writer->save($newFilePath);
-
+        unset($spreadsheetOutput);
         ob_end_clean();
         return response()->download($newFilePath)->deleteFileAfterSend(true);
     }

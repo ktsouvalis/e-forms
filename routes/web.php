@@ -33,6 +33,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
@@ -279,6 +280,10 @@ Route::post('/save_microapp/{microapp}', [MicroappController::class,'saveProfile
 Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+
+Route::post("/school_app/enrollments/{select}", [EnrollmentController::class, 'save']);
+
+Route::get("/school_app/enrollments/{file}", [EnrollmentController::class, 'download_file']);
 
 Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
 
@@ -528,7 +533,7 @@ Route::match(array('GET','post'), "/share_link/{type}/{my_id}", function($type, 
     
         }
         return back()->with('warning', 'Η αποστολή δεν έγινε και τα σφάλματα που καταγράφηκαν στο Log mails');
-    }
+    }  
     try{
         Log::channel('mails')->info("Σύνδεσμος στάλθηκε προσωπικά στο ".$$type->mail);
     }

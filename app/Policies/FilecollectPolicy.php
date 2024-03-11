@@ -19,6 +19,7 @@ class FilecollectPolicy
     {
         //
         if($user->isAdmin()) return true;
+        if($user->isDirector()) return true;
         if($user->department->filecollects->find($filecollect->id)) return true;
         return false;
     }

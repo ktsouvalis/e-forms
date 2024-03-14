@@ -502,13 +502,17 @@ class FilecollectController extends Controller
 
                         $sheetOutput->fromArray($rowData, null, "A{$new_sheet_row}");
                         $new_sheet_row++;
-                        $spreadsheetInput->disconnectWorksheets();
-                        unset($spreadsheetInput);
                     }
                 }
                 catch(\Exception $e){
                     Log::channel('files')->error(Auth::user()->username." failed to extract file $filePath: ".$e->getMessage());
-                    continue;
+                }
+                finally{
+                    unset($reader);
+                    $spreadsheetInput->disconnectWorksheets();
+                    unset($spreadsheetInput);
+                    unset($worksheet); // Unset the $worksheet variable to free up memory
+                    gc_collect_cycles();
                 }
             }
         }
@@ -517,6 +521,9 @@ class FilecollectController extends Controller
         $newFilePath = "{$directory}/filecollect".$filecollect->id."_extracted_data.xlsx";
         $writer->save($newFilePath);
         unset($spreadsheetOutput);
+        unset($writer);
+        $spreadsheetOutput->disconnectWorksheets();
+        gc_collect_cycles();
         ob_end_clean();
         return response()->download($newFilePath)->deleteFileAfterSend(true);
     }

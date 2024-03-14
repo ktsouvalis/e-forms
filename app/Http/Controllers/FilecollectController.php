@@ -520,9 +520,9 @@ class FilecollectController extends Controller
         $writer = new Xlsx($spreadsheetOutput);
         $newFilePath = "{$directory}/filecollect".$filecollect->id."_extracted_data.xlsx";
         $writer->save($newFilePath);
+        $spreadsheetOutput->disconnectWorksheets();
         unset($spreadsheetOutput);
         unset($writer);
-        $spreadsheetOutput->disconnectWorksheets();
         gc_collect_cycles();
         ob_end_clean();
         return response()->download($newFilePath)->deleteFileAfterSend(true);

@@ -63,7 +63,7 @@
                         <tr>
                             <form action="{{url("/school_app/enrollments/enrolled")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                                 @csrf
-                            <td>Αριθμός εγγεγραμμένων μαθητών Α' Τάξης 2024-25</td>
+                            <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  2024-25</td>
                             <td>
                                 <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
                             </td>
@@ -108,13 +108,13 @@
                 </table>
             </nav>
             
-            <h3>Στοιχεία εγγραφής στο Ολοήμερο @if($school->primary == 1) (μαθητές Α' Τάξης) @else πρόγραμμα του Νηπιαγωγείου @endif</h3>  {{-- ΔΗΜΟΤΙΚΑ:  / ΝΗΠΙΑΓΩΓΕΙΑ: Εγγραφέντες στο Ολοήμερο --}}     
+            <h3>Στοιχεία εγγραφής στο Ολοήμερο @if($school->primary == 1) πρόγραμμα. @else πρόγραμμα του Νηπιαγωγείου. @endif</h3>  {{-- ΔΗΜΟΤΙΚΑ:  / ΝΗΠΙΑΓΩΓΕΙΑ: Εγγραφέντες στο Ολοήμερο --}}     
             <nav class="navbar navbar-light bg-light">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Στοιχεία</th>
-                        <th>@if($school->primary == 1) Τάξη Α' @else Προνήπια / Νήπια @endif</th>
+                        <th>@if($school->primary == 1) Μαθητές Ολοήμερου @else Προνήπια / Νήπια @endif</th>
                         {{-- <th>Τάξη Β'</th>
                         <th>Τάξη Γ'</th>
                         <th>Τάξη Δ'</th>
@@ -132,11 +132,11 @@
                         <td> 
                             @if($school->primary == 1)
                                 @if($school->has_extended_all_day == 1)
-                                <form action="{{url("/school_app/$appname/2_enrollments_primary_ext_all_day_school.xlsx/Ολοήμερο_A_Τάξη.xlsx")}}" method="get"class="container-fluid">
+                                <form action="{{url("/school_app/$appname/2_enrollments_primary_ext_all_day_school.xlsx/Ολοήμερο_2024_25.xlsx")}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @else
-                                <form action="{{url("/school_app/$appname/2_enrollments_primary_all_day_school.xlsx/Ολοήμερο_A_Τάξη.xlsx")}}" method="get"class="container-fluid">
+                                <form action="{{url("/school_app/$appname/2_enrollments_primary_all_day_school.xlsx/Ολοήμερο_2024_25.xlsx")}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @endif
@@ -156,7 +156,7 @@
                     <form action="{{url("/school_app/$appname/all_day")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                     <tr>
-                        <td>Αριθμός εγγεγραμμένων μαθητών @if($school->primary == 1) Α' Τάξης @else - Νηπίων/Προνηπίων - @endif στο Ολοήμερο 2024-25</td>
+                        <td>Αριθμός εγγεγραμμένων  @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο 2024-25</td>
                         <td>
                             <input name="nr_of_students1_all_day1" id="nr_of_students1_all_day1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1_all_day1}}@endif">
                         </td>
@@ -165,7 +165,7 @@
                     
                     <tr>
                         <td>
-                            Υποβολή Αρχείου μαθητών της Α' Τάξης στο Ολοήμερο
+                            Υποβολή Αρχείου @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο
                             <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
                         </td>
                         <td>

@@ -237,18 +237,18 @@
             <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
-                    <th id="search">Μήνας</th>
+                    <th id="search"></th>
                     <th id="search">Σχολείο</th>
-                    <th id="search">Λειτουργία</th>
-                    <th id="">Μαθητές Πρωινή Υποδοχή</th>
-                    <th id="">Τμήματα 15.00</th>
-                    <th id="">Μαθητές 15.00</th>
-                    <th id="">Τμήματα 16.00</th>
-                    <th id="">Μαθητές 16.00</th>
-                    <th id="">Τμήματα 17.30</th>
-                    <th id="">Μαθητές 17.30</th>
-                    <th id="">Σχόλια</th>
-                    <th>Αρχείο</th>
+                    <th id="search"></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th id=""></th>
+                    <th></th>
                     <th>Τελευταία ενημέρωση</th>
                 </tr>
             </thead>

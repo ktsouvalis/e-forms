@@ -158,7 +158,7 @@
                     <tr>
                         <td>Αριθμός εγγεγραμμένων μαθητών @if($school->primary == 1) Α' Τάξης @else - Νηπίων/Προνηπίων - @endif στο Ολοήμερο 2024-25</td>
                         <td>
-                            <input name="nr_of_students1_all_day1" id="nr_of_students1_all_day1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1_all_day}}@endif">
+                            <input name="nr_of_students1_all_day1" id="nr_of_students1_all_day1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1_all_day1}}@endif">
                         </td>
                         {{-- </td><td>50</td><td>25</td><td>26</td><td>28</td><td>5</td><td>150</td>  --}}
                     </tr>

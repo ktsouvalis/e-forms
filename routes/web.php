@@ -33,7 +33,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
-use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
@@ -283,7 +283,9 @@ Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 Route::post("/school_app/enrollments/{select}", [EnrollmentController::class, 'save']);
 
-Route::get("/school_app/enrollments/{file}", [EnrollmentController::class, 'download_file']);
+Route::post("/school_app/enrollments/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file']);
+
+Route::get("/school_app/enrollments/{file}/{download_file_name}", [EnrollmentController::class, 'download_file']);
 
 Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
 

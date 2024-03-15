@@ -15,8 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('school_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->text('comments')->nullable();
-            $table->string('file1');
-
+            $table->integer('nr_of_students1');
+            $table->string('enrolled_file1');
+            $table->integer('nr_of_students1_all_day1')->nullable();
+            $table->string('all_day_file1')->nullable();
+            $table->string('extra_section_file1')->nullable();
+            $table->string('boundaries_st_file1')->nullable();
             $table->timestamps();
         });
     }

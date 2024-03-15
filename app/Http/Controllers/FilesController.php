@@ -32,10 +32,20 @@ class FilesController extends Controller
         return response()->json(['success'=>'File uploaded successfully'], 200);
     }
 
-    public function download_file($directory, $original_filename, $driver){
+    public function download_file($directory, $original_filename, $driver, $desiredFilename = null){
+        if($desiredFilename){
+            if(strpos(substr($desiredFilename, -6), ".")){//if there is an extension to given filename
+                $filename = $desiredFilename;
+            } else {//find the extension and add it to the given filename
+                $extension = $file->extension();
+                $filename = $desiredFilename.$extension;
+            }
+        } else {
+            $filename = $original_filename;
+        }
         try{
             ob_end_clean();
-            return Storage::disk($driver)->download($directory."/".$original_filename);   
+            return Storage::disk($driver)->download($directory."/".$original_filename, $filename);
         }
         catch(\Exception $e){
             return response()->json(['error'=>$e->getMessage()], 500);

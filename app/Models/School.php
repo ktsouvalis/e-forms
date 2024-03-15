@@ -8,6 +8,7 @@ use App\Models\microapps\Fruit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
 use App\Models\microapps\Immigrant;
+use App\Models\microapps\Enrollment;
 use App\Models\microapps\SchoolArea;
 use App\Models\microapps\AllDaySchool;
 use App\Models\microapps\InternalRule;
@@ -72,6 +73,10 @@ class School extends Authenticatable
 
     public function fileshares(){
         return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
+    }
+
+    public function enrollments(){
+        return $this->hasOne(Enrollment::class);
     }
 
     public function fruit(){

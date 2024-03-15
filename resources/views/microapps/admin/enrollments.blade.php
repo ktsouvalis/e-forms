@@ -183,7 +183,7 @@
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Αίτημα δημιουργίας επιπλέον τμήματος </button>
                     </form>
                 </div>
-            </div>
+            
             {{-- Δημοτικό - Μαθητές στα όρια --}}
             <div class="hstack gap-3">
                 <form action="{{url("school_app/enrollments/upload_file/4_boundary_students_dim.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -224,6 +224,7 @@
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Αίτημα δημιουργίας επιπλέον τμήματος </button>
                 </form>
             </div>
+        </div>
         </div>
         </nav>
         @endif

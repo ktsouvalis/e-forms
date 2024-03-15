@@ -118,7 +118,9 @@ class EnrollmentController extends Controller
                 }
                 return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
-            
+            $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+            $stakeholder->hasAnswer = 1;
+            $stakeholder->save();
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
         else{

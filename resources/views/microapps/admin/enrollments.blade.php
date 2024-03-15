@@ -210,7 +210,7 @@
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
-                        <span class="input-group-text w-75"><strong>Νηπ. - Αίτημα δημιουργίας επιπλέον τμήματος</strong></span>
+                        <span class="input-group-text w-75"><strong>Νηπ. - Μαθητές στα όρια</strong></span>
                     </div>
                     <div class="input-group w-75">
                         <input name="file" type="file" class="form-control"><br>
@@ -221,7 +221,7 @@
                     </div>
                 </form>
                 <form action="{{url("/school_app/enrollments/4_boundary_students_nip.xlsx/4_boundary_students_nip.xlsx")}}" method="get">
-                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Αίτημα δημιουργίας επιπλέον τμήματος </button>
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Μαθητές στα όρια </button>
                 </form>
             </div>
         </div>

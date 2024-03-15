@@ -478,6 +478,7 @@ class FilecollectController extends Controller
                 }
                 try{
                     $reader = IOFactory::createReader('Xlsx');
+                    $reader->setReadDataOnly(true);
                     $spreadsheetInput = $reader->load($filePath);
                     $worksheet = $spreadsheetInput->getActiveSheet();
 
@@ -505,7 +506,13 @@ class FilecollectController extends Controller
                 }
                 catch(\Exception $e){
                     Log::channel('files')->error(Auth::user()->username." failed to extract file $filePath: ".$e->getMessage());
-                    continue;
+                }
+                finally{
+                    unset($reader);
+                    $spreadsheetInput->disconnectWorksheets();
+                    unset($spreadsheetInput);
+                    unset($worksheet); // Unset the $worksheet variable to free up memory
+                    gc_collect_cycles();
                 }
             }
         }
@@ -513,7 +520,10 @@ class FilecollectController extends Controller
         $writer = new Xlsx($spreadsheetOutput);
         $newFilePath = "{$directory}/filecollect".$filecollect->id."_extracted_data.xlsx";
         $writer->save($newFilePath);
-
+        $spreadsheetOutput->disconnectWorksheets();
+        unset($spreadsheetOutput);
+        unset($writer);
+        gc_collect_cycles();
         ob_end_clean();
         return response()->download($newFilePath)->deleteFileAfterSend(true);
     }

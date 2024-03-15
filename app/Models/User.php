@@ -80,6 +80,10 @@ class User extends Authenticatable
         return Superadmin::where('user_id',Auth::id())->exists(); 
     }
 
+    public static function isDirector(){
+        return (Auth::user()->department->name == 'Διευθυντής Εκπαίδευσης');
+    }
+
     public function addedbys()
     {
         return $this->morphMany(FileshareStakeholder::class, 'addedby');

@@ -18,7 +18,8 @@
         <title>Σχολεία</title>
     @endpush
     @php
-        $all_schools = App\Models\School::all();
+        $active_schools = App\Models\School::where('is_active',1)->get();
+        $special = App\Models\School::where('code', 9999999)->first();
     @endphp
         <p class="h4">Σχολεία Διεύθυνσης</p>
         @if(Illuminate\Support\Facades\DB::table('last_update_schools')->find(1))
@@ -63,14 +64,14 @@
                         <th id="search">Λειτ.</th>
                         <th id="search">Κωδικός</th>
                         <th id="search">Δήμος</th>
-                        <th id="search">Διευθυντής</th>
-                        <th id="search">last login</th>
+                        {{-- <th id="search">Διευθυντής</th> --}}
+                        {{-- <th id="search">last login</th> --}}
                         <th id="search">Σύμβουλος Εκπαίδευσης</th>
-                        <th id="search">Μαζική Αποστολή</th>
+                        {{-- <th id="search">Μαζική Αποστολή</th> --}}
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($all_schools as $school)
+                @foreach($active_schools as $school)
                     @php
                         $text = url("/school/$school->md5");
                     @endphp
@@ -86,30 +87,46 @@
                         <td >{{$school->code}}</td>
                         <td >{{$school->municipality->name}}</td>
 
-                        @if($school->director)
+                        {{-- @if($school->director)
                         <td>{{$school->director->surname}} {{$school->director->name}}</td>
                         @else
                         <td> - </td>
-                        @endif
+                        @endif --}}
                         
-                        @if($school->logged_in_at)
+                        {{-- @if($school->logged_in_at)
                             <td>{{Illuminate\Support\Carbon::parse($school->logged_in_at)}}</td>
                         @else
                             <td > - </td>
-                        @endif
+                        @endif --}}
                         @if($school->schregion)
                             <td>{{$school->schregion->consultant->surname}} {{$school->schregion->consultant->name}}</td>
                         @else
                             <td>-</td>
                         @endif
                         
-                        @if($school->sent_link_mail)
+                        {{-- @if($school->sent_link_mail)
                             <td style="text-align:center"><i class="btn btn-success bi bi-check2-circle"></i></td>
                         @else
                             <td style="text-align:center"> - </td>
-                        @endif
+                        @endif --}}
                     </tr>
                 @endforeach
+                <tr>
+                    <td style="text-align:center">
+                        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{url("/school/$special->md5")}}"> </button>
+                    </td>
+                    <td >{{$special->name}}</td>
+                    <td >{{$special->telephone}}</td>
+                    <td >{{$special->mail}}</td>
+                    <td >{{$special->organikotita}}</td>
+                    <td >{{$special->leitourgikotita}}</td>
+                    <td >{{$special->code}}</td>
+                    <td >{{$special->municipality->name}}</td>
+                    {{-- <td >{{$special->director->surname}} {{$special->director->name}}</td> --}}
+                    {{-- <td >{{Illuminate\Support\Carbon::parse($special->logged_in_at)}}</td> --}}
+                    <td >{{$special->schregion->consultant->surname}} {{$special->schregion->consultant->name}}</td>
+                    {{-- <td style="text-align:center"><i class="btn btn-success bi bi-check2-circle"></i></td> --}}
+                </tr>
             </tbody>
             </table>
             </div>

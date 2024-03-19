@@ -63,17 +63,19 @@
                     {{-- <th class="align-middle">Αποστολή συνδέσμου</th> --}}
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
-                    <th id="search">email</th>
-                    <th id="search">Τηλ.</th>
+                    <th id="">email</th>
+                    <th id="">Τηλ.</th>
                     <th id="search">Κλάδος</th>
                     <th id="search">ΑΦΜ</th>
-                    <th id="search">Οργ.</th>
                     <th id="search">Υπηρέτηση</th>
+                    <th id="search">Δήμος Υπηρέτησης</th>
+                    <th id="search">Οργ.</th>
                     <th id="search">AΜ</th>
                     <th id="search">Σχ. Εργ.</th>
-                    <th id="search">email ΠΣΔ</th>
-                    <th id="search">last login</th> 
-                    <th id="search">Μαζική Αποστολή</th>
+
+                    {{-- <th id="">email ΠΣΔ</th> --}}
+                    {{-- <th id="search">last login</th> 
+                    <th id="search">Μαζική Αποστολή</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -94,16 +96,22 @@
                     <td>{{$teacher->telephone}}</td>
                     <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->afm}}</td>
-                    <td>{{$teacher->organiki->name}}</td>
                     @if($teacher->ypiretisi_id!=null)
                         <td>{{$teacher->ypiretisi->name}}</td>
+                        @if($teacher->ypiretisi->municipality)
+                            <td>{{$teacher->ypiretisi->municipality->name}}</td>
+                        @else
+                            <td>-</td>
+                        @endif
                     @else
                         <td>-</td>
+                        <td>-</td>
                     @endif
+                    <td>{{$teacher->organiki->name}}</td>
                     <td>{{$teacher->am}}</td>
                     <td>{{$teacher->sxesi_ergasias->name}}</td>
-                    <td>{{$teacher->sch_mail}}</td>
-                    @if($teacher->logged_in_at)
+                    {{-- <td>{{$teacher->sch_mail}}</td> --}}
+                    {{-- @if($teacher->logged_in_at)
                         <td>{{Illuminate\Support\Carbon::parse($teacher->logged_in_at)}}</td>
                     @else
                         <td> - </td>
@@ -112,7 +120,7 @@
                         <td style="text-align:center"><i class="btn btn-success bi bi-check2-circle"></i></td>
                     @else
                         <td style="text-align:center"> - </td>
-                    @endif
+                    @endif --}}
                 </tr>
             @endif  
             @endforeach

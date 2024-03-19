@@ -85,14 +85,14 @@
                     </form>
                 </nav>
             </div> 
-            <div class=" py-3">
+            <div class="py-3">
                 <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th id="search">ID</th>
+                        {{-- <th id="search">ID</th> --}}
                         <th id="search">Τύπος</th>
-                        <th id="">Ημερομηνία</th>
+                        <th id="">Ημερομηνία <p class="text-muted">(Ε/Μ/Η)</p></th>
                         <th id="">Δράση</th>
                         <th id="">Πρακτικό</th>
                         <th id="">Αρχείο</th>
@@ -110,11 +110,12 @@
                             $today = Illuminate\Support\Carbon::now();
                         @endphp
                         <tr>
-                            <td>
+                            {{-- <td>
                                 <div>{{$outing->id}}</div>
-                            </td>
+                            </td> --}}
                             <td>{{$outing->type->description}}</td> 
-                            <td>{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}} </td>
+                            <td>{{$my_date->year}}/{{$my_date->month}}/{{$my_date->day}} </td>
+                            {{-- <td>{{$outing->outing_date}} </td> --}}
                             <td>{{$outing->destination}}</td>
                             <td>{{$outing->record}}</td>
                             <td>

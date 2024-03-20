@@ -191,7 +191,7 @@
                         @php
                             $file2 = $old_data->all_day_file1;
                         @endphp<td>
-                        <form action="{{url("/school_app/enrollments/enrollments1_$school_code.xlsx/$file2")}}" method="get"class="container-fluid">
+                        <form action="{{url("/school_app/enrollments/enrollments2_$school_code.xlsx/$file2")}}" method="get"class="container-fluid">
                             <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file2}} </button>
                         </form>
                         </td><tr>

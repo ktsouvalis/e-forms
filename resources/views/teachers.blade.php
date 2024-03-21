@@ -112,20 +112,20 @@
     <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-warning">
                     <h5 class="modal-title" id="messageModalLabel">Λοιπές Πληροφορίες Εκπαιδευτικού</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-light">
                     <p></p>   
                     <p></p>
                     <p></p>
-                    <p></p>
+                    <b><p></p></b>
                     <p></p>
                     <br>
                     <small style="text-align: end"><p class="text-muted"></p></small>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

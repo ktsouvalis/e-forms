@@ -10,12 +10,13 @@
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
-        <script src="{{asset('copylink.js')}}"></script>
         <script src="{{asset('summernote-0.8.18-dist/summernote-lite.min.js')}}"></script>
         <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script>
             $(document).ready(function() {
                 $('a[data-toggle="modal"]').on('mousedown', function (event) {
+                    var stakeholderName = $(this).data('stakeholder-name');
+                    $('#messageModal .modal-header').text('Μήνυμα προς ' + stakeholderName);
                     event.preventDefault();
                     var stakeholderId = $(this).data('stakeholder-id');
                     $('#stakeholderId').val(stakeholderId);
@@ -225,22 +226,21 @@
             <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header bg-primary text-light">
                             <h5 class="modal-title" id="messageModalLabel">Αποστολή μηνύματος</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{{url("/filecollects/send_personal_message")}}" method="post">
                             @csrf
-                            <div class="modal-body">
+                            <div class="modal-body bg-light">
                                 <input type="hidden" id="stakeholderId" name="stakeholder_id">
                                 <div class="form-group">
-                                    <label for="message" class="py-2">Μήνυμα </label>
                                     <textarea class="form-control" id="message" name="message"></textarea>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary bi bi-send"> Αποστολή</button>
+                            <div class="modal-footer bg-light">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
+                                <button type="submit" class="btn btn-outline-primary bi bi-send"> Αποστολή</button>
                             </div>
                         </form>
                     </div>
@@ -275,8 +275,14 @@
                     @else
                         <td>{{$one_stakeholder->stakeholder->afm}}</td>
                     @endif
+                    @php
+                        if($one_stakeholder->stakeholder instanceof App\Models\School)
+                            $name = $one_stakeholder->stakeholder->name;
+                        else
+                            $name = $one_stakeholder->stakeholder->surname . ' ' . $one_stakeholder->stakeholder->name;
+                    @endphp
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}">
+                        <a href="#" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}" data-stakeholder-name = "{{$name}}">
                             {{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}
                         </a>
                     </td>

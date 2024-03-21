@@ -60,9 +60,18 @@
                     $('#infoModal .modal-body p:eq(0)').text('Σχολείο: ' + school.name);
                     $('#infoModal .modal-body p:eq(1)').text('Τηλέφωνο Σχολείου: ' + school.telephone);
                     $('#infoModal .modal-body p:eq(2)').text('Διεύθυνση Σχολείου: ' + school.address);
-                    $('#infoModal .modal-body p:eq(3)').text('Διευθυντής/Διευθύντρια: ' + school.director.surname + ' ' + school.director.name);
-                    $('#infoModal .modal-body p:eq(4)').text('Τηλέφωνο Διευθυντή/Διευθύντριας: ' + school.director.telephone);
-                    $('#infoModal .modal-body p:eq(5)').text('Τελευταία σύνδεση: ' + school.logged_in_at);
+                    if(school.director){
+                        $('#infoModal .modal-body p:eq(3)').text('Διευθυντής/Διευθύντρια: ' + school.director.surname + ' ' + school.director.name);
+                        $('#infoModal .modal-body p:eq(4)').text('Τηλέφωνο Διευθυντή/Διευθύντριας: ' + school.director.telephone);
+                    }else{
+                        $('#infoModal .modal-body p:eq(3)').text('Διευθυντής/Διευθύντρια: -');
+                        $('#infoModal .modal-body p:eq(4)').text('Τηλέφωνο Διευθυντή/Διευθύντριας: -');
+                    }
+                    if(school.logged_in_at){
+                        $('#infoModal .modal-body p:eq(5)').text('Τελευταία σύνδεση: ' + school.logged_in_at);
+                    }else{
+                        $('#infoModal .modal-body p:eq(5)').text('Τελευταία σύνδεση: -');
+                    }
                     setTimeout(function() {
                         $('#infoModal').modal('show');
                     }, 50);
@@ -176,14 +185,18 @@
                     <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{url("/school/$special->md5")}}"> </button>
                     </td>
+                    <td >{{$special->code}}</td>
                     <td >{{$special->name}}</td>
-                    <td >{{$special->telephone}}</td>
+                    @if($special->director)
+                        <td >{{$special->director->surname}} {{$special->director->name}}</td>
+                    @else
+                        <td> - </td>
+                    @endif
+                    <td >{{$special->municipality->name}}</td>
+                    <td >{{$special->schregion->consultant->surname}} {{$special->schregion->consultant->name}}</td>
                     <td >{{$special->mail}}</td>
                     <td >{{$special->organikotita}}</td>
                     <td >{{$special->leitourgikotita}}</td>
-                    <td >{{$special->code}}</td>
-                    <td >{{$special->municipality->name}}</td>
-                    <td >{{$special->schregion->consultant->surname}} {{$special->schregion->consultant->name}}</td>
                 </tr>
             </tbody>
             </table>

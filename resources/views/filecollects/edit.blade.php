@@ -15,11 +15,13 @@
         <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script>
             $(document).ready(function() {
-                $('a[data-toggle="modal"]').on('click', function (event) {
+                $('a[data-toggle="modal"]').on('mousedown', function (event) {
                     event.preventDefault();
                     var stakeholderId = $(this).data('stakeholder-id');
                     $('#stakeholderId').val(stakeholderId);
-                    $('#messageModal').modal('show');
+                    setTimeout(function() {
+                        $('#messageModal').modal('show');
+                    }, 50);
                     $('#messageModal').on('shown.bs.modal', function() {
                         $('#message').focus();
                     });

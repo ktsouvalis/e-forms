@@ -324,7 +324,7 @@ class TeacherController extends Controller
         $teachers_array = session('teachers_array');
         session()->forget('teachers_array');
         $error=false;
-        $done_at_least_once = false;
+        $existing = Teacher::all();
         // CREATE OR UPDATE (based on 'afm' field) EXISTING TEACHERS
         foreach($teachers_array as $teacher){
             try{
@@ -353,7 +353,6 @@ class TeacherController extends Controller
                     ]
                 );
                 
-                $done_at_least_once = true;
             }
             catch(Throwable $e){
                 // Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
@@ -365,10 +364,9 @@ class TeacherController extends Controller
         // make not active the teachers that exist in database but not in 4.1 and 4.2
         Teacher::whereNotIn('afm', collect($teachers_array)->pluck('afm'))->update(['active' => 0]);
         
-        if($done_at_least_once){
+        if(Teacher::all()!=$existing)
             DB::table('last_update_teachers')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
-        }
-
+        
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertTeachers');
             return redirect(url('/teachers'))

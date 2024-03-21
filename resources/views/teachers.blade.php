@@ -1,4 +1,7 @@
 <x-layout>
+    @php
+        $all_teachers = App\Models\Teacher::all();
+    @endphp
     @push('links')
         <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
         <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
@@ -9,30 +12,85 @@
         <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
         <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
         <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="copycolumn.js"></script>
-        <script src="copycolumn2.js"></script>
-        <script src="copylink.js"></script>
+        <script>
+            document.getElementById("copyCodeButton").addEventListener("click", function () {
+                var codeColumn = document.querySelectorAll("#dataTable tbody td:nth-child(2)");
+                var codeValues = Array.from(codeColumn).map(function (cell) {
+                    return cell.textContent.trim();
+                });
+                var concatenatedValues = codeValues.join(",");
+                var tempTextArea = document.createElement("textarea");
+                tempTextArea.value = concatenatedValues;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+                alert("Αντιγράφτηκαν " + codeValues.length + " αναγνωριστικά!");
+            });
+        </script>
+        <script>
+            document.getElementById("copyMailButton").addEventListener("click", function () {
+                var mailColumn = document.querySelectorAll("#dataTable tbody td:nth-child(7)");
+                var mailValues = Array.from(mailColumn).map(function (cell) {
+                    return cell.textContent.trim();
+                });
+                var concatenatedValues = mailValues.join(",");
+                var tempTextArea = document.createElement("textarea");
+                tempTextArea.value = concatenatedValues;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+                alert("Αντιγράφτηκαν " + mailValues.length + " emails");
+            });
+        </script>
+        <script src="{{asset('copylink.js')}}"></script>
         <script src="datatable_init_teachers.js"></script>
+        <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+        <script>
+            var teachers = @json($all_teachers);
+        </script>
+        <script>
+            $(document).ready(function() {                
+                $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
+                    event.preventDefault();
+                    var teacherId = $(this).data('teacher-id');
+                    var teacher = teachers.find(teacher => teacher.id == teacherId);
+                    $('#infoModal .modal-body p:eq(0)').text('Επώνυμο: ' + teacher.surname);
+                    $('#infoModal .modal-body p:eq(1)').text('Όνομα: ' + teacher.name);
+                    $('#infoModal .modal-body p:eq(2)').text('Α.Μ.: ' + teacher.am);
+                    $('#infoModal .modal-body p:eq(3)').text('Τηλέφωνο: ' + teacher.telephone);
+                    $('#infoModal .modal-body p:eq(4)').text('Mail ΠΣΔ: ' + teacher.sch_mail);
+                    $('#infoModal .modal-body p:eq(5)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
+                    setTimeout(function() {
+                        $('#infoModal').modal('show');
+                    }, 50);
+                });
+                
+            });
+        </script>
     @endpush
     @push('title')
         <title>Εκπαιδευτικοί</title>
     @endpush
-    @php
-        $all_teachers = App\Models\Teacher::all();
-    @endphp
-    <body>     
-    <p class="h4">Εκπαιδευτικοί Διεύθυνσης</p>
-    <p class="text-muted">Δεν περιλαμβάνονται οι ΕΕΠ, ΕΒΠ, οι ιδιωτικοί εκπαιδευτικοί και όσοι συμπληρώνουν ωράριο από τη Δ/θμια</p>
-    
-    <div class="hstack gap-3">
-    @if(Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1))
-    <div class="col-md-4 py-3" style="max-width:15rem">
-        <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-            <div>Τελευταία ενημέρωση<br><strong> {{Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1)->date_updated}}</strong></div>
-        </div>
-    </div>
-    @endif
-    </div>
+   
+    <body> 
+        <div class="row">
+            <div class="col">
+                <p class="h4">Εκπαιδευτικοί Διεύθυνσης</p>
+                <p class="text-muted">Δεν περιλαμβάνονται οι ΕΕΠ, ΕΒΠ, οι ιδιωτικοί εκπαιδευτικοί και όσοι συμπληρώνουν ωράριο από τη Δ/θμια</p>
+                <p class="text-muted">(Κάνετε κλικ στο επώνυμο του εκπαιδευτικού για περισσότερες πληροφορίες)</p>
+            </div>
+            <div class="col">
+                @if(Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1))
+                    <div class="col-md-4 py-3" style="max-width:15rem">
+                        <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
+                            <div>Τελευταία ενημέρωση<br><strong> {{Illuminate\Support\Facades\DB::table('last_update_teachers')->find(1)->date_updated}}</strong></div>
+                        </div>
+                    </div>
+                @endif
+            </div>    
+        </div>    
     
     <div class="hstack gap-3">
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
@@ -51,31 +109,43 @@
             @endif
         @endif
     </div>
-{{-- Στον πίνακα πρέπει στην 4η στήλη (4) να είναι το e-mail και το ΑΦΜ στην 7η στήλη (7)  --}}
-{{-- Στις στήλες 2, 4, 5, 6, 9, 10, 11, 12 kai 13 μειώνεται το πλάτος του serch field με javascript  --}}
-{{-- Αν αλλαχτεί κάτι από τα παραπάνω στον πίνακα όπως σειρά στηλών κλπ θα πρέπει να αλλαχτεί και στα javascript: datatable_init_teachers.js, copycolumn.js, copycolumn2.js  --}}
-{{-- Τα copycolumn αρχεία είναι κοινά για τους πίνακες teachers και schools. Αλλαγή στο ένα θα επηρεάσει και το άλλο. --}}
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Λοιπές Πληροφορίες Εκπαιδευτικού</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p></p>   
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+                    <br>
+                    <small style="text-align: end"><p class="text-muted"></p></small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
                 <tr>
                     <th class="align-middle">Αντιγραφή συνδέσμου</th>
-                    {{-- <th class="align-middle">Αποστολή συνδέσμου</th> --}}
+                    <th id="search">ΑΦΜ</th>
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
-                    <th id="">email</th>
-                    <th id="">Τηλ.</th>
                     <th id="search">Κλάδος</th>
-                    <th id="search">ΑΦΜ</th>
+                    <th id="search">Σχ. Εργ.</th>
+                    <th id="">email</th>
                     <th id="search">Υπηρέτηση</th>
                     <th id="search">Δήμος Υπηρέτησης</th>
                     <th id="search">Οργ.</th>
-                    <th id="search">AΜ</th>
-                    <th id="search">Σχ. Εργ.</th>
-
-                    {{-- <th id="">email ΠΣΔ</th> --}}
-                    {{-- <th id="search">last login</th> 
-                    <th id="search">Μαζική Αποστολή</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -86,16 +156,20 @@
                     $text = url("/teacher/$teacher->md5");
                 @endphp
                 
-                <tr>  
+                <tr> 
                     <td style="text-align:center">
                         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
                     </td>
-                    <td>{{$teacher->surname}}</td>
-                    <td>{{$teacher->name}}</td>
-                    <td>{{$teacher->mail}}</td>
-                    <td>{{$teacher->telephone}}</td>
-                    <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->afm}}</td>
+                    <td>
+                        <a href="#" data-toggle="modal" data-target="#infoModal" data-teacher-id="{{$teacher->id}}">
+                            {{$teacher->surname}}
+                        </a>
+                    </td>
+                    <td>{{$teacher->name}}</td>
+                    <td>{{$teacher->klados}}</td>
+                    <td>{{$teacher->sxesi_ergasias->name}}</td>
+                    <td>{{$teacher->mail}}</td>
                     @if($teacher->ypiretisi_id!=null)
                         <td>{{$teacher->ypiretisi->name}}</td>
                         @if($teacher->ypiretisi->municipality)
@@ -108,19 +182,6 @@
                         <td>-</td>
                     @endif
                     <td>{{$teacher->organiki->name}}</td>
-                    <td>{{$teacher->am}}</td>
-                    <td>{{$teacher->sxesi_ergasias->name}}</td>
-                    {{-- <td>{{$teacher->sch_mail}}</td> --}}
-                    {{-- @if($teacher->logged_in_at)
-                        <td>{{Illuminate\Support\Carbon::parse($teacher->logged_in_at)}}</td>
-                    @else
-                        <td> - </td>
-                    @endif 
-                    @if($teacher->sent_link_mail)
-                        <td style="text-align:center"><i class="btn btn-success bi bi-check2-circle"></i></td>
-                    @else
-                        <td style="text-align:center"> - </td>
-                    @endif --}}
                 </tr>
             @endif  
             @endforeach

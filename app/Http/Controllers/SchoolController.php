@@ -71,6 +71,7 @@ class SchoolController extends Controller
             $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(26, $row)->getValue()=="Ναί")?0:1;
             $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue()=="Όχι")?1:0;
             $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue():"-";
+            $check['address']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue():"-";
 
             $check['special_needs']=0;
             if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Ειδικής Αγωγής"))
@@ -115,7 +116,7 @@ class SchoolController extends Controller
         $schools_array = session('schools_array');
         session()->forget('schools_array');
         $error=false;
-        $done_at_least_once=false;
+        $existing = School::all();
         foreach($schools_array as $school){
             // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE, update existing records based on 'code' field
             try{
@@ -138,12 +139,9 @@ class SchoolController extends Controller
                         'experimental' => $school['experimental'],
                         'special_needs' => $school['special_needs'],
                         'international' => $school['international'],
+                        'address' => $school['address'],
                     ]
                 );
-                $record = School::where('code', $school['code'])->first(); //η εντολή θα επιστρέψει μια εγγραφή που βρέθηκε στο excel ΚΑΙ στη βάση
-                $record->updated_at=now(); //είτε δημιουργήθηκε τώρα στη βάση, είτε υπήρχε (ανεξάρτητα από το αν είναι dirty ή όχι), ανανεώνω το timestamp
-                $record->save();
-                $done_at_least_once=true;
             }
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code'].' '.$e->getMessage());
@@ -151,7 +149,7 @@ class SchoolController extends Controller
                 continue;    
             }
         }
-        if($done_at_least_once){
+        if(School::all()!=$existing){
             DB::table('last_update_schools')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
         }
         if(!$error){
@@ -176,12 +174,6 @@ class SchoolController extends Controller
         session()->regenerate();
 
         return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
-    }
-
-    public function login_from_admin($id){
-        $school = School::where('id', $id)->firstOrFail();
-        Auth::guard('school')->login($school);
-        return;
     }
 
     public function logout(){

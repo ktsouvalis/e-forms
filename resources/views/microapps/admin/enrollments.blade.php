@@ -245,6 +245,7 @@
             <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
+                    <th id="search">Είδος</th>
                     <th id="search">Σχολείο</th>
                     <th id="search">Εγγραφέντες</th>
                     <th id="">Αρχείο</th>
@@ -252,9 +253,8 @@
                     <th id="">Αρχείο Ολ.</th>
                     <th id="">Αίτημα επιπλ. τμ.</th>
                     <th id="">Μαθητές στα όρια</th>
-                    <th id=""></th>
-                    <th id=""></th>
                     <th>Τελευταία ενημέρωση</th>
+                    <th>Κωδικός</th>
                 </tr>
             </thead>
             <tbody>
@@ -268,6 +268,7 @@
                         $one = $one_school->enrollments;
                     @endphp
                         <tr>
+                            <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
                             <td> {{$one_school->name}}</td>
                         @if($one)
                             
@@ -303,8 +304,6 @@
                                     </form>
                                 @endif
                                 </td>
-                            <td></td>
-                            <td></td>
                             <td>{{$one->updated_at}}</td>
                         @else
                             <td>-</td>
@@ -314,9 +313,8 @@
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
                         @endif
+                        <td>{{$one_school->code}}</td>
                         </tr>
             @endforeach
             </tbody>

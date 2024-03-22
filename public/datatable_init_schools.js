@@ -3,7 +3,7 @@ $(document).ready(function () {
     $('#dataTable thead tr #search').each(function () {
         var cellIndex = $(this)[0].cellIndex;
         var width='';
-        if (cellIndex==2 || cellIndex==4 || cellIndex==5 || cellIndex==6 || cellIndex==7 || cellIndex==11){
+        if (cellIndex == 7 || cellIndex == 8 || cellIndex == 1 || cellIndex == 4){//οργανικότητα, λειτουργικότητα, κωδικός, δήμος
             width="width:60px;";
         }
         var title = $(this).text();
@@ -48,7 +48,7 @@ $(document).ready(function () {
                     that.search(regex, true, false).draw();
                 }).on('click', function (e) {
                     e.stopPropagation();
-                    column.search($(this).val()).draw();
+                    that.search($(this).val()).draw();
                 });
 
                 excludeColumn.on('keyup change clear', function () {
@@ -69,7 +69,7 @@ $(document).ready(function () {
                     that.search(regex, true, false).draw();
                 }).on('click', function (e) {
                     e.stopPropagation();
-                    column.search($(this).val()).draw();
+                    that.search($(this).val()).draw();
                 });
             });
         },

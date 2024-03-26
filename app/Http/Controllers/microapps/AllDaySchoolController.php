@@ -27,6 +27,13 @@ class AllDaySchoolController extends Controller
                 $noc3=0;
             $noc4 = $request->all()['nr_class_4'];
             $noc5 = $request->all()['nr_class_5'];
+            if(isset($request->all()['nr_pupils_3']))
+                $nos3 = $request->all()['nr_pupils_3'];
+            else
+                $nos3=0;
+            $nos4 = $request->all()['nr_pupils_4'];
+            $nos5 = $request->all()['nr_pupils_5'];
+            $nosm = $request->all()['nr_morning'];
             $comments= $request->all()['comments'];
             $functionality = $request->all()['functionality'];
             $month = Month::getActiveMonth();
@@ -60,42 +67,6 @@ class AllDaySchoolController extends Controller
                     return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
-                //load the file with phpspreadsheet
-                $spreadsheet = IOFactory::load("../storage/app/$path");
-                
-                $row=7;
-                $rowSumValue="1";
-                $nos3=0;
-                $nos4=0;
-                $nos5=0;
-                $nosm=0;
-                while ($rowSumValue != "" && $row<400){
-                    $time = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-                    // echo $row.' '.$time.'<br>';
-                    if($time=='15:00' or $time=='3:00:00 μμ' or $time==0.625 or $time=='15:00 ή 14:50' or $time=='15:00 ή 14:55' or $time=='15:00:00'){
-                        $nos3++;
-                    }
-                    else if($time=='16:00' or $time=='4:00:00 μμ'  or $time=='16:00 ή 15:50' or $time=='16:00:00') {
-                        // echo $row.' '.$time.' 4<br>';
-                        $nos4++;
-                    }
-                    else if($time=='17:30' or $time=='5:30:00 μμ'  or $time=='17:30:00'){
-                        // echo $row.' '.$time.' 5<br>';
-                        $nos5++;
-                    }
-                    // or abs(strtotime($temp)/86400-0.66666666666667)< 0.00001 or $time = 0.66666666666667
-                    // or abs(strtotime($temp2)/86400-0.72916666666667)< 0.00001
-                    $morning = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
-                    if($morning=="ΠΡΩΙΝΗ ΥΠΟΔΟΧΗ"){
-                        $nosm++;
-                    }
-                    $row++;
-                    $rowSumValue="";
-                    for($col=1;$col<=4;$col++){
-                        $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
-                    }
-                    echo '-<br>';
-                }
                 try{
                     AllDaySchool::updateOrCreate(
                     [
@@ -136,8 +107,11 @@ class AllDaySchoolController extends Controller
                         'functionality'=> $functionality,
                         'comments'=> $comments,
                         'nr_of_class_3' => $noc3,
+                        'nr_of_pupils_3' => $nos3,
                         'nr_of_class_4' =>  $noc4,
-                        'nr_of_class_5' => $noc5
+                        'nr_of_pupils_4' => $nos4,
+                        'nr_of_class_5' => $noc5,
+                        'nr_of_pupils_5' => $nos5,
                     ]); 
                 }
                 catch(Throwable $e){

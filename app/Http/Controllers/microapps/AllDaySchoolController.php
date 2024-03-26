@@ -33,6 +33,7 @@ class AllDaySchoolController extends Controller
                 $nos3=0;
             $nos4 = $request->all()['nr_pupils_4'];
             $nos5 = $request->all()['nr_pupils_5'];
+            $nosm = $request->all()['nr_morning'];
             $comments= $request->all()['comments'];
             $functionality = $request->all()['functionality'];
             $month = Month::getActiveMonth();

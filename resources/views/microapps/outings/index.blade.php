@@ -1,16 +1,14 @@
 <x-layout>
-
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
     @endpush
-
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init_outings.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init_outings.js')}}"></script>
         <script>
             $(document).ready(function() {
                 $('body').on('change', '.outing-checkbox', function() {
@@ -27,7 +25,7 @@
                     });
 
                     $.ajax({
-                        url: '../check_outing/'+outingId,
+                        url: '../microapps/outings/check/'+outingId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
@@ -57,6 +55,7 @@
         <title>Εκδρομές</title> 
     @endpush  
     @php
+        $appname = 'outings';
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
         $outings = App\Models\microapps\Outing::orderBy('outing_date','desc')->get();
@@ -74,10 +73,8 @@
                     <th id="search">Έλεγχος</th>
                     <th id="">Τμήματα (πλήθος εκδρομών)</th>
                     <th id="search">Δράση</th>
-                    {{-- <th id="">Πρακτικό</th> --}}
                     <th id="search">Ημερομηνία Υποβολής</th>
                     <th>Διαγραφή εκδρομής</th>
-                    <th id="">Κωδικός</th>
                 </tr>
             </thead>
             <tbody>
@@ -92,7 +89,7 @@
                         <td>
                             <div class="vstack gap-2">
                             
-                            <form action="{{url("/download_record/$outing->id")}}" method="post">
+                            <form action="{{url("/microapps/outings/download_file/$outing->id")}}" method="get">
                                 @csrf
                                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
                             </form>
@@ -116,20 +113,15 @@
                         {{-- <td>{{$outing->record}} </td> --}}
                         <td>{{$outing->updated_at}}</td>
                         <td>
-                            <form action="{{url("/delete_outing/$outing->id")}}" method="post">
+                            <form action="{{url("/microapps/outings/$outing->id")}}" method="post">
+                                @method('DELETE')
                                 @csrf
                                 <button class="bi bi-x-circle btn btn-danger" type="submit" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>
                             </form>
                         </td>
-                        <td>{{$outing->id}}</td>
-                        
                     </tr> 
                 @endforeach   
             </tbody>  
             </table>    
         </div> <!-- table responsive closure -->
-    @push('scripts')
-    
-    @endpush
-
 </x-layout>

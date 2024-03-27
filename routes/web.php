@@ -328,19 +328,11 @@ Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'mic
 Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->middleware('boss');
 
 // OUTINGS ROUTES
-Route::post('/new_outing',[OutingsController::class, 'new_outing'])->middleware('isSchool');
+Route::resource('microapps/outings', OutingsController::class);
 
-Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']); //checking Auth inside the method
+Route::get('/microapps/outings/download_file/{outing}', [OutingsController::class, 'download_file']); //checking Auth inside the method
 
-Route::post('/delete_outing/{outing}', [OutingsController::class,'delete_outing']); //checking Auth inside the method
-
-Route::post('/check_outing/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
-
-Route::get('/outing_profile/{outing}', function(Outing $outing){
-    return view('microapps.school.outing-profile',['outing'=>$outing]);
-})->middleware('canUpdateOuting');
-
-Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_outing_profile'])->middleware('canUpdateOuting');
+Route::post('/microapps/outings/check/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
 
 // ALL_DAY_SCHOOL ROUTES
 Route::resource('microapps/all_day_school', AllDaySchoolController::class);

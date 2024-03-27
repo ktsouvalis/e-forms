@@ -1,28 +1,28 @@
 <x-layout_school>
     @php
+        $appname = 'outings';
         $school = Auth::guard('school')->user(); //check which school is logged in
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         $outings = $school->outings;
     @endphp
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
     @endpush
-
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init.js')}}"></script>
     @endpush
     @push('title')
         <title>Εκδρομές</title>
     @endpush
         <div class="py-3">
             <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/new_outing")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/outings")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text w-25"></span>
@@ -79,7 +79,7 @@
                             <div class="input-group">
                                 <span class="input-group-text w-25"><em>Μορφή αρχείου: .pdf < 10MB</em></span>
                                 <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή Εκδρομής </button>
-                                <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                <a href="{{url("/microapps/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                             </div>
                         @endif
                     </form>
@@ -90,14 +90,12 @@
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        {{-- <th id="search">ID</th> --}}
                         <th id="search">Τύπος</th>
                         <th id="">Ημερομηνία <p class="text-muted">(Ε/Μ/Η)</p></th>
                         <th id="">Δράση</th>
                         <th id="">Πρακτικό</th>
                         <th id="">Αρχείο</th>
                         <th id="">Τμήματα</th>
-                        
                         <th>Επεξεργασία μελλοντικής εκδρομής</th>
                         <th>Διαγραφή μελλοντικής εκδρομής</th>
                     </tr>
@@ -110,22 +108,17 @@
                             $today = Illuminate\Support\Carbon::now();
                         @endphp
                         <tr>
-                            {{-- <td>
-                                <div>{{$outing->id}}</div>
-                            </td> --}}
                             <td>{{$outing->type->description}}</td> 
                             <td>{{$my_date->year}}/{{$my_date->month}}/{{$my_date->day}} </td>
-                            {{-- <td>{{$outing->outing_date}} </td> --}}
                             <td>{{$outing->destination}}</td>
                             <td>{{$outing->record}}</td>
                             <td>
                                 <div class="hstack gap-2">
-                                
-                                <form action="{{url("/download_record/$outing->id")}}" method="post">
-                                    @csrf
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
-                                </form>
-                                {{$outing->file}}
+                                    <form action="{{url("/microapps/outings/download_file/$outing->id")}}" method="get">
+                                        @csrf
+                                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
+                                    </form>
+                                    {{$outing->file}}
                                 </div>
                             </td>
                             <td>
@@ -135,9 +128,10 @@
                             </td>
                             
                             @if(Illuminate\Support\Carbon::parse($outing->outing_date)->startOfDay()>=Illuminate\Support\Carbon::now()->startOfDay() and $accepts)
-                            <td><a href="{{url("/outing_profile/$outing->id")}}" class="btn btn-primary bi bi-pencil-square "> </a></td>
+                            <td><a href="{{url("/microapps/outings/$outing->id/edit")}}" class="btn btn-primary bi bi-pencil-square "> </a></td>
                             <td>
-                                <form action="{{url("/delete_outing/$outing->id")}}" method="post">
+                                <form action="{{url("/microapps/outings/$outing->id")}}" method="post">
+                                    @method('DELETE')
                                     @csrf
                                     <button class="bi bi-x-circle btn btn-danger" type="submit" style="color:white" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>
                                 </form>

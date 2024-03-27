@@ -9,7 +9,8 @@
     @endphp
     <div class="py-3">
             <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/save_outing_profile/$outing->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/outings/$outing->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                        @method('PUT')
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text w-25"></span>
@@ -73,9 +74,7 @@
                             <div class="input-group">
                                 <span class="input-group-text w-25"><em>Μορφή αρχείου: .pdf < 10MB</em></span>
                                 <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση</button>
-                                
-                                <a href="{{url("/outing_profile/$outing->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Ακύρωση</a>
-                                {{-- <label class="p-3 text-muted small">Με την αποθήκευση η εκδρομή θα σημανθεί ως μη ελεγμένη</label> --}}
+                                <a href="{{url("/microapps/outings/$outing->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Ακύρωση</a>
                             </div>
                         @endif
                     </form>

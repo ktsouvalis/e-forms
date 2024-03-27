@@ -20,7 +20,92 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-        @if(Auth::user()->isAdmin())      
+        @php
+            $enrollments = $microapp->stakeholders;
+        @endphp
+        <div class="table-responsive py-2" style="align-self:flex-start">
+            <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th id="search">Είδος</th>
+                    <th id="search">Σχολείο</th>
+                    <th id="search">Εγγραφέντες</th>
+                    <th id="">Αρχείο</th>
+                    <th id="">Ολοήμερο</th>
+                    <th id="">Αρχείο Ολ.</th>
+                    <th id="">Αίτημα επιπλ. τμ.</th>
+                    <th id="">Μαθητές στα όρια</th>
+                    <th>Τελευταία ενημέρωση</th>
+                    <th>Κωδικός</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                   // dd($enrollments);   
+                @endphp
+                
+                @foreach($enrollments as $one_stakeholder)
+                    @php
+                        $one_school = $one_stakeholder->stakeholder;
+                        $one = $one_school->enrollments;
+                    @endphp
+                        <tr>
+                            <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
+                            <td> {{$one_school->name}}</td>
+                        @if($one)
+                            
+                            <td> {{$one->nr_of_students1}}</td>
+                            <td>
+                                <form action="{{url("/school_app/enrollments/enrollments1_$one_school->code.xlsx/Εγγραφέντες_$one_school->name.xlsx")}}" method="get">
+                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->enrolled_file1}} </button> 
+                                </form>   
+                            </td>
+                            <td>
+                                @if($one->nr_of_students1_all_day1)
+                                    {{$one->nr_of_students1_all_day1}}
+                                @endif
+                            </td>
+                            <td>
+                                @if($one->all_day_file1)
+                                    <form action="{{url("/school_app/enrollments/enrollments2_$one_school->code.xlsx/Ολοήμερο_$one_school->name.xlsx")}}" method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->all_day_file1}} </button> 
+                                    </form>   
+                                @endif
+                            </td>
+                            <td>
+                                @if($one->extra_section_file1)
+                                    <form action="{{url("/school_app/enrollments/enrollments3_$one_school->code.pdf/Επιπλέον_Τμ_$one_school->name.pdf")}}" method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->extra_section_file1}} </button> 
+                                    </form>
+                                @endif   
+                            </td>
+                            <td>
+                                @if($one->boundaries_st_file1)
+                                    <form action="{{url("/school_app/enrollments/enrollments4_$one_school->code.xlsx/Μαθητές_στα_όρια_$one_school->name.xlsx")}}" method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->boundaries_st_file1}} </button> 
+                                    </form>
+                                @endif
+                                </td>
+                            <td>{{$one->updated_at}}</td>
+                        @else
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        @endif
+                        <td>{{$one_school->code}}</td>
+                        </tr>
+            @endforeach
+            </tbody>
+            </table>
+        </div> <!-- table responsive closure -->
+        @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
+        <p class="fw-bold">Σημ: Με την επιλογή αυτή αποστέλλεται mail σε όλα τα Σχολεία που δεν έχουν κάνει υποβολή πίνακα τον τρέχοντα / ενεργό Μήνα</p>
+
+        @if(Auth::user()->isAdmin() or Auth::user()->id==14)      
         <nav class="container navbar navbar-light bg-light">
             <div class="row">
                 {{-- Αρχείο Δημοτικού Εγγραφέντων στην Α' Τάξη --}}
@@ -236,90 +321,4 @@
         </div>
         </nav>
         @endif
-
-        
-        @php
-            $enrollments = $microapp->stakeholders;
-        @endphp
-        <div class="table-responsive py-2" style="align-self:flex-start">
-            <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th id="search">Είδος</th>
-                    <th id="search">Σχολείο</th>
-                    <th id="search">Εγγραφέντες</th>
-                    <th id="">Αρχείο</th>
-                    <th id="">Ολοήμερο</th>
-                    <th id="">Αρχείο Ολ.</th>
-                    <th id="">Αίτημα επιπλ. τμ.</th>
-                    <th id="">Μαθητές στα όρια</th>
-                    <th>Τελευταία ενημέρωση</th>
-                    <th>Κωδικός</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                   // dd($enrollments);   
-                @endphp
-                
-                @foreach($enrollments as $one_stakeholder)
-                    @php
-                        $one_school = $one_stakeholder->stakeholder;
-                        $one = $one_school->enrollments;
-                    @endphp
-                        <tr>
-                            <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
-                            <td> {{$one_school->name}}</td>
-                        @if($one)
-                            
-                            <td> {{$one->nr_of_students1}}</td>
-                            <td>
-                                <form action="{{url("/school_app/enrollments/enrollments1_$one_school->code.xlsx/Εγγραφέντες_$one_school->name.xlsx")}}" method="get">
-                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->enrolled_file1}} </button> 
-                                </form>   
-                            </td>
-                            <td>
-                                @if($one->nr_of_students1_all_day1)
-                                    {{$one->nr_of_students1_all_day1}}
-                                @endif
-                            </td>
-                            <td>
-                                @if($one->all_day_file1)
-                                    <form action="{{url("/school_app/enrollments/enrollments2_$one_school->code.xlsx/Ολοήμερο_$one_school->name.xlsx")}}" method="get">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->all_day_file1}} </button> 
-                                    </form>   
-                                @endif
-                            </td>
-                            <td>
-                                @if($one->extra_section_file1)
-                                    <form action="{{url("/school_app/enrollments/enrollments3_$one_school->code.pdf/Επιπλέον_Τμ_$one_school->name.pdf")}}" method="get">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->extra_section_file1}} </button> 
-                                    </form>
-                                @endif   
-                            </td>
-                            <td>
-                                @if($one->boundaries_st_file1)
-                                    <form action="{{url("/school_app/enrollments/enrollments4_$one_school->code.xlsx/Μαθητές_στα_όρια_$one_school->name.xlsx")}}" method="get">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->boundaries_st_file1}} </button> 
-                                    </form>
-                                @endif
-                                </td>
-                            <td>{{$one->updated_at}}</td>
-                        @else
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                        @endif
-                        <td>{{$one_school->code}}</td>
-                        </tr>
-            @endforeach
-            </tbody>
-            </table>
-        </div> <!-- table responsive closure -->
-        @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
-        <p class="fw-bold">Σημ: Με την επιλογή αυτή αποστέλλεται mail σε όλα τα Σχολεία που δεν έχουν κάνει υποβολή πίνακα τον τρέχοντα / ενεργό Μήνα</p>
 </x-layout>

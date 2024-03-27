@@ -327,6 +327,7 @@ Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'mic
 
 Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->middleware('boss');
 
+// OUTINGS ROUTES
 Route::post('/new_outing',[OutingsController::class, 'new_outing'])->middleware('isSchool');
 
 Route::post('/download_record/{outing}', [OutingsController::class, 'download_record']); //checking Auth inside the method
@@ -351,24 +352,15 @@ Route::post('/microapps/all_day_school/update_template/{type}', [AllDaySchoolCon
 Route::get('/microapps/all_day_school/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rigths are checked inside the method
 
 // IMMIGRANTS ROUTES
-Route::post('/save_immigrants', [ImmigrantsController::class, 'post_immigrants'])->middleware('isSchool');
+Route::resource('microapps/immigrants', ImmigrantsController::class);
 
-Route::post('/dl_immigrants_template', function(Request $request){
-    $file = 'immigrants/immigrants.xlsx';
-    $response = Storage::disk('local')->download($file);  
-    ob_end_clean();
-    try{
-        return $response;
-    }
-    catch(Throwable $e){
-        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
-    }
-});
+Route::get('/microapps/immigrants/download_template/yes', [ImmigrantsController::class, 'download_template'])->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
 
-Route::post('/update_immigrants_template', [ImmigrantsController::class, 'update_immigrants_template'])->middleware('boss');
+Route::post('/microapps/immigrants/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
 
-Route::post('/dl_immigrants_file/{immigrant}', [ImmigrantsController::class, 'download_file']);
+Route::get('/microapps/immigrants/download_file/{immigrant}', [ImmigrantsController::class, 'download_file']); //access rights are checked inside the method
 
+//DEFIBRILLATORS ROUTES
 Route::post('/dl_defibrillators_document', function(Request $request){
     $file = 'defibrillators/Διαδικασία_Προμήθειας_Απινιδωτών.pdf';
     $response = Storage::disk('local')->download($file);  

@@ -18,10 +18,34 @@ use Illuminate\Support\Facades\Validator;
 class ImmigrantsController extends Controller
 {
     //
-    public function post_immigrants(Request $request){
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('isSchool')->only(['create','store']);
+        $this->middleware('auth')->only(['index']);
+        $this->microapp = Microapp::where('url', '/immigrants')->first();
+    }
+
+    public function index(){
+        if(Auth::user()->microapps->where('microapp_id', $this->microapp->id)->first() or Auth::user()->isAdmin())
+            return view('microapps.immigrants.index');
+        else 
+            abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ'); ; 
+    }
+
+    public function create(){
         $school = Auth::guard('school')->user();
-        $microapp = Microapp::where('url', '/immigrants')->first();
-        if($microapp->accepts){
+        
+        if($school->microapps->where('microapp_id', $this->microapp->id)->first())
+            return view('microapps.immigrants.create');
+        else 
+            abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ');
+    }
+
+    public function store(Request $request){
+        $school = Auth::guard('school')->user();
+        
+        if($this->microapp->accepts){
             $comments= $request->all()['comments'];
             
             $month = Month::getActiveMonth();
@@ -46,7 +70,7 @@ class ImmigrantsController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/school_app/immigrants'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+                    return redirect(url('/microapps/immigrants/create'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
                 try{
@@ -67,7 +91,7 @@ class ImmigrantsController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/school_app/immigrants'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return redirect(url('/microapps/immigrants/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
             else{
@@ -88,7 +112,7 @@ class ImmigrantsController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/school_app/immigrants'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return redirect(url('/microapps/immigrants/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
             try{
@@ -97,16 +121,16 @@ class ImmigrantsController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/immigrants'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
+            return redirect(url('/microapps/immigrants/create'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
-            return redirect(url('/school_app/immigrants'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return redirect(url('/microapps/immigrants/create'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
 
     }
 
     public function download_file(Request $request, Immigrant $immigrant){
-        $immigrants_id = Microapp::where('url', '/immigrants')->first()->id;
+        $immigrants_id = $this->microapp->id;
         if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $immigrants_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $immigrant->school->id)){
             $file = 'immigrants/immigrants_'.$immigrant->school->code.'_month'.$immigrant->month->id.'.xlsx';
             $response = Storage::disk('local')->download($file, $immigrant->file);  
@@ -121,7 +145,7 @@ class ImmigrantsController extends Controller
         abort(403, 'Unauthorized action.');
     }
 
-    public function update_immigrants_template(Request $request){
+    public function update_template(Request $request){
         $rule = [
             'template_file' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
@@ -138,5 +162,17 @@ class ImmigrantsController extends Controller
         }
         
         return back()->with('success', 'Το αρχείο ενημερώθηκε');
+    }
+
+    public function download_template(Request $request){
+        $file = 'immigrants/immigrants.xlsx';
+        $response = Storage::disk('local')->download($file);  
+        ob_end_clean();
+        try{
+            return $response;
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
     }
 }

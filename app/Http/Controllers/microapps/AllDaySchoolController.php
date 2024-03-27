@@ -18,6 +18,7 @@ class AllDaySchoolController extends Controller
 {
     //
     private $microapp;
+
     public function __construct(){
         $this->middleware('isSchool')->only(['create','store']);
         $this->middleware('auth')->only(['index']);
@@ -25,7 +26,6 @@ class AllDaySchoolController extends Controller
     }
 
     public function index(){
-        
         if(Auth::user()->microapps->where('microapp_id', $this->microapp->id)->first() or Auth::user()->isAdmin())
             return view('microapps.all_day_school.index');
         else 
@@ -33,7 +33,6 @@ class AllDaySchoolController extends Controller
     }
 
     public function create(){
-        
         $school = Auth::guard('school')->user();
         
         if($school->microapps->where('microapp_id', $this->microapp->id)->first())

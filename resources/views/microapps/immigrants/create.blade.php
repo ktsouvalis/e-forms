@@ -3,6 +3,7 @@
         <title>Πρόσφυγες Μαθητές</title>
     @endpush
 @php
+    $appname = 'immigrants';
     $school = Auth::guard('school')->user(); //check which school is logged in
     $active_month = App\Models\Month::getActiveMonth();
     $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
@@ -11,12 +12,12 @@
 @endphp
 <div class="container">
     <div class="container px-5">  
-            <form action="{{url("/dl_immigrants_template")}}" method="post">
+            <form action="{{url("/microapps/immigrants/download_template/yes")}}" method="get">
                 @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/save_immigrants")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/immigrants")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
@@ -39,7 +40,7 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     @endif
                 </form>
@@ -48,7 +49,7 @@
         </div> 
         <div class="container px-5 py-2">
             @if($old_data)
-                <form action="{{url("/dl_immigrants_file/$old_data->id")}}" method="post">
+                <form action="{{url("/microapps/immigrants/download_file/$old_data->id")}}" method="get">
                     @csrf
                    Αρχείο που έχετε υποβάλλει: <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> 
                 </form>   
@@ -73,7 +74,7 @@
                     <td> {{$one->month->name}}</td>
                     <td> {{$one->comments}}</td>
                     <td>
-                        <form action="{{url("/dl_immigrants_file/$one->id")}}" method="post">
+                        <form action="{{url("/microapps/immigrants/download_file/$one->id")}}" method="get">
                         @csrf
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   

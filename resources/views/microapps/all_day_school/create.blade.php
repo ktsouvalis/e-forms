@@ -113,7 +113,7 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/school_app/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     @endif
                 </form>
@@ -122,15 +122,10 @@
         </div> 
         <div class="container px-5 py-2">
             @if($old_data)
-                <div class="vstack gap-3">
-                    <div class="vstack gap-2">
-                        <div class="hstack gap-2"><label><strong> Καταμέτρηση πρωινής υποδοχής για τον μήνα {{$old_data->month->name}}: </strong></label><mytext class="text-primary">{{$old_data->nr_morning}}</mytext> </div> 
-                        <form action="{{url("/dl_all_day_file/$old_data->id")}}" method="post">
-                            @csrf
-                        <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> </div>
-                        </form>
-                    </div>
-                </div>
+                <form action="{{url("/microapps/all_day_school/download_file/$old_data->id")}}" method="get">
+                    @csrf
+                <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> </div>
+                </form>
             @endif
             @include('microapps.new_ticket_button')
         </div>

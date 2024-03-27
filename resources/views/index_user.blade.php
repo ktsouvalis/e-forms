@@ -188,7 +188,7 @@
                                 @endif
                                 </div>
                                 <div class="py-2" style="text-align:center">
-                                    <a class="text-dark" style="text-decoration:none;" href="{{ url("/admin".$one_microapp->url) }}">
+                                    <a class="text-dark" style="text-decoration:none;" href="{{ url("/microapps".$one_microapp->url) }}">
                                         <div class="h5 card-title {{ $one_microapp->icon }}"></div>
                                         <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>
                                     </a>

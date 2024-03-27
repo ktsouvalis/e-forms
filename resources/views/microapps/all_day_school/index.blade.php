@@ -16,6 +16,7 @@
         <title>Ολοήμερο και Πρωινή Υποδοχή</title>
     @endpush
     @php
+        $appname = 'all_day_school';
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
@@ -24,10 +25,9 @@
         <nav class="navbar navbar-light bg-light">
             <div class="vstack gap-2">
                 <div class="hstack gap-3">
-                <form action="{{url("/update_all_day_template/dim")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/all_day_school/update_template/dim")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        {{-- <span class="input-group-text w-25"></span> --}}
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Δημοτικών</strong></span>
                     </div>
                     <div class="input-group w-75">
@@ -35,19 +35,18 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/dl_all_day_template/1")}}" method="post">
+                <form action="{{url("/microapps/all_day_school/download_template/1")}}" method="get">
                     @csrf
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας δημοτικών προς συμπλήρωση </button>
                 </form>
                 </div>
                 <div class="hstack gap-3">
-                <form action="{{url("/update_all_day_template/nip")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/all_day_school/update_template/nip")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        {{-- <span class="input-group-text w-25"></span> --}}
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Νηπιαγωγείων</strong></span>
                     </div>
                     <div class="input-group w-75">
@@ -58,7 +57,7 @@
                         <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/dl_all_day_template/0")}}" method="post">
+                <form action="{{url("/microapps/all_day_school/download_template/0")}}" method="get">
                     @csrf
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
                 </form>
@@ -127,7 +126,7 @@
                             <td> {{$one->nr_of_pupils_5}}</td>
                             <td> {{$one->comments}}</td>
                             <td>
-                                <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
+                                <form action="{{url("/microapps/all_day_school/download_file/$one->id")}}" method="get">
                                 @csrf
                                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                                 </form>   

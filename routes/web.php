@@ -110,15 +110,15 @@ Route::view('/school_areas', 'public/school_areas');
 
 //ADMIN Routes
 
-Route::get('/admin/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
-    if($microapp->active){
-        return view('microapps.admin.'.$appname,['appname'=>$appname]);
-    }
-    else{
-        return redirect(url('/index_user'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
-    }
-})->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
+// Route::get('/admin/{appname}', function($appname){
+//     $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
+//     if($microapp->active){
+//         return view('microapps.admin.'.$appname,['appname'=>$appname]);
+//     }
+//     else{
+//         return redirect(url('/index_user'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
+//     }
+// })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
 //// USER ROUTES
 
@@ -341,31 +341,16 @@ Route::get('/outing_profile/{outing}', function(Outing $outing){
 
 Route::post('/save_outing_profile/{outing}', [OutingsController::class,'save_outing_profile'])->middleware('canUpdateOuting');
 
-Route::post('/save_all_day_school', [AllDaySchoolController::class, 'post_all_day'])->middleware('isSchool');
+// ALL_DAY_SCHOOL ROUTES
+Route::resource('microapps/all_day_school', AllDaySchoolController::class);
 
-Route::post('/dl_all_day_template/{type}', function(Request $request, $type){
-    if($type==1)
-        $file = 'all_day/oloimero_dim.xlsx';
-    else
-        $file = 'all_day/oloimero_nip.xlsx';
+Route::get('/microapps/all_day_school/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->middleware('canViewMicroapp');
 
-    
-    $response = Storage::disk('local')->download($file);  
-    ob_end_clean();
-    try{
-        return $response;
-    }
-    catch(Throwable $e){
-        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
-    }
-});
+Route::post('/microapps/all_day_school/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
-Route::post('/update_all_day_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
+Route::get('/microapps/all_day_school/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rigths are checked inside the method
 
-Route::post('/dl_all_day_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']);
-
-Route::post('/self_update_all_day/{all_day_school}', [AllDaySchoolController::class, 'self_update']);
-
+// IMMIGRANTS ROUTES
 Route::post('/save_immigrants', [ImmigrantsController::class, 'post_immigrants'])->middleware('isSchool');
 
 Route::post('/dl_immigrants_template', function(Request $request){

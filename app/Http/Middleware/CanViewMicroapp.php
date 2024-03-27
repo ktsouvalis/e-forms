@@ -22,50 +22,40 @@ class CanViewMicroapp
     {
         $url = $request->url();
         $segments = explode('/', $url);
-        $app = end($segments);
+        $app = $segments[4];
         $microapp = Microapp::where('url', "/".$app)->firstOrFail(); 
-        $user = Auth::guard('web')->user();
-        if($user){
-            if(Superadmin::where('user_id',$user->id)->exists()){
+       
+        if(Auth::check()){
+            $user = Auth::guard('web')->user();
+            if($user->isAdmin()){
                 return $next($request);
             }
-            if(MicroappUser::where('user_id',$user->id)
-                ->where('microapp_id', $microapp->id)
-                ->exists()){
-                    return $next($request);
+            if($user->microapps->where('microapp_id', $microapp->id)->count()){
+                return $next($request);
             }
         }
-        if($microapp->visible){
+        
+        if(Auth::guard('teacher')->check()){
             $teacher = Auth::guard('teacher')->user();
-            if($teacher){
-                if(MicroappStakeholder::where('stakeholder_id',$teacher->id)
-                    ->where('stakeholder_type', 'App\Models\Teacher')
-                    ->where('microapp_id', $microapp->id)
-                    ->exists()){
-                        return $next($request);
-                }
+            if($teacher->microapps->where('microapp_id', $microapp->id)->count()){
+                return $next($request);
             }
+        }
 
+        if(Auth::guard('school')->check()){
             $school = Auth::guard('school')->user();
-            if($school){
-                if(MicroappStakeholder::where('stakeholder_id',$school->id)
-                    ->where('microapp_id', $microapp->id)
-                    ->where('stakeholder_type', 'App\Models\School')
-                    ->exists()){
-                        return $next($request);
-                }
+            if($school->microapps->where('microapp_id', $microapp->id)->count()){
+                return $next($request);
             }
+        }
 
+        if(Auth::guard('consultant')->check()){
             $consultant = Auth::guard('consultant')->user();
-            if($consultant){
-                if($microapp->url=="/internal_rules" or $microapp->url=="/work_planning"){
-                        return $next($request);
-                }
+            if($microapp->url=="/internal_rules" or $microapp->url=="/work_planning"){
+                return $next($request);
             }
-            abort(403, 'Unauthorized action.');
         }
-        else{
-            abort(403, 'Unauthorized action.');   
-        }
+
+        abort(403, 'Unauthorized action.');      
     }
 }

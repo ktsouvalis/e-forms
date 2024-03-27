@@ -1,5 +1,6 @@
 <x-layout_school>
     @php
+        $appname = 'all_day_school';
         $school = Auth::guard('school')->user(); //check which school is logged in
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $active_month = App\Models\Month::getActiveMonth();
@@ -28,13 +29,13 @@
             <strong>ΣΗΜΑΝΤΙΚΟ</strong><br><br> Σας ενημερώνουμε ότι λόγω προβλημάτων στην καταμέτρηση των πεδίων ώρας/ημερομηνίας στα αρχεία excel, 
             θα πρέπει <strong>οι αριθμοί των μαθητών που αποχωρούν</strong> σε κάθε ζώνη του Ολοήμερου Προγράμματος αλλά και <strong>o αριθμός των μαθητών της Πρωινής Υποδοχής</strong> να συμπληρώνονται από εσάς στα αντίστοιχα νέα πεδία.
         </div>  
-            <form action="{{url("/dl_all_day_template/$school->primary")}}" method="post">
+            <form action="{{url("/microapps/all_day_school/download_template/$school->primary")}}" method="get">
                 @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
                 @if(!$old_data)<small><u class="text-muted">Συμπληρώστε <b>όλα</b> τα πεδία βάζοντας 0 όπου δεν υπάρχουν μαθητές/τμήματα</u></small>@endif
-                <form action="{{url("/save_all_day_school")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/$appname")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
@@ -170,7 +171,7 @@
                     <td> {{$one->nr_of_pupils_5}}</td>
                     <td> {{$one->comments}}</td>
                     <td>
-                        <form action="{{url("/dl_all_day_file/$one->id")}}" method="post">
+                        <form action="{{url("/microapps/all_day_school/download_file/$one->id")}}" method="get">
                         @csrf
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   

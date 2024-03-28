@@ -287,7 +287,9 @@ Route::post("/school_app/enrollments/upload_file/{upload_file_name}", [Enrollmen
 
 Route::get("/school_app/enrollments/{file}/{download_file_name}", [EnrollmentController::class, 'download_file']);
 
-Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
+// FRUITS ROUTES
+Route::resource('microapps/fruits', FruitsController::class);
+// Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
 
 Route::post("/save_school_area/{school}", [SchoolAreaController::class, 'save_school_area'])->middleware('canUpdateSchoolArea');
 

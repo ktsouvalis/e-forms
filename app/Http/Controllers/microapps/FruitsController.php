@@ -8,14 +8,33 @@ use App\Models\Microapp;
 use Illuminate\Http\Request;
 use App\Models\microapps\Fruit;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class FruitsController extends Controller
 {
     //
-    public function save_fruits(Request $request){
+
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('canViewMicroapp')->only(['create','store']);
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('canViewMicroapp')->only(['index']);
+        $this->microapp = Microapp::where('url', '/fruits')->first();
+    }
+
+    public function index(){
+        return view('microapps.fruits.index', ['appname' => 'fruits']);
+    }
+
+    public function create(){
+        return view('microapps.fruits.create', ['appname' => 'fruits']);
+    }
+
+    public function store(Request $request){
         $school = Auth::guard('school')->user();
-        $microapp = Microapp::where('url', '/fruits')->first();
-        if($microapp->accepts){
+        if($this->microapp->accepts){
             try{
                 Fruit::updateOrCreate(
                     [
@@ -35,16 +54,16 @@ class FruitsController extends Controller
                 catch(Throwable $e){
         
                 }
-                return redirect(url('/school_app/fruits'))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+                return redirect(url('/microapps/fruits/create'))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
-            $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+            $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
             $stakeholder->hasAnswer = 1;
             $stakeholder->save();
             
-            return redirect(url('/school_app/fruits'))->with('success', 'Η εγγραφή αποθηκεύτηκε.');
+            return redirect(url('/microapps/fruits/create'))->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
         else{
-            return redirect(url('/school_app/fruits'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return redirect(url('/microapps/fruits/create'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
     }
 }

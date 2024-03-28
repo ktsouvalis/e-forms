@@ -262,6 +262,8 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
+
+Route::view('/evaluation', 'evaluation');
 //////// MICROAPPS ROUTES
 
 Route::view('/microapps', 'microapps')->middleware('auth');

@@ -36,7 +36,7 @@
                 <th id="search">Αξ. 2 - Επώνυμο</th>
                 <th id="search">Αξ. 2 - ΑΦΜ</th>
                 <th id="search">Κατηγορία</th>
-                <th id="">Ημερομηνία ολοκλήρωσης</th>
+                <th id="">Ολοκλήρωση (επίδοση έκθεσης)</th>
                 <th id="">ΑΜ</th>
                 <th id="">Κλάδος</th>
             </tr>
@@ -72,10 +72,10 @@
                          <td> - </td>
                          <td> - </td>
                      <td> {{$teacher->category}} </td> 
-                     @if($teacher->date_completed == null)
+                     @if($completed_n_given == false)
                          <td> Εκκρεμότητα </td>
                      @else
-                         <td> {{$teacher->date_completed}} </td>
+                         <td> Ολοκλήρωση </td>
                      @endif
                      <td> {{$teacher->am}} </td>
                      <td> {{$teacher->klados}} </td>
@@ -111,11 +111,11 @@
                     <td> - </td>
                     <td> - </td>
                     <td> {{$teacher->category}} </td> 
-                     @if($teacher->date_completed == null)
-                         <td> Εκκρεμότητα </td>
-                     @else
-                         <td> {{$teacher->date_completed}} </td>
-                     @endif
+                    @if($completed_n_given == false)
+                        <td> Εκκρεμότητα </td>
+                    @else
+                        <td> Ολοκλήρωση </td>
+                    @endif
                      <td> {{$teacher->am}} </td>
                      <td> {{$teacher->klados}} </td>
                  </tr>
@@ -177,10 +177,10 @@
                             
                         @endif
                         <td> {{$teacher->category}} </td> 
-                        @if($teacher->date_completed == null)
+                        @if($completed_n_given == false)
                             <td> Εκκρεμότητα </td>
                         @else
-                            <td> {{$teacher->date_completed}} </td>
+                            <td> Ολοκλήρωση </td>
                         @endif
                         <td> {{$teacher->am}} </td>
                         <td> {{$teacher->klados}} </td>

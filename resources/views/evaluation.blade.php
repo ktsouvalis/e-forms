@@ -17,6 +17,14 @@
     @endpush
 
 <div class="container-fluid">
+    <div>
+        <p class="h4">Αξιολόγηση</p>
+        <p>
+            <form action="{{url("/evaluation_differences")}}">
+                <button type="submit" class="btn btn-primary">Εικόνα ανά εκπαιδευτικό</button>
+            </form>
+        </p>
+    </div>
     <div class="table-responsive py-2" style="align-self:flex-start">
         <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
         <thead>
@@ -72,7 +80,7 @@
                          <td> - </td>
                          <td> - </td>
                      <td> {{$teacher->category}} </td> 
-                     @if($completed_n_given == false)
+                     @if($teacher->completed_n_given == false)
                          <td> Εκκρεμότητα </td>
                      @else
                          <td> Ολοκλήρωση </td>
@@ -111,7 +119,7 @@
                     <td> - </td>
                     <td> - </td>
                     <td> {{$teacher->category}} </td> 
-                    @if($completed_n_given == false)
+                    @if($teacher->completed_n_given == false)
                         <td> Εκκρεμότητα </td>
                     @else
                         <td> Ολοκλήρωση </td>
@@ -177,7 +185,7 @@
                             
                         @endif
                         <td> {{$teacher->category}} </td> 
-                        @if($completed_n_given == false)
+                        @if($teacher->completed_n_given == false)
                             <td> Εκκρεμότητα </td>
                         @else
                             <td> Ολοκλήρωση </td>

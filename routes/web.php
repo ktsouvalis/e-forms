@@ -264,6 +264,8 @@ Route::post('/insert_operation', [OperationController::class,'insertOperation'])
 
 
 Route::view('/evaluation', 'evaluation');
+
+Route::view('/evaluation_differences', 'evaluation_differences');
 //////// MICROAPPS ROUTES
 
 Route::view('/microapps', 'microapps')->middleware('auth');

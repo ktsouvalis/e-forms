@@ -1,17 +1,16 @@
     @php
-        // $school = Auth::guard('school')->user(); //check which school is logged in
         $microapp = App\Models\Microapp::where('url', '/school_area')->first();
         $accepts = $microapp->accepts; 
         $name = $microapp->name;
-        
         $old_data = $school->school_area;
         $data=array();
         if($old_data){
             $data = json_decode($old_data->data); 
         }
+        // dd($old_data);
     @endphp
     @push('scripts')
-    <script src="../addfields.js"></script>
+    <script src="{{asset("addfields.js")}}"></script>
     @endpush
     @push('title')
         <title>{{$name}}</title>
@@ -23,7 +22,8 @@
                 <a href="https://dipeach.ddns.net/e-forms/school_areas" target="_blank">Καταγραφή Ορίων Σχολικής Περιφέρειας Σχολικών Μονάδων Π.Ε. Αχαΐας</a>
             </div>
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/save_school_area/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/school_area/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    @method('PUT')
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75 text-wrap"><strong>Καταχώρηση στοιχείων για τα γεωγραφικά όρια Σχολικής Περιφέρειας εγγραφής μαθητών.</strong></span>
@@ -107,7 +107,7 @@
                     @else <!-- show div to user of directorate only -->
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση ορίων</button>
-                            <a href="{{url("/school_area_profile/$school->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>    
+                            <a href="{{url("/microapps/school_area/$school->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>    
                         </div>
                         @if($old_data and $old_data->confirmed)
                             <div class='alert alert-info text-center my-2'>

@@ -291,17 +291,7 @@ Route::get("/school_app/enrollments/{file}/{download_file_name}", [EnrollmentCon
 Route::resource('microapps/fruits', FruitsController::class);
 
 // SCHOOL AREA ROUTES
-Route::post("/save_school_area/{school}", [SchoolAreaController::class, 'save_school_area'])->middleware('canUpdateSchoolArea');
-
-Route::get("/school_area_profile/{school?}", function(School $school=null){
-    if(Auth::check()){
-        $blade='admin';
-    }
-    else if (Auth::guard('school')->check()){
-        $blade='school';
-    }
-    return view("microapps.$blade.school_area_profile", ['school'=>$school]);
-})->middleware('canUpdateSchoolArea');
+Route::resource('microapps/school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
 Route::post("/create_ticket",[TicketsController::class, 'create_ticket'])->middleware('isSchool');

@@ -1,16 +1,14 @@
 <x-layout>
-   
-    @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+   @push('links')
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
     @endpush
-
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init.js')}}"></script>
     @endpush
     @push('title')
         <title>Όρια Σχολείων</title>
@@ -44,23 +42,14 @@
             <tbody>
             
                 @foreach($school_areas as $school)
-                {{-- $school is MicroappStakeholder object so method ->stakeholder fetches School object attributes) --}}
-                    {{-- @php
-                        if($school->stakeholder->school_area AND $school->stakeholder->school_area->updated_at != ""){ // if school has a school_area record, get timestamp
-                            $date = DateTime::createFromFormat('Y-m-d H:i:s', $school->stakeholder->school_area->updated_at);
-                            $timestamp = $date->getTimestamp();
-                        }else{
-                            $date = DateTime::createFromFormat('Y-m-d H:i:s', '2021-03-01 10:00:00');
-                            $timestamp = $date->getTimestamp();
-                        }
-                    @endphp --}}
                     <tr>
                         @php
                             $school_id = $school->stakeholder->id;
                         @endphp
                         <td>
                         @if(App\Models\MicroappUser::where('user_id',Auth::user()->id)->where('microapp_id', $microapp->id)->where('can_edit', 1)->exists() or Auth::user()->isAdmin())
-                            <form action="{{url("/school_area_profile/$school_id")}}" method="get" target="_blank">
+                            <form action="{{url("/microapps/school_area/$school_id/edit")}}" method="get" target="_blank">
+                                @csrf
                                 <button type="submit">{{$school->stakeholder->name}} </button>
                             </form>
                         @else
@@ -106,5 +95,5 @@
             </tbody>  
         </table>    
     </div> <!-- table responsive closure -->
-    @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
+    @include('microapps.microapps_admin_after') <!--email to those who haven't submitted an answer-->
 </x-layout>

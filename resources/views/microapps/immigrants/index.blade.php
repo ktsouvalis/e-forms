@@ -14,7 +14,6 @@
         <title>Πρόσφυγες Μαθητές</title>
     @endpush
     @php
-        $appname = 'immigrants';
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp

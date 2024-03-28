@@ -289,8 +289,8 @@ Route::get("/school_app/enrollments/{file}/{download_file_name}", [EnrollmentCon
 
 // FRUITS ROUTES
 Route::resource('microapps/fruits', FruitsController::class);
-// Route::post("/save_fruits", [FruitsController::class, 'save_fruits'])->middleware('isSchool');
 
+// SCHOOL AREA ROUTES
 Route::post("/save_school_area/{school}", [SchoolAreaController::class, 'save_school_area'])->middleware('canUpdateSchoolArea');
 
 Route::get("/school_area_profile/{school?}", function(School $school=null){
@@ -303,6 +303,7 @@ Route::get("/school_area_profile/{school?}", function(School $school=null){
     return view("microapps.$blade.school_area_profile", ['school'=>$school]);
 })->middleware('canUpdateSchoolArea');
 
+// TICKETS ROUTES
 Route::post("/create_ticket",[TicketsController::class, 'create_ticket'])->middleware('isSchool');
 
 Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
@@ -343,7 +344,7 @@ Route::get('/microapps/all_day_school/download_template/{type}', [AllDaySchoolCo
 
 Route::post('/microapps/all_day_school/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
-Route::get('/microapps/all_day_school/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rigths are checked inside the method
+Route::get('/microapps/all_day_school/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rights are checked inside the method
 
 // IMMIGRANTS ROUTES
 Route::resource('microapps/immigrants', ImmigrantsController::class);

@@ -16,7 +16,6 @@
         <title>Ολοήμερο και Πρωινή Υποδοχή</title>
     @endpush
     @php
-        $appname = 'all_day_school';
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp

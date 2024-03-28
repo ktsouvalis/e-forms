@@ -1,6 +1,5 @@
 <x-layout_school>
     @php
-        $appname = 'outings';
         $school = Auth::guard('school')->user(); //check which school is logged in
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field

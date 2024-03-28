@@ -1,6 +1,5 @@
 <x-layout_school>
     @php
-        $appname = 'all_day_school';
         $school = Auth::guard('school')->user(); //check which school is logged in
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $active_month = App\Models\Month::getActiveMonth();

@@ -20,25 +20,16 @@ class AllDaySchoolController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('isSchool')->only(['create','store']);
-        $this->middleware('auth')->only(['index']);
+        $this->middleware('canViewMicroapp')->only(['create','store', 'index']);
         $this->microapp = Microapp::where('url', '/all_day_school')->first();
     }
 
     public function index(){
-        if(Auth::user()->microapps->where('microapp_id', $this->microapp->id)->first() or Auth::user()->isAdmin())
-            return view('microapps.all_day_school.index');
-        else 
-            abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ'); ; 
+        return view('microapps.all_day_school.index', ['appname' => 'all_day_school']);
     }
 
     public function create(){
-        $school = Auth::guard('school')->user();
-        
-        if($school->microapps->where('microapp_id', $this->microapp->id)->first())
-            return view('microapps.all_day_school.create');
-        else 
-            abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ');
+        return view('microapps.all_day_school.create', ['appname' => 'all_day_school']);
     }
 
     public function store(Request $request){
@@ -204,7 +195,6 @@ class AllDaySchoolController extends Controller
         else
             $file = 'all_day/oloimero_nip.xlsx';
 
-        
         $response = Storage::disk('local')->download($file);  
         ob_end_clean();
         try{

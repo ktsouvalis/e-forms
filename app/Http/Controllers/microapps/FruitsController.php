@@ -17,10 +17,7 @@ class FruitsController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('isSchool')->only(['create', 'store']);
-        $this->middleware('canViewMicroapp')->only(['create','store']);
-        $this->middleware('auth')->only(['index']);
-        $this->middleware('canViewMicroapp')->only(['index']);
+        $this->middleware('canViewMicroapp')->only(['create','store','index']);
         $this->microapp = Microapp::where('url', '/fruits')->first();
     }
 

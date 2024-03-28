@@ -21,25 +21,16 @@ class ImmigrantsController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('isSchool')->only(['create','store']);
-        $this->middleware('auth')->only(['index']);
+        $this->middleware('canViewMicroapp')->only(['index','create','store']);
         $this->microapp = Microapp::where('url', '/immigrants')->first();
     }
 
     public function index(){
-        if(Auth::user()->microapps->where('microapp_id', $this->microapp->id)->first() or Auth::user()->isAdmin())
-            return view('microapps.immigrants.index');
-        else 
-            abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ'); ; 
+        return view('microapps.immigrants.index', ['appname' => 'immigrants']); 
     }
 
     public function create(){
-        $school = Auth::guard('school')->user();
-        
-        if($school->microapps->where('microapp_id', $this->microapp->id)->first())
-            return view('microapps.immigrants.create');
-        else 
-            abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ');
+        return view('microapps.immigrants.create', ['appname' => 'immigrants']);
     }
 
     public function store(Request $request){

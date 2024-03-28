@@ -3,7 +3,6 @@
         <title>Πρόσφυγες Μαθητές</title>
     @endpush
 @php
-    $appname = 'immigrants';
     $school = Auth::guard('school')->user(); //check which school is logged in
     $active_month = App\Models\Month::getActiveMonth();
     $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();

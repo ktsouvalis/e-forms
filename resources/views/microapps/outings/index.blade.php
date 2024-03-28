@@ -55,7 +55,6 @@
         <title>Εκδρομές</title> 
     @endpush  
     @php
-        $appname = 'outings';
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
         $outings = App\Models\microapps\Outing::orderBy('outing_date','desc')->get();

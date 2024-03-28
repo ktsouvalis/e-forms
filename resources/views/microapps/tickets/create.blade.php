@@ -3,25 +3,25 @@
         <title>Τεχνική Υποστήριξη</title>
     @endpush
     @push('links')
-        <link href="../summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
+        <link href="{{asset("summernote-0.8.18-dist/summernote-lite.min.css")}}" rel="stylesheet">
     @endpush
     @push('scripts')
-    <script src="../summernote-0.8.18-dist/summernote-lite.min.js"></script>
-    <script>
-       $(document).ready(function () {
-        $('#comments').summernote({
-            height: 200, // Adjust the height as needed
-            width:600,
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['list', ['ul', 'ol']],
-                ['link', ['link']]
-            ],
-            placeholder: 'Περιγραφή...',
-            lang: 'el-GR' // Set language to Greek
+        <script src="{{asset("summernote-0.8.18-dist/summernote-lite.min.js")}}"></script>
+        <script>
+        $(document).ready(function () {
+            $('#comments').summernote({
+                height: 200, // Adjust the height as needed
+                width:600,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['list', ['ul', 'ol']],
+                    ['link', ['link']]
+                ],
+                placeholder: 'Περιγραφή...',
+                lang: 'el-GR' // Set language to Greek
+            });
         });
-    });
-    </script>
+        </script>
     @endpush
     @php
         $school = Auth::guard('school')->user(); //check which school is logged in
@@ -49,14 +49,14 @@
                             $text = max($ticket->updated_at, $maxPostUpdate);
                         @endphp
                         <tr>
-                            <td><a href="{{url("/ticket_profile/$ticket->id#bottom")}}">{{$ticket->id}}</a></td>
+                            <td><a href="{{url("/microapps/tickets/$ticket->id/edit#bottom")}}">{{$ticket->id}}</a></td>
                             <td>{{$ticket->subject}}</td> 
                             <td>{{$ticket->created_at}} </td>
                             <td>{{$text}} </td>
                             @if($ticket->solved)
-                                <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Έχει επιλυθεί</a></td>
+                                <td ><a style="color:green" href="{{url("/microapps/tickets/$ticket->id/edit#bottom")}}">Έχει επιλυθεί</a></td>
                             @else
-                                <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Προς επίλυση</a></td>
+                                <td ><a style="color:red" href="{{url("/microapps/tickets/$ticket->id/edit#bottom")}}">Προς επίλυση</a></td>
                             @endif
                         </tr> 
                     @endforeach   
@@ -67,7 +67,7 @@
         <hr>
         <div class="container px-5">   
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/tickets")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>

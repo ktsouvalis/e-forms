@@ -1,16 +1,14 @@
 <x-layout>
-
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
     @endpush
-
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init.js')}}"></script>
     @endpush
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
@@ -42,13 +40,13 @@
                 $text = max($ticket->updated_at, $maxPostUpdate);
             @endphp
                 <tr> 
-                    <td><a href="{{url("/ticket_profile/$ticket->id#bottom")}}">{{$ticket->id}}</a></td>
+                    <td><a href="{{url("/microapps/tickets/$ticket->id/edit#bottom")}}">{{$ticket->id}}</a></td>
                     <td>{{$ticket->subject}}</td> 
                     <td>{{$ticket->school->name}}</td>
                     @if($ticket->solved)
-                        <td ><a style="color:green" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Έχει επιλυθεί</a></td>
+                        <td ><a style="color:green" href="{{url("/microapps/tickets/$ticket->id/edit#bottom")}}">Έχει επιλυθεί</a></td>
                     @else
-                        <td ><a style="color:red" href="{{url("/ticket_profile/$ticket->id#bottom")}}">Προς επίλυση</a></td>
+                        <td ><a style="color:red" href="{{url("/microapps/tickets/$ticket->id/edit#bottom")}}">Προς επίλυση</a></td>
                     @endif
                     <td>{{$ticket->created_at}} </td>
                     <td>{{$text}} </td>
@@ -64,7 +62,7 @@
     </div> <!-- table responsive closure -->
     <div>
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+            <form action="{{url("/microapps/tickets/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                 @csrf
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>

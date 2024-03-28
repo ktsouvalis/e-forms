@@ -294,31 +294,19 @@ Route::resource('microapps/fruits', FruitsController::class);
 Route::resource('microapps/school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
-Route::post("/create_ticket",[TicketsController::class, 'create_ticket'])->middleware('isSchool');
+Route::resource('microapps/tickets', TicketsController::class);
 
-Route::get("/ticket_profile/{ticket}", function(Ticket $ticket){
-    if(Auth::user()){
-        $blade='admin';
-    }
-    else if (Auth::guard('school')->user()){
-        $blade='school';
-    }
-    return view("microapps.$blade.ticket-profile", ['ticket'=>$ticket]);
-})->middleware('canUpdateTicket');
+Route::post('/microapps/tickets/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
 
-Route::post("/update_ticket/{ticket}", [TicketsController::class, 'update_ticket'])->middleware('canUpdateTicket');
+Route::post('/microapps/tickets/update-post', [TicketsController::class, 'update_post']);
 
-Route::post("/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
+Route::post("/microapps/tickets/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
 
-Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
+Route::get('/microapps/tickets/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])->middleware('canUpdateTicket');
 
-Route::post('/update-post', [TicketsController::class, 'update_post']);
+Route::post('/microapps/tickets/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->middleware('boss');
 
-Route::post('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])->middleware('canUpdateTicket');
-
-Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
-
-Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->middleware('boss');
+Route::post('/microapps/tickets/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
 
 // OUTINGS ROUTES
 Route::resource('microapps/outings', OutingsController::class);
@@ -362,6 +350,7 @@ Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defi
 
 Route::post('/dl_defibrillators_file/{defibrillator}', [DefibrillatorsController::class, 'download_file']);
 
+// INTERNAL RULES ROUTES
 Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules'])->middleware('isSchool');
 
 Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further

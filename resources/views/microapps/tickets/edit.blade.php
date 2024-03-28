@@ -2,10 +2,10 @@
     <title>Δελτίο {{$ticket->id}}</title>
 @endpush
 @push('links')
-    <link href="../summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
+    <link href="{{asset("summernote-0.8.18-dist/summernote-lite.min.css")}}" rel="stylesheet">
 @endpush
 @push('scripts')
-    <script src="../summernote-0.8.18-dist/summernote-lite.min.js"></script>
+    <script src="{{asset("summernote-0.8.18-dist/summernote-lite.min.js")}}"></script>
     <script>
         $(document).ready(function() {
             $('.summernote').each(function() {
@@ -106,8 +106,8 @@
             Το δελτίο είναι ανοιχτό
         </div>
     @else
-        <div class='alert alert-success text-center'>
-            Το δελτίο είναι κλειστό. Θα ανοίξει αυτόματα, αν προσθέσετε κάποιο σχόλιο
+        <div class='alert alert-dark text-center'>
+            <b>Το δελτίο είναι κλειστό. Θα ανοίξει αυτόματα, αν προσθέσετε κάποιο σχόλιο</b>
         </div>
     @endif
             <div class="container-fluid">
@@ -166,7 +166,8 @@
         @endforeach
         <hr>
         <nav class="navbar navbar-light bg-light justify-content-center">
-        <form action="{{url("/update_ticket/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+        <form action="{{url("/microapps/tickets/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+            @method('PUT')
             @csrf
             <span class="input-group-text"><strong>Προσθήκη Νέου Σχολίου </strong></span>
             <div class="input-group justify-content-center">
@@ -199,7 +200,7 @@
     </nav>
     <hr>
     @if(!$ticket->solved)
-        <form action="{{url("/mark_as_resolved/$ticket->id")}}" method="post">
+        <form action="{{url("/microapps/tickets/mark_as_resolved/$ticket->id")}}" method="post">
             @csrf
             <strong>Αν θεωρείτε ότι λύθηκε το πρόβλημα: </strong>
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
@@ -245,7 +246,7 @@
             @php
                 $basename = basename($file);
             @endphp
-            <form action="{{url("/get_ticket_file/$ticket->id/$basename")}}" method="post">
+            <form action="{{url("/microapps/tickets/get_ticket_file/$ticket->id/$basename")}}" method="get">
             @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
             </form> 

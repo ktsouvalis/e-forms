@@ -61,7 +61,7 @@
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:skyblue; text-align:center;">
           <div class="text-dark fa-solid fa-signature"></div> 
-            <a href="{{url("/consultant_directors")}}" style=" text-decoration:none;" class="text-dark"> Διευθυντές</a>
+            <a href="{{url("/consultant_teachers")}}" style=" text-decoration:none;" class="text-dark"> Εκπαιδευτικοί</a>
         </div>
       </nav>
       @else

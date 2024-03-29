@@ -244,7 +244,7 @@ Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');
 
-Route::view('/consultant_directors','consultant_directors')->middleware('isConsultant');
+Route::view('/consultant_teachers','consultant_teachers')->middleware('isConsultant');
 
 Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 

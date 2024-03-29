@@ -40,6 +40,7 @@
         <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
         <thead>
             <tr>
+                <th id="search">Ημνία Διορισμού</th>
                 <th id="search">Όνομα</th>
                 <th id="search">Επώνυμο</th>
                 <th id="search">ΑΦΜ</th>
@@ -80,7 +81,8 @@
                     }   
                 @endphp
                  <tr>
-                     <td>{{$teacher->name}}</td>
+                    <td>{{$teacher->appointment_date}}</td> 
+                    <td>{{$teacher->name}}</td>
                      <td> {{$teacher->surname}}</td>
                      <td> {{$teacher->afm}}</td>
                      @php

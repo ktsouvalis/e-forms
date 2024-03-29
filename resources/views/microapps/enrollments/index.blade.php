@@ -1,16 +1,16 @@
 <x-layout>
 
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{ asset('DataTables-1.13.4/css/dataTables.bootstrap5.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('Responsive-2.4.1/css/responsive.bootstrap5.css') }}" rel="stylesheet"/>
     @endpush
 
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
+        <script src="{{ asset('DataTables-1.13.4/js/jquery.dataTables.js') }}"></script>
+        <script src="{{ asset('DataTables-1.13.4/js/dataTables.bootstrap5.js') }}"></script>
+        <script src="{{ asset('Responsive-2.4.1/js/dataTables.responsive.js') }}"></script>
+        <script src="{{ asset('Responsive-2.4.1/js/responsive.bootstrap5.js') }}"></script>
+        <script src="{{ asset('datatable_init.js') }}"></script>
     @endpush
     @push('title')
         <title>Εγγραφές 2024-25</title>
@@ -23,12 +23,11 @@
         @if(Auth::user()->isAdmin())      
         <nav class="container navbar navbar-light bg-light">
             <div class="row">
-                {{-- Αρχείο Δημοτικού Εγγραφέντων στην Α' Τάξη --}}
+                
                 <div class="col-6 hstack gap-3"> 
-                <form action="{{url("school_app/enrollments/upload_file/1_enrollments_primary_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/enrollments/upload_file/1_enrollments_primary_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        {{-- <span class="input-group-text w-25"></span> --}}
                         <span class="input-group-text w-75"><strong>Δημοτικό Εγγραφές στην Α' Τάξη</strong></span>
                     </div>
                     <div class="input-group w-75">
@@ -36,19 +35,18 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/school_app/enrollments/1_enrollments_primary_school.xlsx/1_enrollments_primary_school.xlsx")}}" method="get">
+                <form action="{{url("/microapps/enrollments/1_enrollments_primary_school.xlsx/1_enrollments_primary_school.xlsx")}}" method="get">
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Δημοτικό Εγγραφές στην Α' Τάξη </button>
                 </form>
                 </div>
                 {{-- Αρχείο Νηπιαγωγείου Εγγραφέντων --}}
                 <div class="col-6 hstack gap-3">
-                    <form action="{{url("school_app/enrollments/upload_file/1_enrollments_nursery_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/enrollments/upload_file/1_enrollments_nursery_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
-                            {{-- <span class="input-group-text w-25"></span> --}}
                             <span class="input-group-text w-75"><strong>Νηπιαγωγείο Εγγραφές</strong></span>
                         </div>
                         <div class="input-group w-75">
@@ -56,10 +54,10 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/1_enrollments_nursery_school.xlsx/1_enrollments_nursery_school.xlsx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/1_enrollments_nursery_school.xlsx/1_enrollments_nursery_school.xlsx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπιαγωγείο Εγγραφές </button>
                     </form>
                 </div>
@@ -67,7 +65,7 @@
             <div class="row">
                 {{-- Αρχείο Δημοτικού (χωρίς διευρυμένο Ολοήμερο) Εγγραφέντων Α' Τάξης στo Ολοήμερο --}}
                 <div class="col-6 hstack gap-3">
-                    <form action="{{url("school_app/enrollments/upload_file/2_enrollments_primary_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/enrollments/upload_file/2_enrollments_primary_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
@@ -78,16 +76,16 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/2_enrollments_primary_all_day_school.xlsx/2_enrollments_primary_all_day_school.xlsx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/2_enrollments_primary_all_day_school.xlsx/2_enrollments_primary_all_day_school.xlsx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Δημοτικό χωρίς διευρυμένο Ολ. - Εγγραφές Ολοήμερου </button>
                     </form>
                 </div>
                 {{-- Αρχείο Νηπιαγωγείου (χωρίς διευρυμένο Ολοήμερο) εγγραφέντων στο Ολοήμερο --}}
                 <div class="col-6 hstack gap-3">
-                    <form action="{{url("school_app/enrollments/upload_file/2_enrollments_nursery_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/enrollments/upload_file/2_enrollments_nursery_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
@@ -98,10 +96,10 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/2_enrollments_nursery_all_day_school.xlsx/2_enrollments_nursery_all_day_school.xlsx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/2_enrollments_nursery_all_day_school.xlsx/2_enrollments_nursery_all_day_school.xlsx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπιαγωγείο χωρίς διευρυμένο Ολ. - Εγγραφές Ολ. </button>
                     </form>
                 </div>
@@ -109,7 +107,7 @@
             <div class="row">
                 {{-- Αρχείο Δημοτικού (με διευρυμένο Ολοήμερο) Εγγραφέντων Α' Τάξης στο Ολοήμερο --}}
                 <div class="col-6 hstack gap-3">
-                    <form action="{{url("school_app/enrollments/upload_file/2_enrollments_primary_ext_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/enrollments/upload_file/2_enrollments_primary_ext_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
@@ -120,16 +118,16 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/2_enrollments_primary_ext_all_day_school.xlsx/2_enrollments_primary_ext_all_day_school.xlsx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/2_enrollments_primary_ext_all_day_school.xlsx/2_enrollments_primary_ext_all_day_school.xlsx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Δημοτικό με διευρυμένο Ολ. - Εγγραφές Ολ </button>
                     </form>
                 </div>   
                 {{-- Αρχείο Νηπιαγωγείου (με διευρυμένο Ολοήμερο) εγγραφέντων στο Ολοήμερο --}}
                 <div class="col-6 hstack">
-                    <form action="{{url("school_app/enrollments/upload_file/2_enrollments_nursery_ext_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/microapps/enrollments/upload_file/2_enrollments_nursery_ext_all_day_school.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
@@ -140,10 +138,10 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/2_enrollments_nursery_ext_all_day_school.xlsx/2_enrollments_nursery_ext_all_day_school.xlsx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/2_enrollments_nursery_ext_all_day_school.xlsx/2_enrollments_nursery_ext_all_day_school.xlsx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπιαγωγείο με διευρυμένο Ολοήμερο - Εγγραφές Ολ. </button>
                     </form>
                 </div>
@@ -151,7 +149,7 @@
             <div class="row">
                 {{-- Δημοτικό - Αρχείο για αίτημα δημιουργίας επιπλέον τμήματος --}}
                 <div class="col hstack gap-3">
-                    <form action="{{url("school_app/enrollments/upload_file/3_enrollments_extra_section_dim.docx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("microapps/enrollments/upload_file/3_enrollments_extra_section_dim.docx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
@@ -162,16 +160,16 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/3_enrollments_extra_section_dim.docx/3_enrollments_extra_section_dim.docx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/3_enrollments_extra_section_dim.docx/3_enrollments_extra_section_dim.docx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Δημ. - Αίτημα Δημιουργίας Επιπλέον Τμήματος </button>
                     </form>
                 </div>
                 {{-- Νηπιαγωγείο - Αρχείο για αίτημα δημιουργίας επιπλέον τμήματος --}}
                 <div class="col hstack gap-3">
-                    <form action="{{url("school_app/enrollments/upload_file/3_enrollments_extra_section_nip.docx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("microapps/enrollments/upload_file/3_enrollments_extra_section_nip.docx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             {{-- <span class="input-group-text w-25"></span> --}}
@@ -182,10 +180,10 @@
                         </div>
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     </form>
-                    <form action="{{url("/school_app/enrollments/3_enrollments_extra_section_nip.docx/3_enrollments_extra_section_nip.docx")}}" method="get">
+                    <form action="{{url("/microapps/enrollments/3_enrollments_extra_section_nip.docx/3_enrollments_extra_section_nip.docx")}}" method="get">
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Αίτημα δημιουργίας επιπλέον τμήματος </button>
                     </form>
                 </div>
@@ -193,7 +191,7 @@
             <div class="row gap-2">
             {{-- Δημοτικό - Μαθητές στα όρια --}}
             <div class="col hstack gap-3">
-                <form action="{{url("school_app/enrollments/upload_file/4_boundary_students_dim.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/enrollments/upload_file/4_boundary_students_dim.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
@@ -204,16 +202,16 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/school_app/enrollments/4_boundary_students_dim.xlsx/4_boundary_students_dim.xlsx")}}" method="get">
+                <form action="{{url("/microapps/enrollments/4_boundary_students_dim.xlsx/4_boundary_students_dim.xlsx")}}" method="get">
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Δημ. - Μαθητές στα όρια </button>
                 </form>
             </div>
             {{-- Νηπιαγωγείο - Μαθητές στα όρια --}}
             <div class="col hstack gap-3">
-                <form action="{{url("school_app/enrollments/upload_file/4_boundary_students_nip.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/microapps/enrollments/upload_file/4_boundary_students_nip.xlsx")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         {{-- <span class="input-group-text w-25"></span> --}}
@@ -224,10 +222,10 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/school_app/enrollments/4_boundary_students_nip.xlsx/4_boundary_students_nip.xlsx")}}" method="get">
+                <form action="{{url("/microapps/enrollments/4_boundary_students_nip.xlsx/4_boundary_students_nip.xlsx")}}" method="get">
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Μαθητές στα όρια </button>
                 </form>
             </div>
@@ -274,7 +272,7 @@
                             
                             <td> {{$one->nr_of_students1}}</td>
                             <td>
-                                <form action="{{url("/school_app/enrollments/enrollments1_$one_school->code.xlsx/Εγγραφέντες_$one_school->name.xlsx")}}" method="get">
+                                <form action="{{url("/microapps/enrollments/enrollments1_$one_school->code.xlsx/Εγγραφέντες_$one_school->name.xlsx")}}" method="get">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->enrolled_file1}} </button> 
                                 </form>   
                             </td>
@@ -285,21 +283,21 @@
                             </td>
                             <td>
                                 @if($one->all_day_file1)
-                                    <form action="{{url("/school_app/enrollments/enrollments2_$one_school->code.xlsx/Ολοήμερο_$one_school->name.xlsx")}}" method="get">
+                                    <form action="{{url("/microapps/enrollments/enrollments2_$one_school->code.xlsx/Ολοήμερο_$one_school->name.xlsx")}}" method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->all_day_file1}} </button> 
                                     </form>   
                                 @endif
                             </td>
                             <td>
                                 @if($one->extra_section_file1)
-                                    <form action="{{url("/school_app/enrollments/enrollments3_$one_school->code.pdf/Επιπλέον_Τμ_$one_school->name.pdf")}}" method="get">
+                                    <form action="{{url("/microapps/enrollments/enrollments3_$one_school->code.pdf/Επιπλέον_Τμ_$one_school->name.pdf")}}" method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->extra_section_file1}} </button> 
                                     </form>
                                 @endif   
                             </td>
                             <td>
                                 @if($one->boundaries_st_file1)
-                                    <form action="{{url("/school_app/enrollments/enrollments4_$one_school->code.xlsx/Μαθητές_στα_όρια_$one_school->name.xlsx")}}" method="get">
+                                    <form action="{{url("/microapps/enrollments/enrollments4_$one_school->code.xlsx/Μαθητές_στα_όρια_$one_school->name.xlsx")}}" method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->boundaries_st_file1}} </button> 
                                     </form>
                                 @endif

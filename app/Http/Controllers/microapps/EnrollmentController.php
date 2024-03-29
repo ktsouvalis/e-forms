@@ -14,6 +14,27 @@ use Illuminate\Support\Facades\Validator;
 class EnrollmentController extends Controller
 {
     //
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        $this->microapp = Microapp::where('url', '/enrollments')->first();
+    }
+
+    public function index(){
+        return view('microapps.enrollments.index', ['appname' => 'enrollments']);
+    }
+
+    public function create(){
+        return view('microapps.enrollments.create', ['appname' => 'enrollments']);
+    }
+
+    public function edit(Ticket $ticket){
+        if(Auth::check())
+            return view('microapps.tickets.ticket-profile-admin', compact('ticket'));
+        else if(Auth::guard('school')->check())
+            return view('microapps.tickets.ticket-profile-school', compact('ticket'));
+    }
     public function save($select, Request $request){
         $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/enrollments')->first();

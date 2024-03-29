@@ -269,11 +269,17 @@ Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'ch
 
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
-Route::post("/school_app/enrollments/{select}", [EnrollmentController::class, 'save']);
+// ENROLLMENTS ROUTES
 
-Route::post("/school_app/enrollments/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file']);
+Route::resource('microapps/enrollments', EnrollmentController::class);
 
-Route::get("/school_app/enrollments/{file}/{download_file_name}", [EnrollmentController::class, 'download_file']);
+Route::group(['prefix' => 'microapps/enrollments'], function () {
+    Route::post("/{select}", [EnrollmentController::class, 'save']);
+
+    Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file']);
+
+    Route::get("/{file}/{download_file_name}", [EnrollmentController::class, 'download_file']);
+});
 
 // FRUITS ROUTES
 Route::resource('microapps/fruits', FruitsController::class);

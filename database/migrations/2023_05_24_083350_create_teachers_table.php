@@ -35,7 +35,8 @@ return new class extends Migration
             $table->string('am')->nullable();
             $table->foreignId('sxesi_ergasias_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->boolean('org_eae');
-            
+            $table->date('appointment_date')->nullable();
+            $table->string('appointment_fek')->nullable();
             //connections
             $table->unsignedBigInteger('organiki_id'); // οργανική τοποθέτηση: id απο τον πίνακα schools ή από τον πίνακα directories
             $table->string('organiki_type'); // όνομα  Model (School ή Directory)

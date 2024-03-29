@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
@@ -184,7 +185,16 @@ class TeacherController extends Controller
             $check['sch_mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
             $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
             $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-            
+            $dateString = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue();
+            if (Date::isDateTime($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row))) {
+                $dateValue = Date::excelToDateTimeObject($dateString);
+                $formattedDate = $dateValue->format('Y-m-d');
+                $check['appointment_date'] = $formattedDate;
+            }
+            else{
+                $check['appointment_date'] = null;
+            }
+            $check['appointment_fek'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
             //cross check sxesi_ergasias with database
             $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
             if(SxesiErgasias::where('name',$sxesi)->count()){
@@ -230,7 +240,7 @@ class TeacherController extends Controller
                 $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
             }
         }
-        // dd($teachers_array);
+    
         $spreadsheet2 = IOFactory::load("../storage/app/$path2");
         $row=2;
         $error=0;
@@ -254,7 +264,16 @@ class TeacherController extends Controller
             $check['sch_mail']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
             $check['klados']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
             $check['am']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-            
+            $dateString = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue();
+            if (Date::isDateTime($spreadsheet2->getActiveSheet()->getCellByColumnAndRow(22, $row))) {
+                $dateValue = Date::excelToDateTimeObject($dateString);
+                $formattedDate = $dateValue->format('Y-m-d');
+                $check['appointment_date'] = $formattedDate;
+            }
+            else{
+                $check['appointment_date'] = null;
+            }
+            $check['appointment_fek'] = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
             //cross check sxesi_ergasias with database
             $sxesi = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
             if(SxesiErgasias::where('name',$sxesi)->count()){
@@ -349,6 +368,8 @@ class TeacherController extends Controller
                         'org_eae' => $teacher['org_eae'],
                         'organiki_id' => $teacher['organiki'],
                         'organiki_type' => $teacher['organiki_type'],
+                        'appointment_date' => $teacher['appointment_date'],
+                        'appointment_fek' => $teacher['appointment_fek'],
                         'active'=>1
                     ]
                 );

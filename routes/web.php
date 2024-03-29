@@ -216,11 +216,11 @@ Route::get('/teacher_app/{appname}', function($appname){
 
 //////// CONSULTANT ROUTES
 
-Route::post('/consultant_app/check_internal_rule/{internal_rule}', [InternalRulesController::class,'check_internal_rule']);
+
 
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
-Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
+// Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
 
 Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
 
@@ -352,22 +352,23 @@ Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defi
 Route::post('/dl_defibrillators_file/{defibrillator}', [DefibrillatorsController::class, 'download_file']);
 
 // INTERNAL RULES ROUTES
-Route::post("/save_internal_rules", [InternalRulesController::class, 'save_internal_rules'])->middleware('isSchool');
 
-Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further
+Route::resource('microapps/internal_rules', InternalRulesController::class);
 
-Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file'])->middleware('isConsultant');
+Route::group(['prefix' => 'microapps/internal_rules'], function () {
 
-Route::post("/approve_int_rule/{type}/{internal_rule}", [InternalRulesController::class, 'approve_int_rule']);
+    Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further
 
-Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file']); //inside method check further
+    Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file'])->middleware('isConsultant');
 
-Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file'])->middleware('isConsultant');
+    Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file']); //inside method check further
 
-Route::post("/dl_internal_rules_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_int_rule_file']);
+    Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file'])->middleware('isConsultant');
 
-Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::class,'check_internal_rule']);
+    Route::get("/download_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_file']);
 
+    Route::post('/check/{internal_rule}', [InternalRulesController::class,'check']);
+});
 
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);

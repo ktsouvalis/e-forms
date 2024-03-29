@@ -1,16 +1,15 @@
 <x-layout>
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
     @endpush
-
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
-        <script src="../toggle_signed_internal_rules.js"></script>
+        <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
+        <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
+        <script src="{{asset('datatable_init.js')}}"></script>
+        <script src="{{asset('/toggle_signed_internal_rules.js')}}"></script>
         <script>
             $(document).ready(function () {
                 // Setup - add a text input for inclusion and exclusion to each header cell
@@ -107,7 +106,7 @@
                     });
 
                     $.ajax({
-                        url: '../check_internal_rule/'+internalRuleId,
+                        url: '/microapps/internal_rules/check/'+internalRuleId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
@@ -185,19 +184,19 @@
                                 </td>
                             @endif
                             <td>{{-- Αρχεία Σχολείου --}}
-                                <form action="{{url("/dl_internal_rules_file/$one->id/school_file")}}" method="post">
+                                <form action="{{url("/microapps/internal_rules/download_file/$one->id/school_file")}}" method="get">
                                     @csrf
                                     <button class="btn btn-warning mb-2 bi bi-box-arrow-down" title="Λήψη αρχείου">@if($one->school_file2 or $one->school_file3)<del> @endif  {{$one->school_file}}</del></button>
                                 </form>
                     
                                 @if($one->school_file2)
-                                    <form action="{{url("/dl_internal_rules_file/$one->id/school_file2")}}" method="post">
+                                    <form action="{{url("/microapps/internal_rules/download_file/$one->id/school_file2")}}" method="get">
                                         @csrf
                                         <button class="btn btn-warning mb-2 bi bi-box-arrow-down" title="Λήψη αρχείου">@if($one->school_file3)<del> @endif  {{$one->school_file2}}</del></button>
                                     </form>
                                 @endif
                                 @if($one->school_file3)
-                                    <form action="{{url("/dl_internal_rules_file/$one->id/school_file3")}}" method="post">
+                                    <form action="{{url("/microapps/internal_rules/download_file/$one->id/school_file3")}}" method="get">
                                         @csrf
                                         <button class="btn btn-warning mb-2 bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->school_file3}}</button>
                                     </form>
@@ -206,21 +205,21 @@
                             <td> {{-- Αρχεία Παρατηρήσεων --}}
                                 @if(!$one->director_comments_file)
                                     @if(!$one->approved_by_director)
-                                        <form action="{{url("/upload_director_comments_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                                        <form action="{{url("/microapps/internal_rules/upload_director_comments_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                                             @csrf                           
                                             <input name="director_comment_file" type="file" class="form-control" required>
                                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
                                         </form>
                                     @endif
                                 @else
-                                    <form action="{{url("/dl_internal_rules_file/$one->id/director_comments_file")}}" method="post">
+                                    <form action="{{url("/microapps/internal_rules/download_file/$one->id/director_comments_file")}}" method="get">
                                         @csrf
                                         <div class="mb-2">Δ/ντης Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->director_comments_file}}</button></div>
                                     </form>   
                                 @endif
                                 
                                 @if($one->consultant_comments_file)
-                                    <form action="{{url("/dl_internal_rules_file/$one->id/consultant_comments_file")}}" method="post">
+                                    <form action="{{url("/microapps/internal_rules/download_file/$one->id/consultant_comments_file")}}" method="get">
                                         @csrf
                                         <div class="mb-2">Συμβ. Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->consultant_comments_file}}</button></div>
                                     </form>
@@ -236,19 +235,19 @@
                             <td>
                                 @if($one->approved_by_consultant and $one->approved_by_director) {{-- Αρχεία Υπογεγραμμένα--}}
                                     @if(!$one->director_signed_file)
-                                        <form action="{{url("/upload_director_signed_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                                        <form action="{{url("/microapps/internal_rules/upload_director_signed_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                                             @csrf                           
                                             <input name="director_signed_file" type="file" class="form-control" required>
                                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
                                         </form>
                                     @else {{-- Έχω υπογεγραμμένο αρχείο Διευθυντή--}}
-                                        <form action="{{url("/dl_internal_rules_file/$one->id/director_signed_file")}}" method="post">
+                                        <form action="{{url("/microapps/internal_rules/download_file/$one->id/director_signed_file")}}" method="get">
                                             @csrf
                                             <div class="mb-2">Δ/ντή Εκπ/σης: <button class="btn {{$director_color}} bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->director_signed_file}}</button></div>
                                         </form> 
                                     @endif
                                     @if($one->consultant_signed_file)
-                                        <form action="{{url("/dl_internal_rules_file/$one->id/consultant_signed_file")}}" method="post">
+                                        <form action="{{url("/microapps/internal_rules/download_file/$one->id/consultant_signed_file")}}" method="get">
                                             @csrf
                                             <div class="mb-2">Συμβ. Εκπ/σης: <button class="btn {{$consultant_color}} bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->consultant_signed_file}}</button></div>
                                         </form>
@@ -288,7 +287,7 @@
                         @endphp
                             @if($one->director_signed_file and $one->consultant_signed_file)
                                 <tr><td><strong>{{$one->school->name}}</strong></td>
-                                <td><form action="{{url("/dl_internal_rules_file/$one->id/director_signed_file")}}" method="post">
+                                <td><form action="{{url("/microapps/internal_rules/download_file/$one->id/director_signed_file")}}" method="get">
                                     @csrf
                                     <div class="mb-2"> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->director_signed_file}}</button></div>
                                 </form></td></tr>

@@ -108,18 +108,6 @@ Route::post('/find_entity', function(Request $request){
 
 Route::view('/school_areas', 'public/school_areas');
 
-//ADMIN Routes
-
-// Route::get('/admin/{appname}', function($appname){
-//     $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
-//     if($microapp->active){
-//         return view('microapps.admin.'.$appname,['appname'=>$appname]);
-//     }
-//     else{
-//         return redirect(url('/index_user'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
-//     }
-// })->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
-
 //// USER ROUTES
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
@@ -296,42 +284,55 @@ Route::resource('microapps/school_area', SchoolAreaController::class);
 // TICKETS ROUTES
 Route::resource('microapps/tickets', TicketsController::class);
 
-Route::post('/microapps/tickets/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('canUpdateTicket')->middleware('boss');
+Route::group(['prefix' => 'microapps/tickets'], function () {
+    Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])
+        ->middleware('canUpdateTicket')
+        ->middleware('boss');
 
-Route::post('/microapps/tickets/update-post', [TicketsController::class, 'update_post']);
+    Route::post('/update-post', [TicketsController::class, 'update_post']);
 
-Route::post("/microapps/tickets/mark_as_resolved/{ticket}",[TicketsController::class, 'mark_as_resolved'])->middleware('canUpdateTicket');
+    Route::post("/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])
+        ->middleware('canUpdateTicket');
 
-Route::get('/microapps/tickets/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])->middleware('canUpdateTicket');
+    Route::get('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])
+        ->middleware('canUpdateTicket');
 
-Route::post('/microapps/tickets/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->middleware('boss');
+    Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])
+        ->middleware('boss');
 
-Route::post('/microapps/tickets/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
+    Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
+});
 
 // OUTINGS ROUTES
 Route::resource('microapps/outings', OutingsController::class);
 
-Route::get('/microapps/outings/download_file/{outing}', [OutingsController::class, 'download_file']); //checking Auth inside the method
+Route::group(['prefix' => 'microapps/outings'], function () {
+    Route::get('/download_file/{outing}', [OutingsController::class, 'download_file']); //checking Auth inside the method
 
-Route::post('/microapps/outings/check/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
+    Route::post('/check/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
+});
 
 // ALL_DAY_SCHOOL ROUTES
 Route::resource('microapps/all_day_school', AllDaySchoolController::class);
 
-Route::get('/microapps/all_day_school/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->middleware('canViewMicroapp');
+Route::group(['prefix' => 'microapps/all_day_school'], function () {
+    Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->middleware('canViewMicroapp');
 
-Route::post('/microapps/all_day_school/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
+    Route::post('/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
-Route::get('/microapps/all_day_school/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rights are checked inside the method
+    Route::get('/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rights are checked inside the method
+});
 
 // IMMIGRANTS ROUTES
 Route::resource('microapps/immigrants', ImmigrantsController::class);
 
-Route::get('/microapps/immigrants/download_template/yes', [ImmigrantsController::class, 'download_template'])->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
+Route::group(['prefix' => 'microapps/immigrants'], function () {
+    Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template'])->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
 
-Route::post('/microapps/immigrants/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
+    Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
 
-Route::get('/microapps/immigrants/download_file/{immigrant}', [ImmigrantsController::class, 'download_file']); //access rights are checked inside the method
+    Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file']); //access rights are checked inside the method
+});
 
 //DEFIBRILLATORS ROUTES
 Route::post('/dl_defibrillators_document', function(Request $request){
@@ -371,70 +372,51 @@ Route::post('/check_internal_rule/{internal_rule}', [InternalRulesController::cl
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);
 
-Route::post('/filecollects/dl_filecollect_file/{filecollect}/{type}', function(Filecollect $filecollect, $type){
-    if($type == 'base'){
-        $filename = $filecollect->base_file;
-    }
-    else if($type=='template'){
-        $filename = $filecollect->template_file;
-    }
-    $file = "file_collects/".$filecollect->id."/".$filename;
-    if(Storage::disk('local')->exists($file)){
-        $response = Storage::disk('local')->download($file);  
-        ob_end_clean();
-        try{
-            return $response;
-        }
-        catch(\Exception $e){
-            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
-        }
-    } 
-    else 
-        return back()->with('failure', 'Το αρχείο δεν υπάρχει.');  
-});//->middleware('can:view,filecollect');
+Route::group(['prefix' => 'filecollects'], function () {
+    Route::get('/download_admin_file/{filecollect}/{type}', [FilecollectController::class, 'download_admin_file']);
 
-Route::post('/filecollects/dl_stake_file/{old_data}', [FilecollectController::class,'getSchoolFile']);
+    Route::get('/download_stake_file/{old_data}', [FilecollectController::class,'download_stake_file']);
 
-Route::post('/filecollects/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
+    Route::post('/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
 
-Route::post('/filecollects/update_filecollect_file/{filecollect}/{type}', [FilecollectController::class, 'update_file'])->middleware('can:view,filecollect');
+    Route::post('/update_admin_file/{filecollect}/{type}', [FilecollectController::class, 'update_admin_file'])->middleware('can:view,filecollect');
 
-Route::post('/filecollects/update_filecollect_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
+    Route::post('/update_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
 
-Route::post('/filecollects/change_filecollect_status/{filecollect}', [FilecollectController::class, 'changeFilecollectStatus'])->middleware('can:view,filecollect');
+    Route::post('/change_status/{filecollect}', [FilecollectController::class, 'change_status'])->middleware('can:view,filecollect');
 
-Route::post("/filecollects/post_filecollect/{filecollect}", [FilecollectController::class, 'post_filecollect']);
+    Route::post("/upload_stake_file/{filecollect}", [FilecollectController::class, 'upload_stake_file']);
 
-Route::post("/filecollects/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']); //access is checked inside the controller
-// ->middleware('can:check,filecollectStakeholder');
+    Route::post("/filecollect_checked/{stakeholder}",[FilecollectController::class, 'check_uncheck']); //access is checked inside the controller
 
-Route::post("/filecollects/save_filecollect_stake_comment/{stakeholder}",[FilecollectController::class, 'save_filecollect_comment']);//access is checked inside the controller
+    Route::post("/save_stake_comment/{stakeholder}",[FilecollectController::class, 'save_stake_comment']);//access is checked inside the controller
 
-Route::post("/filecollects/download_filecollect_directory/{filecollect}", [FilecollectController::class, 'download_filecollect_directory'])->middleware('can:view,filecollect');
+    Route::post("/download_directory/{filecollect}", [FilecollectController::class, 'download_directory'])->middleware('can:view,filecollect');
 
-Route::post('/filecollects/num_of_lines/{filecollect}', [FilecollectController::class, 'add_num_of_lines'])->middleware('boss');
+    Route::post('/num_of_lines/{filecollect}', [FilecollectController::class, 'add_num_of_lines'])->middleware('boss');
 
-Route::post("/filecollects/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
+    Route::post("/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
 
-Route::post("/filecollects/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
-
+    Route::post("/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
+});
 
 // FILESHARES ROUTES
 
 Route::resource('fileshares', FileshareController::class);
 
-Route::post('/save_fileshare_comment/{fileshare}', [FileshareController::class, 'add_comment']);
+Route::group(['prefix' => 'fileshares'], function(){
+    Route::post('/save_comment/{fileshare}', [FileshareController::class, 'save_comment']);
 
-Route::post("/get_file/{fileshare}/{original_filename}", [FileshareController::class, 'download_file']);
+    Route::get("/download_file/{fileshare}/{original_filename}", [FileshareController::class, 'download_file']);
 
-Route::post("/del_file/{fileshare}/{orginal_filename}", [FileshareController::class, 'delete_file'])->middleware('can:view,fileshare');
+    Route::post("/delete_file/{fileshare}/{orginal_filename}", [FileshareController::class, 'delete_file'])->middleware('can:view,fileshare');
 
-Route::post('auto_update_fileshare_whocan/{fileshare}', [FileshareController::class, 'auto_update_whocan']);
+    Route::post('/auto_update_whocan/{fileshare}', [FileshareController::class, 'auto_update_whocan']);
 
-Route::post('/inform_my_teachers/{fileshare}', [FileshareController::class, 'school_informs_teachers']);
+    Route::post('/inform_my_teachers/{fileshare}', [FileshareController::class, 'school_informs_teachers']);
 
-Route::post('/fileshare_allow_schools/{fileshare}', [FileshareController::class, 'allow_schools']);
-
+    Route::post('/allow_schools/{fileshare}', [FileshareController::class, 'allow_schools']);
+});
 
 // WHOCAN Routes
 

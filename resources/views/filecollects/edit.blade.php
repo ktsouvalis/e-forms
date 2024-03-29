@@ -93,7 +93,7 @@
         
         <div class="container">
             <div class="hstack gap-3">
-                <form action="{{url("/filecollects/update_filecollect_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/filecollects/update_admin_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75"><strong>Ενημέρωση εγκυκλίου συλλογής</strong></span>
@@ -106,7 +106,7 @@
                     </div>
                 </form>
                 @if($filecollect->base_file)
-                <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/base")}}" method="post">
+                <form action="{{url("/filecollects/download_admin_file/$filecollect->id/base")}}" method="get">
                     @csrf
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
                 </form>
@@ -114,7 +114,7 @@
             </div>
                 <hr>
                 <div class="hstack gap-3">
-                <form action="{{url("/filecollects/update_filecollect_file/$filecollect->id/template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/filecollects/update_admin_file/$filecollect->id/template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου συλλογής</strong></span>
@@ -127,7 +127,7 @@
                     </div>
                 </form>
                 @if($filecollect->template_file)
-                <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/template")}}" method="post">
+                <form action="{{url("/filecollects/download_admin_file/$filecollect->id/template")}}" method="get">
                     @csrf
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
                 </form>
@@ -181,7 +181,7 @@
                 </form>
                 <hr>
         @endif
-        <form action="{{url("/filecollects/update_filecollect_comment/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+        <form action="{{url("/filecollects/update_comment/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @csrf
             <span class="input-group-text"><strong>Προσθήκη μηνύματος για ενδιαφερόμενους</strong></span>
             <div class="input-group justify-content-center">
@@ -290,7 +290,7 @@
                     
                     @if($one_stakeholder->file)
                         <td>
-                            <form action="{{url("/filecollects/dl_stake_file/$one_stakeholder->id")}}" method="post">
+                            <form action="{{url("/filecollects/download_stake_file/$one_stakeholder->id")}}" method="get">
                                 @csrf
                                 <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$one_stakeholder->file}} </button>
                             </form>
@@ -343,7 +343,7 @@
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όσους <strong>δεν</strong> έχουν στείλει αρχείο</button>
                 </form>
-                <form action="{{url("/filecollects/download_filecollect_directory/$filecollect->id")}}" method="post">
+                <form action="{{url("/filecollects/download_directory/$filecollect->id")}}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-cloud-download" > Λήψη αρχείων</button>
                 </form>

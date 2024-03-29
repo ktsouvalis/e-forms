@@ -126,7 +126,7 @@
                             @php
                                 $fi = $fileshare->id;
                             @endphp
-                            <a class="text-dark" style="text-decoration:none;" href="{{url("/fileshare_profile/$fi")}}">
+                            <a class="text-dark" style="text-decoration:none;" href="{{url("/fileshares/$fi/edit")}}">
                             <div class="h5 card-title fa-solid fa-file-pdf"></div>
                             <div>{{$fileshare->name}}</div>
                             </a> 

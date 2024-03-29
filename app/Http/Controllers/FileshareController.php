@@ -418,7 +418,7 @@ class FileshareController extends Controller
         return response()->json(['message' => 'Fileshare updated successfully']);
     }
 
-    public function add_comment(Fileshare $fileshare, Request $request){
+    public function save_comment(Fileshare $fileshare, Request $request){
         $validator = Validator::make($request->all(), [
             'comment' => 'max:5000',
         ]);

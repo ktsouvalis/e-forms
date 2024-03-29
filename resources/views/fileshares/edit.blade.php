@@ -54,7 +54,7 @@
                     });
 
                     $.ajax({
-                        url: '../fileshare_allow_schools/'+fileshareId,
+                        url: '../allow_schools/'+fileshareId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
@@ -110,7 +110,7 @@
                 </form>
             </nav> 
         <hr>
-        <form action="{{url("/save_fileshare_comment/$fileshare->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+        <form action="{{url("/fileshares/save_comment/$fileshare->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @csrf
             <span class="input-group-text"><strong>Προσθήκη μηνύματος για ενδιαφερόμενους</strong></span>
             <div class="input-group justify-content-center">
@@ -149,7 +149,7 @@
                         <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
-                <form action="{{url("/auto_update_fileshare_whocan/$fileshare->id")}}" method="post" class="container-fluid">
+                <form action="{{url("/fileshares/auto_update_whocan/$fileshare->id")}}" method="post" class="container-fluid">
                     @csrf
                     <div class="input-group py-1 px-1">
                         <span class="w-25"></span>
@@ -285,12 +285,12 @@
                         @php
                             $basename = basename($file_c);
                         @endphp
-                        <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/fileshares/download_file/$fileshare->id/$basename")}}" method="get">
                         @csrf
                             <input type="hidden" name="personal" value="0">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                         </form>
-                        <form action="{{url("/del_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/delete_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
                             <input type="hidden" name="personal" value="0">
                             <button class="btn btn-danger bi bi-x-circle"></button>
@@ -307,12 +307,12 @@
                         @php
                             $basename = basename($file_p);
                         @endphp
-                        <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/fileshares/download_file/$fileshare->id/$basename")}}" method="get">
                         @csrf
                             <input type="hidden" name="personal" value="1">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                         </form>
-                        <form action="{{url("/del_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/delete_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
                             <input type="hidden" name="personal" value="1">
                             <button class="btn btn-danger bi bi-x-circle"></button>

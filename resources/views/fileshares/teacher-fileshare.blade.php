@@ -36,7 +36,7 @@
                         @php
                             $basename = basename($file_c);
                         @endphp
-                        <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/fileshares/download_file/$fileshare->id/$basename")}}" method="get">
                         @csrf
                             <input type="hidden" name="personal" value="0">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
@@ -63,7 +63,7 @@
                         }
                     @endphp
                     @if(!empty($fieldOfInterest) && strpos($string, $fieldOfInterest)!==false)
-                        <form action="{{url("/get_file/$fileshare->id/$string")}}" method="post">
+                        <form action="{{url("/fileshares/download_file/$fileshare->id/$string")}}" method="get">
                         @csrf
                             <input type="hidden" name="personal" value="1">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$string}}</button>

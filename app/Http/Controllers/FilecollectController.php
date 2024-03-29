@@ -72,7 +72,7 @@ class FilecollectController extends Controller
         }
     }
 
-    public function update_file(Request $request, Filecollect $filecollect, $type){
+    public function update_admin_file(Request $request, Filecollect $filecollect, $type){
         if($type=='base'){
             $file = $request->file('base_file');
             $msg = "Η εγκύκλιος";
@@ -191,7 +191,7 @@ class FilecollectController extends Controller
         return back()->with('success',"Επιτυχής αποθήκευση των στοιχείων της Συλλογής $filecollect->name");
     }
 
-    public function changeFilecollectStatus(Request $request, Filecollect $filecollect){
+    public function change_status(Request $request, Filecollect $filecollect){
         if($request->all()['asks_to'] == 'ch_vis_status'){
             $filecollect->visible = $filecollect->visible==1?0:1; //change visibility based on previous state
             $filecollect->accepts = 0; // reset acceptability
@@ -206,7 +206,7 @@ class FilecollectController extends Controller
         return back()->with('success', 'H κατάσταση της εφαρμογής άλλαξε επιτυχώς');
     }
 
-    public function post_filecollect(Request $request, Filecollect $filecollect){
+    public function upload_stake_file(Request $request, Filecollect $filecollect){
         if($filecollect->visible and $filecollect->accepts){
             $record_to_update=null;
             //identify stakeholder
@@ -277,7 +277,7 @@ class FilecollectController extends Controller
             abort('403');
     }
 
-    public function getSchoolFile(Request $request, FilecollectStakeholder $old_data){
+    public function download_stake_file(Request $request, FilecollectStakeholder $old_data){
         $extension="";
         if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
             $extension ='.xlsx';
@@ -399,7 +399,7 @@ class FilecollectController extends Controller
         else abort(403);
     }
 
-    public function save_filecollect_comment(Request $request, FilecollectStakeholder $stakeholder){
+    public function save_stake_comment(Request $request, FilecollectStakeholder $stakeholder){
         if(Auth::guard('school')->check()){
             $user = Auth::guard('school')->user();
         }
@@ -417,7 +417,7 @@ class FilecollectController extends Controller
         else abort(403);
     }
 
-    public function download_filecollect_directory(Request $request, Filecollect $filecollect){
+    public function download_directory(Request $request, Filecollect $filecollect){
         $directory = 'file_collects/' . $filecollect->id;
         $helper = new FilesController;
         $files = $helper->download_directory_as_zip($directory);
@@ -446,8 +446,6 @@ class FilecollectController extends Controller
 
         return back()->with('success', 'Ο αριθμός γραμμών αποθηκεύτηκε');
     }
-
-        
 
     public function extract_xlsx_file(Request $request, Filecollect $filecollect){
         $directory = storage_path("app/file_collects/$filecollect->id");
@@ -536,5 +534,27 @@ class FilecollectController extends Controller
 
         return back()->with('success', 'Το μήνυμα εστάλη');
         // return back()->with('success', $stakeholder->stakeholder->name);
+    }
+
+    public function download_admin_file(Filecollect $filecollect, $type){
+        if($type == 'base'){
+            $filename = $filecollect->base_file;
+        }
+        else if($type=='template'){
+            $filename = $filecollect->template_file;
+        }
+        $file = "file_collects/".$filecollect->id."/".$filename;
+        if(Storage::disk('local')->exists($file)){
+            $response = Storage::disk('local')->download($file);  
+            ob_end_clean();
+            try{
+                return $response;
+            }
+            catch(\Exception $e){
+                return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+            }
+        } 
+        else 
+            return back()->with('failure', 'Το αρχείο δεν υπάρχει.');  
     }
 }

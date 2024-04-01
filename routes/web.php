@@ -54,9 +54,6 @@ use App\Http\Controllers\microapps\InternalRulesController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::resource('tests', TestController::class);
-
 ///// INDEX ////////////////////////////////////
 
 Route::view('/', 'index')->name('index');
@@ -217,18 +214,18 @@ Route::group(['prefix' =>'manage/operations'], function(){
 });
 
 //////// MANAGE MICROAPPS ROUTES
-// Route::resource('manage/microapps', MicroappController::class);
+Route::resource('manage/microapps', MicroappController::class);
 
-// Route::group(['prefix' => 'manage/microapps'], function(){ 
-//     Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
+Route::group(['prefix' => 'manage/microapps'], function(){ 
+    Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
 
-//     Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
-// });
+    Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+});
 
 // ENROLLMENTS ROUTES
-Route::resource('microapps/enrollments', EnrollmentController::class);
+Route::resource('enrollments', EnrollmentController::class);
 
-Route::group(['prefix' => 'microapps/enrollments'], function () {
+Route::group(['prefix' => 'enrollments'], function () {
     Route::post("/{select}", [EnrollmentController::class, 'save']);
 
     Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file']);
@@ -237,10 +234,10 @@ Route::group(['prefix' => 'microapps/enrollments'], function () {
 });
 
 // FRUITS ROUTES
-Route::resource('microapps/fruits', FruitsController::class);
+Route::resource('fruits', FruitsController::class);
 
 // SCHOOL AREA ROUTES
-Route::resource('microapps/school_area', SchoolAreaController::class);
+Route::resource('school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
 Route::resource('tickets', TicketsController::class);
@@ -265,18 +262,18 @@ Route::group(['prefix' => 'tickets'], function () {
 });
 
 // OUTINGS ROUTES
-Route::resource('microapps/outings', OutingsController::class);
+Route::resource('outings', OutingsController::class);
 
-Route::group(['prefix' => 'microapps/outings'], function () {
+Route::group(['prefix' => 'outings'], function () {
     Route::get('/download_file/{outing}', [OutingsController::class, 'download_file']); //checking Auth inside the method
 
     Route::post('/check/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
 });
 
 // ALL_DAY_SCHOOL ROUTES
-Route::resource('microapps/all_day_school', AllDaySchoolController::class);
+Route::resource('all_day_school', AllDaySchoolController::class);
 
-Route::group(['prefix' => 'microapps/all_day_school'], function () {
+Route::group(['prefix' => 'all_day_school'], function () {
     Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->middleware('canViewMicroapp');
 
     Route::post('/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
@@ -285,9 +282,9 @@ Route::group(['prefix' => 'microapps/all_day_school'], function () {
 });
 
 // IMMIGRANTS ROUTES
-Route::resource('microapps/immigrants', ImmigrantsController::class);
+Route::resource('immigrants', ImmigrantsController::class);
 
-Route::group(['prefix' => 'microapps/immigrants'], function () {
+Route::group(['prefix' => 'immigrants'], function () {
     Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template'])->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
 
     Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
@@ -295,14 +292,10 @@ Route::group(['prefix' => 'microapps/immigrants'], function () {
     Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file']); //access rights are checked inside the method
 });
 
-Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defibrillators'])->middleware('isSchool');
-
-Route::post('/dl_defibrillators_file/{defibrillator}', [DefibrillatorsController::class, 'download_file']);
-
 // INTERNAL RULES ROUTES
-Route::resource('microapps/internal_rules', InternalRulesController::class);
+Route::resource('internal_rules', InternalRulesController::class);
 
-Route::group(['prefix' => 'microapps/internal_rules'], function () {
+Route::group(['prefix' => 'internal_rules'], function () {
 
     Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further
 
@@ -318,9 +311,9 @@ Route::group(['prefix' => 'microapps/internal_rules'], function () {
 });
 
 // WORK PLAN ROUTES
-Route::resource('microapps/work_planning', WorkPlanController::class);
+Route::resource('work_planning', WorkPlanController::class);
 
-Route::group(['prefix' => 'microapps/work_planning'], function () {
+Route::group(['prefix' => 'work_planning'], function () {
     
     Route::post('/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
 

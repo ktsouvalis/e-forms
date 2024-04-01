@@ -59,7 +59,7 @@
         @if($one_microapp->active)
             <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->color}}; text-align:center;">
                 <div class="text-dark {{$one_microapp->icon}}"></div>
-                <a href="{{url("/microapps".$one_microapp->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
+                <a href="{{url($one_microapp->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
             </div>
         @endif
     @endforeach

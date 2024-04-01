@@ -21,7 +21,7 @@
     @endpush
         <div class="py-3">
             <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/microapps/outings")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/outings")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text w-25"></span>
@@ -78,7 +78,7 @@
                             <div class="input-group">
                                 <span class="input-group-text w-25"><em>Μορφή αρχείου: .pdf < 10MB</em></span>
                                 <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή Εκδρομής </button>
-                                <a href="{{url("/microapps/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                             </div>
                         @endif
                     </form>
@@ -113,7 +113,7 @@
                             <td>{{$outing->record}}</td>
                             <td>
                                 <div class="hstack gap-2">
-                                    <form action="{{url("/microapps/outings/download_file/$outing->id")}}" method="get">
+                                    <form action="{{url("/outings/download_file/$outing->id")}}" method="get">
                                         @csrf
                                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
                                     </form>
@@ -127,9 +127,9 @@
                             </td>
                             
                             @if(Illuminate\Support\Carbon::parse($outing->outing_date)->startOfDay()>=Illuminate\Support\Carbon::now()->startOfDay() and $accepts)
-                            <td><a href="{{url("/microapps/outings/$outing->id/edit")}}" class="btn btn-primary bi bi-pencil-square "> </a></td>
+                            <td><a href="{{url("/outings/$outing->id/edit")}}" class="btn btn-primary bi bi-pencil-square "> </a></td>
                             <td>
-                                <form action="{{url("/microapps/outings/$outing->id")}}" method="post">
+                                <form action="{{url("/outings/$outing->id")}}" method="post">
                                     @method('DELETE')
                                     @csrf
                                     <button class="bi bi-x-circle btn btn-danger" type="submit" style="color:white" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>

@@ -19,7 +19,7 @@
             </div>
             <div class="col">
                 Εξαγωγή προγράμματος μήνα σε excel: <p><small><em>(15/2/2024 - Έχει διορθωθεί εσφαλμένη εμφάνιση ημερομηνιών στο εξαγόμενο αρχείο)</em></small></p>
-                <form action="{{url("/microapps/work_planning/extract_work_plan/$yearWeek")}}" method="post">
+                <form action="{{url("/work_planning/extract_work_plan/$yearWeek")}}" method="post">
                 @csrf
                 <input type="image" src="{{url('/favicon/xlsx.jpg')}}" alt="xlsx" width="20" height="20">
                 </form>
@@ -43,7 +43,7 @@
     <div class="row h5">
         Εβδομάδα: {{$today->startOfWeek()->isoFormat('DD-MM-YYYY')}} έως {{$today->startOfWeek()->add(4, 'day')->isoFormat('DD-MM-YYYY')}}
     </div>
-    <form action="{{url("/microapps/work_planning/save_work_plan/$yearWeek")}}"  method="post">
+    <form action="{{url("/work_planning/save_work_plan/$yearWeek")}}"  method="post">
         @csrf
         <div class="row">
             <div class="col">

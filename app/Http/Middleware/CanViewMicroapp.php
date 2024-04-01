@@ -22,7 +22,7 @@ class CanViewMicroapp
     {
         $url = $request->url();
         $segments = explode('/', $url);
-        $app = $segments[4];
+        $app = $segments[3];
         $microapp = Microapp::where('url', "/".$app)->firstOrFail(); 
        
         if(Auth::check()){

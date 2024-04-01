@@ -48,7 +48,7 @@
                         @endphp
                         <td>
                         @if(App\Models\MicroappUser::where('user_id',Auth::user()->id)->where('microapp_id', $microapp->id)->where('can_edit', 1)->exists() or Auth::user()->isAdmin())
-                            <form action="{{url("/microapps/school_area/$school_id/edit")}}" method="get" target="_blank">
+                            <form action="{{url("/school_area/$school_id/edit")}}" method="get" target="_blank">
                                 @csrf
                                 <button type="submit">{{$school->stakeholder->name}} </button>
                             </form>

@@ -22,7 +22,7 @@
                 <a href="https://dipeach.ddns.net/e-forms/school_areas" target="_blank">Καταγραφή Ορίων Σχολικής Περιφέρειας Σχολικών Μονάδων Π.Ε. Αχαΐας</a>
             </div>
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/microapps/school_area/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/school_area/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @method('PUT')
                     @csrf
                     <div class="input-group">
@@ -107,7 +107,7 @@
                     @else <!-- show div to user of directorate only -->
                         <div class="input-group">
                             <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση ορίων</button>
-                            <a href="{{url("/microapps/school_area/$school->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>    
+                            <a href="{{url("/school_area/$school->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>    
                         </div>
                         @if($old_data and $old_data->confirmed)
                             <div class='alert alert-info text-center my-2'>

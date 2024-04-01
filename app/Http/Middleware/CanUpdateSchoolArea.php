@@ -21,7 +21,7 @@ class CanUpdateSchoolArea
     {
         $url = $request->url();
         $segments = explode('/', $url);
-        $school = School::find($segments[5]);
+        $school = School::find($segments[4]);
         $microapp = Microapp::where('url','/school_area')->first();
         if(Auth::check()){
             $user = Auth::guard('web')->user();

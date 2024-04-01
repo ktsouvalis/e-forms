@@ -12,7 +12,7 @@
         <div class="container px-5">
             
                 <nav class="navbar navbar-light bg-light">
-                    <form action="{{url("/microapps/fruits")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{url("/fruits")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <input type="hidden" name="asks_to" value="insert">
                         <div class="input-group">
@@ -41,7 +41,7 @@
                             <div class="input-group">
                                 <span class="w-25"></span>
                                 <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                                <a href="{{url("/microapps/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                             </div>
                         @endif
                     </form>

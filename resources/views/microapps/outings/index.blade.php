@@ -25,7 +25,7 @@
                     });
 
                     $.ajax({
-                        url: '../microapps/outings/check/'+outingId,
+                        url: '../outings/check/'+outingId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
@@ -88,7 +88,7 @@
                         <td>
                             <div class="vstack gap-2">
                             
-                            <form action="{{url("/microapps/outings/download_file/$outing->id")}}" method="get">
+                            <form action="{{url("/outings/download_file/$outing->id")}}" method="get">
                                 @csrf
                                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
                             </form>
@@ -112,7 +112,7 @@
                         {{-- <td>{{$outing->record}} </td> --}}
                         <td>{{$outing->updated_at}}</td>
                         <td>
-                            <form action="{{url("/microapps/outings/$outing->id")}}" method="post">
+                            <form action="{{url("/outings/$outing->id")}}" method="post">
                                 @method('DELETE')
                                 @csrf
                                 <button class="bi bi-x-circle btn btn-danger" type="submit" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>

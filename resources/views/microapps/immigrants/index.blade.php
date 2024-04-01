@@ -18,13 +18,13 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-            <form action="{{url("/microapps/immigrants/download_template/yes")}}" method="get">
+            <form action="{{url("/immigrants/download_template/yes")}}" method="get">
                 @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>
             @if(Auth::user()->isAdmin())      
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/microapps/immigrants/update_template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                <form action="{{url("/immigrants/update_template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-50"><strong>Ενημέρωση πρότυπου αρχείου</strong></span>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/microapps/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        <a href="{{url("/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
             </nav>
@@ -62,7 +62,7 @@
                     <td> {{$one->school->name}}</td>
                     <td> {{$one->comments}}</td>
                     <td>
-                        <form action="{{url("/microapps/immigrants/download_file/$one->id")}}" method="get">
+                        <form action="{{url("/immigrants/download_file/$one->id")}}" method="get">
                         @csrf
                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   

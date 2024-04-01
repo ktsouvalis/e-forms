@@ -49,11 +49,11 @@
       <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
           <div class="text-dark fa-solid fa-file-signature"></div> 
-            <a href="{{url("/microapps/internal_rules/create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
+            <a href="{{url("/internal_rules/create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#ff8f00; text-align:center;">
           <div class="text-dark fa-solid fa-map"></div> 
-            <a href="{{url("/microapps/work_planning/create")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
+            <a href="{{url("/work_planning/create")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
           <div class="text-dark fa-solid fa-school"></div> 

@@ -166,7 +166,7 @@
         @endforeach
         <hr>
         <nav class="navbar navbar-light bg-light justify-content-center">
-        <form action="{{url("/microapps/tickets/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+        <form action="{{url("/tickets/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @method('PUT')
             @csrf
             <span class="input-group-text"><strong>Προσθήκη Νέου Σχολίου </strong></span>
@@ -200,7 +200,7 @@
     </nav>
     <hr>
     @if(!$ticket->solved)
-        <form action="{{url("/microapps/tickets/mark_as_resolved/$ticket->id")}}" method="post">
+        <form action="{{url("/tickets/mark_as_resolved/$ticket->id")}}" method="post">
             @csrf
             <strong>Αν θεωρείτε ότι λύθηκε το πρόβλημα: </strong>
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
@@ -246,7 +246,7 @@
             @php
                 $basename = basename($file);
             @endphp
-            <form action="{{url("/microapps/tickets/get_ticket_file/$ticket->id/$basename")}}" method="get">
+            <form action="{{url("/tickets/get_ticket_file/$ticket->id/$basename")}}" method="get">
             @csrf
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
             </form> 

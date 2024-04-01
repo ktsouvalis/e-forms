@@ -41,26 +41,14 @@
         <thead>
             <tr>
                 <th id="search">Ημνία Διορισμού</th>
+                <th id="search">Κλάδος</th>
                 <th id="search">Όνομα</th>
                 <th id="search">Επώνυμο</th>
                 <th id="search">ΑΦΜ</th>
                 <th id="search">Α1</th>                
                 <th id="search">Α2</th>
                 <th id="search">Β</th>
-                <th id="search">Α1 Επώνυμο</th>
-                <th id="search">Α1 ΑΦΜ</th>
-                <th id="search">Α1 Ολοκλ</th>
-                {{-- <th id="search">Σχολείο</th>
-                <th id="search">mail Σχολείου</th> --}}
-                <th id="search">Α2 Όνομα</th>
-                <th id="search">Α2 Επώνυμο</th>
-                <th id="search">Α2 ΑΦΜ</th>
-                <th id="search">Α2 Ολοκλ</th>
-                <th id="search">Κατηγορία</th>
-                <th id="">Β Αξ1</th>
-                <th id="">Β Αξ2</th>
-                <th id="">Β Ολοκλ</th>
-                <th id="">Κλάδος</th>
+                
                 <th id="">ΑΜ</th>
             </tr>
         </thead>
@@ -81,7 +69,8 @@
                     }   
                 @endphp
                  <tr>
-                    <td>{{$teacher->appointment_date}}</td> 
+                    <td>{{$teacher->appointment_date}}</td>
+                    <td> {{$teacher->klados}} </td>
                     <td>{{$teacher->name}}</td>
                      <td> {{$teacher->surname}}</td>
                      <td> {{$teacher->afm}}</td>
@@ -94,36 +83,29 @@
                         <td>-</td>
                     @endif  
                     @php
-                    $a2 = DB::table('evaluation_a2')->where('teacher_afm', $teacher->afm)->first();
+                        $a2 = DB::table('evaluation_a2')->where('teacher_afm', $teacher->afm)->first();
+                        if($a2){
+                            $evaluator_a2 = App\Models\Teacher::where('afm', $a2->evaluator_afm)->first();
+                        }
                     @endphp
                     @if($a2)
-                        <td>Α2</td>
+                        <td>Α2 @if($evaluator_a2){{$evaluator_a2->surname}} {{$evaluator_a2->name}} @endif </td>
                     @else
                         <td>-</td>
                     @endif 
                     @php
                         $b = DB::table('evaluation_b')->where('teacher_afm', $teacher->afm)->first();
+                        if($b){
+                            $evaluator_b = App\Models\Teacher::where('afm', $b->evaluator_1_afm)->first();
+                        }   
                     @endphp
                     @if($b)
-                        <td>Β</td>
+                        <td>Β @if($evaluator_b){{$evaluator_b->surname}} {{$evaluator_b->name}} @endif </td>
                     @else
                         <td>-</td>
                     @endif
-                     <td> </td>
-                        <td></td>
-                        
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>      
+                            
                         <td> {{$teacher->am}} </td>
-                        <td> {{$teacher->klados}} </td>
                     </tr>
         @endforeach
         </tbody>

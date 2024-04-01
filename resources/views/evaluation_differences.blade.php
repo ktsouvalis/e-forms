@@ -41,7 +41,7 @@
         <thead>
             <tr>
                 <th id="search">Ημνία Διορισμού</th>
-                <th id="">Κλάδος</th>
+                <th id="search">Κλάδος</th>
                 <th id="search">Όνομα</th>
                 <th id="search">Επώνυμο</th>
                 <th id="search">ΑΦΜ</th>

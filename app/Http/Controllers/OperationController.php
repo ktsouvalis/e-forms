@@ -129,4 +129,17 @@ class OperationController extends Controller
         return redirect(url("/operation_profile/$operation->id"))
             ->with('success', 'Επιτυχής αποθήκευση');
     }
+
+    public function setMenuPriority(Request $request){
+        foreach($request->input() as $key=>$value){
+            if(substr($key,0,9)=='operation'){
+                $operation_id = substr($key, 9);
+                $operation = Operation::find($operation_id);
+                $operation->menu_priority = $value;
+                $operation->save();
+            }
+        }
+
+        return back()->with('success', 'Επιτυχής αποθήκευση');
+    }
 }

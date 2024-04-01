@@ -262,6 +262,8 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
+Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
+
 
 Route::view('/evaluation', 'evaluation');
 

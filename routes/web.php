@@ -43,7 +43,6 @@ use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
-use App\Http\Controllers\microapps\DefibrillatorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -218,13 +217,13 @@ Route::group(['prefix' =>'manage/operations'], function(){
 });
 
 //////// MANAGE MICROAPPS ROUTES
-Route::resource('manage/microapps', MicroappController::class);
+// Route::resource('manage/microapps', MicroappController::class);
 
-Route::group(['prefix' => 'manage/microapps'], function(){ 
-    Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
+// Route::group(['prefix' => 'manage/microapps'], function(){ 
+//     Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
 
-    Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
-});
+//     Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+// });
 
 // ENROLLMENTS ROUTES
 Route::resource('microapps/enrollments', EnrollmentController::class);

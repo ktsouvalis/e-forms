@@ -244,9 +244,9 @@ Route::resource('microapps/fruits', FruitsController::class);
 Route::resource('microapps/school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
-Route::resource('microaps/tickets', TicketsController::class);
+Route::resource('tickets', TicketsController::class);
 
-Route::group(['prefix' => 'microaps/tickets'], function () {
+Route::group(['prefix' => 'tickets'], function () {
     Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])
         ->middleware('canUpdateTicket')
         ->middleware('boss');

@@ -26,7 +26,7 @@
                 // $filecollects = App\Models\Filecollect::all();
                
                 if($user->isAdmin()){
-                    $operations=App\Models\Operation::all(); //$operations is Operation model
+                    $operations=App\Models\Operation::orderBy('menu_priority','ASC')->get(); //$operations is Operation model
                     $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
                     $super_admin=true;
                 }

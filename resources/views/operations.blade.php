@@ -70,6 +70,27 @@
                 </div>
             @endisset
         @endisset
+        <hr>
+
+        <form action="{{url("/set_menu_priority")}}" method="post">
+            @csrf
+            <div class="input-group">
+            <span class="input-group-text w-25"></span>
+            <span class="input-group-text w-75"><strong>Αλλαγή Προτεραιότητας Μενού</strong></span>
+            </div>
+            @foreach($all_operations as $operation)
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon2">{{$operation->name}}</span>
+                    <input name="operation{{$operation->id}}" type="number" class="form-control" required value="{{$operation->menu_priority}}">
+                </div>
+            @endforeach
+            <div class="input-group">
+                <span class="w-25"></span>
+                <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Αλλαγή</button>
+                <a href="{{url("/manage_operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+            </div>
+        </form>
+        <hr>
         
         @can('create', App\Models\Operation::class)
         <div class="container py-5">

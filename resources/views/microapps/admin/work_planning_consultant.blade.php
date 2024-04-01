@@ -18,7 +18,7 @@
                 <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
             </div>
             <div class="col">
-                Εξαγωγή προγράμματος μήνα σε excel: <p><small><em>(15/2/2024 - Έχει διορθωθεί εσφαλμένη εμφάνιση ημερομηνιών στο εξαγόμενο αρχείο)</em></small></p>
+                Εξαγωγή προγράμματος μήνα σε excel: 
                 <form action="{{url("/consultant_app/extract_work_plan/$yearWeek")}}" method="post">
                 @csrf
                 <input type="image" src="{{url('/favicon/xlsx.jpg')}}" alt="xlsx" width="20" height="20">

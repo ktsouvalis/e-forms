@@ -20,10 +20,10 @@ class OutingsController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index']);
-        $this->middleware('isSchool')->only(['create', 'store']);
-        $this->middleware('canViewMicroapp')->only(['create','store','index']);
-        $this->middleware('canUpdateOuting')->only(['edit', 'update']);
+        // $this->middleware('auth')->only(['index']);
+        // $this->middleware('isSchool')->only(['create', 'store']);
+        // $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        // $this->middleware('canUpdateOuting')->only(['edit', 'update']);
         $this->microapp = Microapp::where('url', '/outings')->first();
     }
 

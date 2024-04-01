@@ -17,9 +17,9 @@ class EnrollmentController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index']);
-        $this->middleware('isSchool')->only(['create', 'store']);
-        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        // $this->middleware('auth')->only(['index']);
+        // $this->middleware('isSchool')->only(['create', 'store']);
+        // $this->middleware('canViewMicroapp')->only(['create','store','index']);
         $this->microapp = Microapp::where('url', '/enrollments')->first();
     }
 

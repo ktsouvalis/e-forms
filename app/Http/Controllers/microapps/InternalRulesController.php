@@ -22,11 +22,11 @@ class InternalRulesController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index']);
-        $this->middleware('isSchool')->only(['store']);
-        $this->middleware('isConsultant')->only(['consultant_create']);
-        $this->middleware('isSchool')->only(['school_create']);
-        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        // $this->middleware('auth')->only(['index']);
+        // $this->middleware('isSchool')->only(['store']);
+        // $this->middleware('isConsultant')->only(['consultant_create']);
+        // $this->middleware('isSchool')->only(['school_create']);
+        // $this->middleware('canViewMicroapp')->only(['create','store','index']);
         $this->microapp = Microapp::where('url', '/internal_rules')->first();
     }
 

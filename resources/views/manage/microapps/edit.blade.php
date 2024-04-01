@@ -1,17 +1,17 @@
 <x-layout>
     @push('links')
-        <link href="../DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="../Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{ asset('DataTables-1.13.4/css/dataTables.bootstrap5.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('Responsive-2.4.1/css/responsive.bootstrap5.css') }}" rel="stylesheet"/>
     @endpush
 
     @push('scripts')
-        <script src="../DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="../DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="../Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="../Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="../datatable_init.js"></script>
-        <script src="../canedit.js"></script>
-        <script src="../copycolumn2.js"></script>
+        <script src="{{ asset('DataTables-1.13.4/js/jquery.dataTables.js') }}"></script>
+        <script src="{{ asset('DataTables-1.13.4/js/dataTables.bootstrap5.js') }}"></script>
+        <script src="{{ asset('Responsive-2.4.1/js/dataTables.responsive.js') }}"></script>
+        <script src="{{ asset('Responsive-2.4.1/js/responsive.bootstrap5.js') }}"></script>
+        <script src="{{ asset('datatable_init.js') }}"></script>
+        <script src="{{ asset('canedit.js') }}"></script>
+        <script src="{{ asset('copycolumn2.js') }}"></script>
     @endpush
 
     @push('title')
@@ -22,9 +22,9 @@
         @if(Auth::user()->isAdmin())
             <hr>
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/save_microapp/$microapp->id")}}" method="post" class="container-fluid">
+                <form action="{{url("/manage/microapps/$microapp->id")}}" method="post" class="container-fluid">
+                    @method('PUT')
                     @csrf
-                    <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>
                         <span class="input-group-text w-75"><strong>Επεξεργασία Χαρακτηριστικών Μικροεφαρμογής</strong></span>
@@ -95,7 +95,7 @@
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
-                        <a href="{{url("/microapp_profile/$microapp->id")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
+                        <a href="{{url("/manage/microapps/$microapp->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
                 

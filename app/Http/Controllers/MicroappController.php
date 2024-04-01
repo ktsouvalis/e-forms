@@ -16,14 +16,35 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class MicroappController extends Controller
 {
-    
+    public function __construct(){
+        $this->middleware('auth');
+        $this->middleware('boss' )->only(['update']);
+        
+    }
+
+    public function index(){
+        return view('manage.microapps.index');
+    }
+
+    public function edit($id){
+        $microapp = Microapp::findOrFail($id);
+        if($microapp->active){
+            if(Auth::user()->can('update', $microapp))
+                return view('manage.microapps.edit', ['microapp' => $microapp]);
+            else
+                abort(403);
+        }
+        else{
+            abort(404);
+        }
+    }
     /**
      * Create a record for the new microapp, add the two admins in the microapps_users table, add other users regarding if the can edit the microapp or not.
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function insertMicroapp(Request $request){
+    public function store(Request $request){
         $incomingFields = $request->all();
         
         try{
@@ -42,7 +63,7 @@ class MicroappController extends Controller
         } 
         catch(Throwable $e){
             Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (create) ". $e->getMessage());
-            return redirect(url('/microapps'))
+            return back()
                 ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, δείτε το log throwable_db.")
                 ->with('old_data', $request->all());
         }
@@ -63,12 +84,12 @@ class MicroappController extends Controller
                 }
                 catch(Throwable $e){
                     Log::channel('throwable_db')->error(Auth::user()->username." insertMicroapp (add users) ".' '.$e->getMessage());
-                    return redirect(url('/microapps'))->with('warning', 'Η μικροεφαρμογή δημιουργήθηκε αλλά οι χρήστες δεν προστέθηκαν. Δείτε το log throwable_db');
+                    return back()->with('warning', 'Η μικροεφαρμογή δημιουργήθηκε αλλά οι χρήστες δεν προστέθηκαν. Δείτε το log throwable_db');
                 }
             }
         }
 
-        return redirect(url('/microapps'))->with('success', 'Τα στοιχεία της εφαρμογής καταχωρήθηκαν επιτυχώς');
+        return back()->with('success', 'Τα στοιχεία της εφαρμογής καταχωρήθηκαν επιτυχώς');
     }
 
     /**
@@ -79,6 +100,7 @@ class MicroappController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function onOff(Request $request, Microapp $microapp){
+        $this->authorize('deactivate', $microapp);
         if($microapp->active){ 
             $microapp->active=0; //deactivate the microapp
             $microapp->visible=0; //change visibility value
@@ -95,7 +117,7 @@ class MicroappController extends Controller
         }
         $microapp->save();
 
-        return redirect(url('/microapps'))->with('success', $text);
+        return back()->with('success', $text);
     }
 
     /**
@@ -106,6 +128,7 @@ class MicroappController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function changeMicroappStatus(Request $request, Microapp $microapp){
+        $this->authorize('update', $microapp);
         if($request->all()['asks_to'] == 'ch_vis_status'){
             $microapp->visible = $microapp->visible==1?0:1; //change visibility based on previous state
             $microapp->accepts = 0; // reset acceptability
@@ -127,8 +150,7 @@ class MicroappController extends Controller
      * @param \App\Models\Microapp $microapp
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function saveProfile(Microapp $microapp, Request $request){
-
+    public function update(Microapp $microapp, Request $request){
         $incomingFields = $request->all();
 
         $microapp->name = $incomingFields['name'];
@@ -145,18 +167,17 @@ class MicroappController extends Controller
 
                 // if there is already a microapp with the newly given name
                 if(Microapp::where('name', $given_name)->count()){
-                    return redirect(url("/microapp_profile/$microapp->id"))->with('failure',"Υπάρχει ήδη μικροεφαρμογή με name $given_name.");
+                    return back()->with('failure',"Υπάρχει ήδη μικροεφαρμογή με name $given_name.");
                 } 
             }
             if($microapp->isDirty('url')){
                 // if url has changed
-                
                 $given_url = $incomingFields['url'];
 
                 // if there is already a microapp with the newly given url
                 if(Microapp::where('url', $given_url)->count()){
                     $existing_microapp =Μicroapp::where('url',$given_url)->first();
-                    return redirect(url("/microapp_profile/$microapp->id"))->with('failure',"Υπάρχει ήδη μικροεφαρμογή με url $given_url: $existing_microapp->name");
+                    return back()->with('failure',"Υπάρχει ήδη μικροεφαρμογή με url $given_url: $existing_microapp->name");
                 }
             }
             
@@ -186,6 +207,6 @@ class MicroappController extends Controller
                 }
             }
         }
-        return redirect(url("/microapp_profile/$microapp->id"))->with('success',"Επιτυχής αποθήκευση των στοιχείων και των χρηστών της μικροεφαρμογής $microapp->name");
+        return back()->with('success',"Επιτυχής αποθήκευση των στοιχείων και των χρηστών της μικροεφαρμογής $microapp->name");
     }
 }

@@ -163,7 +163,7 @@
                 <div class="row hidden-md-up justify-content-left">
                     <div class="col-md-4 py-3" style="max-width:15rem">
                         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                            <a class="text-dark" style="text-decoration:none;" href="{{url("/microapps")}}">
+                            <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/microapps")}}">
                             <div class="h5 card-title fa-solid fa-microchip"></div>
                             <div>Μικροεφαρμογές</div>
                             </a> 

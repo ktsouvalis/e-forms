@@ -238,23 +238,21 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
+Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
+
+
+Route::view('/evaluation', 'evaluation');
+
+Route::view('/evaluation_differences', 'evaluation_differences');
+
 //////// MICROAPPS ROUTES
-Route::view('/microapps', 'microapps')->middleware('auth');
+Route::resource('manage/microapps', MicroappController::class);
 
-Route::post('/insert_microapp', [MicroappController::class,'insertMicroapp']);
+Route::group(['prefix' => 'manage/microapps'], function(){ 
+    Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
 
-Route::get('/microapp_profile/{microapp}', function(Microapp $microapp){
-    if($microapp->active){
-        return view('microapp-profile',['microapp'=>$microapp]);
-    }
-    abort(404);
-})->middleware('can:update,microapp' );
-
-Route::post('/save_microapp/{microapp}', [MicroappController::class,'saveProfile']);
-
-Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
-
-Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+    Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+});
 
 // ENROLLMENTS ROUTES
 Route::resource('microapps/enrollments', EnrollmentController::class);

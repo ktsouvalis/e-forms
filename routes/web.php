@@ -240,26 +240,33 @@ Route::resource('fruits', FruitsController::class);
 Route::resource('school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
-Route::resource('tickets', TicketsController::class);
+// Route::resource('tickets', TicketsController::class);
 
-Route::group(['prefix' => 'tickets'], function () {
-    Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])
-        ->middleware('canUpdateTicket')
-        ->middleware('boss');
+Route::get('/tickets', [TicketsController::class, 'index']);
 
-    Route::post('/update-post', [TicketsController::class, 'update_post']);
+Route::get('/tickets', [TicketsController::class, 'create']); //->middleware('canViewMicroapp')->middleware('isSchool');
 
-    Route::post("/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])
-        ->middleware('canUpdateTicket');
+Route::get('/tickets/{ticket}/edit', [TicketsController::class, 'edit']); //->middleware('canUpdateTicket')->middleware('auth');
 
-    Route::get('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])
-        ->middleware('canUpdateTicket');
+Route::put('/tickets/{ticket}', [TicketsController::class, 'update']); //->middleware('canUpdateTicket')->middleware('auth');
 
-    Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])
-        ->middleware('boss');
+Route::post('/tickets/store', [TicketsController::class, 'store']);//->middleware('canViewMicroapp')->middleware('isSchool');
 
-    Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
-});
+Route::post('/tickets/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('boss');
+
+Route::post('/tickets/update-post', [TicketsController::class, 'update_post']);
+
+Route::post("/tickets/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])
+    ->middleware('canUpdateTicket');
+
+Route::get('/tickets/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])
+    ->middleware('canUpdateTicket');
+
+Route::post('/tickets/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])
+    ->middleware('boss');
+
+Route::post('/tickets/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
+
 
 // OUTINGS ROUTES
 Route::resource('outings', OutingsController::class);

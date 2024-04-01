@@ -97,4 +97,9 @@ class SectionController extends Controller
             return redirect(url('/sections'))->with('warning', 'Επιτυχής ενημέρωση τμημάτων σχολείων με σφάλματα που καταγράφηκαν στο log throwable_db');
         }
     }
+
+    // public function delete_sections(Request $request){
+    //     Section::truncate();
+    //     return redirect(url('/sections'))->with('success', 'Τα τμήματα διαγράφηκαν');
+    // }
 }

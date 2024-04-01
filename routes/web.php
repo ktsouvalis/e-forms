@@ -215,18 +215,7 @@ Route::get('/teacher_app/{appname}', function($appname){
 })->middleware('isTeacher')->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
 
 //////// CONSULTANT ROUTES
-
-
-
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
-
-// Route::view('/consultant_app/internal_rules','microapps.admin.internal_rules_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
-
-Route::view('/consultant_app/work_planning','microapps.admin.work_planning_consultant')->middleware('isConsultant')->middleware('canViewMicroapp');
-
-Route::post('/consultant_app/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
-
-Route::post('/consultant_app/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->middleware('isConsultant');
 
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
@@ -239,7 +228,6 @@ Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 Route::get('/clogout', [ConsultantController::class, 'logout']);
 
 //////// OPERATIONS ROUTES
-
 Route::view('/manage_operations', 'operations')->middleware('boss');
 
 Route::get('/operation_profile/{operation}', function(Operation $operation){
@@ -251,7 +239,6 @@ Route::post('/save_operation/{operation}', [OperationController::class,'saveProf
 Route::post('/insert_operation', [OperationController::class,'insertOperation']);
 
 //////// MICROAPPS ROUTES
-
 Route::view('/microapps', 'microapps')->middleware('auth');
 
 Route::post('/insert_microapp', [MicroappController::class,'insertMicroapp']);
@@ -270,7 +257,6 @@ Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'ch
 Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 
 // ENROLLMENTS ROUTES
-
 Route::resource('microapps/enrollments', EnrollmentController::class);
 
 Route::group(['prefix' => 'microapps/enrollments'], function () {
@@ -358,7 +344,6 @@ Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defi
 Route::post('/dl_defibrillators_file/{defibrillator}', [DefibrillatorsController::class, 'download_file']);
 
 // INTERNAL RULES ROUTES
-
 Route::resource('microapps/internal_rules', InternalRulesController::class);
 
 Route::group(['prefix' => 'microapps/internal_rules'], function () {
@@ -374,6 +359,16 @@ Route::group(['prefix' => 'microapps/internal_rules'], function () {
     Route::get("/download_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_file']);
 
     Route::post('/check/{internal_rule}', [InternalRulesController::class,'check']);
+});
+
+// WORK PLAN ROUTES
+Route::resource('microapps/work_planning', WorkPlanController::class);
+
+Route::group(['prefix' => 'microapps/work_planning'], function () {
+    
+    Route::post('/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
+
+    Route::post('/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->middleware('isConsultant');
 });
 
 // FILECOLLECTS ROUTES
@@ -408,7 +403,6 @@ Route::group(['prefix' => 'filecollects'], function () {
 });
 
 // FILESHARES ROUTES
-
 Route::resource('fileshares', FileshareController::class);
 
 Route::group(['prefix' => 'fileshares'], function(){
@@ -488,7 +482,7 @@ Route::match(array('GET','post'), "/share_link/{type}/{my_id}", function($type, 
     $rest_of_address = substr($mail_address, $at_position-1);
     $mail_to_show = $first_letter.'*****'.$rest_of_address;
     return back()->with('success', 'Ο σύνδεσμος στάλθηκε στο '.$mail_to_show);
-    });
+});
 
 Route::post("share_links_to_all/{type}", function($type){
     $error=false;
@@ -811,10 +805,7 @@ Route::view('/sections', 'sections')->middleware('auth')->middleware('can:viewSe
 
 Route::post('/upload_sections_template', [SectionController::class, 'import_sections']);
 
-Route::post('/delete_sections', [SectionController::class, function(Request $request){
-    Section::truncate();
-    return redirect(url('/sections'))->with('success', 'Τα τμήματα διαγράφηκαν');
-}]);
+// Route::post('/delete_sections', [SectionController::class, 'delete_sections']);
 
 //misc routes
 

@@ -29,15 +29,8 @@ class EnrollmentController extends Controller
         return view('microapps.enrollments.create', ['appname' => 'enrollments']);
     }
 
-    public function edit(Ticket $ticket){
-        if(Auth::check())
-            return view('microapps.tickets.ticket-profile-admin', compact('ticket'));
-        else if(Auth::guard('school')->check())
-            return view('microapps.tickets.ticket-profile-school', compact('ticket'));
-    }
     public function save($select, Request $request){
         $school = Auth::guard('school')->user();
-        $microapp = Microapp::where('url', '/enrollments')->first();
         $filename = $request->file('file')->getClientOriginalName();
             
         //handle the file
@@ -121,7 +114,7 @@ class EnrollmentController extends Controller
             }
             return redirect(url('/school_app/enrollments'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
         }
-        if($microapp->accepts){
+        if($this->microapp->accepts){
             try{
                 Enrollment::updateOrCreate(
                     [
@@ -139,7 +132,7 @@ class EnrollmentController extends Controller
                 }
                 return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
-            $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+            $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
             $stakeholder->hasAnswer = 1;
             $stakeholder->save();
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');

@@ -53,7 +53,7 @@
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#ff8f00; text-align:center;">
           <div class="text-dark fa-solid fa-map"></div> 
-            <a href="{{url("/consultant_app/work_planning")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
+            <a href="{{url("/microapps/work_planning/create")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
           <div class="text-dark fa-solid fa-school"></div> 

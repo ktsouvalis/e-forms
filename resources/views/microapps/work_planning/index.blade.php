@@ -20,7 +20,6 @@
         $yearWeek=$year.$week;
     @endphp
 <div class="container">
-    {{-- <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div> --}}
     <span class="" id="basic-addon2">Ημερομηνία</span>
     <input name="outing_date" type="date" class=""  aria-label="outing_date" aria-describedby="basic-addon1" value="{{$selected_day->isoFormat('YYYY-MM-DD')}}" onChange="location = window.location.pathname + '?date=' +this.value";>
 

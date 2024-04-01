@@ -167,16 +167,6 @@ Route::get('/index_school', function(){
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
 
-Route::get('/school_app/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail();
-    if($microapp->visible){
-        return view('microapps.school.'.$appname,['appname'=>$appname]);
-    }
-    else{
-        return redirect(url('/index_school'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
-    }
-})->middleware('isSchool')->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if school is not in the stakeholders of this microapp
-
 //////// TEACHER ROUTES
 
 Route::view('/teachers','teachers')->middleware('can:viewAny, '.Teacher::class);
@@ -202,18 +192,6 @@ Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
 
 Route::get('/tlogout', [TeacherController::class, 'logout']);
 
-Route::get('/teacher_view/{form}',[TeacherController::class,'makeForm'])->middleware('can:view,form');
-
-Route::get('/teacher_app/{appname}', function($appname){
-    $microapp = Microapp::where('url', '/'.$appname)->firstOrFail(); 
-    if($microapp->active){
-        return view('microapps.teacher.'.$appname,['appname'=>$appname]);
-    }
-    else{
-        return redirect(url('/index_teacher'))->with('warning', "Η εφαρμογή $microapp->name είναι ανενεργή");
-    }
-})->middleware('isTeacher')->middleware('canViewMicroapp');//will throw a 404 if the url does not exist or a 403 if teacher is not in the stakeholders of this microapp
-
 //////// CONSULTANT ROUTES
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
@@ -227,18 +205,17 @@ Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 
 Route::get('/clogout', [ConsultantController::class, 'logout']);
 
+/// EVALUATION ROUTES
+Route::view('/evaluation', 'evaluation');
+
+Route::view('/evaluation_differences', 'evaluation_differences');
+
 //////// MANAGE OPERATIONS ROUTES
 Route::resource('manage/operations', OperationController::class)->middleware('boss');
 
 Route::group(['prefix' =>'manage/operations'], function(){
     Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
 });
-
-
-/// EVALUATION ROUTES
-Route::view('/evaluation', 'evaluation');
-
-Route::view('/evaluation_differences', 'evaluation_differences');
 
 //////// MANAGE MICROAPPS ROUTES
 Route::resource('manage/microapps', MicroappController::class);
@@ -786,7 +763,3 @@ Route::view('/sections', 'sections')->middleware('auth')->middleware('can:viewSe
 Route::post('/upload_sections_template', [SectionController::class, 'import_sections']);
 
 // Route::post('/delete_sections', [SectionController::class, 'delete_sections']);
-
-//misc routes
-
-Route::view('/anaplirotes','anaplirotes');

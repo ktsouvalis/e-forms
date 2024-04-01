@@ -2,16 +2,16 @@
     
 
     @push('links')
-        <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
-        <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+        <link href="{{ asset('DataTables-1.13.4/css/dataTables.bootstrap5.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('Responsive-2.4.1/css/responsive.bootstrap5.css') }}" rel="stylesheet"/>
     @endpush
 
     @push('scripts')
-        <script src="DataTables-1.13.4/js/jquery.dataTables.js"></script>
-        <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
-        <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
-        <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
-        <script src="canedit.js"></script>
+        <script src="{{ asset('DataTables-1.13.4/js/jquery.dataTables.js') }}"></script>
+        <script src="{{ asset('DataTables-1.13.4/js/dataTables.bootstrap5.js') }}"></script>
+        <script src="{{ asset('Responsive-2.4.1/js/dataTables.responsive.js') }}"></script>
+        <script src="{{ asset('Responsive-2.4.1/js/responsive.bootstrap5.js') }}"></script>
+        <script src="{{ asset('canedit.js') }}"></script>
     @endpush
 
     @push('title')
@@ -40,7 +40,7 @@
                         @can('view', $one_operation)
                             <tr>  
                                 <td>{{$one_operation->id}}</td>
-                                <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="{{url("/operation_profile/$one_operation->id")}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td>
+                                <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="{{url("/manage/operations/$one_operation->id/edit")}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td>
                                 <td>{{$one_operation->url}}</td>
                                 <td>{{$one_operation->color}}</td>
                                 <td>{{$one_operation->icon}}</td>
@@ -75,9 +75,8 @@
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/insert_operation")}}" method="post" class="container-fluid">
+            <form action="{{url("/manage/operations")}}" method="post" class="container-fluid">
                 @csrf
-                <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
                     <span class="input-group-text w-75"><strong>Εισαγωγή νέας Λειτουργίας</strong></span>
@@ -129,7 +128,7 @@
                 <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                    <a href="{{url("/manage_operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                    <a href="{{url("/manage/operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                 </div>
             </form>
         </nav>

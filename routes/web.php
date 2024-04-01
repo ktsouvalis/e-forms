@@ -227,25 +227,20 @@ Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 
 Route::get('/clogout', [ConsultantController::class, 'logout']);
 
-//////// OPERATIONS ROUTES
-Route::view('/manage_operations', 'operations')->middleware('boss');
+//////// MANAGE OPERATIONS ROUTES
+Route::resource('manage/operations', OperationController::class)->middleware('boss');
 
-Route::get('/operation_profile/{operation}', function(Operation $operation){
-    return view('operation-profile',['operation'=>$operation]);
-})->middleware('boss');
-
-Route::post('/save_operation/{operation}', [OperationController::class,'saveProfile']);
-
-Route::post('/insert_operation', [OperationController::class,'insertOperation']);
-
-Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
+Route::group(['prefix' =>'manage/operations'], function(){
+    Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
+});
 
 
+/// EVALUATION ROUTES
 Route::view('/evaluation', 'evaluation');
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
-//////// MICROAPPS ROUTES
+//////// MANAGE MICROAPPS ROUTES
 Route::resource('manage/microapps', MicroappController::class);
 
 Route::group(['prefix' => 'manage/microapps'], function(){ 
@@ -322,19 +317,6 @@ Route::group(['prefix' => 'microapps/immigrants'], function () {
     Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
 
     Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file']); //access rights are checked inside the method
-});
-
-//DEFIBRILLATORS ROUTES
-Route::post('/dl_defibrillators_document', function(Request $request){
-    $file = 'defibrillators/Διαδικασία_Προμήθειας_Απινιδωτών.pdf';
-    $response = Storage::disk('local')->download($file);  
-    ob_end_clean();
-    try{
-        return $response;
-    }
-    catch(Throwable $e){
-        return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
-    }
 });
 
 Route::post('/save_defibrillators', [DefibrillatorsController::class, 'save_defibrillators'])->middleware('isSchool');

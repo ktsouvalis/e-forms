@@ -60,7 +60,7 @@
                     
                         <div class="col-md-4 py-3" style="max-width:15rem">
                             <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/manage_operations")}}">
+                                <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/operations")}}">
                                 <div class="h5 card-title fa-solid fa-toolbox"></div>
                                 <div>Διαχείριση Λειτουργιών</div>
                                 </a> 

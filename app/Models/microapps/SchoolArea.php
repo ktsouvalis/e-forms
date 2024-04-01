@@ -16,6 +16,6 @@ class SchoolArea extends Model
     ];
 
     public function school() {
-        return $this->hasOne(School::class);
+        return $this->belongsTo(School::class);
     }
 }

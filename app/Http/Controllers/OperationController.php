@@ -11,13 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class OperationController extends Controller
 {
+
+    public function index(){
+        return view('manage.operations.index');
+    }
+
+    public function edit($id){
+        $operation = Operation::findOrFail($id);
+        return view('manage.operations.edit', ['operation' => $operation]);
+    }
     /**
      * Insert a new operation into the database.
      *
      * @param Request $request The HTTP request object.
      * @return \Illuminate\View\View The rendered view.
      */
-    public function insertOperation(Request $request)
+    public function store(Request $request)
     {
         $incomingFields = $request->all();
         
@@ -53,7 +62,7 @@ class OperationController extends Controller
             }
         }
 
-        return redirect(url('/manage_operations'))->with('success', 'Τα στοιχεία της λειτουργίας καταχωρήθηκαν επιτυχώς');
+        return back()->with('success', 'Τα στοιχεία της λειτουργίας καταχωρήθηκαν επιτυχώς');
 
     }
 
@@ -64,7 +73,7 @@ class OperationController extends Controller
      * @param Request $request The HTTP request object.
      * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
-    public function saveProfile(Operation $operation, Request $request)
+    public function update(Operation $operation, Request $request)
     {
         $incomingFields = $request->all();
        
@@ -82,8 +91,7 @@ class OperationController extends Controller
 
                 if (Operation::where('name', $given_name)->count()) {
                     //if there is already an operation with the newly given name
-                    return redirect(url("/operation_profile/$operation->id"))
-                        ->with('failure', "Υπάρχει ήδη λειτουργία με name $given_name.");
+                    return back()->with('failure', "Υπάρχει ήδη λειτουργία με name $given_name.");
                 }
             } else {
                 // if url has changed
@@ -93,8 +101,7 @@ class OperationController extends Controller
                     if (Operation::where('url', $given_url)->count()) {
                         //if there is already an operation with the newly given url
                         $existing_operation = Operation::where('url', $given_url)->first();
-                        return redirect(url("/operation_profile/$operation->id"))
-                            ->with('failure', "Υπάρχει ήδη λειτουργία με url $given_url: $existing_operation->name");
+                        return back()->with('failure', "Υπάρχει ήδη λειτουργία με url $given_url: $existing_operation->name");
                     }
                 }
             }
@@ -126,8 +133,7 @@ class OperationController extends Controller
                 }
             }
         }
-        return redirect(url("/operation_profile/$operation->id"))
-            ->with('success', 'Επιτυχής αποθήκευση');
+        return back()->with('success', 'Επιτυχής αποθήκευση');
     }
 
     public function setMenuPriority(Request $request){

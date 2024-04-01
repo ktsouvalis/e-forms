@@ -17,7 +17,29 @@ use Illuminate\Support\Facades\Validator;
 class OutingsController extends Controller
 {
     //
-    public function new_outing(Request $request){
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        $this->middleware('canUpdateOuting')->only(['edit', 'update']);
+        $this->microapp = Microapp::where('url', '/outings')->first();
+    }
+
+    public function index(){
+        return view('microapps.outings.index', ['appname' => 'outings']);
+    }
+
+    public function create(){
+        return view('microapps.outings.create', ['appname' => 'outings']);
+    }
+
+    public function edit(Outing $outing){
+        return view('microapps.outings.edit', compact('outing'));
+    }
+
+    public function store(Request $request){
         $school = Auth::guard('school')->user();
         $rule = [
             'record_file' => 'mimetypes:application/pdf'
@@ -53,7 +75,7 @@ class OutingsController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/outings'))->with('failure', 'Δεν έγινε η καταχώρηση της εκδρομής, προσπαθήστε ξανά');
+            return back()->with('failure', 'Δεν έγινε η καταχώρηση της εκδρομής, προσπαθήστε ξανά');
         }
 
         try{
@@ -73,7 +95,7 @@ class OutingsController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/outings'))->with('warning', 'Δεν έγινε η καταχώρηση των τμημάτων και του πρακτικού στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να τα εισάγετε ξανά');    
+            return back()->with('warning', 'Δεν έγινε η καταχώρηση των τμημάτων και του πρακτικού στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να τα εισάγετε ξανά');    
         }
 
         try{
@@ -90,14 +112,13 @@ class OutingsController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/outings'))->with('warning', 'Δεν ανέβηκε το αρχείο στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να το ανεβάσετε ξανά');
+            return back()->with('warning', 'Δεν ανέβηκε το αρχείο στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να το ανεβάσετε ξανά');
         }
-        // Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name." created outing ".$new_outing->id);
-        return redirect(url('/school_app/outings'))->with('success','Η εκδρομή καταχωρίστηκε επιτυχώς');
+        return back()->with('success','Η εκδρομή καταχωρίστηκε επιτυχώς');
     }
 
-    public function download_record(Request $request, Outing $outing){
-        $outings_microapp_id = Microapp::where('url', '/outings')->first()->id;
+    public function download_file(Request $request, Outing $outing){
+        $outings_microapp_id = $this->microapp->id;
         if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){
             $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
             $response = Storage::disk('local')->download($file, $outing->file);  
@@ -113,11 +134,10 @@ class OutingsController extends Controller
         abort(403, 'Unauthorized action.');
     }
 
-    public function delete_outing(Request $request, Outing $outing){
-        $outings_microapp_id = Microapp::where('url', '/outings')->first()->id;
+    public function destroy(Request $request, Outing $outing){
+        $outings_microapp_id = $this->microapp->id;
         if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){    
             $file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
-
             $outing->delete();
             try{
                 Storage::disk('local')->delete($file);
@@ -125,8 +145,6 @@ class OutingsController extends Controller
             catch(Throwable $e){
         
             }
-
-            // return redirect(url('/school_app/outings'))->with('success','Η εκδρομή διαγράφηκε');
             return back()->with('success','Η εκδρομή διαγράφηκε');
         }
         abort(403, 'Unauthorized action.');
@@ -141,12 +159,12 @@ class OutingsController extends Controller
                 $outing->checked = 0;
             $outing->save();
 
-            return response()->json(['message' => 'Outing updated successfully']);
+            return response()->json(['message' => 'Outing updated successfully: '.$outing->checked]);
         }
         abort(403, 'Unauthorized action.');
     }
 
-    public function save_outing_profile(Request $request, Outing $outing){// protected by middleware
+    public function update(Request $request, Outing $outing){
         $rule = [
             'record_file' => 'mimetypes:application/pdf'
         ];
@@ -221,8 +239,7 @@ class OutingsController extends Controller
                 session(['error' => "Το τμήμα $name δεν αποθηκεύτηκε στην εκδρομή"]);
             }
         }
-        
         $outing->save();
-        return redirect(url('/school_app/outings'))->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
+        return redirect(url('/microapps/outings/create'))->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
     }
 }

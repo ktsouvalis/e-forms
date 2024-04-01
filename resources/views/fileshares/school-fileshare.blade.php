@@ -33,14 +33,14 @@
                                 @php
                                     $basename = basename($file_c);
                                 @endphp
-                                <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
+                                <form action="{{url("/fileshares/download_file/$fileshare->id/$basename")}}" method="get">
                                 @csrf
                                     <input type="hidden" name="personal" value="0">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                                 </form>
                             @endforeach
                             @if($fileshare->allow_school)
-                            <form action="{{url("/inform_my_teachers/$ffi")}}" method="post">
+                            <form action="{{url("/fileshares/inform_my_teachers/$ffi")}}" method="post">
                                 @csrf
                                 <button type="submit" class="bi bi-info-circle btn btn-primary" onclick="return confirm('Επιβεβαίωση ενημέρωσης εκπαιδευτικών;')"> Ενημέρωση Εκπαιδευτικών Σχολείου για τα κοινά αρχεία</button>
                             </form>
@@ -52,7 +52,7 @@
                                     @php
                                         $basename = basename($file_p);
                                     @endphp
-                                    <form action="{{url("/get_file/$fileshare->id/$basename")}}" method="post">
+                                    <form action="{{url("/fileshares/download_file/$fileshare->id/$basename")}}" method="get">
                                     @csrf
                                         <input type="hidden" name="personal" value="1">
                                         <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>

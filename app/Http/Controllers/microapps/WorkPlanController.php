@@ -15,9 +15,26 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Style;
 class WorkPlanController extends Controller
 {
     //
+
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isConsultant')->only(['create']);
+        $this->middleware('canViewMicroapp')->only(['create','index']);
+        $this->microapp = Microapp::where('url', '/work_planning')->first();
+    }
+
+    public function index(){
+        return view('microapps.work_planning.index', ['appname' => 'work_planning']);
+    }
+
+    public function create(){
+        return view('microapps.work_planning.create', ['appname' => 'work_planning']);
+    }
+
     public function saveWorkPlan($yearWeek, Request $request){
-        $microapp = Microapp::where('url', "/work_planning")->first();
-        if($microapp->accepts){
+        if($this->microapp->accepts){
             $programm = json_encode(array(
                     'mon'=> $request->all()['mon'],
                     'tue'=> $request->all()['tue'],

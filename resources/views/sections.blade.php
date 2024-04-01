@@ -66,14 +66,14 @@
             </nav>
         
 
-            @if($all_sections->count())
+            {{-- @if($all_sections->count())
             <nav class="navbar navbar-light bg-light">
                 <form action="{{url('/delete_sections')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                     @csrf
                     <button type="submit" class="btn bi bi-x-circle btn-danger" onclick="return confirm('Η ενέργεια θα διαγράψει τα τμήματα όλων των σχολείων. Είστε βέβαιοι;')"> Διαγραφή Τμημάτων</button>
                 </form>
             </nav>
-            @endif
+            @endif --}}
         @endcan
     </div>
 </x-layout>

@@ -17,10 +17,27 @@ use Illuminate\Support\Facades\Validator;
 class AllDaySchoolController extends Controller
 {
     //
-    public function post_all_day(Request $request){
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('canViewMicroapp')->only(['create','store', 'index']);
+        $this->microapp = Microapp::where('url', '/all_day_school')->first();
+    }
+
+    public function index(){
+        return view('microapps.all_day_school.index', ['appname' => 'all_day_school']);
+    }
+
+    public function create(){
+        return view('microapps.all_day_school.create', ['appname' => 'all_day_school']);
+    }
+
+    public function store(Request $request){
         $school = Auth::guard('school')->user();
-        $microapp = Microapp::where('url', '/all_day_school')->first();
-        if($microapp->accepts){
+        
+        if($this->microapp->accepts){
             if(isset($request->all()['nr_class_3']))
                 $noc3 = $request->all()['nr_class_3'];
             else
@@ -64,7 +81,7 @@ class AllDaySchoolController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+                    return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
                 try{
@@ -93,7 +110,7 @@ class AllDaySchoolController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
             else{
@@ -112,6 +129,7 @@ class AllDaySchoolController extends Controller
                         'nr_of_pupils_4' => $nos4,
                         'nr_of_class_5' => $noc5,
                         'nr_of_pupils_5' => $nos5,
+                        'nr_morning' => $nosm,
                     ]); 
                 }
                 catch(Throwable $e){
@@ -121,7 +139,7 @@ class AllDaySchoolController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/school_app/all_day_school'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
             $show = Month::where('number', $month_to_store)->first()->name;
@@ -131,10 +149,10 @@ class AllDaySchoolController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/all_day_school'))->with('success', "Τα στοιχεία για τον μήνα $show ενημερώθηκαν");
+            return redirect(url('/microapps/all_day_school/create'))->with('success', "Τα στοιχεία για τον μήνα $show ενημερώθηκαν");
         }
         else{
-            return redirect(url('/school_app/all_day_school'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
     }
 
@@ -151,7 +169,7 @@ class AllDaySchoolController extends Controller
                 return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
             }
         }
-        abort(403, 'Unauthorized action.');
+        abort(403, 'ΔΕΝ ΕΧΕΤΕ ΔΙΚΑΙΩΜΑ ΠΡΟΣΒΑΣΗΣ');
     }
 
     public function update_all_day_template(Request $request, $type){
@@ -173,12 +191,19 @@ class AllDaySchoolController extends Controller
         return back()->with('success', 'Το αρχείο ενημερώθηκε');
     }
 
-    public function self_update(Request $request, AllDaySchool $all_day_school){
-        if(isset($request->all()['nos3']))
-            $all_day_school->update(['nr_of_pupils_3'=>$request->all()['nos3']]);
-        $all_day_school->update(['nr_of_pupils_4'=>$request->all()['nos4']]);
-        $all_day_school->update(['nr_of_pupils_5'=>$request->all()['nos5']]);
+    public function download_template($type){
+        if($type==1)
+            $file = 'all_day/oloimero_dim.xlsx';
+        else
+            $file = 'all_day/oloimero_nip.xlsx';
 
-        return back()->with('success', 'Τα στοιχεία ενημερώθηκαν');
+        $response = Storage::disk('local')->download($file);  
+        ob_end_clean();
+        try{
+            return $response;
+        }
+        catch(Throwable $e){
+            return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
+        }
     }
 }

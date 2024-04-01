@@ -16,7 +16,7 @@
                     });
     
                     $.ajax({
-                        url: '../filecollects/save_filecollect_stake_comment/'+stakeholderId,
+                        url: '../filecollects/save_stake_comment/'+stakeholderId,
                         type: 'POST',
                         data: {
                             stake_comment: comment
@@ -68,7 +68,7 @@
         <div class="row">
             <div class="col">
                 @if($filecollect->base_file)
-                    <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/base")}}" method="post">
+                    <form action="{{url("/filecollects/download_admin_file/$filecollect->id/base")}}" method="get">
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text"><b>Σχετικό Έγγραφο</b></span>
@@ -83,7 +83,7 @@
                     <span class="input-group-text"><b>Αρχείο που έχετε υποβάλλει</b></span>
                 </div>
                 <div class="hstack gap-2">
-                    <form action="{{url("/filecollects/dl_stake_file/$old_data->id")}}" method="post">
+                    <form action="{{url("/filecollects/download_stake_file/$old_data->id")}}" method="get">
                         @csrf
                         <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$old_data->file}} </button>
                     </form>
@@ -98,7 +98,7 @@
             </div>
             <div class="col">
                 @if($filecollect->template_file)
-                    <form action="{{url("/filecollects/dl_filecollect_file/$filecollect->id/template")}}" method="post">
+                    <form action="{{url("/filecollects/download_admin_file/$filecollect->id/template")}}" method="get">
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text"><b>Πρότυπο Αρχείο</b></span>
@@ -109,7 +109,7 @@
             </div>
         </div>
         <hr>
-        <form action="{{url("/filecollects/post_filecollect/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+        <form action="{{url("/filecollects/upload_stake_file/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
             @csrf
             <div class="input-group">
                 <span class="input-group-text"><strong>Αποστολή αρχείου για τη συλλογή {{$filecollect->name}} </strong></span>

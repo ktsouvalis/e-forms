@@ -14,9 +14,25 @@ use Illuminate\Support\Facades\Validator;
 class EnrollmentController extends Controller
 {
     //
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        $this->microapp = Microapp::where('url', '/enrollments')->first();
+    }
+
+    public function index(){
+        return view('microapps.enrollments.index', ['appname' => 'enrollments']);
+    }
+
+    public function create(){
+        return view('microapps.enrollments.create', ['appname' => 'enrollments']);
+    }
+
     public function save($select, Request $request){
         $school = Auth::guard('school')->user();
-        $microapp = Microapp::where('url', '/enrollments')->first();
         $filename = $request->file('file')->getClientOriginalName();
             
         //handle the file
@@ -100,7 +116,7 @@ class EnrollmentController extends Controller
             }
             return redirect(url('/school_app/enrollments'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
         }
-        if($microapp->accepts){
+        if($this->microapp->accepts){
             try{
                 Enrollment::updateOrCreate(
                     [
@@ -118,7 +134,7 @@ class EnrollmentController extends Controller
                 }
                 return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
-            $stakeholder = $microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+            $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
             $stakeholder->hasAnswer = 1;
             $stakeholder->save();
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');

@@ -26,6 +26,31 @@ use Illuminate\Support\Facades\Validator;
 class TicketsController extends Controller
 {
     //
+    private $microapp;
+
+    public function __construct(){
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        $this->middleware('canUpdateTicket')->only(['update']);
+        $this->microapp = Microapp::where('url', '/tickets')->first();
+    }
+
+    public function index(){
+        return view('microapps.tickets.index', ['appname' => 'tickets']);
+    }
+
+    public function create(){
+        return view('microapps.tickets.create', ['appname' => 'tickets']);
+    }
+
+    public function edit(Ticket $ticket){
+        if(Auth::check())
+            return view('microapps.tickets.ticket-profile-admin', compact('ticket'));
+        else if(Auth::guard('school')->check())
+            return view('microapps.tickets.ticket-profile-school', compact('ticket'));
+    }
+
     private function validate_request(Request $request){
         $string="";
         $error=false;
@@ -117,7 +142,7 @@ class TicketsController extends Controller
         return $success;
     }
         
-    public function create_ticket(Request $request){
+    public function store(Request $request){
         $validation = $this->validate_request($request);
         if($validation['error']==true){
             return back()->with('failure', $validation['message']);
@@ -132,9 +157,9 @@ class TicketsController extends Controller
         }
 
         if($mails)
-            return redirect(url("/ticket_profile/$new_ticket->id"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');  
+            return redirect(url("/microapps/tickets/$new_ticket->id/edit"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');  
         else
-            return redirect(url("/ticket_profile/$new_ticket->id"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, κάποια mail απέτυχαν να σταλούν');       
+            return redirect(url("/microapps/tickets/$new_ticket->id/edit"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, κάποια mail απέτυχαν να σταλούν');       
         
     }
 
@@ -178,7 +203,7 @@ class TicketsController extends Controller
         return true;
     }
 
-    public function update_ticket(Ticket $ticket, Request $request){
+    public function update(Ticket $ticket, Request $request){
         //check who wants to update the ticket
         if(Auth::user()){
             $user = Auth::user();
@@ -366,7 +391,6 @@ class TicketsController extends Controller
     }
 
     public function admin_create_ticket(Request $request){
-        // $school = School::find($request->input('school'));
         $school = School::where('name', $request->input('school'))->first();
         if(!$school){
             return back()->with(['failure' => 'Το σχολείο δεν βρέθηκε']);
@@ -376,7 +400,7 @@ class TicketsController extends Controller
             $mails = $this->send_creation_mails($new_ticket);
         }
 
-        return redirect(url("/ticket_profile/$new_ticket->id#bottom"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
+        return redirect(url("/microapps/tickets/$new_ticket->id/edit#bottom"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
 
     public function microapp_create_ticket(Request $request, $appname){
@@ -403,11 +427,11 @@ class TicketsController extends Controller
                 $result = Storage::copy($sourcePath, $destinationPath);
             }
             catch(Throwable $e){
-                return redirect(url("/ticket_profile/$new_ticket->id"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, αλλά δεν ήταν δυνατή η αποθήκευση του συνημμένου');
+                return redirect(url("/microapps/tickets/$new_ticket->id/edit#bottom"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, αλλά δεν ήταν δυνατή η αποθήκευση του συνημμένου');
             }
             Log::channel('tickets')->info($school->name." ticket $new_ticket->id uploaded file");
             $new_post = $this->add_post($new_ticket->id, $school->id,'App\Models\School' , "Προστέθηκε το αρχείο $original_filename");
         }
-        return redirect(url("/ticket_profile/$new_ticket->id"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
+        return redirect(url("/microapps/tickets/$new_ticket->id/edit#bottom"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
 }

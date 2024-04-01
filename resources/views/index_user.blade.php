@@ -60,7 +60,7 @@
                     
                         <div class="col-md-4 py-3" style="max-width:15rem">
                             <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/manage_operations")}}">
+                                <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/operations")}}">
                                 <div class="h5 card-title fa-solid fa-toolbox"></div>
                                 <div>Διαχείριση Λειτουργιών</div>
                                 </a> 
@@ -126,7 +126,7 @@
                             @php
                                 $fi = $fileshare->id;
                             @endphp
-                            <a class="text-dark" style="text-decoration:none;" href="{{url("/fileshare_profile/$fi")}}">
+                            <a class="text-dark" style="text-decoration:none;" href="{{url("/fileshares/$fi/edit")}}">
                             <div class="h5 card-title fa-solid fa-file-pdf"></div>
                             <div>{{$fileshare->name}}</div>
                             </a> 
@@ -163,7 +163,7 @@
                 <div class="row hidden-md-up justify-content-left">
                     <div class="col-md-4 py-3" style="max-width:15rem">
                         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                            <a class="text-dark" style="text-decoration:none;" href="{{url("/microapps")}}">
+                            <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/microapps")}}">
                             <div class="h5 card-title fa-solid fa-microchip"></div>
                             <div>Μικροεφαρμογές</div>
                             </a> 
@@ -188,7 +188,7 @@
                                 @endif
                                 </div>
                                 <div class="py-2" style="text-align:center">
-                                    <a class="text-dark" style="text-decoration:none;" href="{{ url("/admin".$one_microapp->url) }}">
+                                    <a class="text-dark" style="text-decoration:none;" href="{{ url("/microapps".$one_microapp->url) }}">
                                         <div class="h5 card-title {{ $one_microapp->icon }}"></div>
                                         <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>
                                     </a>

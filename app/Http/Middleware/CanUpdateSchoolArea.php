@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\School;
 use App\Models\Microapp;
 use App\Models\MicroappUser;
 use Illuminate\Http\Request;
@@ -18,7 +19,9 @@ class CanUpdateSchoolArea
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $school = $request->route('school');
+        $url = $request->url();
+        $segments = explode('/', $url);
+        $school = School::find($segments[5]);
         $microapp = Microapp::where('url','/school_area')->first();
         if(Auth::check()){
             $user = Auth::guard('web')->user();

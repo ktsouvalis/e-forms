@@ -22,6 +22,10 @@ class InternalRulesController extends Controller
     private $microapp;
 
     public function __construct(){
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isSchool')->only(['store']);
+        $this->middleware('isConsultant')->only(['consultant_create']);
+        $this->middleware('isSchool')->only(['school_create']);
         $this->middleware('canViewMicroapp')->only(['create','store','index']);
         $this->microapp = Microapp::where('url', '/internal_rules')->first();
     }
@@ -32,9 +36,17 @@ class InternalRulesController extends Controller
 
     public function create(){
         if(Auth::guard('school')->check())
-            return view('microapps.internal_rules.create-school', ['appname' => 'internal_rules']);
+            return $this->school_create();
         else if(Auth::guard('consultant')->check())
-            return view('microapps.internal_rules.create-consultant', ['appname' => 'internal_rules']);
+            return $this->consultant_create();
+    }
+
+    private function school_create(){
+        return view('microapps.internal_rules.create-school', ['appname' => 'internal_rules']);
+    }
+
+    private function consultant_create(){
+        return view('microapps.internal_rules.create-consultant', ['appname' => 'internal_rules']);
     }
 
     public function store(Request $request){

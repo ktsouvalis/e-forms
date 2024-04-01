@@ -1,12 +1,12 @@
 @php
     $user = Auth::user();
     if(App\Models\Superadmin::where('user_id',$user->id)->exists()){
-        $operations=App\Models\Operation::all(); //$operations is Operation model
+        $operations=App\Models\Operation::orderBy('menu_priority')->get(); //$operations is Operation model
         $microapps=App\Models\Microapp::all(); //$microapps is Microapp model
         $super_admin=true;
     }
     else {
-        $operations=$user->operations; //$operations is UsersOperations model
+        $operations = $user->operations;
         $microapps=$user->microapps; // $microapps is MicroappUser model
         $super_admin=false;
     }

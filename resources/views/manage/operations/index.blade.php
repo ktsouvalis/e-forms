@@ -72,7 +72,7 @@
         @endisset
         <hr>
 
-        <form action="{{url("/set_menu_priority")}}" method="post">
+        <form action="{{url("/manage/operations/set_menu_priority")}}" method="post">
             @csrf
             <div class="input-group">
             <span class="input-group-text w-25"></span>
@@ -87,7 +87,7 @@
             <div class="input-group">
                 <span class="w-25"></span>
                 <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Αλλαγή</button>
-                <a href="{{url("/manage_operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                <a href="{{url("/manage/operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
             </div>
         </form>
         <hr>

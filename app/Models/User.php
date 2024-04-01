@@ -56,7 +56,10 @@ class User extends Authenticatable
 
     public function operations()
     {
-        return $this->hasMany(UsersOperations::class);
+        // return $this->hasMany(UsersOperations::class);
+         return $this->hasMany(UsersOperations::class)
+                ->join('operations', 'users_operations.operation_id', '=', 'operations.id')
+                ->orderBy('operations.menu_priority');
     }
 
     public function forms(){

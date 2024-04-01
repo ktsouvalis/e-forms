@@ -244,7 +244,7 @@ Route::resource('school_area', SchoolAreaController::class);
 
 Route::get('/tickets', [TicketsController::class, 'index']);
 
-Route::get('/tickets', [TicketsController::class, 'create']); //->middleware('canViewMicroapp')->middleware('isSchool');
+Route::get('/tickets/create', [TicketsController::class, 'create']); //->middleware('canViewMicroapp')->middleware('isSchool');
 
 Route::get('/tickets/{ticket}/edit', [TicketsController::class, 'edit']); //->middleware('canUpdateTicket')->middleware('auth');
 

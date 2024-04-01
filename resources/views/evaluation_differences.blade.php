@@ -83,18 +83,24 @@
                         <td>-</td>
                     @endif  
                     @php
-                    $a2 = DB::table('evaluation_a2')->where('teacher_afm', $teacher->afm)->first();
+                        $a2 = DB::table('evaluation_a2')->where('teacher_afm', $teacher->afm)->first();
+                        if($a2){
+                            $evaluator_a2 = App\Models\Teacher::where('afm', $a2->evaluator_afm)->first();
+                        }
                     @endphp
                     @if($a2)
-                        <td>Α2</td>
+                        <td>Α2 @if($evaluator_a2){{$evaluator_a2->surname}} {{$evaluator_a2->name}} @endif </td>
                     @else
                         <td>-</td>
                     @endif 
                     @php
                         $b = DB::table('evaluation_b')->where('teacher_afm', $teacher->afm)->first();
+                        if($b){
+                            $evaluator_b = App\Models\Teacher::where('afm', $b->evaluator_1_afm)->first();
+                        }   
                     @endphp
                     @if($b)
-                        <td>Β</td>
+                        <td>Β @if($evaluator_b){{$evaluator_b->surname}} {{$evaluator_b->name}} @endif </td>
                     @else
                         <td>-</td>
                     @endif

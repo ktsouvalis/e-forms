@@ -29,10 +29,10 @@ class TicketsController extends Controller
     private $microapp;
 
     public function __construct(){
-        // $this->middleware('auth')->only(['index']);
-        // $this->middleware('isSchool')->only(['create', 'store']);
-        // $this->middleware('canViewMicroapp')->only(['create','store','index']);
-        // $this->middleware('canUpdateTicket')->only(['update']);
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('canViewMicroapp')->only(['create','store','index']);
+        $this->middleware('canUpdateTicket')->only(['update']);
         $this->microapp = Microapp::where('url', '/tickets')->first();
     }
 

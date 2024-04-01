@@ -240,17 +240,17 @@ Route::resource('fruits', FruitsController::class);
 Route::resource('school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
-// Route::resource('tickets', TicketsController::class);
+Route::resource('tickets', TicketsController::class);
 
-Route::get('/tickets', [TicketsController::class, 'index']);
+// Route::get('/tickets', [TicketsController::class, 'index']);
 
-Route::get('/tickets/create', [TicketsController::class, 'create']); //->middleware('canViewMicroapp')->middleware('isSchool');
+// Route::get('/tickets/create', [TicketsController::class, 'create']); //->middleware('canViewMicroapp')->middleware('isSchool');
 
-Route::get('/tickets/{ticket}/edit', [TicketsController::class, 'edit']); //->middleware('canUpdateTicket')->middleware('auth');
+// Route::get('/tickets/{ticket}/edit', [TicketsController::class, 'edit']); //->middleware('canUpdateTicket')->middleware('auth');
 
-Route::put('/tickets/{ticket}', [TicketsController::class, 'update']); //->middleware('canUpdateTicket')->middleware('auth');
+// Route::put('/tickets/{ticket}', [TicketsController::class, 'update']); //->middleware('canUpdateTicket')->middleware('auth');
 
-Route::post('/tickets/store', [TicketsController::class, 'store']);//->middleware('canViewMicroapp')->middleware('isSchool');
+// Route::post('/tickets/store', [TicketsController::class, 'store']);//->middleware('canViewMicroapp')->middleware('isSchool');
 
 Route::post('/tickets/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('boss');
 

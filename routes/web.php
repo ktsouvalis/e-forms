@@ -191,6 +191,8 @@ Route::get('/tlogout', [TeacherController::class, 'logout']);
 //////// CONSULTANT ROUTES
 Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
+Route::view('/consultant_evaluation_b','consultant_evaluation')->middleware('isConsultant');
+
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');

@@ -26,6 +26,7 @@
 </div>
 <div>
     <p class="h4">Εμφάνιση στοιχείων Αξιολόγησης στο πεδίο Β</p>
+    <p class="h5">Παρουσιάζονται τα στοιχεία από το αρχείο που έχει ανέβει από τη Διεύθυνση στο πεδίο Β</p>
 </div>
 @php
 $user = Auth::guard('consultant')->user();
@@ -45,6 +46,18 @@ $teachersAfms = DB::table('evaluation_b')
 <div class="table-responsive py-2" style="align-self:flex-start">
     <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
     <thead>
+        <tr>
+            <th>Πεδίο</th>
+            <th colspan="3">Αξιολογούμενος</th>
+           
+            {{-- <th id="search">Σχολείο</th>                
+            <th id="search">mail Σχολείου</th> --}}
+            <th colspan="3">Αξιολογητής 1</th>
+            <th colspan="3">Αξιολογητής 2</th>
+            
+            <th id="">ΑΜ</th>
+            <th id="">Κλάδος</th>
+        </tr>
         <tr>
             <th id="search">Α1, Α2, Β</th>
             <th id="search">Όνομα</th>

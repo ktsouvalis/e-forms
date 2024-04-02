@@ -53,16 +53,16 @@ class FruitsController extends Controller
                 catch(Throwable $e){
         
                 }
-                return redirect(url('/microapps/fruits/create'))->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+                return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
             $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
             $stakeholder->hasAnswer = 1;
             $stakeholder->save();
             
-            return redirect(url('/microapps/fruits/create'))->with('success', 'Η εγγραφή αποθηκεύτηκε.');
+            return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
         else{
-            return redirect(url('/microapps/fruits/create'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return back()->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
     }
 }

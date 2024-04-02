@@ -157,9 +157,9 @@ class TicketsController extends Controller
         }
 
         if($mails)
-            return redirect(url("/microapps/tickets/$new_ticket->id/edit"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');  
+            return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');  
         else
-            return redirect(url("/microapps/tickets/$new_ticket->id/edit"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, κάποια mail απέτυχαν να σταλούν');       
+            return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, κάποια mail απέτυχαν να σταλούν');       
         
     }
 
@@ -400,7 +400,7 @@ class TicketsController extends Controller
             $mails = $this->send_creation_mails($new_ticket);
         }
 
-        return redirect(url("/microapps/tickets/$new_ticket->id/edit#bottom"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
+        return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
 
     public function microapp_create_ticket(Request $request, $appname){
@@ -427,11 +427,11 @@ class TicketsController extends Controller
                 $result = Storage::copy($sourcePath, $destinationPath);
             }
             catch(Throwable $e){
-                return redirect(url("/microapps/tickets/$new_ticket->id/edit#bottom"))->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, αλλά δεν ήταν δυνατή η αποθήκευση του συνημμένου');
+                return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('warning','Το δελτίο δημιουργήθηκε με επιτυχία, αλλά δεν ήταν δυνατή η αποθήκευση του συνημμένου');
             }
             Log::channel('tickets')->info($school->name." ticket $new_ticket->id uploaded file");
             $new_post = $this->add_post($new_ticket->id, $school->id,'App\Models\School' , "Προστέθηκε το αρχείο $original_filename");
         }
-        return redirect(url("/microapps/tickets/$new_ticket->id/edit#bottom"))->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
+        return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
 }

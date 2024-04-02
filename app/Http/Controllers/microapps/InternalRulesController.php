@@ -246,7 +246,7 @@ class InternalRulesController extends Controller
                     catch(\Exception $e){
 
                     }
-                    return redirect(url('/admin/internal_rules'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+                    return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
                 $internal_rule->director_signed_file = $file;

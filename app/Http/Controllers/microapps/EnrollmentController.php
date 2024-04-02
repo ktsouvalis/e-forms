@@ -114,7 +114,7 @@ class EnrollmentController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/school_app/enrollments'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+            return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
         }
         if($this->microapp->accepts){
             try{

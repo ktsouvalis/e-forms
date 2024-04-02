@@ -240,6 +240,7 @@ class OutingsController extends Controller
             }
         }
         $outing->save();
-        return redirect(url('/outings/create'))->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
+
+        return redirect()->route('outings.create')->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
     }
 }

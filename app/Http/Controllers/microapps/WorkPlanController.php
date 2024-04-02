@@ -55,7 +55,7 @@ class WorkPlanController extends Controller
             return back()->with('success', 'Ενημερώθηκε το πρόγραμμα');
         }
         else{
-            return redirect(url('/consultant_app/work_planning'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return back()->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
     }
 

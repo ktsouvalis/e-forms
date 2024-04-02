@@ -80,7 +80,7 @@
         @if($one_microapp->microapp->visible)
           <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
             <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
-            <a href="{{url($one_microapp->microapp->url)}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
+            <a href="{{url($one_microapp->microapp->url."/create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
           </div>
         @endif 
       @endforeach

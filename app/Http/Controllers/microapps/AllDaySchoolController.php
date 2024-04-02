@@ -81,7 +81,7 @@ class AllDaySchoolController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+                    return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
                 try{
@@ -110,7 +110,7 @@ class AllDaySchoolController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return back()->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
             else{
@@ -139,7 +139,7 @@ class AllDaySchoolController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return back()->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
             $show = Month::where('number', $month_to_store)->first()->name;
@@ -149,10 +149,10 @@ class AllDaySchoolController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/microapps/all_day_school/create'))->with('success', "Τα στοιχεία για τον μήνα $show ενημερώθηκαν");
+            return back()->with('success', "Τα στοιχεία για τον μήνα $show ενημερώθηκαν");
         }
         else{
-            return redirect(url('/microapps/all_day_school/create'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return back()->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
     }
 

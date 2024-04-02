@@ -40,11 +40,12 @@
                             </td>
                             <td>
                                 @if($school->primary == 1)
-                                    <form action="{{url("/$appname/1_enrollments_primary_school.xlsx/Εγγραφέντες.xlsx")}}" method="get"class="container-fluid">
+                                    <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_primary_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
                                         <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                     </form>
+                                    {{-- {{url("/$appname/1_enrollments_primary_school.xlsx/Εγγραφέντες.xlsx")}} --}}
                                 @else
-                                    <form action="{{url("/$appname/1_enrollments_nursery_school.xlsx/Εγγραφέντες.xlsx")}}" method="get"class="container-fluid">
+                                    <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_nursery_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
                                         <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
                                     </form>
                                 @endif  
@@ -52,9 +53,10 @@
                             </td>
                         </tr>
                         <tr>
-                            <form action="{{url("/enrollments/enrolled")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                            <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                                 @csrf
                             <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  2024-25</td>
+                            {{-- {{url("/enrollments/enrolled")}} --}}
                             <td>
                                 <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
                             </td>
@@ -75,7 +77,9 @@
                                     <div class="input-group">
                                         <span class="w-25"></span>
                                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                                        <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                        <a href="{{route('enrollments.create')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                        {{-- {{url("/$appname/create")}} --}}
+                                        {{-- {{route('microapps.'.$appname.".create")}} --}}
                                     </div>
                                 @endif
                             </td>

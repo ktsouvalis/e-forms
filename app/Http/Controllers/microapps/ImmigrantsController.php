@@ -63,7 +63,7 @@ class ImmigrantsController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/microapps/immigrants/create'))->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+                    return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
                 }
 
                 try{
@@ -84,7 +84,7 @@ class ImmigrantsController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/microapps/immigrants/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return back()->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }
             }
             else{
@@ -105,7 +105,7 @@ class ImmigrantsController extends Controller
                     catch(Throwable $e){
             
                     }
-                    return redirect(url('/microapps/immigrants/create'))->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
+                    return back()->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
                 }  
             }
             try{
@@ -114,10 +114,10 @@ class ImmigrantsController extends Controller
             catch(Throwable $e){
     
             }
-            return redirect(url('/microapps/immigrants/create'))->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
+            return back()->with('success', "Τα στοιχεία για τον μήνα $month->name ενημερώθηκαν");
         }
         else{
-            return redirect(url('/microapps/immigrants/create'))->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
+            return back()->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');
         }
 
     }

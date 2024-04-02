@@ -222,15 +222,15 @@ Route::group(['prefix' => 'manage/microapps'], function(){
     Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 });
 
-// ENROLLMENTS ROUTES
+//ENROLLMENTS ROUTES
 Route::resource('enrollments', EnrollmentController::class);
 
 Route::group(['prefix' => 'enrollments'], function () {
-    Route::post("/{select}", [EnrollmentController::class, 'save']);
+    Route::post("/{select}", [EnrollmentController::class, 'save'])->name('enrollments.save');
 
-    Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file']);
+    Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file'])->name('enrollments.upload_file');
 
-    Route::get("/{file}/{download_file_name}", [EnrollmentController::class, 'download_file']);
+    Route::get("/{file}/{download_file_name}", [EnrollmentController::class, 'download_file'])->name('enrollments.download_file');
 });
 
 // FRUITS ROUTES
@@ -242,21 +242,22 @@ Route::resource('school_area', SchoolAreaController::class);
 // TICKETS ROUTES
 Route::resource('tickets', TicketsController::class);
 
-Route::post('/tickets/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('boss');
+Route::group(['prefix' => 'tickets'], function(){
+    Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('boss');
 
-Route::post('/tickets/update-post', [TicketsController::class, 'update_post']);
+    Route::post('/update-post', [TicketsController::class, 'update_post']);
 
-Route::post("/tickets/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])
-    ->middleware('canUpdateTicket');
+    Route::post("/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])
+        ->middleware('canUpdateTicket');
 
-Route::get('/tickets/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])
-    ->middleware('canUpdateTicket');
+    Route::get('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])
+        ->middleware('canUpdateTicket');
 
-Route::post('/tickets/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])
-    ->middleware('boss');
+    Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])
+        ->middleware('boss');
 
-Route::post('/tickets/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
-
+    Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
+});
 
 // OUTINGS ROUTES
 Route::resource('outings', OutingsController::class);
@@ -271,7 +272,8 @@ Route::group(['prefix' => 'outings'], function () {
 Route::resource('all_day_school', AllDaySchoolController::class);
 
 Route::group(['prefix' => 'all_day_school'], function () {
-    Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->middleware('canViewMicroapp');
+    Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template']);
+    // ->middleware('canViewMicroapp');
 
     Route::post('/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
 
@@ -282,7 +284,8 @@ Route::group(['prefix' => 'all_day_school'], function () {
 Route::resource('immigrants', ImmigrantsController::class);
 
 Route::group(['prefix' => 'immigrants'], function () {
-    Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template'])->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
+    Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template']);
+    // ->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
 
     Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
 

@@ -230,10 +230,10 @@ Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], fun
 });
 
 // FRUITS ROUTES
-Route::resource('fruits', FruitsController::class);
+Route::resource('fruits', FruitsController::class)->middleware('canViewMicroapp');
 
 // SCHOOL AREA ROUTES
-Route::resource('school_area', SchoolAreaController::class);
+Route::resource('school_area', SchoolAreaController::class)->middleware('canViewMicroapp');
 
 // TICKETS ROUTES
 Route::resource('tickets', TicketsController::class)->middleware('canViewMicroapp');
@@ -262,15 +262,14 @@ Route::group(['prefix' => 'outings'], function () {
 });
 
 // ALL_DAY_SCHOOL ROUTES
-Route::resource('all_day_school', AllDaySchoolController::class);
+Route::resource('all_day_school', AllDaySchoolController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'all_day_school'], function () {
-    Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template']);
-    // ->middleware('canViewMicroapp');
+Route::group(['prefix' => 'all_day_school', 'middleware' => 'canViewMicroapp'], function () {
+    Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->name('all_day_school.download_template');
 
-    Route::post('/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->middleware('boss');
+    Route::post('/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->name('all_day_school.update_template')->middleware('boss');
 
-    Route::get('/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file']); //access rights are checked inside the method
+    Route::get('/download_file/{all_day_school}', [AllDaySchoolController::class, 'download_file'])->name('all_day_school.download_file'); //access rights are checked inside the method
 });
 
 // IMMIGRANTS ROUTES

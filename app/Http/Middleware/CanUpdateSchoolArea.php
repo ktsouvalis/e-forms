@@ -19,10 +19,9 @@ class CanUpdateSchoolArea
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $url = $request->url();
-        $segments = explode('/', $url);
-        $school = School::find($segments[4]);
-        $microapp = Microapp::where('url','/school_area')->first();
+        $routeName = $request->route()->getName();
+        $resource = explode('.', $routeName)[0];
+        $microapp = Microapp::where('url', "/".$resource)->firstOrFail(); 
         if(Auth::check()){
             $user = Auth::guard('web')->user();
             if($microapp->active){

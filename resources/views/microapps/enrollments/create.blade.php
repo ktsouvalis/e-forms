@@ -92,9 +92,10 @@
                             @php
                                 $file1 = $old_data->enrolled_file1;
                             @endphp<td>
-                            <form action="{{url("/enrollments/enrollments1_$school_code.xlsx/$file1")}}" method="get"class="container-fluid">
+                            <form action="{{route('enrollments.download_file',['file'=>"enrollments1_$school_code.xlsx", 'download_file_name' => $file1])}}" method="get"class="container-fluid">
                                 <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file1}} </button>
                             </form>
+                            {{-- {{url("/enrollments/enrollments1_$school_code.xlsx/$file1")}} --}}
                             </td>
                         </tr>
                         @endif
@@ -120,28 +121,28 @@
                         <td> 
                             @if($school->primary == 1)
                                 @if($school->has_extended_all_day == 1)
-                                <form action="{{url("/$appname/2_enrollments_primary_ext_all_day_school.xlsx/Ολοήμερο_2024_25.xlsx")}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_ext_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2024_25.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @else
-                                <form action="{{url("/$appname/2_enrollments_primary_all_day_school.xlsx/Ολοήμερο_2024_25.xlsx")}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2024_25.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @endif
                             @else
                                 @if($school->has_extended_all_day == 1)
-                                <form action="{{url("/$appname/2_enrollments_nursery_ext_all_day_school.xlsx/Ολοήμερο.xlsx")}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_nursery_ext_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
                                 </form>
                                 @else
-                                <form action="{{url("/$appname/2_enrollments_nursery_all_day_school.xlsx/Ολοήμερο.xlsx")}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_nursery_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
                                 </form>
                                 @endif
                             @endif
                         </td>
                     </tr>
-                    <form action="{{url("/$appname/all_day")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{route("enrollments.save", ['select'=>'all_day'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                     <tr>
                         <td>Αριθμός εγγεγραμμένων  @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο 2024-25</td>
@@ -165,7 +166,7 @@
                                 <div class="input-group">
                                     <span class="w-25"></span>
                                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                                    <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                    <a href="{{route('enrollments.create')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                                 </div>
                             @endif
                         </td>
@@ -178,7 +179,7 @@
                         @php
                             $file2 = $old_data->all_day_file1;
                         @endphp<td>
-                        <form action="{{url("/enrollments/enrollments2_$school_code.xlsx/$file2")}}" method="get"class="container-fluid">
+                        <form action="{{route('enrollments.download_file',['file'=>"enrollments2_$school_code.xlsx", 'download_file_name' => $file2])}}" method="get"class="container-fluid">
                             <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file2}} </button>
                         </form>
                         </td><tr>
@@ -211,11 +212,11 @@
             <tr>
                 <td>
                     @if($school->primary == 1)
-                        <form action="{{url("/$appname/3_enrollments_extra_section_dim.docx/Αίτημα_δημιουργίας_επιπλέον_τμημ.docx")}}" method="get"class="container-fluid">
+                        <form action=" {{route('enrollments.download_file',['file'=>"3_enrollments_extra_section_dim.docx", 'download_file_name' => "Αίτημα_δημιουργίας_επιπλέον_τμημ.docx"])}}" method="get"class="container-fluid">
                             <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Κατεβάστε το αρχείο"> Αίτημα Επιπλέον Τμήματος-Τμημάτων</button>
                         </form>
                     @else
-                        <form action="{{url("/$appname/3_enrollments_extra_section_nip.docx/Αίτημα_δημιουργίας_επιπλέον_τμημ.docx")}}" method="get"class="container-fluid">
+                        <form action="{{route('enrollments.download_file',['file'=>"3_enrollments_extra_section_nip.docx", 'download_file_name' => "Αίτημα_δημιουργίας_επιπλέον_τμημ.docx"])}}" method="get"class="container-fluid">
                             <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Κατεβάστε το αρχείο"> Αίτημα Επιπλέον Τμήματος-Τμημάτων</button>                                
                         </form>
                     @endif
@@ -223,11 +224,11 @@
                 </td>
                 <td>
                     @if($school->primary == 1)
-                        <form action="{{url("/$appname/4_boundary_students_dim.xlsx/Μαθητές_στα_όρια.xlsx")}}" method="get"class="container-fluid">
+                        <form action=" {{route('enrollments.download_file',['file'=>"4_boundary_students_dim.xlsx", 'download_file_name' => "Μαθητές_στα_όρια.xlsx"])}}" method="get"class="container-fluid">
                             <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Κατεβάστε το αρχείο"> Μαθητές στα όρια</button>
                         </form>
                     @else
-                        <form action="{{url("/$appname/4_boundary_students_nip.xlsx/Μαθητές_στα_όρια.xlsx")}}" method="get"class="container-fluid">
+                        <form action=" {{route('enrollments.download_file',['file'=>"4_boundary_students_nip.xlsx", 'download_file_name' => "Μαθητές_στα_όρια.xlsx"])}}" method="get"class="container-fluid">
                             <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Κατεβάστε το αρχείο"> Μαθητές στα όρια</button>
                         </form>
                     @endif
@@ -243,7 +244,7 @@
                 </td>
             </tr>
             <tr>
-            <form action="{{url("/enrollments/extra_section")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+            <form action="{{route("enrollments.save", ["select"=>"extra_section"])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                 @csrf
                 <td> <input name="file" type="file" class="form-control" required>
                     @if(!$accepts)
@@ -254,12 +255,12 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{route("enrollments.create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     @endif
                 </td>
             </form>
-            <form action="{{url("/$appname/boundary_students")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+            <form action="{{route("enrollments.save", ["select"=>"boundary_students"])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                 @csrf
                 <td>
                     <input name="file" type="file" class="form-control" required>
@@ -271,7 +272,7 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            <a href="{{route("enrollments.create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     @endif
                 </td>
@@ -284,7 +285,7 @@
                     @php
                     $file3 = $old_data->extra_section_file1;
                     @endphp
-                    <form action="{{url("/enrollments/enrollments3_$school_code.pdf/$file3")}}" method="get"class="container-fluid">
+                    <form action="{{route('enrollments.download_file',['file'=>"enrollments3_$school_code.pdf", 'download_file_name' => $file3])}}" method="get"class="container-fluid">
                         <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file3}} </button>
                     </form> 
                 </td>
@@ -296,7 +297,7 @@
                 $file4 = $old_data->boundaries_st_file1;
                 @endphp
                 <td>
-                <form action="{{url("/enrollments/enrollments4_$school_code.xlsx/$file4")}}" method="get"class="container-fluid">
+                <form action="{{route('enrollments.download_file',['file'=>"enrollments4_$school_code.xlsx", 'download_file_name' => $file4])}}" method="get"class="container-fluid">
                     <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file4}} </button>
                 </form>
                 </td>

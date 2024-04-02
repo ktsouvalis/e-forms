@@ -64,9 +64,9 @@
             $('.save-button').click(function() {
                 var markup = $(this).siblings('.summernote').summernote('code');
                 var postId = $(this).data('id');
-
+                var ticketId = $(this).data('ticket-id');
                 $.ajax({
-                    url: '../update-post',
+                    url: '../update-post/'+ticketId,
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -151,7 +151,7 @@
                                 
                                 <div class="post-editor" style="display: none;">
                                     <textarea class="summernote">{!!$one_post->text!!}</textarea>
-                                    <button class="save-button" data-id="{{$one_post->id}}">Save</button>
+                                    <button class="save-button" data-id="{{$one_post->id}}" data-ticket-id="{{ $ticket->id }}">Save</button>
                                     <button class="cancel-button">Cancel</button>
                                 </div>
                             </div>

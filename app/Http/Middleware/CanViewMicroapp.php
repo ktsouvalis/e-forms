@@ -20,11 +20,9 @@ class CanViewMicroapp
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $url = $request->url();
-        $segments = explode('/', $url);
-        $app = $segments[3];
-        $microapp = Microapp::where('url', "/".$app)->firstOrFail(); 
-       
+        $routeName = $request->route()->getName();
+        $resource = explode('.', $routeName)[0];
+        $microapp = Microapp::where('url', "/".$resource)->firstOrFail(); 
         if(Auth::check()){
             $user = Auth::guard('web')->user();
             if($user->isAdmin()){

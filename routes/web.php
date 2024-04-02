@@ -155,10 +155,7 @@ Route::post('/insert_directors', [SchoolController::class, 'insertDirectors']);
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
 Route::get('/index_school', function(){
-    if(Auth::guard('school')->user())
         return view('index_school');
-    else
-        return view('index');
 });
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
@@ -178,10 +175,7 @@ Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middlewa
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);
 
 Route::get('/index_teacher', function(){
-    if(Auth::guard('teacher')->user())
-        return view('index_teacher');
-    else
-        return view('index');
+    return view('index_teacher');
 });
 
 Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
@@ -225,9 +219,9 @@ Route::group(['prefix' => 'manage/microapps'], function(){
 });
 
 //ENROLLMENTS ROUTES
-Route::resource('enrollments', EnrollmentController::class);
+Route::resource('enrollments', EnrollmentController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'enrollments'], function () {
+Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], function () {
     Route::post("/{select}", [EnrollmentController::class, 'save'])->name('enrollments.save');
 
     Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file'])->name('enrollments.upload_file');
@@ -242,23 +236,20 @@ Route::resource('fruits', FruitsController::class);
 Route::resource('school_area', SchoolAreaController::class);
 
 // TICKETS ROUTES
-Route::resource('tickets', TicketsController::class);
+Route::resource('tickets', TicketsController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'tickets'], function(){
-    Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->middleware('boss');
+Route::group(['prefix' => 'tickets', 'middleware' =>'canViewMicroapp'], function(){
+    Route::post('/ticket_needed_visit/{ticket}', [TicketsController::class, 'ticket_needed_visit'])->name('tickets.visit')->middleware('boss');
 
-    Route::post('/update-post', [TicketsController::class, 'update_post']);
+    Route::post('/update-post/{ticket}', [TicketsController::class, 'update_post'])->name('tickets.update_post')->middleware('canUpdateTicket');
 
-    Route::post("/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])
-        ->middleware('canUpdateTicket');
+    Route::post("/mark_as_resolved/{ticket}", [TicketsController::class, 'mark_as_resolved'])->name('tickets.mark_as_resolved')->middleware('canUpdateTicket');
 
-    Route::get('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])
-        ->middleware('canUpdateTicket');
+    Route::get('/get_ticket_file/{ticket}/{original_filename}', [TicketsController::class, 'download_file'])->name('tickets.download_file')->middleware('canUpdateTicket');
 
-    Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])
-        ->middleware('boss');
+    Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->name('tickets.admin_create_ticket')->middleware('boss');
 
-    Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket']);
+    Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket'])->name('tickets.microapp_create_ticket');
 });
 
 // OUTINGS ROUTES

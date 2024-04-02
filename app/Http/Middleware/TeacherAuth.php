@@ -18,7 +18,7 @@ class TeacherAuth
     {
         if (!Auth::guard('teacher')->check()) {
             // User is not authorized from the 'teacher' guard
-            return redirect(url("/index_teacher"));
+            abort(403, 'Unauthorized action.');
         }
         return $next($request);
     }

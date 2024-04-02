@@ -69,7 +69,8 @@ $teachersAfms = DB::table('evaluation_b')
      @foreach($teachersAfms as $afm)
          @php
          $teacher = App\Models\Teacher::where('afm', $afm)->first();
-         @endphp 
+         @endphp
+         @if($teacher) 
          <tr>
              <td> Β </td> 
              <td>{{$teacher->name}}</td>
@@ -121,6 +122,7 @@ $teachersAfms = DB::table('evaluation_b')
                  <td> {{$teacher->am}} </td>
                  <td> {{$teacher->klados}} </td>
              </tr>
+             @endif
  @endforeach
     </tbody>
     </table>

@@ -63,6 +63,10 @@
           <div class="text-dark fa-solid fa-signature"></div> 
             <a href="{{url("/consultant_teachers")}}" style=" text-decoration:none;" class="text-dark"> Εκπαιδευτικοί</a>
         </div>
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
+          <div class="text-dark fa-solid fa-star"></div> 
+            <a href="{{url("/consultant_evaluation")}}" style=" text-decoration:none;" class="text-dark"> Αξιολόγηση-Β</a>
+        </div>
       </nav>
       @else
           @push('app-icon')

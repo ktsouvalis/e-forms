@@ -65,7 +65,6 @@ $teachersAfms = DB::table('evaluation_b')
         </tr>
     </thead>
     <tbody>
-     @endphp
      @foreach($teachersAfms as $afm)
          @php
          $teacher = App\Models\Teacher::where('afm', $afm)->first();

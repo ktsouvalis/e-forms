@@ -155,10 +155,7 @@ Route::post('/insert_directors', [SchoolController::class, 'insertDirectors']);
 Route::get('/school/{md5}', [SchoolController::class, 'login']);
 
 Route::get('/index_school', function(){
-    if(Auth::guard('school')->user())
         return view('index_school');
-    else
-        return view('index');
 });
 
 Route::get('/slogout', [SchoolController::class, 'logout']);
@@ -178,10 +175,7 @@ Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middlewa
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);
 
 Route::get('/index_teacher', function(){
-    if(Auth::guard('teacher')->user())
-        return view('index_teacher');
-    else
-        return view('index');
+    return view('index_teacher');
 });
 
 Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
@@ -223,9 +217,9 @@ Route::group(['prefix' => 'manage/microapps'], function(){
 });
 
 //ENROLLMENTS ROUTES
-Route::resource('enrollments', EnrollmentController::class);
+Route::resource('enrollments', EnrollmentController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'enrollments'], function () {
+Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], function () {
     Route::post("/{select}", [EnrollmentController::class, 'save'])->name('enrollments.save');
 
     Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file'])->name('enrollments.upload_file');

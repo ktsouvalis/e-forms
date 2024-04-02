@@ -18,7 +18,7 @@ class ConsultantAuth
     {
        if (!Auth::guard('consultant')->check()) {
             // User is not authorized from the 'consultant' guard
-            return redirect(url("/index_consultant"));
+            abort(403, 'Unauthorized action.');
         }
         return $next($request);
     }

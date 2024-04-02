@@ -18,7 +18,7 @@ class SchoolAuth
     {
         if (!Auth::guard('school')->check()) {
             // User is not authorized from the 'school' guard
-            return redirect(url("/index_school"));
+            abort(403, 'Unauthorized action.');
         }
         return $next($request);
     }

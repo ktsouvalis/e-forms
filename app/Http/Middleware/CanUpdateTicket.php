@@ -21,9 +21,9 @@ class CanUpdateTicket
     {
         $microapp = Microapp::where('url','/tickets')->first();
         if($microapp->active and $microapp->visible and $microapp->accepts){
-            $ticket = $request->route('ticket'); // takes the {ticket} argument from the route, which is Outing model
-            $user = Auth::guard('web')->user();
-            if($user){
+            $ticket = $request->route('ticket'); // takes the {ticket} argument from the route, which is Ticket model
+            if(Auth::check()){
+                $user = Auth::guard('web')->user();
                 if($user->isAdmin()){
                     return $next($request);
                 }
@@ -33,10 +33,9 @@ class CanUpdateTicket
                         return $next($request);
                 }
             }
-        
-                
-            $school = Auth::guard('school')->user();
-            if($school){
+            
+            if(Auth::guard('school')->check()){
+                $school = Auth::guard('school')->user();
                 if($ticket->school_id == $school->id)
                 return $next($request);
             }

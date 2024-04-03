@@ -39,8 +39,8 @@ class CanUpdateTicket
                 if($ticket->school_id == $school->id)
                 return $next($request);
             }
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Μη εξουσιοδοτημένη ενέργεια');
         }
-        abort(403, 'Microapp not active');
+        abort(403, 'Εφαρμογή "Τεχνική Στήριξη" μη ενεργή');
     }
 }

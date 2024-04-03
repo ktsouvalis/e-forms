@@ -23,6 +23,9 @@ class CanViewMicroapp
         $routeName = $request->route()->getName();
         $resource = explode('.', $routeName)[0];
         $microapp = Microapp::where('url', "/".$resource)->firstOrFail(); 
+        if(!$microapp->active)
+            abort(403, "Μη εξουσιοδοτημένη ενέργεια (inactive)");
+
         if(Auth::check()){
             $user = Auth::guard('web')->user();
             if($user->isAdmin()){
@@ -31,8 +34,12 @@ class CanViewMicroapp
             if($user->microapps->where('microapp_id', $microapp->id)->count()){
                 return $next($request);
             }
+            abort(403, "Μη εξουσιοδοτημένη ενέργεια (no access)");
         }
-        
+
+        if(!$microapp->visible)
+            abort(403, "Μη εξουσιοδοτημένη ενέργεια (invisible)");
+
         if(Auth::guard('teacher')->check()){
             $teacher = Auth::guard('teacher')->user();
             if($teacher->microapps->where('microapp_id', $microapp->id)->count()){
@@ -54,6 +61,6 @@ class CanViewMicroapp
             }
         }
 
-        abort(403, 'Unauthorized action.');      
+        abort(403, "Μη εξουσιοδοτημένη ενέργεια (no access)");      
     }
 }

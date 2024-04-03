@@ -20,6 +20,7 @@ class SchoolAreaController extends Controller
     public function __construct(){
         $this->middleware('auth')->only(['index']);
         $this->middleware('isSchool')->only(['create']);
+        $this->middleware('canUpdateSchoolArea')->only(['edit', 'update']);
         $this->microapp = Microapp::where('url', '/school_area')->first();
     }
 

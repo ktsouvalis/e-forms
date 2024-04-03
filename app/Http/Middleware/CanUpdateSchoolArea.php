@@ -7,6 +7,7 @@ use App\Models\School;
 use App\Models\Microapp;
 use App\Models\MicroappUser;
 use Illuminate\Http\Request;
+use App\Models\microapps\SchoolArea;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,6 +21,7 @@ class CanUpdateSchoolArea
     public function handle(Request $request, Closure $next): Response
     {
         $routeName = $request->route()->getName();
+        $school = School::find($request->route('school_area')); //it may be {school_area} but it is actually the school_id
         $resource = explode('.', $routeName)[0];
         $microapp = Microapp::where('url', "/".$resource)->firstOrFail(); 
         if(Auth::check()){
@@ -35,7 +37,7 @@ class CanUpdateSchoolArea
                         return $next($request);
                 }
             }
-            abort(403, 'Microapp not active'); 
+            abort(403, 'Εφαρμογή "Όρια Σχολείων" μη ενεργή'); 
         }
         elseif(Auth::guard('school')->check()){
             if($microapp->active and $microapp->visible){
@@ -43,11 +45,11 @@ class CanUpdateSchoolArea
                 if($school->id == $loggedinSchool->id)
                     return $next($request);
                 else
-                    abort(403, 'Unauthorized action.');
+                    abort(403, 'Μη εξουσιοδοτημένη ενέργεια.');
             } 
-            abort(403, 'Microapp not active');
+            abort(403, 'Εφαρμογή "Όρια Σχολείων" μη ενεργή');
         }
-        abort(403, 'Unauthorized action.');
+        abort(403, 'Μη εξουσιοδοτημένη ενέργεια');
     }
 }
 

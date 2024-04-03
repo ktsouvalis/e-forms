@@ -275,7 +275,7 @@ Route::group(['prefix' => 'all_day_school', 'middleware' => 'canViewMicroapp'], 
 // IMMIGRANTS ROUTES
 Route::resource('immigrants', ImmigrantsController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'immigrants'], function () {
+Route::group(['prefix' => 'immigrants', 'middleware' => 'canViewMicroapp'], function () {
     Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template'])->name('immigrants.download_template');
     //i need the /yes in the url because without it there is conflict with the show() method of the resource route
 
@@ -285,21 +285,20 @@ Route::group(['prefix' => 'immigrants'], function () {
 });
 
 // INTERNAL RULES ROUTES
-Route::resource('internal_rules', InternalRulesController::class);
+Route::resource('internal_rules', InternalRulesController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'internal_rules'], function () {
+Route::group(['prefix' => 'internal_rules', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->name('internal_rules.upload_director_comments_file')->middleware('auth');
 
-    Route::post("/upload_director_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_director_comments_file'])->middleware('auth'); //inside method check further
+    Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file'])->name('internal_rules.upload_consultant_comments_file')->middleware('isConsultant');
 
-    Route::post("/upload_consultant_comments_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_comments_file'])->middleware('isConsultant');
+    Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file'])->name('internal_rules.upload_director_signed_file')->middleware('auth');
 
-    Route::post("/upload_director_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_director_signed_file']); //inside method check further
+    Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file'])->name('internal_rules.upload_consultant_signed_file')->middleware('isConsultant');
 
-    Route::post("/upload_consultant_signed_file/{internal_rule}", [InternalRulesController::class, 'upload_consultant_signed_file'])->middleware('isConsultant');
+    Route::get("/download_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_file'])->name('internal_rules.download_file'); //access rights are checked inside the method
 
-    Route::get("/download_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_file']);
-
-    Route::post('/check/{internal_rule}', [InternalRulesController::class,'check']);
+    Route::post('/check/{internal_rule}', [InternalRulesController::class,'check'])->name('internal_rules.check'); //access rights are checked inside the method
 });
 
 // WORK PLAN ROUTES

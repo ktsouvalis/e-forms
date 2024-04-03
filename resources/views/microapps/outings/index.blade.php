@@ -17,7 +17,7 @@
                     const isChecked = $(this).is(':checked');
                     // Get the CSRF token from the meta tag
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
-                    
+                    const myurl = 
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': csrfToken
@@ -25,7 +25,7 @@
                     });
 
                     $.ajax({
-                        url: 'outings/check/'+outingId,
+                        url: '{{ route("outings.check", ["outing" =>"mpla"]) }}'.replace("mpla", outingId),
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
@@ -62,7 +62,7 @@
         //     ->orderBy('checked', 'asc')
         //     ->orderBy('outing_date', 'desc')
         //     ->get();
-        $outings = App\Models\microapps\Outing::all();
+        $outings = App\Models\microapps\Outing::orderBy('outing_date', 'desc')->get();
     @endphp
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     

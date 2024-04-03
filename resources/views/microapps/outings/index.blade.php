@@ -25,7 +25,7 @@
                     });
 
                     $.ajax({
-                        url: '/outings/check/'+outingId,
+                        url: 'outings/check/'+outingId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates

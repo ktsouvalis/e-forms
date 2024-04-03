@@ -18,14 +18,10 @@
 <div class="container-fluid">
 <div>
     <p class="h4">Αξιολόγηση</p>
-    <p>
-        <form action="evaluation">
-            <button type="submit" class="btn btn-primary">Αξιολόγηση</button>
-        </form>
-    </p>
 </div>
 <div>
     <p class="h4">Εμφάνιση στοιχείων Αξιολόγησης στο πεδίο Β</p>
+    <p class="h5">Παρουσιάζονται τα στοιχεία από το αρχείο που έχει ανέβει από τη Διεύθυνση στο πεδίο Β</p>
 </div>
 @php
 $user = Auth::guard('consultant')->user();
@@ -46,36 +42,57 @@ $teachersAfms = DB::table('evaluation_b')
     <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
     <thead>
         <tr>
-            <th id="search">Α1, Α2, Β</th>
-            <th id="search">Όνομα</th>
-            <th id="search">Επώνυμο</th>
-            <th id="search">ΑΦΜ</th>
+            <th colspan="4">Αξιολογούμενος</th>
+           <th>Ημ/νία Διορισμού</th>
             {{-- <th id="search">Σχολείο</th>                
             <th id="search">mail Σχολείου</th> --}}
-            <th id="search">Αξ. 1 -Όνομα</th>
+            <th colspan="3">Αξιολογητής 1</th>
+            <th colspan="3">Αξιολογητής 2</th>
+            
+            <th id="">ΑΜ</th>
+            <th id="">Κλάδος</th>
+        </tr>
+        <tr>
+            <th id="search">Επώνυμο</th>
+            <th id="search">Όνομα</th>
+            <th id="search">ΑΦΜ</th>
+            <th id="search">Σχολείο</th>                
+            <th></th>
             <th id="search">Αξ. 1 - Επώνυμο</th>
+            <th id="search">Αξ. 1 -Όνομα</th>
+          
             <th id="search">Αξ. 1 - ΑΦΜ</th>
             {{-- <th id="search">Σχολείο</th>
             <th id="search">mail Σχολείου</th> --}}
-            <th id="search">Αξ. 2 - Όνομα</th>
+            
             <th id="search">Αξ. 2 - Επώνυμο</th>
+            <th id="search">Αξ. 2 - Όνομα</th>
             <th id="search">Αξ. 2 - ΑΦΜ</th>
             <th id="">ΑΜ</th>
             <th id="">Κλάδος</th>
         </tr>
     </thead>
     <tbody>
-     @endphp
      @foreach($teachersAfms as $afm)
          @php
          $teacher = App\Models\Teacher::where('afm', $afm)->first();
          @endphp
          @if($teacher) 
          <tr>
-             <td> Β </td> 
-             <td>{{$teacher->name}}</td>
              <td> {{$teacher->surname}}</td>
+             <td>{{$teacher->name}}</td>
+             
              <td> {{$teacher->afm}}</td>
+         @if($teacher->ypiretisi_id!=null)
+             <td>{{$teacher->ypiretisi->name}}</td>  
+         @else
+             <td>-</td>
+         @endif
+         @if($teacher->appointment_date != null)
+            <td>{{ date('d/m/Y', strtotime($teacher->appointment_date)) }}</td>  
+         @else
+            <td>-</td>
+        @endif
              {{-- <td>{{ $teacher->ypiretisi->name }}</td>
              <td>{{ $teacher->ypiretisi->mail }}</td> --}}
              @php
@@ -83,20 +100,15 @@ $teachersAfms = DB::table('evaluation_b')
                 $evaluator_1 = App\Models\Teacher::where('afm', $evaluator_1_afm->evaluator_1_afm)->first();
              @endphp
              @if($evaluator_1)
-                 <td> {{$evaluator_1->name}} </td>
-                 <td> {{$evaluator_1->surname}} </td>
-                 <td> {{$evaluator_1->afm}} </td>
-                 @php
-                     $evaluator_1_teacher = App\Models\Teacher::find($evaluator_1->id);
-                 @endphp
-                 {{-- <td> {{$evaluator_1_teacher->ypiretisi->name}} </td>
-                 <td> {{$evaluator_1_teacher->ypiretisi->mail}} </td> --}}
+                <td> {{$evaluator_1->surname}} </td>  
+                <td> {{$evaluator_1->name}} </td>
+                 
+                 <td> {{$evaluator_1->afm}} </td1>
              @else
                  <td> - </td>
                  <td> - </td>
                  <td> - </td>
-                 {{-- <td> - </td>
-                 <td> - </td> --}}
+                
              @endif
                  @php
                   $evaluator_2_afm = DB::table('evaluation_b')->select('evaluator_2_afm')->where('teacher_afm', $teacher->afm)->first();
@@ -110,8 +122,9 @@ $teachersAfms = DB::table('evaluation_b')
                     
                  @endphp
                  @if($evaluator_2)
-                     <td> {{$evaluator_2->name}} </td>
                      <td> {{$evaluator_2->surname}} </td>
+                     <td> {{$evaluator_2->name}} </td>
+                     
                      <td> {{$evaluator_2->afm}} </td> 
                  @else
                      <td> - </td>

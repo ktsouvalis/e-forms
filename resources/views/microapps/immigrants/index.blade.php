@@ -41,7 +41,7 @@
             @endif
         
         @php
-            $immigrants = App\Models\microapps\Immigrant::all()->sortByDesc('month_id');
+            $immigrants = App\Models\microapps\Immigrant::all()->sortByDesc('updated_at');
         @endphp
             <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">

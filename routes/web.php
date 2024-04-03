@@ -273,15 +273,15 @@ Route::group(['prefix' => 'all_day_school', 'middleware' => 'canViewMicroapp'], 
 });
 
 // IMMIGRANTS ROUTES
-Route::resource('immigrants', ImmigrantsController::class);
+Route::resource('immigrants', ImmigrantsController::class)->middleware('canViewMicroapp');
 
 Route::group(['prefix' => 'immigrants'], function () {
-    Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template']);
-    // ->middleware('canViewMicroapp'); //i need the /yes in the url because without it there is conflict with the show() method of the resource route
+    Route::get('/download_template/yes', [ImmigrantsController::class, 'download_template'])->name('immigrants.download_template');
+    //i need the /yes in the url because without it there is conflict with the show() method of the resource route
 
-    Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->middleware('boss');
+    Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->name('immigrants.update_template')->middleware('boss');
 
-    Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file']); //access rights are checked inside the method
+    Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file'])->name('immigrants.download_file'); //access rights are checked inside the method
 });
 
 // INTERNAL RULES ROUTES

@@ -253,12 +253,12 @@ Route::group(['prefix' => 'tickets', 'middleware' =>'canViewMicroapp'], function
 });
 
 // OUTINGS ROUTES
-Route::resource('outings', OutingsController::class);
+Route::resource('outings', OutingsController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'outings'], function () {
-    Route::get('/download_file/{outing}', [OutingsController::class, 'download_file']); //checking Auth inside the method
+Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], function () {
+    Route::get('/download_file/{outing}', [OutingsController::class, 'download_file'])->name('outings.download_file'); //checking access inside the method
 
-    Route::post('/check/{outing}', [OutingsController::class,'check_outing']); //checking Auth inside the method
+    Route::post('/check/{outing}', [OutingsController::class,'check_outing'])->name('outings.check');; //checking access inside the method
 });
 
 // ALL_DAY_SCHOOL ROUTES

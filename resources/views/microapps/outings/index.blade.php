@@ -57,7 +57,11 @@
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
-        $outings = App\Models\microapps\Outing::orderBy('outing_date','desc')->get();
+        $outings = App\Models\microapps\Outing::where('checked', 0)
+            ->orWhere('outing_date', '>=', \Carbon\Carbon::today())
+            ->orderBy('checked', 'asc')
+            ->orderBy('outing_date', 'desc')
+            ->get();
     @endphp
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     
@@ -121,6 +125,7 @@
                     </tr> 
                 @endforeach   
             </tbody>  
-            </table>    
+            </table>  
+            {{-- {{$outings->links()}}   --}}
         </div> <!-- table responsive closure -->
 </x-layout>

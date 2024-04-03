@@ -25,7 +25,7 @@
                     });
 
                     $.ajax({
-                        url: '../outings/check/'+outingId,
+                        url: '/outings/check/'+outingId,
                         type: 'POST',
                         data: {
                             // _method: 'PATCH', // Laravel uses PATCH for updates
@@ -57,16 +57,17 @@
     @php
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field 
-        $outings = App\Models\microapps\Outing::where('checked', 0)
-            ->orWhere('outing_date', '>=', \Carbon\Carbon::today())
-            ->orderBy('checked', 'asc')
-            ->orderBy('outing_date', 'desc')
-            ->get();
+        // $outings = App\Models\microapps\Outing::where('checked', 0)
+        //     ->orWhere('outing_date', '>=', \Carbon\Carbon::today())
+        //     ->orderBy('checked', 'asc')
+        //     ->orderBy('outing_date', 'desc')
+        //     ->get();
+        $outings = App\Models\microapps\Outing::all();
     @endphp
         @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     
         <div class="table-responsive py-2">
-            <table  id="dataTable" class="small display table table-sm table-hover text-center">
+            <table  id="dataTable" class="small display table table-sm table-hover text-center text-wrap">
             <thead>
                 <tr>
                     <th id="search">Σχολείο</th>
@@ -74,7 +75,7 @@
                     <th id="">Αρχείο</th>
                     <th id="search">Τύπος</th>
                     <th id="search">Έλεγχος</th>
-                    <th id="">Τμήματα (πλήθος εκδρομών)</th>
+                    {{-- <th id="">Τμήματα (πλήθος εκδρομών)</th> --}}
                     <th id="search">Δράση</th>
                     <th id="search">Ημερομηνία Υποβολής</th>
                     <th>Διαγραφή εκδρομής</th>
@@ -107,11 +108,11 @@
                             <input type="checkbox" class="outing-checkbox" data-outing-id="{{ $outing->id }}" {{ $outing->checked ? 'checked' : '' }}>
                             <div class="check_td_{{$outing->id}}"> {{$text}}</div>
                         </td>
-                        <td>
+                        {{-- <td>
                             @foreach($outing->sections as $section)
                                 {{$section->section->name}} (<b>{{$section->section->outings->count()}}</b>)<br>
                             @endforeach
-                        </td>
+                        </td> --}}
                         <td>{{$outing->destination}}</td>
                         {{-- <td>{{$outing->record}} </td> --}}
                         <td>{{$outing->updated_at}}</td>

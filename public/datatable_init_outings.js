@@ -3,7 +3,8 @@ $(document).ready(function () {
     $('#dataTable thead tr #search').each(function () {
         var cellIndex = $(this)[0].cellIndex;
         var width='';
-        if (cellIndex==1 || cellIndex==3 || cellIndex==5 || cellIndex==7 || cellIndex==8){
+        if (cellIndex==1 || cellIndex==3 || cellIndex==4 || cellIndex==6){
+        // if (cellIndex == 2 || cellIndex == 4 || cellIndex == 5 ) {
             width="width:60px;";
         }
         var title = $(this).text();

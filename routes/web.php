@@ -258,7 +258,7 @@ Route::resource('outings', OutingsController::class)->middleware('canViewMicroap
 Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], function () {
     Route::get('/download_file/{outing}', [OutingsController::class, 'download_file'])->name('outings.download_file'); //checking access inside the method
 
-    Route::post('/check/{outing}', [OutingsController::class,'check_outing'])->name('outings.check');; //checking access inside the method
+    Route::post('/check/{outing}', [OutingsController::class,'check_outing'])->name('outings.check'); //checking access inside the method
 });
 
 // ALL_DAY_SCHOOL ROUTES

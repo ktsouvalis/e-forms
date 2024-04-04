@@ -145,7 +145,10 @@ class OutingsController extends Controller
             catch(Throwable $e){
         
             }
-            return back()->with('success','Η εκδρομή διαγράφηκε');
+            if(Auth::guard('school')->check())
+                return back()->with('success','Η εκδρομή διαγράφηκε');
+            else if (Auth::check())
+                return response()->json(['message' => 'Outing deleted '.$outing->id]);
         }
         abort(403, 'Unauthorized action.');
     }
@@ -242,5 +245,17 @@ class OutingsController extends Controller
         $outing->save();
 
         return redirect()->route('outings.create')->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
+    }
+
+    public function count_sections(Outing $outing){
+        // $school = $outing->school;
+        $out_sections = $outing->sections;
+        $counting = array();
+        foreach($out_sections as $section){
+            $sec_name = $section->section->name;
+            $sec_count = $section->section->outings->count();
+            $counting[$sec_name] = $sec_count;
+        }
+        return response()->json(['sections' => json_encode($counting)]);
     }
 }

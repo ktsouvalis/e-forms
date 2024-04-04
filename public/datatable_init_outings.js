@@ -1,11 +1,12 @@
 $(document).ready(function () {
-    // Setup - add a text input for inclusion and exclusion to each header cell
     $('#dataTable thead tr #search').each(function () {
         var cellIndex = $(this)[0].cellIndex;
         var width='';
-        if (cellIndex==1 || cellIndex==3 || cellIndex==4 || cellIndex==6){
-        // if (cellIndex == 2 || cellIndex == 4 || cellIndex == 5 ) {
-            width="width:60px;";
+        if (cellIndex==1 || cellIndex==3 || cellIndex==4){
+            width="width:80px;";
+        }
+        if ( cellIndex == 6) {
+            width = "width:200px;";
         }
         var title = $(this).text();
         $(this).html(`
@@ -16,16 +17,11 @@ $(document).ready(function () {
         `);
     });
 
-    // DataTable
     var table = $('#dataTable').DataTable({
-        // "columnDefs": [
-        //     { "width": "60px", "targets": 0 }
-        // ],
         "order": [],
         lengthMenu: [10, 25, 50, 100, -1], // Add -1 for "All"
-        pageLength: 25, // Set the initial page length
+        pageLength: 25,
         initComplete: function () {
-            // Apply the search
             this.api().columns().every(function () {
                 var that = this;
                 var includeColumn = $('input.include-search', this.header());

@@ -22,74 +22,12 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $('body').on('change', '.ticket-checkbox', function() {
-                
-                const ticketId = $(this).data('ticket-id');
-                const isChecked = $(this).is(':checked');
-                const csrfToken = $('meta[name="csrf-token"]').attr('content');
-                
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken
-                    }
-                });
-
-                $.ajax({
-                    url: '../ticket_needed_visit/'+ticketId,
-                    type: 'POST',
-                    data: {
-                        checked: isChecked
-                    },
-                    success: function(response) {
-                        console.log("success");
-                    },
-                    error: function(error) {
-                        console.log("An error occurred: " + error);
-                    }
-                });
-            });
-        });
+        var ticketNeededVisitUrl = '{{ route("tickets.visit", ["ticket" =>"mpla"]) }}';
+        var editPostUrl = '{{ route("tickets.update_post", ["ticket" =>"mpla"]) }}'
     </script>
-    <script>
-        $(document).ready(function() {
-            $('.summernote').summernote();
-
-            $('.edit-button').click(function() {
-                $(this).siblings('.card').find('.post-text').hide();
-                $(this).hide();
-                $(this).siblings('.card').find('.post-editor').show();
-            });
-
-            $('.save-button').click(function() {
-                var markup = $(this).siblings('.summernote').summernote('code');
-                var postId = $(this).data('id');
-                var ticketId = $(this).data('ticket-id');
-                $.ajax({
-                    url: '../update-post/'+ticketId,
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: postId,
-                        text: markup
-                    },
-                    success: (function(postTextElement) {
-                        return function() {
-                            // postTextElement.html(markup);
-                            // postTextElement.show();
-                            // postTextElement.siblings('.post-editor').hide();
-                            location.reload();
-                        }
-                    })($(this).parent().siblings('.post-text'))
-                }); 
-            });
-            $('.cancel-button').click(function() {
-                $(this).parent().hide();
-                $(this).parent().siblings('.post-text').show();
-                $('.edit-button').show();
-            });
-        });
-</script>
+    <script src="{{asset("ticket_visit.js")}}"></script>
+    <script src="{{asset("ticket_edit_post.js")}}"></script>
+    <script></script>
 @endpush
 @php
     $accepts = App\Models\Microapp::where('url', '/tickets')->first()->accepts; //fetch microapp 'accepts' field
@@ -156,7 +94,7 @@
                                 </div>
                             </div>
                             <div class="edited-label"></div>
-                            @if($showPencil)
+                            @if($showPencil and $accepts)
                                 <button class="edit-button"><i class="fa fa-pencil"></i></button>
                             @endif
                         </div>

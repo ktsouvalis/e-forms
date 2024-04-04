@@ -19,9 +19,8 @@ class WorkPlanController extends Controller
     private $microapp;
 
     public function __construct(){
-        // $this->middleware('auth')->only(['index']);
-        // $this->middleware('isConsultant')->only(['create']);
-        // $this->middleware('canViewMicroapp')->only(['create','index']);
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isConsultant')->only(['create']);
         $this->microapp = Microapp::where('url', '/work_planning')->first();
     }
 

@@ -304,13 +304,13 @@ Route::group(['prefix' => 'internal_rules', 'middleware' => 'canViewMicroapp'], 
 });
 
 // WORK PLAN ROUTES
-Route::resource('work_planning', WorkPlanController::class);
+Route::resource('work_planning', WorkPlanController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'work_planning'], function () {
+Route::group(['prefix' => 'work_planning', 'middleware'=>'canViewMicroapp'], function () {
     
-    Route::post('/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->middleware('isConsultant');
+    Route::post('/save_work_plan/{yearWeek}', [WorkPlanController::class, 'saveWorkPlan'])->name('work_planning.save_work_plan')->middleware('isConsultant');
 
-    Route::post('/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->middleware('isConsultant');
+    Route::post('/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->name('work_planning.extract_work_plan')->middleware('isConsultant');
 });
 
 // FILECOLLECTS ROUTES

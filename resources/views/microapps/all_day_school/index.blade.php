@@ -24,7 +24,8 @@
         <nav class="navbar navbar-light bg-light">
             <div class="vstack gap-2">
                 <div class="hstack gap-3">
-                <form action="{{url("/all_day_school/update_template/dim")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                {{-- <form action="{{url("/all_day_school/update_template/dim")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
+                    <form action="{{route('all_day_school.update_template', ['type' => 'dim'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Δημοτικών</strong></span>
@@ -34,16 +35,18 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        {{-- <a href="{{url("/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                        <a href="{{route('all_day_school.index')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/all_day_school/download_template/1")}}" method="get">
-                    @csrf
+                {{-- <form action="{{url("/all_day_school/download_template/1")}}" method="get"> --}}
+                <form action="{{route('all_day_school.download_template', ['type' => '1'])}}" method="get">
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας δημοτικών προς συμπλήρωση </button>
                 </form>
                 </div>
                 <div class="hstack gap-3">
-                <form action="{{url("/all_day_school/update_template/nip")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                {{-- <form action="{{url("/all_day_school/update_template/nip")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
+                    <form action="{{route('all_day_school.update_template', ['type' => 'nip'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Νηπιαγωγείων</strong></span>
@@ -53,11 +56,12 @@
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                        <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        {{-- <a href="{{url("/admin/$appname")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                        <a href="{{route('all_day_school.index')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     </div>
                 </form>
-                <form action="{{url("/all_day_school/download_template/0")}}" method="get">
-                    @csrf
+                {{-- <form action="{{url("/all_day_school/download_template/0")}}" method="get"> --}}
+                <form action="{{route('all_day_school.download_template', ['type' => '0'])}}" method="get">
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας νηπιαγωγείων προς συμπλήρωση </button>
                 </form>
             </div>
@@ -101,10 +105,6 @@
                 </tr>
             </thead>
             <tbody>
-                @php
-                    // dd($months);   
-                @endphp
-                
                 @foreach($months as $month_number) 
                     @foreach($all_day_schools as $one_stakeholder)
                     @php
@@ -125,9 +125,9 @@
                             <td> {{$one->nr_of_pupils_5}}</td>
                             <td> {{$one->comments}}</td>
                             <td>
-                                <form action="{{url("/all_day_school/download_file/$one->id")}}" method="get">
-                                @csrf
-                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
+                                {{-- <form action="{{url("/all_day_school/download_file/$one->id")}}" method="get"> --}}
+                                <form action="{{route('all_day_school.download_file', ['all_day_school' => $one->id])}}" method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                                 </form>   
                             </td>
                             <td>{{$one->updated_at}}</td>

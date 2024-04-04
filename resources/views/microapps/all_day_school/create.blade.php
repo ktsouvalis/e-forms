@@ -28,16 +28,16 @@
             <strong>ΣΗΜΑΝΤΙΚΟ</strong><br><br> Σας ενημερώνουμε ότι λόγω προβλημάτων στην καταμέτρηση των πεδίων ώρας/ημερομηνίας στα αρχεία excel, 
             θα πρέπει <strong>οι αριθμοί των μαθητών που αποχωρούν</strong> σε κάθε ζώνη του Ολοήμερου Προγράμματος αλλά και <strong>o αριθμός των μαθητών της Πρωινής Υποδοχής</strong> να συμπληρώνονται από εσάς στα αντίστοιχα νέα πεδία.
         </div>  
-            <form action="{{url("/all_day_school/download_template/$school->primary")}}" method="get">
-                @csrf
+            {{-- <form action="{{url("/all_day_school/download_template/$school->primary")}}" method="get"> --}}
+                <form action="{{route("all_day_school.download_template", ["type" => $school->primary])}}", method="get">
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
                 @if(!$old_data)<small><u class="text-muted">Συμπληρώστε <b>όλα</b> τα πεδία βάζοντας 0 όπου δεν υπάρχουν μαθητές/τμήματα</u></small>@endif
-                <form action="{{url("/$appname")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                {{-- <form action="{{url("/$appname")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
+                    <form action="{{route("all_day_school.store")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        {{-- <span class="input-group-text w-25"></span> --}}
                         <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{App\Models\Month::find($month_to_store)->name}}</my_text></strong></span>
                     </div>
                     @if($school->primary)
@@ -112,7 +112,8 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                            {{-- <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                            <a href="{{route("$appname.create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     @endif
                 </form>
@@ -121,9 +122,9 @@
         </div> 
         <div class="container px-5 py-2">
             @if($old_data)
-                <form action="{{url("/all_day_school/download_file/$old_data->id")}}" method="get">
-                    @csrf
-                <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> </div>
+                {{-- <form action="{{url("/all_day_school/download_file/$old_data->id")}}" method="get"> --}}
+                <form action="{{route("all_day_school.download_file", ["all_day_school" => $old_data->id])}}" method="get">
+                    <div class="hstack gap-2"><label><strong>Αρχείο που έχετε υποβάλλει για τον μήνα {{$old_data->month->name}}:</strong></label> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> </div>
                 </form>
             @endif
             @include('microapps.new_ticket_button')
@@ -165,9 +166,9 @@
                     <td> {{$one->nr_of_pupils_5}}</td>
                     <td> {{$one->comments}}</td>
                     <td>
-                        <form action="{{url("/all_day_school/download_file/$one->id")}}" method="get">
-                        @csrf
-                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
+                        {{-- <form action="{{url("/all_day_school/download_file/$one->id")}}" method="get"> --}}
+                        <form action="{{route("all_day_school.download_file", ["all_day_school" => $one->id])}}" method="get">
+                            <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   
                     </td>
                     <td>{{$one->updated_at}}</td>

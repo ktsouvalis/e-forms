@@ -9,124 +9,12 @@
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
-        <script src="{{asset('/toggle_signed_internal_rules.js')}}"></script>
+        <script src="{{asset('toggle_signed_internal_rules.js')}}"></script>
+        <script src="{{asset('datatable_init_internal_rules_second.js')}}"></script>
         <script>
-            $(document).ready(function () {
-                // Setup - add a text input for inclusion and exclusion to each header cell
-                $('#dataTable2 thead tr #search').each(function () {
-                    var title = $(this).text();
-                    $(this).html(`
-                        <div class="vstack gap-1">
-                            <input type="text" class="include-search" style=" font-size:small;" placeholder="${title} +" />
-                            <input type="text" class="exclude-search" style=" font-size:small;" placeholder="${title} - " />
-                        </div>
-                    `);
-                });
-
-                // DataTable
-                var table = $('#dataTable2').DataTable({
-                    "order": [],
-                    lengthMenu: [10, 25, 50, 100, -1], // Add -1 for "All"
-                    pageLength: 25, // Set the initial page length
-                    initComplete: function () {
-                        // Apply the search
-                        this.api().columns().every(function () {
-                            var that = this;
-                            var includeColumn = $('input.include-search', this.header());
-                            var excludeColumn = $('input.exclude-search', this.header());
-
-                            includeColumn.on('keyup change clear', function () {
-                                var includeValue = this.value;
-                                var excludeValue = excludeColumn.val();
-                                var regex;
-
-                                if (includeValue) {
-                                    if (excludeValue) {
-                                        regex = `^(?=.*${includeValue})(?!.*${excludeValue})`;
-                                    } else {
-                                        regex = `.*${includeValue}`;
-                                    }
-                                } else {
-                                    regex = excludeValue ? `^(?!.*${excludeValue}).*` : '';
-                                }
-
-                                that.search(regex, true, false).draw();
-                            }).on('click', function (e) {
-                                e.stopPropagation();
-                                column.search($(this).val()).draw();
-                            });
-
-                            excludeColumn.on('keyup change clear', function () {
-                                var excludeValue = this.value;
-                                var includeValue = includeColumn.val();
-                                var regex;
-
-                                if (excludeValue) {
-                                    if (includeValue) {
-                                        regex = `^(?=.*${includeValue})(?!.*${excludeValue})`;
-                                    } else {
-                                        regex = `^(?!.*${excludeValue}).*`;
-                                    }
-                                } else {
-                                    regex = includeValue ? `.*${includeValue}` : '';
-                                }
-
-                                that.search(regex, true, false).draw();
-                            }).on('click', function (e) {
-                                e.stopPropagation();
-                                column.search($(this).val()).draw();
-                            });
-                        });
-                    },
-                });
-            });
+            var  internalRuleCheckUrl = '{{ route("internal_rules.check", ["internal_rule" =>"mpla"]) }}';
         </script>
-        <script>
-            $(document).ready(function() {
-                $('body').on('change', '.internal-rule-checkbox', function() {
-                    const internalRuleId = $(this).data('internal-rule-id');
-                    const isChecked = $(this).is(':checked');
-                    var who
-                    if(isChecked == true){
-                        who = 'consultantYes';
-                    }else {
-                       who = 'consultantNo';
-                    }
-
-                    //const buttonValue = $(this).data('set');
-                    // Get the CSRF token from the meta tag
-                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
-                    
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                        }
-                    });
-
-                    $.ajax({
-                        url: '/internal_rules/check/'+internalRuleId,
-                        type: 'POST',
-                        data: {
-                            // _method: 'PATCH', // Laravel uses PATCH for updates
-                            checked: who,
-                        },
-                        success: function(response) {
-                            // Handle the response here, update the page as needed
-                            if(isChecked){
-                                $('.check_td_'+internalRuleId).html('Εγκρίθηκε')
-                            }
-                            else{
-                                $('.check_td_'+internalRuleId).html('Έγκριση')
-                            }
-                        },
-                        error: function(error) {
-                            // Handle errors
-                            console.log("An error occurred: " + error);
-                        }
-                    });
-                });
-            });
-        </script>
+        <script src="{{asset('check_internal_rule_con.js')}}"></script>
     @endpush
     @push('title')
         <title>Εσωτερικός Κανονισμός</title>
@@ -183,20 +71,20 @@
                             </td>
                         @endif
                         <td>{{-- Αρχεία Σχολείου --}}
-                            <form action="{{url("/internal_rules/download_file/$one->id/school_file")}}" method="get">
-                                @csrf
+                            {{-- <form action="{{url("/internal_rules/download_file/$one->id/school_file")}}" method="get"> --}}
+                            <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'school_file'])}}" method="get">
                                 <button class="btn btn-warning mb-2 bi bi-box-arrow-down" title="Λήψη αρχείου">@if($one->school_file2 or $one->school_file3)<del> @endif  {{$one->school_file}}</del></button>
                             </form>
                 
                             @if($one->school_file2)
-                                <form action="{{url("/internal_rules/download_file/$one->id/school_file2")}}" method="get">
-                                    @csrf
+                                {{-- <form action="{{url("/internal_rules/download_file/$one->id/school_file2")}}" method="get"> --}}
+                                <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'school_file2'])}}" method="get">
                                     <button class="btn btn-warning mb-2 bi bi-box-arrow-down" title="Λήψη αρχείου">@if($one->school_file3)<del> @endif  {{$one->school_file2}}</del></button>
                                 </form>
                             @endif
                             @if($one->school_file3)
-                                <form action="{{url("/internal_rules/download_file/$one->id/school_file3")}}" method="get">
-                                    @csrf
+                                {{-- <form action="{{url("/internal_rules/download_file/$one->id/school_file3")}}" method="get"> --}}
+                                <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'school_file3'])}}" method="get">
                                     <button class="btn btn-warning mb-2 bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->school_file3}}</button>
                                 </form>
                             @endif
@@ -204,22 +92,23 @@
                         <td> {{-- Αρχεία Παρατηρήσεων --}}
                             @if(!$one->consultant_comments_file)
                                 @if(!$one->approved_by_consultant)
-                                    <form action="{{url("/internal_rules/upload_consultant_comments_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                                    {{-- <form action="{{url("/internal_rules/upload_consultant_comments_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
+                                    <form action="{{route('internal_rules.upload_consultant_comments_file', ['internal_rule' => $one->id])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                                         @csrf                           
                                         <input name="consultant_comment_file" type="file" class="form-control" required>
                                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
                                     </form>
                                 @endif
                             @else
-                                <form action="{{url("/internal_rules/download_file/$one->id/consultant_comments_file")}}" method="get">
-                                    @csrf
+                                {{-- <form action="{{url("/internal_rules/download_file/$one->id/consultant_comments_file")}}" method="get"> --}}
+                                <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'consultant_comments_file'])}}" method="get">
                                     <div class="mb-2">Σύμβ. Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->consultant_comments_file}}</button></div>
                                 </form>   
                             @endif
                             
                             @if($one->director_comments_file)
-                                <form action="{{url("/internal_rules/download_file/$one->id/director_comments_file")}}" method="get">
-                                    @csrf
+                                {{-- <form action="{{url("/internal_rules/download_file/$one->id/director_comments_file")}}" method="get"> --}}
+                                <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'director_comments_file'])}}" method="get">
                                     <div class="mb-2">Δ/ντης Εκπ/σης: <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->director_comments_file}}</button></div>
                                 </form>
                             @endif
@@ -234,20 +123,21 @@
                         <td>
                             @if($one->approved_by_consultant and $one->approved_by_director) {{-- Αρχεία Υπογεγραμμένα--}}
                                 @if(!$one->consultant_signed_file)
-                                    <form action="{{url("/internal_rules/upload_consultant_signed_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                                    {{-- <form action="{{url("/internal_rules/upload_consultant_signed_file/$one->id")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
+                                    <form action="{{route('internal_rules.upload_consultant_signed_file', ['internal_rule' => $one->id])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                                         @csrf                           
                                         <input name="consultant_signed_file" type="file" class="form-control" required>
                                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
                                     </form>
                                 @else {{-- Έχω υπογεγραμμένο αρχείο Συμβούλου--}}
-                                    <form action="{{url("/internal_rules/download_file/$one->id/consultant_signed_file")}}" method="get">
-                                        @csrf
+                                    {{-- <form action="{{url("/internal_rules/download_file/$one->id/consultant_signed_file")}}" method="get"> --}}
+                                    <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'consultant_signed_file'])}}" method="get">
                                         <div class="mb-2">Σύμβ. Εκπ/σης: <button class="btn {{$consultant_color}} bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->consultant_signed_file}}</button></div>
                                     </form>
                                 @endif
                                 @if($one->director_signed_file)
-                                    <form action="{{url("/internal_rules/download_file/$one->id/director_signed_file")}}" method="get">
-                                        @csrf
+                                    {{-- <form action="{{url("/internal_rules/download_file/$one->id/director_signed_file")}}" method="get"> --}}
+                                    <form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'director_signed_file'])}}" method="get">
                                         <div class="mb-2">Δ/ντη Εκπ/σης: <button class="btn {{$director_color}} bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->director_signed_file}}</button></div>
                                     </form>
                                 @endif
@@ -284,8 +174,8 @@
                         @endphp
                             @if($one->director_signed_file and $one->consultant_signed_file)
                                 <tr><td><strong>{{$one->school->name}}</strong></td>
-                                <td><form action="{{url("/internal_rules/download_file/$one->id/director_signed_file")}}" method="get">
-                                    @csrf
+                                {{-- <td><form action="{{url("/internal_rules/download_file/$one->id/director_signed_file")}}" method="get"> --}}
+                                <td><form action="{{route('internal_rules.download_file', ['internal_rule' => $one->id, 'file_type' => 'director_signed_file'])}}" method="get">
                                     <div class="mb-2"> <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$one->director_signed_file}}</button></div>
                                 </form></td></tr>
                             @endif

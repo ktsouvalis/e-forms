@@ -60,8 +60,8 @@
                         <td>
                             <div class="vstack gap-2">
                             
-                            <form action="{{url("/outings/download_file/$outing->id")}}" method="get">
-                                @csrf
+                            {{-- <form action="{{url("/outings/download_file/$outing->id")}}" method="get"> --}}
+                            <form action="{{route('outings.download_file', ['outing' =>$outing->id])}}" method="get">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button>
                             </form>
                             {{$outing->school->telephone}}

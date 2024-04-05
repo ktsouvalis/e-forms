@@ -22,7 +22,8 @@
     <div class="container">
         <div class="alert alert-warning text-muted text-center">
             Σύνδεσμος για δημοσίευση ορίων Σχολικών Μονάδων:
-            <strong><a href="{{url("/school_areas")}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>    
+            {{-- <strong><a href="{{url("/school_areas")}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>     --}}
+            <strong><a href="{{route('school_areas_public')}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>
             </strong><br><br> 
         </div>
     </div>
@@ -48,8 +49,8 @@
                         @endphp
                         <td>
                         @if(App\Models\MicroappUser::where('user_id',Auth::user()->id)->where('microapp_id', $microapp->id)->where('can_edit', 1)->exists() or Auth::user()->isAdmin())
-                            <form action="{{url("/school_area/$school_id/edit")}}" method="get" target="_blank">
-                                @csrf
+                            {{-- <form action="{{url("/school_area/$school_id/edit")}}" method="get" target="_blank"> --}}
+                            <form action="{{route('school_area.edit', ['school_area' => $school_id])}}" method="get" target="_blank">
                                 <button type="submit">{{$school->stakeholder->name}} </button>
                             </form>
                         @else

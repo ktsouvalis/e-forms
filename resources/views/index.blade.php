@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Ηλεκτρονικές Υπηρεσίες</title>
-    <link rel="stylesheet" href="{{url('/bootstrap/css/bootstrap.css')}}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{asset('bootstrap/css/bootstrap.css')}}" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
-    <link rel="icon" href="{!! asset(url('/favicon/favicon.ico')) !!}"/>
-    <link rel="apple-touch-icon" sizes="180x180" href="{{url('/favicon/apple-touch-icon.png')}}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{url("/favicon/favicon-32x32.png")}}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{url("/favicon/favicon-16x16.png")}}">
-    <link rel="manifest" href="{{url('/favicon/site.webmanifest')}}">
-    <link rel="mask-icon" href="{{url('/favicon/safari-pinned-tab.svg')}}" color="#5bbad5">
+    <link rel="icon" href="{!! asset('/favicon/favicon.ico') !!}"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('favicon/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{asset("favicon/favicon-32x32.png")}}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{asset("favicon/favicon-16x16.png")}}">
+    <link rel="manifest" href="{{asset('favicon/site.webmanifest')}}">
+    <link rel="mask-icon" href="{{asset('favicon/safari-pinned-tab.svg')}}" color="#5bbad5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
@@ -31,7 +31,7 @@
     </div>
     <!-- This div does not appear in small screens-->
     <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary d-none d-md-block " style="width: 280px; opacity:0.2;">
-        <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
+        <div class="d-flex justify-content-center"><img src="{{asset('favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
           <div class="d-flex justify-content-center h6">ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΠΑΤΡΩΝ</div>
           <hr>
           <ul class="nav nav-pills flex-column mb-auto">
@@ -163,7 +163,7 @@
        <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; {{Illuminate\Support\Carbon::now()->year}} <a href="" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
-    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
+    <script src="{{asset('bootstrap/js/bootstrap.js')}}"></script>
 
         </div> <!-- container closing -->
    

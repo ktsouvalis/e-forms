@@ -188,7 +188,10 @@
                                 @endif
                                 </div>
                                 <div class="py-2" style="text-align:center">
-                                    <a class="text-dark" style="text-decoration:none;" href="{{ url($one_microapp->url) }}">
+                                    @php $resource = substr($one_microapp->url, 1); @endphp
+                                    {{-- <a class="text-dark" style="text-decoration:none;" href="{{ url($one_microapp->url) }}"> --}}
+                                    <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}">
+                                        {{-- <div class="h5 card-title {{ $one_microapp->icon }}"></div> --}}
                                         <div class="h5 card-title {{ $one_microapp->icon }}"></div>
                                         <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>
                                     </a>
@@ -209,7 +212,7 @@
                     
             </div>
             <div class="col p-3">
-                    <img src="{{url("/favicon/android-chrome-512x512.png")}}" width="200" height="200" alt="forms">
+                    <img src="{{asset("favicon/android-chrome-512x512.png")}}" width="200" height="200" alt="forms">
             </div>
             <div class="col p-3">
                 <form action="{{url("/login")}}" method="post">

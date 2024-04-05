@@ -63,7 +63,9 @@
                         @if($one_microapp->microapp->visible)
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:{{$one_microapp->microapp->color}}; text-align:center;">
-                                <a  class="text-dark" style="text-decoration:none;" href="{{url($one_microapp->microapp->url."/create")}}">
+                                @php $resource = substr($one_microapp->microapp->url, 1); @endphp
+                                {{-- <a  class="text-dark" style="text-decoration:none;" href="{{url($one_microapp->microapp->url."/create")}}"> --}}
+                                <a  class="text-dark" style="text-decoration:none;" href="{{route("$resource.create")}}">
                                 <div class="h5 card-title {{$one_microapp->microapp->icon}}"></div>
                                 <div>{{$one_microapp->microapp->name}}</div>
                                 </a> 

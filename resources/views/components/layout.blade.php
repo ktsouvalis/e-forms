@@ -44,7 +44,7 @@
       @include('components/menu_of_user') 
     @else {{--if this page is index show pc icon--}}
       @push('app-icon')
-        <div class="d-flex justify-content-center"><img src="{{url('/favicon/android-chrome-512x512.png')}}" width="50" height="50" alt="services"></div>
+        <div class="d-flex justify-content-center"><img src="{{asset('favicon/android-chrome-512x512.png')}}" width="50" height="50" alt="services"></div>
         <div class="d-flex justify-content-center h6">{{$user->display_name}}</div>
       @endpush
     @endif
@@ -70,7 +70,7 @@
   <footer class="border-top text-center small text-muted py-3">
     <p class="m-0">Copyright &copy; {{Illuminate\Support\Carbon::now()->year}} <a href="{{url("/")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
   </footer>
-  <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
+  <script src="{{asset('bootstrap/js/bootstrap.js')}}"></script>
   <script
     src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="

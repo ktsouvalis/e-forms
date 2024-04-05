@@ -49,11 +49,11 @@
       <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
           <div class="text-dark fa-solid fa-file-signature"></div> 
-            <a href="{{url("/internal_rules/create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
+            <a href="{{route("internal_rules.create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#ff8f00; text-align:center;">
           <div class="text-dark fa-solid fa-map"></div> 
-            <a href="{{url("/work_planning/create")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
+            <a href="{{route("work_planning.create")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
         </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
           <div class="text-dark fa-solid fa-school"></div> 
@@ -84,7 +84,7 @@
     <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_consultant")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
-    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
+    <script src="{{asset('bootstrap/js/bootstrap.js')}}"></script>
     <script
         src="https://code.jquery.com/jquery-3.6.4.min.js"
         integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="

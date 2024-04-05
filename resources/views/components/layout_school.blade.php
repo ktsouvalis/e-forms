@@ -84,7 +84,9 @@
           @if($one_microapp->microapp->visible)
             <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
               <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
-              <a href="{{url($one_microapp->microapp->url."/create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
+              @php $resource = substr($one_microapp->microapp->url, 1); @endphp
+              {{-- <a href="{{url($one_microapp->microapp->url."/create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a> --}}
+              <a href="{{route($resource.'.create')}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
             </div>
           @endif
         @endforeach
@@ -119,7 +121,7 @@
     <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; 2023 <a href="{{url("/index_school")}}" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
     </footer>
-    <script src="{{url('/bootstrap/js/bootstrap.js')}}"></script>
+    <script src="{{asset('bootstrap/js/bootstrap.js')}}"></script>
     <script
                 src="https://code.jquery.com/jquery-3.6.4.min.js"
                 integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="

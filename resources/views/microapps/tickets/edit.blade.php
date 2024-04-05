@@ -104,7 +104,8 @@
         @endforeach
         <hr>
         <nav class="navbar navbar-light bg-light justify-content-center">
-        <form action="{{url("/tickets/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
+        {{-- <form action="{{url("/tickets/$ticket->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center"> --}}
+        <form action="{{route('tickets.update', ['ticket' => $ticket->id])}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @method('PUT')
             @csrf
             <span class="input-group-text"><strong>Προσθήκη Νέου Σχολίου </strong></span>
@@ -138,7 +139,8 @@
     </nav>
     <hr>
     @if(!$ticket->solved)
-        <form action="{{url("/tickets/mark_as_resolved/$ticket->id")}}" method="post">
+        {{-- <form action="{{url("/tickets/mark_as_resolved/$ticket->id")}}" method="post"> --}}
+        <form action="{{route('tickets.mark_as_resolved', ['ticket' => $ticket->id])}}" method="post">
             @csrf
             <strong>Αν θεωρείτε ότι λύθηκε το πρόβλημα: </strong>
             <button type="submit" class="btn btn-success bi bi-envelope"> Κλείσιμο δελτίου</button>
@@ -166,7 +168,8 @@
         @php
             $url = $ticket->school->md5;    
         @endphp
-        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{url("/school/$url")}}"> </button>
+        {{-- <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{url("/school/$url")}}"> </button> --}}
+        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{route('school_login', ['md5' => $url])}}"> </button>
     @endif
     </div>
     <div class="files m-2">
@@ -184,8 +187,8 @@
             @php
                 $basename = basename($file);
             @endphp
-            <form action="{{url("/tickets/get_ticket_file/$ticket->id/$basename")}}" method="get">
-            @csrf
+            {{-- <form action="{{url("/tickets/get_ticket_file/$ticket->id/$basename")}}" method="get"> --}}
+            <form action="{{route('tickets.download_file', ['ticket' => $ticket->id, 'original_filename' => $basename])}}" method="get">
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
             </form> 
         @endforeach

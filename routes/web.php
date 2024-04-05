@@ -152,7 +152,7 @@ Route::post('/insert_schools', [SchoolController::class, 'insertSchools']);
 
 Route::post('/insert_directors', [SchoolController::class, 'insertDirectors']);
 
-Route::get('/school/{md5}', [SchoolController::class, 'login']);
+Route::get('/school/{md5}', [SchoolController::class, 'login'])->name('school_login');
 
 Route::get('/index_school', function(){
         return view('index_school');

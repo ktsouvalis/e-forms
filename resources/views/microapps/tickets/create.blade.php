@@ -49,14 +49,17 @@
                             $text = max($ticket->updated_at, $maxPostUpdate);
                         @endphp
                         <tr>
-                            <td><a href="{{url("/tickets/$ticket->id/edit#bottom")}}">{{$ticket->id}}</a></td>
+                            {{-- <td><a href="{{url("/tickets/$ticket->id/edit#bottom")}}">{{$ticket->id}}</a></td> --}}
+                            <td><a href="{{route('tickets.edit', ['ticket' => $ticket->id])}}#bottom">{{$ticket->id}}</td>
                             <td>{{$ticket->subject}}</td> 
                             <td>{{$ticket->created_at}} </td>
                             <td>{{$text}} </td>
                             @if($ticket->solved)
-                                <td ><a style="color:green" href="{{url("/tickets/$ticket->id/edit#bottom")}}">Έχει επιλυθεί</a></td>
+                                {{-- <td ><a style="color:green" href="{{url("/tickets/$ticket->id/edit#bottom")}}">Έχει επιλυθεί</a></td> --}}
+                                <td ><a style="color:green" href="{{route('tickets.edit', ['ticket' => $ticket->id])}}#bottom">Έχει επιλυθεί</a></td>
                             @else
-                                <td ><a style="color:red" href="{{url("/tickets/$ticket->id/edit#bottom")}}">Προς επίλυση</a></td>
+                                {{-- <td ><a style="color:red" href="{{url("/tickets/$ticket->id/edit#bottom")}}">Προς επίλυση</a></td> --}}
+                                <td ><a style="color:red" href="{{route('tickets.edit', ['ticket' => $ticket->id])}}#bottom">Προς επίλυση</a></td>
                             @endif
                         </tr> 
                     @endforeach   
@@ -67,7 +70,8 @@
         <hr>
         <div class="container px-5">   
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/tickets")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                {{-- <form action="{{url("/tickets")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
+                <form action="{{route('tickets.store')}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>

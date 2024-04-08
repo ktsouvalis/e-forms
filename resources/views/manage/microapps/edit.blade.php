@@ -21,7 +21,8 @@
         @if(Auth::user()->isAdmin())
             <hr>
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/manage/microapps/$microapp->id")}}" method="post" class="container-fluid">
+                {{-- <form action="{{url("/manage/microapps/$microapp->id")}}" method="post" class="container-fluid"> --}}
+                <form action="{{route('microapps.update', $microapp->id)}}" method="post" class="container-fluid">
                     @method('PUT')
                     @csrf
                     <div class="input-group">
@@ -94,7 +95,8 @@
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
-                        <a href="{{url("/manage/microapps/$microapp->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
+                        {{-- <a href="{{url("/manage/microapps/$microapp->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a> --}}
+                        <a href="{{route('microapps.edit', $microapp->id)}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
                 

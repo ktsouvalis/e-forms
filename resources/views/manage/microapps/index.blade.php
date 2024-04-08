@@ -45,7 +45,8 @@
                             <tr >  
                                 <td>{{$one_microapp->id}}</td>
                                 @can('update', $one_microapp)
-                                <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="{{url("/manage/microapps/$one_microapp->id/edit")}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
+                                {{-- <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="{{url("/manage/microapps/$one_microapp->id/edit")}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td> --}}
+                                <td><div class="badge text-wrap" style="background-color:{{$one_microapp->color}};"><a href="{{route('microapps.edit', $one_microapp->id)}}" style="color:black; text-decoration:none;">{{$one_microapp->name}}</a></div></td>
                                 @else
                                 <td>{{$one_microapp->name}}</td>
                                 @endcan
@@ -66,7 +67,8 @@
                                 @endphp
                                 <td >
                                     @can('deactivate', App\Models\Microapp::class)
-                                        <form action="{{url("/manage/microapps/microapp_onoff/$one_microapp->id")}}" method="post">
+                                        {{-- <form action="{{url("/manage/microapps/microapp_onoff/$one_microapp->id")}}" method="post"> --}}
+                                        <form action="{{route('microapps.onoff', $one_microapp->id)}}" method="post">
                                         @csrf
                                         @if($one_microapp->active) 
                                             <button type="submit" class="btn btn-dark bi bi-x-circle text-white bg-dark"  data-toggle="tooltip" title="Απενεργοποίηση" onclick="return confirm('Αν απενεργοποιήσετε τη μικροεφαρμογή, θα διαγραφούν οι χρήστες Διεύθυνσης που μπορούν να τη διαχειριστούν και σχολεία ή/και εκπαιδευτικοί στους οποίους απευθύνεται! \n')"></button>
@@ -106,14 +108,16 @@
                                 @endphp
                             @can('update', $one_microapp)
                             <td >
-                                <form action="{{url("/manage/microapps/change_microapp_status/$one_microapp->id")}}" method="post">
+                                {{-- <form action="{{url("/manage/microapps/change_microapp_status/$one_microapp->id")}}" method="post"> --}}
+                                <form action="{{route('microapps.change_status', $one_microapp->id)}}" method="post">
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_vis_status">
                                 <button type="submit" class="btn btn-secondary bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> </button>
                                 </form>
                             </td>
                             <td >
-                                <form action="{{url("/manage/microapps/change_microapp_status/$one_microapp->id")}}" method="post">
+                                {{-- <form action="{{url("/manage/microapps/change_microapp_status/$one_microapp->id")}}" method="post"> --}}
+                                <form action="{{route('microapps.change_status', $one_microapp->id)}}" method="post">
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_acc_status">
                                 <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>
@@ -137,7 +141,8 @@
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/manage/microapps")}}" method="post" class="container-fluid">
+            {{-- <form action="{{url("/manage/microapps")}}" method="post" class="container-fluid"> --}}
+            <form action="{{route('microapps.store')}}" method="post" class="container-fluid">
                 @csrf
                 <input type="hidden" name="asks_to" value="insert">
                 <div class="input-group">
@@ -195,7 +200,8 @@
                 <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                    <a href="{{url("/manage/microapps")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                    {{-- <a href="{{url("/manage/microapps")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                    <a href="{{route('microapps.index')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                 </div>
             </form>
         </nav>

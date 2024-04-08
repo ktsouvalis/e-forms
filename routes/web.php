@@ -203,19 +203,21 @@ Route::view('/evaluation', 'evaluation');
 Route::view('/evaluation_differences', 'evaluation_differences');
 
 //////// MANAGE OPERATIONS ROUTES
-Route::resource('manage/operations', OperationController::class)->middleware('boss');
+Route::resource('operations', OperationController::class)->middleware('boss');
 
-Route::group(['prefix' =>'manage/operations'], function(){
-    Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
+Route::group(['prefix' =>'operations'], function(){
+    Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority'])->name('operations.set_menu_priority');
 });
 
 //////// MANAGE MICROAPPS ROUTES
-Route::resource('manage/microapps', MicroappController::class);
+Route::resource('microapps', MicroappController::class)->middleware('auth');
 
-Route::group(['prefix' => 'manage/microapps'], function(){ 
-    Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
+Route::group(['prefix' => 'microapps'], function(){ 
+    // Route::post("/change_status/{microapp}",[MicroappController::class, 'changeMicroappStatus'])->name('microapps.change_status');
 
-    Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+    Route::post("/change_status/{microapp}",[MicroappController::class, 'changeMicroappStatus'])->name('microapps.change_status')->middleware('can:update,microapp');
+
+    Route::post("/onoff/{microapp}",[MicroappController::class, 'onOff'])->name('microapps.onoff')->middleware('can:deactivate,'. Microapp::class);
 });
 
 //ENROLLMENTS ROUTES

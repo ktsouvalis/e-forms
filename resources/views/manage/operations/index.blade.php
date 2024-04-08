@@ -40,7 +40,8 @@
                         @can('view', $one_operation)
                             <tr>  
                                 <td>{{$one_operation->id}}</td>
-                                <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="{{url("/manage/operations/$one_operation->id/edit")}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td>
+                                {{-- <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="{{url("/manage/operations/$one_operation->id/edit")}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td> --}}
+                                <td><div class="badge text-wrap" style="background-color:{{$one_operation->color}};"><a href="{{route('operations.edit', $one_operation->id)}}" style="color:black; text-decoration:none;">{{$one_operation->name}}</a></div></td>
                                 <td>{{$one_operation->url}}</td>
                                 <td>{{$one_operation->color}}</td>
                                 <td>{{$one_operation->icon}}</td>
@@ -66,13 +67,15 @@
             @isset($record)
                 <div class="alert alert-success" role="alert">Έγινε η καταχώρηση με τα εξής στοιχεία:</div>
                 <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                    <a href="{{url("/operation_profile/$record->id")}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a>
+                    {{-- <a href="{{url("/operation_profile/$record->id")}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a> --}}
+                    <a href="{{route('operations.edit', $record->id)}}" style="color:white; text-decoration:none;">{{$record->id}}, {{$record->name}}, {{$record->parent_id}}</a>
                 </div>
             @endisset
         @endisset
         <hr>
 
-        <form action="{{url("/manage/operations/set_menu_priority")}}" method="post">
+        {{-- <form action="{{url("/manage/operations/set_menu_priority")}}" method="post"> --}}
+        <form action="{{route('operations.set_menu_priority')}}" method="post">
             @csrf
             <div class="input-group">
             <span class="input-group-text w-25"></span>
@@ -87,7 +90,8 @@
             <div class="input-group">
                 <span class="w-25"></span>
                 <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Αλλαγή</button>
-                <a href="{{url("/manage/operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                {{-- <a href="{{url("/manage/operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                <a href="{{route('operations.index')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
             </div>
         </form>
         <hr>
@@ -96,7 +100,8 @@
         <div class="container py-5">
         <div class="container px-5">
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url("/manage/operations")}}" method="post" class="container-fluid">
+            {{-- <form action="{{url("/manage/operations")}}" method="post" class="container-fluid"> --}}
+            <form action="{{route('operations.store')}}" method="post" class="container-fluid">
                 @csrf
                 <div class="input-group">
                     <span class="input-group-text w-25"></span>
@@ -149,7 +154,8 @@
                 <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                    <a href="{{url("/manage/operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                    {{-- <a href="{{url("/manage/operations")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                    <a href="{{route('operations.index')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                 </div>
             </form>
         </nav>

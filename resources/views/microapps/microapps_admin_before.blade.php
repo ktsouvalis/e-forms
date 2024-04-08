@@ -9,7 +9,8 @@
     <a class="btn btn-primary bi bi-eye px-1" data-toggle="tooltip" data-placement="top" title="Απαντήσεις" style="text-decoration: none;" href="{{ url($microapp->url) }}"></a>
 @else
     @can('update', $microapp)
-        <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ url("/manage/microapps/$microapp->id/edit") }}"></a>
+        {{-- <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ url("/manage/microapps/$microapp->id/edit") }}"></a> --}}
+        <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ route('microapps.edit', $microapp->id) }}"></a>
     @endcan
 @endif
 </div>
@@ -45,13 +46,15 @@
         </div>
     @endif  
     @can('update', $microapp)
-    <form action="{{url("/manage/microapps/change_microapp_status/$microapp->id")}}" method="post">
+    {{-- <form action="{{url("/manage/microapps/change_microapp_status/$microapp->id")}}" method="post"> --}}
+    <form action="{{route('microapps.change_status', $microapp->id)}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_vis_status">
         <button type="submit" class="btn btn-secondary bi bi-binoculars"  onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> {{$tooltip_vis}}</button>
     </form>
 
-    <form action="{{url("/manage/microapps/change_microapp_status/$microapp->id")}}" method="post">
+    {{-- <form action="{{url("/manage/microapps/change_microapp_status/$microapp->id")}}" method="post"> --}}
+    <form action="{{route('microapps.change_status', $microapp->id)}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_acc_status">
         <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down"  {{$hidden_acc}}> {{$tooltip_acc}}</button>

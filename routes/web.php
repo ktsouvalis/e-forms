@@ -58,12 +58,6 @@ use App\Http\Controllers\microapps\InternalRulesController;
 
 Route::view('/', 'index')->name('index');
 
-Route::view('/index_user', 'index_user');
-
-Route::get('/back', function(){
-    return back();
-});
-
 Route::post('/find_entity', function(Request $request){
     if(!is_numeric($request->entity_code))
         return redirect(url('/'))->with('warning', "Θα πρέπει να καταχωρίσετε αριθητική τιμή.");
@@ -108,27 +102,21 @@ Route::view('/school_areas', 'public/school_areas')->name('school_areas_public')
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
+Route::view('/index_user', 'index_user');
+
 Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
 Route::view('/change_password', 'password_change_form')->middleware('auth');
 
 Route::post('/change_password', [UserController::class, 'passwordChange']);
 
-Route::view('/manage_users', 'users')->middleware('boss');
+// MANAGING USER ROUTES
 
-Route::post('/upload_user_template', [UserController::class, 'importUsers'])->name('upload_user_template');
+Route::resource('users', UserController::class)->middleware('boss');
 
-Route::post('/insert_users', [UserController::class, 'insertUsers']);
-
-Route::post('/insert_user', [UserController::class,'insertUser']);
-
-Route::get('/user_profile/{user}', function(User $user){
-    return view('user-profile',['user'=>$user]);
-})->middleware('boss');
-
-Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
-
-Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
+Route::group(['prefix'=>'users', 'middleware'=>'boss'], function(){
+    Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->name('users.reset_password');
+});
 
 //////// SCHOOL ROUTES
 
@@ -202,14 +190,14 @@ Route::view('/evaluation', 'evaluation');
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
-//////// MANAGE OPERATIONS ROUTES
+//////// MANAGING OPERATIONS ROUTES
 Route::resource('operations', OperationController::class)->middleware('boss');
 
 Route::group(['prefix' =>'operations'], function(){
     Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority'])->name('operations.set_menu_priority');
 });
 
-//////// MANAGE MICROAPPS ROUTES
+//////// MANAGING MICROAPPS ROUTES
 Route::resource('microapps', MicroappController::class)->middleware('auth');
 
 Route::group(['prefix' => 'microapps'], function(){ 

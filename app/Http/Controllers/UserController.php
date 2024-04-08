@@ -15,6 +15,13 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class UserController extends Controller
 {
+    public function index(){
+        return view('manage.users.index');
+    }
+
+    public function edit(User $user){
+        return view('manage.users.edit')->with('user', $user);
+    }
     public function login(Request $request){
         
         $incomingFields=$request->validate([//the html names of the fields
@@ -52,7 +59,7 @@ class UserController extends Controller
         $user->password = bcrypt($incomingFields['pass1']);
         $user->save();
 
-        return redirect(url('/'))->with('success', 'Ο νέος σας κωδικός αποθηκεύτηκε επιτυχώς');
+        return redirect(url('/index_user'))->with('success', 'Ο νέος σας κωδικός αποθηκεύτηκε επιτυχώς');
     }
 
     public function passwordReset(Request $request, User $user){
@@ -63,7 +70,7 @@ class UserController extends Controller
     }
 
     
-    public function insertUser(Request $request){
+    public function store(Request $request){
         //VALIDATION
         $incomingFields = $request->all();
 
@@ -72,13 +79,13 @@ class UserController extends Controller
 
         if(User::where('username', $given_name)->count()){
             $existing_user = User::where('username', $given_name)->first();
-            return redirect(url('/manage_users'))
+            return back()
                 ->with('failure', "Υπάρχει ήδη χρήστης με όνομα χρήστη $given_name: $existing_user->display_name, $existing_user->email")
                 ->with('old_data', $incomingFields);
         }
 
         if($incomingFields['user_department3']=="Επιλογή τμήματος"){
-            return redirect(url('/manage_users'))
+            return back()
                 ->with('failure', "Πρέπει να επιλέξετε τμήμα")
                 ->with('old_data', $incomingFields);   
         }
@@ -96,7 +103,7 @@ class UserController extends Controller
             ]);
         } 
         catch(QueryException $e){
-            return redirect(url('/manage_users'))
+            return back()
                 ->with('failure', "Κάποιο πρόβλημα προέκυψε κατά την εκτέλεση της εντολής, προσπαθήστε ξανά.")
                 ->with('old_data', $incomingFields);
         }
@@ -111,12 +118,12 @@ class UserController extends Controller
             }
         }
 
-        return redirect(url('/manage_users'))
+        return back()
             ->with('success','Επιτυχής καταχώρηση νέου χρήστη')
             ->with('record', $record);
     }
 
-    public function saveProfile(User $user, Request $request){
+    public function update(User $user, Request $request){
 
         $incomingFields = $request->all();
        
@@ -133,7 +140,7 @@ class UserController extends Controller
 
                 if(User::where('username', $given_name)->count()){
                     $existing_user =User::where('username',$given_name)->first();
-                    return redirect(url("/user_profile/$user->id"))->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
+                    return back()->with('failure',"Υπάρχει ήδη χρήστης με username $given_name: $existing_user->display_name, $existing_user->email");
                 }
             }
             
@@ -175,35 +182,13 @@ class UserController extends Controller
         
         if(!$edited){
             // return view('user-profile',['dberror'=>"Δεν υπάρχουν αλλαγές προς αποθήκευση", 'user' => $user]);
-            return redirect(url("/user_profile/$user->id"))->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
+            return back()->with('warning',"Δεν υπάρχουν αλλαγές προς αποθήκευση");
         }
-        return redirect(url("/user_profile/$user->id"))->with('success','Επιτυχής αποθήκευση');
+        return back()->with('success','Επιτυχής αποθήκευση');
     }
 
-    public function usersDl(){
-        
-        $users = User::all();
-        $spreadsheet = new Spreadsheet();
-        $activeWorksheet = $spreadsheet->getActiveSheet();
-        
-        $activeWorksheet->setCellValue('A1', 'Username');
-        $activeWorksheet->setCellValue('B1', 'DisplayName');
-        $activeWorksheet->setCellValue('C1', 'email');
-        
-        $row = 2;
-        foreach($users as $user){
-            
-            $activeWorksheet->setCellValue("A".$row, $user->username);
-            $activeWorksheet->setCellValue("B".$row, $user->display_name);
-            $activeWorksheet->setCellValue("C".$row, $user->email);
-            
-            $row++;
-        }
-        
-        $writer = new Xlsx($spreadsheet);
-        $filename = "usersTo_".date('YMd')."_".Auth::id().".xlsx";
-        $writer->save($filename);
-
-        return response()->download("$filename");
+    public function destroy(User $user){
+        $user->delete();
+        return back()->with('success',"Ο χρήστης $user->username διαγράφηκε επιτυχώς");
     }
 }

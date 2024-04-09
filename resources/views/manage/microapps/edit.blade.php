@@ -106,21 +106,27 @@
             
             
             <nav class="navbar navbar-light bg-light">
+                @php
+                    $myapp ='microapp';
+                    $myid = $microapp->id;
+                @endphp
+                <div class="vstack gap-3">
+                @include('criteria_form')
                 <form action="{{url("/import_whocan/microapp/$microapp->id")}}" method="post" class="container-fluid">
                     @csrf
                     <div class="input-group">
                         <span class="input-group-text w-25"></span>
-                        <span class="input-group-text w-75"><strong>Ενδιαφερόμενοι</strong></span>
+                        <span class="input-group-text w-75"><strong>Ενδιαφερόμενοι (ΑΜ ή ΑΦΜ εκπαιδευτικών ή/και Κωδικοί Σχολείων)</strong></span>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon2">Name</span>
-                        <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
+                        <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΜ ή ΑΦΜ εκπαιδευτικών ή/και Κωδικοί Σχολείων χωρισμένα με κόμμα (,)" required></textarea>
                     </div>
                     <div class="input-group py-1 px-1">
-                        <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
+                </div>
             </nav>  
         <div class="vstack gap-2 py-3">
             @if($microapp->stakeholders->count())

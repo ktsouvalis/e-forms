@@ -22,4 +22,8 @@ class Fileshare extends Model
     public function stakeholders(){
         return $this->hasMany(FileshareStakeholder::class);
     }
+
+    public function accessCriteria(){
+       return $this->morphOne(AccessCriteria::class, 'app');
+    }
 }

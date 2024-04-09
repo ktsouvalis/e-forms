@@ -134,6 +134,12 @@
         @endif
         <hr>
         <nav class="navbar navbar-light bg-light">
+            <div class="vstack gap-3">
+                @php
+                    $myapp = 'fileshare';
+                    $myid = $fileshare->id;
+                @endphp
+                @include('criteria_form')
                 <form action="{{url("/import_whocan/fileshare/$fileshare->id")}}" method="post" class="container-fluid">
                     @csrf
                     <div class="input-group">
@@ -145,14 +151,15 @@
                         <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
                     </div>
                     <div class="input-group py-1 px-1">
-                        <span class="w-25"></span>
+                        {{-- <span class="w-25"></span> --}}
                         <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
                     </div>
                 </form>
+                </div>
                 <form action="{{url("/fileshares/auto_update_whocan/$fileshare->id")}}" method="post" class="container-fluid">
                     @csrf
                     <div class="input-group py-1 px-1">
-                        <span class="w-25"></span>
+                        {{-- <span class="w-25"></span> --}}
                         <button type="submit" class="btn btn-warning bi bi-database-add"> Αυτόματη Εισαγωγή Ενδιαφερόμενων για τα προσωπικά αρχεία</button>
                     </div>
                 </form>

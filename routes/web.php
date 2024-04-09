@@ -359,6 +359,10 @@ Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'de
 
 Route::post('/import_whocan/{my_app}/{my_id}', [WhocanController::class, 'import_whocans']);
 
+Route::post('/import_whocan_criteria/{my_app}/{my_id}', [WhocanController::class, 'import_whocans_with_criteria']);
+
+Route::post('/delete_whocan_criteria/{my_app}/{my_id}', [WhocanController::class, 'delete_whocan_criteria']);
+
 
 // MAIL Routes
 

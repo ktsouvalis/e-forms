@@ -13,6 +13,7 @@ use App\Models\Filecollect;
 use App\Mail\FilesToReceive;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
+use App\Models\AccessCriteria;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use App\Models\FileshareStakeholder;
@@ -115,6 +116,61 @@ class WhocanController extends Controller
         }
     }
 
+    public function import_whocans_with_criteria(Request $request, $my_app, $my_id){
+        if($my_app == 'microapp')$class="App\Models\Microapp";
+        else if($my_app == 'fileshare')$class="App\Models\Fileshare";
+        else if($my_app == 'filecollect')$class="App\Models\Filecollect";
+
+        $json = array();
+        $klados = array();
+        $sxesi_ergasias_id = array();
+        $org_eae = array();
+
+        $found_kladoi = false;
+        foreach($request->all() as $key => $value){
+            if(substr($key,0,2) == 'kl'){
+                array_push($klados, $value); 
+                $found_kladoi = true;  
+            }
+        }
+        if(!$found_kladoi){
+            return back()->with('warning', 'Δεν επιλέχθηκε κλάδος');
+        }
+
+        $found_sxesi_ergasias = false;
+        foreach($request->all() as $key => $value){
+            if(substr($key,0,2) == 'sx'){
+                array_push($sxesi_ergasias_id, $value);  
+                $found_sxesi_ergasias = true; 
+            }
+        }
+        if(!$found_sxesi_ergasias){
+            return back()->with('warning', 'Δεν επιλέχθηκε σχέση εργασίας');
+        }
+
+        if($request->input('eae_yes'))
+            array_push($org_eae, 1);
+        
+        if($request->input('eae_no'))
+            array_push($org_eae, 0);
+
+        $json['klados']= $klados;
+        $json['sxesi_ergasias_id']= $sxesi_ergasias_id;
+        $json['org_eae']= $org_eae;
+
+        AccessCriteria::updateOrCreate(
+            [
+            'app_id' => $my_id,
+            'app_type' => $class
+            ],
+            [
+            'criteria' => json_encode($json)
+            ]
+        );
+
+        return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων');
+    }
+
     /**
      * Delete all stakeholders from a microapp or fileshare
      *
@@ -161,6 +217,16 @@ class WhocanController extends Controller
 
         Log::channel('user_memorable_actions')->info(Auth::user()->username." deleted one $my_id whocan from stakeholders table of $my_app");
         return back()->with('success', 'Ο χρήστης διαγράφηκε');
+    }
+
+    public function delete_whocan_criteria(Request $request, $my_app, $my_id){
+        if($my_app == 'microapp')$class="App\Models\Microapp";
+        else if($my_app == 'fileshare')$class="App\Models\Fileshare";
+        else if($my_app == 'filecollect')$class="App\Models\Filecollect";
+
+        AccessCriteria::where('app_id', $my_id)->where('app_type', $class)->delete();
+
+        return back()->with('success', 'Επιτυχής διαγραφή κριτηρίων');
     }
 
     /**

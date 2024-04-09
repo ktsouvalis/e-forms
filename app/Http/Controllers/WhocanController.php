@@ -148,11 +148,19 @@ class WhocanController extends Controller
             return back()->with('warning', 'Δεν επιλέχθηκε σχέση εργασίας');
         }
 
-        if($request->input('eae_yes'))
+        $found_eae = false;
+        if($request->input('eae_yes')){
             array_push($org_eae, 1);
+            $found_eae = true;
+        }
         
-        if($request->input('eae_no'))
+        if($request->input('eae_no')){
             array_push($org_eae, 0);
+            $found_eae = true;
+        }
+        if(!$found_eae){
+            return back()->with('warning', 'Δεν επιλέχθηκε θέση στην Γενική ή Ειδική Αγωγή');
+        }
 
         $json['klados']= $klados;
         $json['sxesi_ergasias_id']= $sxesi_ergasias_id;

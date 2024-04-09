@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('app_id');
             $table->string('app_type');
-            $table->json('criteria');
+            $table->text('criteria');
             $table->timestamps();
         });
     }

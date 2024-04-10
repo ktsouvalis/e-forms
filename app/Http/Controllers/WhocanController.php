@@ -175,6 +175,100 @@ class WhocanController extends Controller
             'criteria' => json_encode($json)
             ]
         );
+        if($my_app=='microapp' and $request->input('inform_whocan_table')){
+            $microapp = Microapp::find($my_id);
+            $criteria = json_decode($microapp->accessCriteria->criteria, true);
+            $count=0;
+            foreach(Teacher::all() as $teacher){
+                if(!$teacher->active)continue;
+                $satisfiesCriteria = true;
+                foreach ($criteria as $key => $value) {
+                    if (!in_array($teacher->$key, $value)) {
+                        $satisfiesCriteria = false;
+                        break;
+                    }  
+                }
+                if($satisfiesCriteria){
+                    MicroappStakeholder::updateOrCreate(
+                        [
+                        'microapp_id' => $my_id,
+                        'stakeholder_id' => $stakeholder->id,
+                        'stakeholder_type' => get_class($stakeholder)
+                        ],
+                        [
+                        'hasAnswer'=> 0
+                        ]
+                    ); 
+                        $count++;
+                }  
+            }
+            if($count)
+                return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων. Προστέθηκαν '.$count.' ενδιαφερόμενοι');
+            else 
+                return back()->with('warning', 'Δεν βρέθηκαν ενδιαφερόμενοι που να ικανοποιούν τα κριτήρια');
+        }
+        if($my_app=='filecollect'){
+            $count=0;
+            $filecollect = Filecollect::find($my_id);
+            $criteria = json_decode($filecollect->accessCriteria->criteria, true);
+            foreach(Teacher::all() as $teacher){
+                if(!$teacher->active)continue;
+                $satisfiesCriteria = true;
+                foreach ($criteria as $key => $value) {
+                    if (!in_array($teacher->$key, $value)) {
+                        $satisfiesCriteria = false;
+                        break;
+                    }  
+                }
+                if($satisfiesCriteria){
+                    if(!FilecollectStakeholder::where('filecollect_id', $my_id)->where('stakeholder_id' , $teacher->id)->where('stakeholder_type' , get_class($teacher))->count())
+                        FilecollectStakeholder::create([
+                            'filecollect_id' => $my_id,
+                            'stakeholder_id' => $teacher->id,
+                            'stakeholder_type' => get_class($teacher)
+                        ]);
+                        $count++;
+                }  
+            }
+            if($count)
+                return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων. Προστέθηκαν '.$count.' ενδιαφερόμενοι');
+            else 
+                return back()->with('warning', 'Δεν βρέθηκαν ενδιαφερόμενοι που να ικανοποιούν τα κριτήρια');
+        }
+        if($my_app=='fileshare'){
+            $count=0;
+            $fileshare = Fileshare::find($my_id);
+            $criteria = json_decode($fileshare->accessCriteria->criteria, true);
+            foreach(Teacher::all() as $teacher){
+                if(!$teacher->active)continue;
+                $satisfiesCriteria = true;
+                foreach ($criteria as $key => $value) {
+                    if (!in_array($teacher->$key, $value)) {
+                        $satisfiesCriteria = false;
+                        break;
+                    }  
+                }
+                if($satisfiesCriteria){
+                    FileshareStakeholder::updateOrCreate(
+                    [
+                    'fileshare_id' => $my_id,
+                    'stakeholder_id' => $teacher->id,
+                    'stakeholder_type' => get_class($teacher)
+                    ],
+                    [
+                    'addedby_id' => Auth::user()->id,
+                    'addedby_type' => get_class(Auth::user()),
+                    'visited_fileshare'=>0 
+                    ]
+                    ); 
+                    $count++;
+                }  
+            }
+            if($count)
+                return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων. Προστέθηκαν '.$count.' ενδιαφερόμενοι');
+            else 
+                return back()->with('warning', 'Δεν βρέθηκαν ενδιαφερόμενοι που να ικανοποιούν τα κριτήρια');
+        }
 
         return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων');
     }

@@ -54,9 +54,11 @@ class FruitsController extends Controller
                 }
                 return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
             }
-            $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
-            $stakeholder->hasAnswer = 1;
-            $stakeholder->save();
+            if($this->microapp->stakeholders->count()){
+                $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+                $stakeholder->hasAnswer = 1;
+                $stakeholder->save();
+            }
             
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }

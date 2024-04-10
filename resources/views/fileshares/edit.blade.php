@@ -164,8 +164,10 @@
                     </div>
                 </form>
             </nav> 
+            @if($fileshare->stakeholders->count() and in_array('App\Models\School', $fileshare->stakeholders->pluck('stakeholder_type')->toArray()))
             <input type="checkbox" id="allow" class="fileshare-checkbox" data-fileshare-id="{{ $fileshare->id }}" {{ $fileshare->allow_school ? 'checked' : '' }}>
             <label for="allow"> <strong> Τα σχολεία μπορούν να προσθέτουν τους εκπαιδευτικούς στους ενδιαφερόμενους του fileshare;</strong></label> 
+            @endif
         </div>
         <hr>
         <div class="container px-5 vstack gap-2 py-3">

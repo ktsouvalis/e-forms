@@ -3,10 +3,11 @@
 <div class="h4">{{$microapp->name}}</div>
 @php
     $currentUrl = request()->url();
+    $resource = substr($microapp->url, 1);
 @endphp
 
-@if (Str::contains($currentUrl, 'manage'))
-    <a class="btn btn-primary bi bi-eye px-1" data-toggle="tooltip" data-placement="top" title="Απαντήσεις" style="text-decoration: none;" href="{{ url($microapp->url) }}"></a>
+@if (Str::contains($currentUrl, 'edit'))
+    <a class="btn btn-primary bi bi-eye px-1" data-toggle="tooltip" data-placement="top" title="Απαντήσεις" style="text-decoration: none;" href="{{ route("$resource.index")}}"></a>
 @else
     @can('update', $microapp)
         {{-- <a class="btn btn-primary bi bi-pencil px-1" data-toggle="tooltip" data-placement="top" title="Επεξεργασία μικροεφαρμογής" style="text-decoration: none;" href="{{ url("/manage/microapps/$microapp->id/edit") }}"></a> --}}
@@ -18,9 +19,8 @@
 @php
     //fetch all stakeholders of the microapp to show them even if they have not submit some answer. $fruits_schools is MicroappStakeholder object
     if($microapp->visible){
-    
-    $hidden_acc = "";
-    $tooltip_vis = "Κλείσιμο ορατότητας";  
+        $hidden_acc = "";
+        $tooltip_vis = "Κλείσιμο ορατότητας";  
         if($microapp->accepts){
             $tooltip_acc="Κλείσιμο υποβολών";
         }

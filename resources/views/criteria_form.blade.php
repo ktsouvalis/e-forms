@@ -1,3 +1,4 @@
+@if(!$$myapp->stakeholders->count())
 @push('scripts')
 <script>
     document.getElementById('selectAllSxeseis').addEventListener('click', function(e) {
@@ -91,9 +92,16 @@
             </div>
         </div>
     </div>
+    @if($myapp=='microapp')
+    <div class="input-group m-1">
+        <input type="checkbox" name="inform_whocan_table" id="inform_whocan_table" class="m-1">
+        <label for="inform_whocan_table"><b>Ενημέρωση πίνακα ενδιαφερόμενων;</b></label>
+    </div>
+    @endif
     <div class="input-group py-1 px-1">
         <button type="submit" class="btn btn-primary bi bi-database-add"> Ενημέρωση Κριτηρίων</button>
     </div>
+    
 </form>
 <form action="{{url("/delete_whocan_criteria/$myapp/$myid")}}" method="POST" class="container-fluid">
     @csrf
@@ -102,3 +110,4 @@
     </div>
 </form>
 </div>
+@endif

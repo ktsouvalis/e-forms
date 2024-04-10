@@ -52,9 +52,11 @@ class SchoolAreaController extends Controller
                     Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' update school area db error '.$e->getMessage());
                     return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
                 }
-                $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
-                $stakeholder->hasAnswer = 1;
-                $stakeholder->save();
+                if($this->microapp->stakeholders->count()){
+                    $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', $school->id)->where('stakeholder_type', 'App\Models\School')->first();
+                    $stakeholder->hasAnswer = 1;
+                    $stakeholder->save();
+                }
                 Log::channel('stakeholders_microapps')->info(Auth::guard('school')->user()->name.' confirmed school area '.Carbon::now());
                 return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');  
             }

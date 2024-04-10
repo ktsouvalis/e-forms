@@ -117,6 +117,7 @@ class WhocanController extends Controller
     }
 
     public function import_whocans_with_criteria(Request $request, $my_app, $my_id){
+        // dd($request->input('kladoi'));
         if($my_app == 'microapp')$class="App\Models\Microapp";
         else if($my_app == 'fileshare')$class="App\Models\Fileshare";
         else if($my_app == 'filecollect')$class="App\Models\Filecollect";
@@ -127,36 +128,28 @@ class WhocanController extends Controller
         $org_eae = array();
 
         $found_kladoi = false;
-        foreach($request->all() as $key => $value){
-            if(substr($key,0,2) == 'kl'){
-                array_push($klados, $value); 
-                $found_kladoi = true;  
-            }
+        foreach($request->input('kladoi') as $kl){
+            array_push($klados, $kl); 
+            $found_kladoi = true;  
         }
+
         if(!$found_kladoi){
             return back()->with('warning', 'Δεν επιλέχθηκε κλάδος');
         }
 
         $found_sxesi_ergasias = false;
-        foreach($request->all() as $key => $value){
-            if(substr($key,0,2) == 'sx'){
-                array_push($sxesi_ergasias_id, $value);  
-                $found_sxesi_ergasias = true; 
-            }
+        foreach($request->input('sxeseis') as $sx){
+            array_push($sxesi_ergasias_id, $sx);  
+            $found_sxesi_ergasias = true; 
         }
         if(!$found_sxesi_ergasias){
             return back()->with('warning', 'Δεν επιλέχθηκε σχέση εργασίας');
         }
 
         $found_eae = false;
-        if($request->input('eae_yes')){
-            array_push($org_eae, 1);
-            $found_eae = true;
-        }
-        
-        if($request->input('eae_no')){
-            array_push($org_eae, 0);
-            $found_eae = true;
+        foreach($request->input('org_eae') as $eae){
+            array_push($org_eae, $eae);  
+            $found_eae = true; 
         }
         if(!$found_eae){
             return back()->with('warning', 'Δεν επιλέχθηκε θέση στην Γενική ή Ειδική Αγωγή');
@@ -192,8 +185,8 @@ class WhocanController extends Controller
                     MicroappStakeholder::updateOrCreate(
                         [
                         'microapp_id' => $my_id,
-                        'stakeholder_id' => $stakeholder->id,
-                        'stakeholder_type' => get_class($stakeholder)
+                        'stakeholder_id' => $teacher->id,
+                        'stakeholder_type' => get_class($teacher)
                         ],
                         [
                         'hasAnswer'=> 0

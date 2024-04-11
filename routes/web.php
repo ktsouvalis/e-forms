@@ -363,6 +363,8 @@ Route::post('/import_whocan_criteria/{my_app}/{my_id}', [WhocanController::class
 
 Route::post('/delete_whocan_criteria/{my_app}/{my_id}', [WhocanController::class, 'delete_whocan_criteria']);
 
+Route::post('/count_criteria_teachers/{access_criteria}', [WhocanController::class, 'count_criteria_teachers'])->name('whocans.count_criteria_teachers');
+
 
 // MAIL Routes
 

@@ -324,6 +324,25 @@ class WhocanController extends Controller
         return back()->with('success', 'Επιτυχής διαγραφή κριτηρίων');
     }
 
+    public function count_criteria_teachers(AccessCriteria $access_criteria){
+        $criteria = json_decode($access_criteria->criteria, true);
+        $count=0;
+        foreach(Teacher::all() as $teacher){
+            if(!$teacher->active)continue;
+            $satisfiesCriteria = true;
+            foreach ($criteria as $key => $value) {
+                if (!in_array($teacher->$key, $value)) {
+                    $satisfiesCriteria = false;
+                    break;
+                }  
+            }
+            if($satisfiesCriteria){
+                $count++;
+            }  
+        }
+        return response(['count'=>$count]);
+    }
+
     /**
      * preview the email will be sent to users, using testing school or teacher
      *

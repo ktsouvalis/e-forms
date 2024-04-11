@@ -193,7 +193,8 @@
                                 <div class="py-2" style="text-align:center">
                                     @php $resource = substr($one_microapp->url, 1); @endphp
                                     {{-- <a class="text-dark" style="text-decoration:none;" href="{{ url($one_microapp->url) }}"> --}}
-                                    <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}">
+                                    {{-- <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}"> --}}
+                                    <a class="text-dark" style="text-decoration:none;" href="{{ Route::has("$resource.index") ? route("$resource.index") : '#' }}">
                                         {{-- <div class="h5 card-title {{ $one_microapp->icon }}"></div> --}}
                                         <div class="h5 card-title {{ $one_microapp->icon }}"></div>
                                         <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>

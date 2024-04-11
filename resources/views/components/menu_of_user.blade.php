@@ -62,7 +62,7 @@
                 <div class="text-dark {{$one_microapp->icon}}"></div>
                 @php $resource = substr($one_microapp->url, 1); @endphp
                 {{-- <a href="{{url($one_microapp->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a> --}}
-                <a href="{{route("$resource.index")}}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
+                <a  href="{{ Route::has("$resource.index") ? route("$resource.index") : '#' }}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
             </div>
         @endif
     @endforeach

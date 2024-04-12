@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
+use App\Jobs\UpdateEDirectorateJob;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -33,12 +34,12 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
-use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 use App\Http\Controllers\microapps\WorkPlanController;
+use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
@@ -509,22 +510,15 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         try{
             Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
     
         }
         return back()->with('command', $output);
     });
 
     Route::post('/com_eDirecorate_update', function () {
-        Artisan::call('update-e-directorate');
-        $output = session()->get('command_output');
-        try{
-            Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
-        }
-        catch(Throwable $e){
-    
-        }
-        return back()->with('command', $output);
+        dispatch(new UpdateEDirectorateJob(Auth::user()->username));
+        return back()->with('success', 'Successfully added to queue, check logs commands_executed for results');
     });
 
     Route::post('/com_change_microapp_accept_status', function () {
@@ -533,7 +527,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         try{
             Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
     
         }
         return back()->with('command', $output);
@@ -546,7 +540,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         try{
             Log::channel('commands_executed')->info(Auth::user()->username.": ".$output);
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
     
         }
         return back()->with('command',$output);
@@ -558,7 +552,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         try{
             Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode ON");
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
     
         }
         return redirect(url("/$secret_parameter"))->with('success', 'Maintenance Mode ON');
@@ -569,7 +563,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         try{
             Log::channel('commands_executed')->info(Auth::user()->username.": Maintenance mode OFF");
         }
-        catch(Throwable $e){
+        catch(\Exception $e){
     
         }
         return back()->with('success', 'Maintenance Mode OFF');
@@ -644,61 +638,43 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
     Route::post('/update_app', function(){
         $sudoRequired = env('SUDO_REQUIRED');
         if($sudoRequired){
+            $error=array();
             $fetch = Process::path('/opt/e-forms')->run('git fetch');
             if($fetch->successful()){
-                try{
-                    Log::channel('commands_executed')->info(Auth::user()->username.":git fetch: ".$fetch->output());
-                }
-                catch(\Exception $e){
-        
-                }
+                Log::channel('commands_executed')->info(Auth::user()->username.":git fetch: ".$fetch->output());
                 $pull = Process::path('/opt/e-forms')->run('git pull');
                 if($pull->successful()){
-                    try{
-                        Log::channel('commands_executed')->info(Auth::user()->username.":git pull: ".$pull->output());
-                    }
-                    catch(\Exception $e){
-        
-                    }
+                    Log::channel('commands_executed')->info(Auth::user()->username.":git pull: ".$pull->output());
                     $migrate = Artisan::call('migrate');
                     if ($migrate === 0) {
-                        try{
-                            Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".Artisan::output());
+                        Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".Artisan::output());
+                        $queue_restart = Artisan::call('queue:restart');
+                        if ($queue_restart === 0) {
+                            Log::channel('commands_executed')->info(Auth::user()->username.":queue:restart ".Artisan::output());
                         }
-                        catch(\Exception $e){
-        
+                        else{
+                            Log::channel('commands_executed')->error(Auth::user()->username.":queue:restart ".Artisan::output());
+                            $error['queue']='Αποτυχία επανεκκίνησης του queue worker';
                         }
-                        return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');
                     }
                     else{
-                        try{
-                            Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".Artisan::output());
-                        }
-                        catch(\Exception $e){
-        
-                        }
-                        return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων');
+                        Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".Artisan::output());
+                        $error['migrate']='Αποτυχία εκτέλεσης των migrations';
                     }
                 }
                 else{
-                    try{
-                        Log::channel('commands_executed')->error(Auth::user()->username.":git pull ".$pull->errorOutput());
-                    }
-                    catch(\Exception $e){
-        
-                    }
-                    return back()->with('failure', 'Αποτυχία ενημέρωσης κώδικα');
+                    Log::channel('commands_executed')->error(Auth::user()->username.":git pull: ".$pull->output());
+                    $error['pull']='Αποτυχία ενημέρωσης του κώδικα από το git';
                 }
-            }    
-            else{
-                try{
-                    Log::channel('commands_executed')->error(Auth::user()->username.":git fetch ".$fetch->errorOutput());
-                }
-                catch(\Exception $e){
-        
-                }
-                return back()->with('failure', 'Αποτυχία ενημέρωσης της εφαρμογής');
             }
+            else{
+                Log::channel('commands_executed')->error(Auth::user()->username.":git fetch: ".$fetch->output());
+                $error['fetch']='Αποτυχία ανάκτησης του κώδικα από το git';
+            }
+            if(!empty($error)){
+                return back()->with('failure', $error);
+            }
+            return back()->with('success', 'Επιτυχής ενημέρωση της εφαρμογής');
         }
         else{
             return back()->with('warning', 'Production mode only');

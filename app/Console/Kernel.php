@@ -28,6 +28,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('update-e-directorate')
             ->dailyAt('16:00');
+
+        // $schedule->command('queue:work --stop-when-empty')
+        //     ->everyMinute(); 
     }
 
     /**

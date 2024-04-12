@@ -33,12 +33,13 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
-use App\Http\Controllers\microapps\EnrollmentController;
+use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 use App\Http\Controllers\microapps\WorkPlanController;
+use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
@@ -217,6 +218,12 @@ Route::group(['prefix' => 'manage/microapps'], function(){
 
     Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
 });
+
+//SECONDMENTS ROUTES
+
+Route::resource('secondments', SecondmentController::class);//->middleware('canViewMicroapp');
+
+//Route::view('/secondments', 'microapps.secondments.create');
 
 //ENROLLMENTS ROUTES
 Route::resource('enrollments', EnrollmentController::class)->middleware('canViewMicroapp');

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\microapps\Secondment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Teacher extends Authenticatable
 {
@@ -34,6 +35,10 @@ class Teacher extends Authenticatable
 
     public function microapps(){
         return $this->morphMany(MicroappStakeholder::class, 'stakeholder');
+    }
+
+    public function secondment(){
+        return $this->hasOne(Secondment::class);
     }
 
     public function filecollects(){

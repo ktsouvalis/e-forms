@@ -21,4 +21,8 @@ class Microapp extends Model
     public function stakeholders(){
         return $this->hasMany(MicroappStakeholder::class);
     }
+
+    public function accessCriteria(){
+       return $this->morphOne(AccessCriteria::class, 'app');
+    }
 }

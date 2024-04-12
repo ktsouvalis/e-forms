@@ -17,7 +17,8 @@
     @if($user->isAdmin())
     <div class="badge text-wrap py-2" style="width: 10rem; background-color:Gainsboro; text-align:center;">
         <div class="text-dark fa-solid fa-users"></div>
-        <a href="{{url("/manage_users")}}" style="color:black; text-decoration:none;" class=""> Χρήστες</a>
+        {{-- <a href="{{url("/manage_users")}}" style="color:black; text-decoration:none;" class=""> Χρήστες</a> --}}
+        <a href="{{route("users.index")}}" style="color:black; text-decoration:none;" class=""> Χρήστες</a>
     </div>
     @endif
     @foreach ($operations as $operation)
@@ -61,7 +62,7 @@
                 <div class="text-dark {{$one_microapp->icon}}"></div>
                 @php $resource = substr($one_microapp->url, 1); @endphp
                 {{-- <a href="{{url($one_microapp->url)}}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a> --}}
-                <a href="{{route("$resource.index")}}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
+                <a  href="{{ Route::has("$resource.index") ? route("$resource.index") : '#' }}" style="color:black; text-decoration:none;" class=""> {{$one_microapp->name}} @if(!$one_microapp->active) <strong style="color:red">ΑΝΕΝΕΡΓΗ</strong>@endif</a>
             </div>
         @endif
     @endforeach

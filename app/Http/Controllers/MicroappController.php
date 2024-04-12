@@ -16,12 +16,6 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class MicroappController extends Controller
 {
-    public function __construct(){
-        $this->middleware('auth');
-        $this->middleware('boss' )->only(['update']);
-        
-    }
-
     public function index(){
         return view('manage.microapps.index');
     }
@@ -100,7 +94,6 @@ class MicroappController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function onOff(Request $request, Microapp $microapp){
-        $this->authorize('deactivate', $microapp);
         if($microapp->active){ 
             $microapp->active=0; //deactivate the microapp
             $microapp->visible=0; //change visibility value

@@ -25,4 +25,8 @@ class Filecollect extends Model
     public function stakeholders(){
         return $this->hasMany(FilecollectStakeholder::class);
     }
+
+    public function accessCriteria(){
+       return $this->morphOne(AccessCriteria::class, 'app');
+    }
 }

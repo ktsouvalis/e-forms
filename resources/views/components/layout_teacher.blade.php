@@ -55,6 +55,23 @@
         }
       } 
     }
+
+    $satisfiesCriteria = false;
+    foreach(App\Models\Microapp::all() as $one_microapp){
+        if($one_microapp->accessCriteria){
+            $criteria = json_decode($one_microapp->accessCriteria->criteria, true);
+            $satisfiesCriteria = true;
+            foreach ($criteria as $key => $value) {
+                if (!in_array($user->$key, $value)) {
+                    $satisfiesCriteria = false;
+                    break;
+                }  
+            }
+        }
+        if($satisfiesCriteria){
+            $active_microapp = true;
+        }
+    }
     
     $active_filecollect=false;
     if($user->filecollects->count()){
@@ -85,6 +102,32 @@
             <a href="{{route("$resource.create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
           </div>
         @endif 
+      @endforeach
+      @foreach(App\Models\Microapp::all() as $one_microapp)
+          @if($one_microapp->accessCriteria)
+            @php
+                $criteria = json_decode($one_microapp->accessCriteria->criteria, true);
+                $satisfiesCriteria = true;
+
+                foreach ($criteria as $key => $value) {
+                  if (!in_array($user->$key, $value)) {
+                      $satisfiesCriteria = false;
+                      break;
+                  }
+                }
+            @endphp
+              
+            @if ($satisfiesCriteria)
+              @if(!$user->microapps->where('microapp_id', $one_microapp->id)->count())
+                  <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->color}}; text-align:center;">
+                    <div class="text-dark {{$one_microapp->icon}}"></div> 
+                    @php $resource = substr($one_microapp->url, 1); @endphp
+                    {{-- <a href="{{url($one_microapp->url."/create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->name}}</a> --}}
+                    <a href="{{route("$resource.create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->name}}</a>
+                  </div>
+              @endif
+            @endif
+          @endif
       @endforeach
       
       @foreach($user->fileshares as $fileshare)

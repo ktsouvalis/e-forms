@@ -204,7 +204,13 @@
             </div>
         @endif
         <hr>
-        
+        @php
+            $myapp = 'filecollect';
+            $myid = $filecollect->id;   
+        @endphp
+        <nav class="navbar navbar-light bg-light">
+        <div class="vstack gap-3">
+        @include('criteria_form')
         <form action="{{url("/import_whocan/filecollect/$filecollect->id")}}" method="post" class="container-fluid">
             @csrf
             <div class="input-group">
@@ -219,6 +225,7 @@
                 <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>
             </div>
         </form>
+        </div>
         </div>
         <div class="vstack gap-2 py-3">
             
@@ -243,6 +250,7 @@
                                 <button type="submit" class="btn btn-outline-primary bi bi-send"> Αποστολή</button>
                             </div>
                         </form>
+                        </nav>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,8 @@
     <div class="container py-5">
         <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/manage/operations/$operation->id")}}" method="post" class="container-fluid">
+                {{-- <form action="{{url("/manage/operations/$operation->id")}}" method="post" class="container-fluid"> --}}
+                <form action="{{route('operations.update', $operation->id)}}" method="post" class="container-fluid">
                     @method('PUT')
                     @csrf
                     <input type="hidden" name="asks_to" value="insert">
@@ -79,7 +80,8 @@
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-outline-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
-                        <a href="{{url("/manage/operations/$operation->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
+                        {{-- <a href="{{url("/manage/operations/$operation->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a> --}}
+                        <a href="{{route('operations.edit', $operation->id)}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                     
                 </form>
             </nav>

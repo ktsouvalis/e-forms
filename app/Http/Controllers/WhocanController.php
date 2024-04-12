@@ -13,6 +13,7 @@ use App\Models\Filecollect;
 use App\Mail\FilesToReceive;
 use Illuminate\Http\Request;
 use App\Mail\MicroappToSubmit;
+use App\Models\AccessCriteria;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use App\Models\FileshareStakeholder;
@@ -115,6 +116,156 @@ class WhocanController extends Controller
         }
     }
 
+    public function import_whocans_with_criteria(Request $request, $my_app, $my_id){
+        // dd($request->input('kladoi'));
+        if($my_app == 'microapp')$class="App\Models\Microapp";
+        else if($my_app == 'fileshare')$class="App\Models\Fileshare";
+        else if($my_app == 'filecollect')$class="App\Models\Filecollect";
+
+        $json = array();
+        $klados = array();
+        $sxesi_ergasias_id = array();
+        $org_eae = array();
+
+        $found_kladoi = false;
+        foreach($request->input('kladoi') as $kl){
+            array_push($klados, $kl); 
+            $found_kladoi = true;  
+        }
+
+        if(!$found_kladoi){
+            return back()->with('warning', 'Δεν επιλέχθηκε κλάδος');
+        }
+
+        $found_sxesi_ergasias = false;
+        foreach($request->input('sxeseis') as $sx){
+            array_push($sxesi_ergasias_id, $sx);  
+            $found_sxesi_ergasias = true; 
+        }
+        if(!$found_sxesi_ergasias){
+            return back()->with('warning', 'Δεν επιλέχθηκε σχέση εργασίας');
+        }
+
+        $found_eae = false;
+        foreach($request->input('org_eae') as $eae){
+            array_push($org_eae, $eae);  
+            $found_eae = true; 
+        }
+        if(!$found_eae){
+            return back()->with('warning', 'Δεν επιλέχθηκε θέση στην Γενική ή Ειδική Αγωγή');
+        }
+
+        $json['klados']= $klados;
+        $json['sxesi_ergasias_id']= $sxesi_ergasias_id;
+        $json['org_eae']= $org_eae;
+
+        AccessCriteria::updateOrCreate(
+            [
+            'app_id' => $my_id,
+            'app_type' => $class
+            ],
+            [
+            'criteria' => json_encode($json)
+            ]
+        );
+        if($my_app=='microapp' and $request->input('inform_whocan_table')){
+            $microapp = Microapp::find($my_id);
+            $criteria = json_decode($microapp->accessCriteria->criteria, true);
+            $count=0;
+            foreach(Teacher::all() as $teacher){
+                if(!$teacher->active)continue;
+                $satisfiesCriteria = true;
+                foreach ($criteria as $key => $value) {
+                    if (!in_array($teacher->$key, $value)) {
+                        $satisfiesCriteria = false;
+                        break;
+                    }  
+                }
+                if($satisfiesCriteria){
+                    MicroappStakeholder::updateOrCreate(
+                        [
+                        'microapp_id' => $my_id,
+                        'stakeholder_id' => $teacher->id,
+                        'stakeholder_type' => get_class($teacher)
+                        ],
+                        [
+                        'hasAnswer'=> 0
+                        ]
+                    ); 
+                        $count++;
+                }  
+            }
+            if($count)
+                return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων. Προστέθηκαν '.$count.' ενδιαφερόμενοι');
+            else 
+                return back()->with('warning', 'Δεν βρέθηκαν ενδιαφερόμενοι που να ικανοποιούν τα κριτήρια');
+        }
+        if($my_app=='filecollect'){
+            $count=0;
+            $filecollect = Filecollect::find($my_id);
+            $criteria = json_decode($filecollect->accessCriteria->criteria, true);
+            foreach(Teacher::all() as $teacher){
+                if(!$teacher->active)continue;
+                $satisfiesCriteria = true;
+                foreach ($criteria as $key => $value) {
+                    if (!in_array($teacher->$key, $value)) {
+                        $satisfiesCriteria = false;
+                        break;
+                    }  
+                }
+                if($satisfiesCriteria){
+                    if(!FilecollectStakeholder::where('filecollect_id', $my_id)->where('stakeholder_id' , $teacher->id)->where('stakeholder_type' , get_class($teacher))->count())
+                        FilecollectStakeholder::create([
+                            'filecollect_id' => $my_id,
+                            'stakeholder_id' => $teacher->id,
+                            'stakeholder_type' => get_class($teacher)
+                        ]);
+                        $count++;
+                }  
+            }
+            if($count)
+                return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων. Προστέθηκαν '.$count.' ενδιαφερόμενοι');
+            else 
+                return back()->with('warning', 'Δεν βρέθηκαν ενδιαφερόμενοι που να ικανοποιούν τα κριτήρια');
+        }
+        if($my_app=='fileshare'){
+            $count=0;
+            $fileshare = Fileshare::find($my_id);
+            $criteria = json_decode($fileshare->accessCriteria->criteria, true);
+            foreach(Teacher::all() as $teacher){
+                if(!$teacher->active)continue;
+                $satisfiesCriteria = true;
+                foreach ($criteria as $key => $value) {
+                    if (!in_array($teacher->$key, $value)) {
+                        $satisfiesCriteria = false;
+                        break;
+                    }  
+                }
+                if($satisfiesCriteria){
+                    FileshareStakeholder::updateOrCreate(
+                    [
+                    'fileshare_id' => $my_id,
+                    'stakeholder_id' => $teacher->id,
+                    'stakeholder_type' => get_class($teacher)
+                    ],
+                    [
+                    'addedby_id' => Auth::user()->id,
+                    'addedby_type' => get_class(Auth::user()),
+                    'visited_fileshare'=>0 
+                    ]
+                    ); 
+                    $count++;
+                }  
+            }
+            if($count)
+                return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων. Προστέθηκαν '.$count.' ενδιαφερόμενοι');
+            else 
+                return back()->with('warning', 'Δεν βρέθηκαν ενδιαφερόμενοι που να ικανοποιούν τα κριτήρια');
+        }
+
+        return back()->with('success', 'Επιτυχής εισαγωγή κριτηρίων');
+    }
+
     /**
      * Delete all stakeholders from a microapp or fileshare
      *
@@ -161,6 +312,35 @@ class WhocanController extends Controller
 
         Log::channel('user_memorable_actions')->info(Auth::user()->username." deleted one $my_id whocan from stakeholders table of $my_app");
         return back()->with('success', 'Ο χρήστης διαγράφηκε');
+    }
+
+    public function delete_whocan_criteria(Request $request, $my_app, $my_id){
+        if($my_app == 'microapp')$class="App\Models\Microapp";
+        else if($my_app == 'fileshare')$class="App\Models\Fileshare";
+        else if($my_app == 'filecollect')$class="App\Models\Filecollect";
+
+        AccessCriteria::where('app_id', $my_id)->where('app_type', $class)->delete();
+
+        return back()->with('success', 'Επιτυχής διαγραφή κριτηρίων');
+    }
+
+    public function count_criteria_teachers(AccessCriteria $access_criteria){
+        $criteria = json_decode($access_criteria->criteria, true);
+        $count=0;
+        foreach(Teacher::all() as $teacher){
+            if(!$teacher->active)continue;
+            $satisfiesCriteria = true;
+            foreach ($criteria as $key => $value) {
+                if (!in_array($teacher->$key, $value)) {
+                    $satisfiesCriteria = false;
+                    break;
+                }  
+            }
+            if($satisfiesCriteria){
+                $count++;
+            }  
+        }
+        return response(['count'=>$count]);
     }
 
     /**

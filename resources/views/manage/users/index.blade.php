@@ -18,21 +18,6 @@
     
 <body>
     <div class="container">
-        
-    {{-- @include('menu') --}}
-    {{-- <div class="d-flex justify-content-end">
-        <a href="/users_dl" class="btn btn-primary bi bi-download"> Λήψη αρχείου χρηστών </a>
-    </div> --}}
-<!--tabs-->
-    {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link @isset($active_tab) @if($active_tab=='search') {{'active'}} @endif @else {{'active'}} @endisset" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Αναζήτηση Χρήστη</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link @isset($active_tab) @if($active_tab=='import') {{'active'}} @endif @endisset" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Μαζική Εισαγωγή Χρηστών</button>
-        </li>
-    </ul> --}}
-<!--tab content-->
     <div class="tab-content" id="myTabContent">
 
         <div class="tab-pane fade @isset($active_tab) @if($active_tab=='search') {{'show active'}}  @endif @else {{'show active'}} @endisset" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
@@ -53,7 +38,8 @@
                         <th id="search">Superadmin</th>
                         <th id="search">CreatedAt</th>
                         <th id="search">UpdatedAt</th>
-                        <th id="">Password Reset</th>
+                        <th id="">Ενέργειες</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -61,10 +47,7 @@
                         <tr>  
                             <td>{{$user->id}}</td>
                             <td>{{$user->username}}</td>
-                            @php
-                                $link = url("/user_profile/$user->id");
-                            @endphp
-                            <td><div class=" text-wrap"><a href="{{$link}}" style="">{{$user->display_name}}</a></div></td>
+                            <td><div class=" text-wrap"><a href="{{route('users.edit', $user->id)}}" style="">{{$user->display_name}}</a></div></td>
                             <td>{{$user->email}}</td>
                             <td>{{$user->department->name}}</td>
                             
@@ -76,13 +59,19 @@
                             
                             <td>{{$user->created_at}}</td>
                             <td>{{$user->updated_at}}</td>
-                            @php
-                                $link2 = url("/reset_password/$user->id");    
-                            @endphp
-                            <form action="{{$link2}}" method="post">
+                            <td>
+                            <div class="hstack gap-2">
+                            <form action="{{route('users.reset_password', $user->id)}}" method="post">
                             @csrf
-                                <td><button class="bi bi-key-fill btn btn-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button></td>
+                                <button class="bi bi-key-fill btn btn-warning" type="submit" onclick="return confirm('Επιβεβαίωση επαναφοράς κωδικού')" > </button>
                             </form>
+                            <form action="{{route('users.destroy', $user->id)}}" method="post">
+                            @method('delete')
+                            @csrf
+                                <button class="bi bi-x-circle btn btn-danger" type="submit" onclick="return confirm('Επιβεβαίωση διαγραφής χρήστη')" > </button>
+                            </form>
+                            </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -94,14 +83,15 @@
                     $sri = session('record')->id;   
                 @endphp
                 <div class="m-2 col-sm-2 btn btn-primary text-wrap">
-                    <a href="{{url("/user_profile/$sri")}}" style="color:white; text-decoration:none;">{{session('record')->id}}, {{session('record')->display_name}}, {{session('record')->username}}</a>
+                    {{-- <a href="{{url("/user_profile/$sri")}}" style="color:white; text-decoration:none;">{{session('record')->id}}, {{session('record')->display_name}}, {{session('record')->username}}</a> --}}
+                    <a href="{{route("users.edit", $sri)}}" style="color:white; text-decoration:none;">{{session('record')->id}}, {{session('record')->display_name}}, {{session('record')->username}}</a>
                 </div>
             @endif
             
             <div class="container py-5">
             <div class="container px-5">
             <nav class="navbar navbar-light bg-light">
-                <form action="{{url("/insert_user")}}" method="post" class="container-fluid">
+                <form action="{{url("/users")}}" method="post" class="container-fluid">
                     @csrf
                     <input type="hidden" name="asks_to" value="insert">
                     <div class="input-group">
@@ -154,67 +144,13 @@
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                        <a href="{{url("/manage_users")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                        {{-- <a href="{{url("/manage_users")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
+                        <a href="{{route("users.index")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                     
                 </form>
             </nav>
             </div></div>
         </div>
-
-        {{-- <div class="tab-pane fade @isset($active_tab) @if($active_tab=='import') {{'show active'}} @endif @endisset" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-            @if(empty($asks_to))
-            <nav class="navbar navbar-light bg-light">
-                <a href="{{url("/users_template.xlsx")}}" class="link-info">Πρότυπο αρχείο για συμπλήρωση</a>
-                <form action="{{url('/upload_user_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
-                    @csrf
-                    
-                    <input type="file" name="import_users" > 
-                    <button type="submit" class="btn btn-primary bi bi-filetype-xlsx"> Αποστολή αρχείου</button>
-                </form>
-            </nav>
-            @else
-            <div style="p-3 mb-2 bg-info text-dark">
-                Διαβάστηκαν οι ακόλουθοι χρήστες από το αρχείο:
-            </div>
-            
-            <table class="table table-striped table-hover table-light">
-                <tr>
-                    <th>Username</th>
-                    <th>DisplayName</th>
-                    <th>email</th>
-                    <th>password</th>
-                </tr>
-                @foreach($users_array as $user)
-                    <tr>  
-                        <td @if ($user['username']=="Κενό πεδίο" or $user['username']=="Υπάρχει ήδη το username") style='color:red;' @endif>{{$user['username']}}</td>
-                        <td @if ($user['display_name']=='Κενό πεδίο') style='color:red;' @endif>{{$user['display_name']}}</td>
-                        <td @if ($user['email']=="Κενό πεδίο" or $user['email']=="Υπάρχει ήδη το email") style='color:red;' @endif>{{$user['email']}}</td>
-                        <td @if ($user['password']=='Κενό πεδίο') style='color:red;' @endif>{{$user['password']}}</td>
-                    </tr>
-                @endforeach
-            </table>
-                @if($asks_to=='save')
-                Να προχωρήσει η εισαγωγή αυτών των στοιχείων;
-                <div class="row">
-                    <form action="{{url("/insert_users")}}" method="post" class="col container-fluid" enctype="multipart/form-data">
-                    @csrf
-                        <button type="submit" class="btn btn-primary bi bi-file-arrow-up"> Εισαγωγή</button>
-                    </form>
-                    <a href="{{url("/manage_users")}}" class="col">Ακύρωση</a>
-                </div>
-                @else
-                <div class="row">
-                    <div>
-                        Διορθώστε τα σημειωμένα σφάλματα και υποβάλετε εκ νέου το αρχείο.
-                    </div>
-                    <a href="{{url("/manage_users")}}" class="col">Ακύρωση</a>
-                </div>
-                @endif
-            @endif
-            @isset($dberror2)
-                <div class="alert alert-danger" role="alert">{{$dberror2}}</div>
-            @endisset
-        </div> --}}
     </div>
     </div>
 

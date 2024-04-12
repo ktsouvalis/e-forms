@@ -59,12 +59,6 @@ use App\Http\Controllers\microapps\InternalRulesController;
 
 Route::view('/', 'index')->name('index');
 
-Route::view('/index_user', 'index_user');
-
-Route::get('/back', function(){
-    return back();
-});
-
 Route::post('/find_entity', function(Request $request){
     if(!is_numeric($request->entity_code))
         return redirect(url('/'))->with('warning', "Θα πρέπει να καταχωρίσετε αριθητική τιμή.");
@@ -109,27 +103,21 @@ Route::view('/school_areas', 'public/school_areas')->name('school_areas_public')
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
+Route::view('/index_user', 'index_user');
+
 Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
 Route::view('/change_password', 'password_change_form')->middleware('auth');
 
 Route::post('/change_password', [UserController::class, 'passwordChange']);
 
-Route::view('/manage_users', 'users')->middleware('boss');
+// MANAGING USER ROUTES
 
-Route::post('/upload_user_template', [UserController::class, 'importUsers'])->name('upload_user_template');
+Route::resource('users', UserController::class)->middleware('boss');
 
-Route::post('/insert_users', [UserController::class, 'insertUsers']);
-
-Route::post('/insert_user', [UserController::class,'insertUser']);
-
-Route::get('/user_profile/{user}', function(User $user){
-    return view('user-profile',['user'=>$user]);
-})->middleware('boss');
-
-Route::post('/save_user/{user}', [UserController::class,'saveProfile']);
-
-Route::post('/reset_password/{user}', [UserController::class, 'passwordReset']);
+Route::group(['prefix'=>'users', 'middleware'=>'boss'], function(){
+    Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->name('users.reset_password');
+});
 
 //////// SCHOOL ROUTES
 
@@ -203,20 +191,22 @@ Route::view('/evaluation', 'evaluation');
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
-//////// MANAGE OPERATIONS ROUTES
-Route::resource('manage/operations', OperationController::class)->middleware('boss');
+//////// MANAGING OPERATIONS ROUTES
+Route::resource('operations', OperationController::class)->middleware('boss');
 
-Route::group(['prefix' =>'manage/operations'], function(){
-    Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority']);
+Route::group(['prefix' =>'operations'], function(){
+    Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority'])->name('operations.set_menu_priority');
 });
 
-//////// MANAGE MICROAPPS ROUTES
-Route::resource('manage/microapps', MicroappController::class);
+//////// MANAGING MICROAPPS ROUTES
+Route::resource('microapps', MicroappController::class)->middleware('auth');
 
-Route::group(['prefix' => 'manage/microapps'], function(){ 
-    Route::post("/change_microapp_status/{microapp}",[MicroappController::class, 'changeMicroappStatus']);
+Route::group(['prefix' => 'microapps'], function(){ 
+    // Route::post("/change_status/{microapp}",[MicroappController::class, 'changeMicroappStatus'])->name('microapps.change_status');
 
-    Route::post("/microapp_onoff/{microapp}",[MicroappController::class, 'onOff']);
+    Route::post("/change_status/{microapp}",[MicroappController::class, 'changeMicroappStatus'])->name('microapps.change_status')->middleware('can:update,microapp');
+
+    Route::post("/onoff/{microapp}",[MicroappController::class, 'onOff'])->name('microapps.onoff')->middleware('can:deactivate,'. Microapp::class);
 });
 
 //SECONDMENTS ROUTES
@@ -375,6 +365,12 @@ Route::post("/delete_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'd
 Route::post("/delete_one_whocan/{my_app}/{my_id}", [WhocanController::class, 'delete_one_whocan']);
 
 Route::post('/import_whocan/{my_app}/{my_id}', [WhocanController::class, 'import_whocans']);
+
+Route::post('/import_whocan_criteria/{my_app}/{my_id}', [WhocanController::class, 'import_whocans_with_criteria']);
+
+Route::post('/delete_whocan_criteria/{my_app}/{my_id}', [WhocanController::class, 'delete_whocan_criteria']);
+
+Route::post('/count_criteria_teachers/{access_criteria}', [WhocanController::class, 'count_criteria_teachers'])->name('whocans.count_criteria_teachers');
 
 
 // MAIL Routes

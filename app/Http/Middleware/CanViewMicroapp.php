@@ -45,6 +45,17 @@ class CanViewMicroapp
             if($teacher->microapps->where('microapp_id', $microapp->id)->count()){
                 return $next($request);
             }
+            else { 
+                if($microapp->accessCriteria){
+                    $criteria = json_decode($microapp->accessCriteria->criteria, true);
+                    foreach ($criteria as $key => $value) {
+                        if (!in_array($teacher->$key, $value)) {
+                            abort(403, "Μη εξουσιοδοτημένη ενέργεια (no access)");
+                        }
+                    }
+                    return $next($request);
+                }
+            }
         }
 
         if(Auth::guard('school')->check()){

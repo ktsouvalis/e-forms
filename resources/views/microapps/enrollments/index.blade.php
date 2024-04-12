@@ -263,7 +263,10 @@
                 @foreach($enrollments as $one_stakeholder)
                     @php
                         $one_school = $one_stakeholder->stakeholder;
+                        // $one_school = App\Models\School::find(92);
                         $one = $one_school->enrollments;
+                        $school_name_filename = str_replace(' ','_',(str_replace('/', '', $one_school->name)));
+                        // dd($school_name_filename);
                     @endphp
                         <tr>
                             <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
@@ -272,7 +275,7 @@
                             
                             <td> {{$one->nr_of_students1}}</td>
                             <td>
-                                <form action="{{route('enrollments.download_file', ['file' =>"enrollments1_$one_school->code.xlsx", 'download_file_name' => "Εγγραφέντες_$one_school->name.xlsx"] )}} " method="get">
+                                <form action="{{route('enrollments.download_file', ['file' =>"enrollments1_$one_school->code.xlsx", 'download_file_name' => "Εγγραφέντες_$school_name_filename.xlsx"] )}} " method="get">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->enrolled_file1}} </button> 
                                 </form>  
                             </td>
@@ -283,21 +286,21 @@
                             </td>
                             <td>
                                 @if($one->all_day_file1)
-                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments2_$one_school->code.xlsx", 'download_file_name' => "Ολοήμερο_$one_school->name.xlsx"] )}}" method="get">
+                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments2_$one_school->code.xlsx", 'download_file_name' => "Ολοήμερο_$school_name_filename.xlsx"] )}}" method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->all_day_file1}} </button> 
                                     </form>   
                                 @endif
                             </td>
                             <td>
                                 @if($one->extra_section_file1)
-                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments3_$one_school->code.pdf", 'download_file_name' => "Επιπλέον_Τμ_$one_school->name.pdf"] )}} " method="get">
+                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments3_$one_school->code.pdf", 'download_file_name' => "Επιπλέον_Τμ_$school_name_filename.pdf"] )}} " method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->extra_section_file1}} </button> 
                                     </form>
                                 @endif   
                             </td>
                             <td>
                                 @if($one->boundaries_st_file1)
-                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments4_$one_school->code.xlsx", 'download_file_name' => "Μαθητές_στα_όρια_$one_school->name.xlsx"] )}} " method="get">
+                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments4_$one_school->code.xlsx", 'download_file_name' => "Μαθητές_στα_όρια_$school_name_filename.xlsx"] )}} " method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->boundaries_st_file1}} </button> 
                                     </form>
                                 @endif

@@ -45,7 +45,7 @@
                     @if($user->isAdmin())
                         <div class="col-md-4 py-3" style="max-width:15rem">
                             <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/manage_users")}}">
+                                <a class="text-dark" style="text-decoration:none;" href="{{route("users.index")}}">
                                 <div class="h5 card-title fa-solid fa-users"></div>
                                 <div>Χρήστες Διεύθυνσης</div>
                                 </a> 
@@ -60,7 +60,7 @@
                     
                         <div class="col-md-4 py-3" style="max-width:15rem">
                             <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                                <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/operations")}}">
+                                <a class="text-dark" style="text-decoration:none;" href="{{route('operations.index')}}">
                                 <div class="h5 card-title fa-solid fa-toolbox"></div>
                                 <div>Διαχείριση Λειτουργιών</div>
                                 </a> 
@@ -80,7 +80,8 @@
                             <div class="card" style="background-color:{{$one_operation->color}}; font-size:small">
                                 <div style="width: 16px; height: 16px;">
                                 @if ($user->isAdmin())
-                                <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/manage/operations/".$one_operation->id."/edit") }}"></a>
+                                {{-- <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/manage/operations/".$one_operation->id."/edit") }}"></a> --}}
+                                <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ route('operations.edit', $one_operation->id) }}"></a>
                                 @endif
                                 
                                 </div>
@@ -163,7 +164,8 @@
                 <div class="row hidden-md-up justify-content-left">
                     <div class="col-md-4 py-3" style="max-width:15rem">
                         <div class="card py-3" style="background-color:Gainsboro; text-decoration:none; text-align:center; font-size:small">
-                            <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/microapps")}}">
+                            {{-- <a class="text-dark" style="text-decoration:none;" href="{{url("/manage/microapps")}}"> --}}
+                            <a class="text-dark" style="text-decoration:none;" href="{{route('microapps.index')}}">
                             <div class="h5 card-title fa-solid fa-microchip"></div>
                             <div>Μικροεφαρμογές</div>
                             </a> 
@@ -184,13 +186,15 @@
                             <div class="card" style="background-color:{{ $one_microapp->color }}; font-size:small">
                                 <div style="width: 16px; height: 16px;">
                                 @if ($user->microapps->where('microapp_id', $one_microapp->id)->where('can_edit', 1)->first() || $user->isAdmin())
-                                <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/manage/microapps/".$one_microapp->id."/edit") }}"></a>
+                                {{-- <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/manage/microapps/".$one_microapp->id."/edit") }}"></a> --}}
+                                <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ route('microapps.edit', $one_microapp->id) }}"></a>
                                 @endif
                                 </div>
                                 <div class="py-2" style="text-align:center">
                                     @php $resource = substr($one_microapp->url, 1); @endphp
                                     {{-- <a class="text-dark" style="text-decoration:none;" href="{{ url($one_microapp->url) }}"> --}}
-                                    <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}">
+                                    {{-- <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}"> --}}
+                                    <a class="text-dark" style="text-decoration:none;" href="{{ Route::has("$resource.index") ? route("$resource.index") : '#' }}">
                                         {{-- <div class="h5 card-title {{ $one_microapp->icon }}"></div> --}}
                                         <div class="h5 card-title {{ $one_microapp->icon }}"></div>
                                         <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>

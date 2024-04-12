@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use PDF;
 use App\Models\School;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -99,6 +99,12 @@ class SecondmentController extends Controller
             
         }
         return $schools;
+    }
+
+    public function createPDF(Secondment $secondment)
+    {
+        $pdf = PDF::loadView('microapps.secondments.pdf', ['secondment' => $secondment]);
+        return $pdf->download('secondment.pdf');
     }
 
 }

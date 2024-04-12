@@ -17,6 +17,7 @@ $(document).ready(function () {
                 
                 $('#calc_acid').show();
                 $('#calc_acid').html(count + ' εκπαιδευτικοί');
+                $('.criteria-calcbox').prop('disabled', true);
             },
             error: function (error) {
                 console.log("An error occurred: " + error);

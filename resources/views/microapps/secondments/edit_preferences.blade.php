@@ -194,7 +194,7 @@
                 <div class="form-group">
                     <div class="input-group mb-2">
                         <div class="px-2 input-group-text">Επισήμανση για τα Σχολεία Προτίμησης:</div>
-                        <textarea class="form-control" name="comments" id="comments" rows="4">{{$secondment->preferences_comments}}</textarea>
+                        <textarea class="form-control" name="preferences_comments" id="preferences_comments" rows="4">{{$secondment->preferences_comments}}</textarea>
                     </div>
                 </div>
                 <div class="text-center">

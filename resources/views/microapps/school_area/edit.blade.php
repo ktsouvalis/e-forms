@@ -107,7 +107,8 @@
                         @endif
                     @else <!-- show div to user of directorate only -->
                         <div class="input-group">
-                            <button type="submit" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση ορίων</button>
+                            <button type="submit" name="action" value="confirm" class="btn btn-primary m-2 bi bi-save"> Αποθήκευση ορίων</button>
+                            <button type="submit" name="action" value="no_confirm" class="btn btn-warning m-2 bi bi-save"> Αποθήκευση Ορίων χωρίς δυνατότητα επιβεβαίωσης από το σχολείο</button>
                             {{-- <a href="{{url("/school_area/$school->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>     --}}
                             <a href="{{route('school_area.edit', ['school_area'=>$school->id])}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                         </div>
@@ -124,7 +125,6 @@
                         @endif
                     @endif
                 </form>
-                
             </nav>
         </div> 
     </div>

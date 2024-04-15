@@ -4,6 +4,7 @@ namespace App\Models;
 
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\microapps\Desks;
 use App\Models\microapps\Fruit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
@@ -81,6 +82,10 @@ class School extends Authenticatable
 
     public function fruit(){
         return $this->hasOne(Fruit::class);
+    }
+
+    public function desks(){
+        return $this->hasOne(Desks::class);
     }
 
     public function school_area(){

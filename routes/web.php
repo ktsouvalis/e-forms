@@ -36,6 +36,7 @@ use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
+use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
@@ -217,6 +218,10 @@ Route::resource('secondments', SecondmentController::class);//->middleware('canV
 Route::get('/secondments/createPDF/{secondment}', [SecondmentController::class, 'createPDF'])->name('secondments.createPDF');
 
 //Route::view('/secondments', 'microapps.secondments.create');
+
+//DESKS ROUTES
+
+Route::resource('desks', DesksController::class)->middleware('canViewMicroapp');
 
 //ENROLLMENTS ROUTES
 Route::resource('enrollments', EnrollmentController::class)->middleware('canViewMicroapp');

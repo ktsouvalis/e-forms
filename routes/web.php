@@ -666,14 +666,6 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
                     $migrate = Artisan::call('migrate');
                     if ($migrate === 0) {
                         Log::channel('commands_executed')->info(Auth::user()->username.":migrate ".Artisan::output());
-                        $queue_restart = Artisan::call('queue:restart');
-                        if ($queue_restart === 0) {
-                            Log::channel('commands_executed')->info(Auth::user()->username.":queue:restart ".Artisan::output());
-                        }
-                        else{
-                            Log::channel('commands_executed')->error(Auth::user()->username.":queue:restart ".Artisan::output());
-                            $error['queue']='Αποτυχία επανεκκίνησης του queue worker';
-                        }
                     }
                     else{
                         Log::channel('commands_executed')->error(Auth::user()->username.":migrate ".Artisan::output());

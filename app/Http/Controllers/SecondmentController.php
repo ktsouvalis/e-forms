@@ -103,7 +103,7 @@ class SecondmentController extends Controller
 
     public function createPDF(Secondment $secondment)
     {
-        $pdf = PDF::loadView('microapps.secondments.pdf', ['secondment' => $secondment]);
+        $pdf = PDF::loadView('microapps.secondments.toPDF', ['secondment' => $secondment]);
         return $pdf->download('secondment.pdf');
     }
 

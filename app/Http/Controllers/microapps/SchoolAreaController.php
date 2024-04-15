@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\microapps\SchoolArea;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SchoolAreaController extends Controller
 {
@@ -18,7 +20,7 @@ class SchoolAreaController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index']);
+        $this->middleware('auth')->only(['index', 'export_xlsx']);
         $this->middleware('isSchool')->only(['create']);
         $this->middleware('canUpdateSchoolArea')->only(['edit', 'update']);
         $this->microapp = Microapp::where('url', '/school_area')->first();
@@ -83,25 +85,83 @@ class SchoolAreaController extends Controller
             }
             
             $data = json_encode($data_array, JSON_UNESCAPED_UNICODE);
-            try{
-                SchoolArea::updateOrCreate(
-                    [
-                        'school_id'=>$school->id
-                    ],
-                    [
-                        'data' => $data,
-                        'comments' => $request->input('general_com'),
-                        'confirmed' => 0,
-                    ]
-                );
+            if($request->action == "no_confirm"){
+                try{
+                    SchoolArea::updateOrCreate(
+                        [
+                            'school_id'=>$school->id
+                        ],
+                        [
+                            'data' => $data,
+                            'comments' => $request->input('general_com'),
+                        ]
+                    );
+                }
+                catch(Throwable $e){
+                    Log::channel('throwable_db')->error(Auth::user()->username.' create school area db error '.$e->getMessage());
+                    return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+                }
             }
-            catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' create school area db error '.$e->getMessage());
-                return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+            else{
+                try{
+                    SchoolArea::updateOrCreate(
+                        [
+                            'school_id'=>$school->id
+                        ],
+                        [
+                            'data' => $data,
+                            'comments' => $request->input('general_com'),
+                            'confirmed' => 0,
+                        ]
+                    );
+                }
+                catch(Throwable $e){
+                    Log::channel('throwable_db')->error(Auth::user()->username.' create school area db error '.$e->getMessage());
+                    return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+                }
             }
-
+                  
             Log::channel('stakeholders_microapps')->info(Auth::guard('web')->user()->username.' updated school area '.Carbon::now());
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
+    }
+
+    public function export_xlsx(){
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set the column names
+        $sheet->setCellValue('A1', 'Σχολείο');
+        $sheet->setCellValue('B1', 'Οδοί');
+        $sheet->setCellValue('C1', 'Σχόλια');
+
+        // Start from the second row, since the first row is the column names
+        $row = 2;
+        $previousSchoolId = null;
+        
+        foreach (SchoolArea::all() as $schoolArea) {
+            if($schoolArea->data){
+                if ($previousSchoolId !== $schoolArea->school_id) {
+                    $start_merge = ++$row; // Skip a row for the new school
+                    $previousSchoolId = $schoolArea->school_id;
+                }
+                $sheet->setCellValue('A' . $row, $schoolArea->school->name);
+
+                $data = json_decode($schoolArea->data, true);
+                foreach ($data as $item) {
+                    $sheet->setCellValue('B' . $row, $item['street']);
+                    $sheet->setCellValue('C' . $row, $item['comment']);
+                    $row++;
+                }
+                $stop_merge = $row;
+            }
+            $sheet->mergeCells('A' . $start_merge . ':A' . $stop_merge-1);
+        } 
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'school_areas.xlsx';
+        $writer->save($fileName);
+
+        ob_end_clean();
+        return response()->download($fileName)->deleteFileAfterSend(true);
     }
 }

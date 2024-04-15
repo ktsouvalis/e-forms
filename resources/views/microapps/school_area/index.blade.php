@@ -26,6 +26,10 @@
             <strong><a href="{{route('school_areas_public')}}" class="text-dark" target="_blank">Περιοχή εγγραφής μαθητών στις Σχολικές Μονάδες της Δ/νσης Π.Ε. Αχαΐας</a>
             </strong><br><br> 
         </div>
+        <form action="{{route("school_area.export_xlsx")}}" method="post">
+            @csrf
+            <button type="submit" class="btn btn-primary bi bi-filetype-xlsx"> Εξαγωγή σε Excel</button>
+        </form>
     </div>
     <div class="table-responsive py-2">
         <table  id="dataTable" class="display table table-sm table-striped table-hover">

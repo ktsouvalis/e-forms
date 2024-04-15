@@ -235,6 +235,10 @@ Route::resource('fruits', FruitsController::class)->middleware('canViewMicroapp'
 // SCHOOL AREA ROUTES
 Route::resource('school_area', SchoolAreaController::class)->middleware('canViewMicroapp');
 
+Route::group(['prefix' => 'school_area', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post('/export_xlsx', [SchoolAreaController::class, 'export_xlsx'])->name('school_area.export_xlsx');
+});
+
 // TICKETS ROUTES
 Route::resource('tickets', TicketsController::class)->middleware('canViewMicroapp');
 

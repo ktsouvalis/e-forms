@@ -165,6 +165,11 @@
                    // alert(selectedOnes);
                 </script>
             @endpush
+            <div class="text-end">
+                <form action="{{route('secondments.view_preferences', ['secondment' => $secondment->id])}}">
+                    <input type="submit" value="Προεπισκόπηση Προτιμήσεων" class="btn btn-info btn-block rounded-2 py-2">   
+                </form>
+            </div>
             <form action="{{route('secondments.update', ['secondment' => $secondment])}}" method="post">
                 @method('PUT')
                 @csrf
@@ -184,6 +189,9 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div>
+                            
+                        </div>
                 </div>
                 
                 <div class="row">
@@ -198,7 +206,9 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();">
+                    <button type="submit" action="save" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
+                    <button type="submit" action="save" value="submit" class="btn btn-danger m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
+                    {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                 </div>
             </form>
         </div>   

@@ -75,7 +75,7 @@ class SecondmentController extends Controller
         }
         
     }
-
+    
     public function getSchoolChoices($klados, $org_eae){
 
         switch($klados){

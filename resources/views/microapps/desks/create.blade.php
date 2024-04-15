@@ -10,16 +10,17 @@
     @endphp
     <div class="container">
         <div class="container px-5">
-            
+            <h5 class="py-5">
+                Παρακαλούμε για την υποβολή αριθμού θρανίων προς διάθεση <strong>ΜΟΝΟ ΣΤΗΝ ΠΕΡΙΠΤΩΣΗ</strong> που υπάρχουν περισσευούμενα θρανία προς διάθεση σε άλλη Σχολική Μονάδα</p>
+            </h5>
                 <nav class="navbar navbar-light bg-light">
                     {{-- <form action="{{url("/fruits")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
                     <form action="{{route('desks.store')}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text w-25"></span>
-                            <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για περισσευούμενα θρανία</strong>
-                            <p>Παρακαλούμε για την υποβολή αριθμού θρανίων προς διάθεση <strong>ΜΟΝΟ ΣΤΗΝ ΠΕΡΙΠΤΩΣΗ</strong> που υπάρχουν περισσευούμενα θρανία προς διάθεση σε άλλη Σχολική Μονάδα</p>
-                            </span>
+                            <span class="input-group-text w-75">Καταχώρηση στοιχείων για περισσευούμενα θρανία</span>
+                            
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25 text-wrap">Αριθμός Θρανίων προς διάθεση</span>

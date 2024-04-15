@@ -215,6 +215,8 @@ Route::group(['prefix' => 'microapps'], function(){
 
 Route::resource('secondments', SecondmentController::class);//->middleware('canViewMicroapp');
 
+Route::view('/secondments/{secondment}', 'microapps.secondments.toPDF')->name('secondments.view_preferences');
+
 Route::get('/secondments/createPDF/{secondment}', [SecondmentController::class, 'createPDF'])->name('secondments.createPDF');
 
 //Route::view('/secondments', 'microapps.secondments.create');

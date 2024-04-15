@@ -25,6 +25,10 @@
         }
     </style>
   </head>
+  @php
+    $sec = App\Models\microapps\Secondment::find($secondment);
+    $selectedOnes = json_decode($sec->preferences_json);
+  @endphp
   <body>
     <div style="width: 100%; ">
       {{-- <div style="margin-right: -15px; margin-left: -15px;"> --}}

@@ -17,7 +17,9 @@
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text w-25"></span>
-                            <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για περισσευούμενα θρανία</strong></span>
+                            <span class="input-group-text w-75"><strong>Καταχώρηση στοιχείων για περισσευούμενα θρανία</strong>
+                            <p>Παρακαλούμε για την υποβολή αριθμού θρανίων προς διάθεση <strong>ΜΟΝΟ ΣΤΗΝ ΠΕΡΙΠΤΩΣΗ</strong> που υπάρχουν περισσευούμενα θρανία προς διάθεση σε άλλη Σχολική Μονάδα</p>
+                            </span>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25 text-wrap">Αριθμός Θρανίων προς διάθεση</span>

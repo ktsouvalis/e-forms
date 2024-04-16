@@ -1,12 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use PDF;
 use App\Models\School;
+use GuzzleHttp\Client;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\microapps\Secondment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+
 class SecondmentController extends Controller
 {
     //
@@ -16,18 +22,36 @@ class SecondmentController extends Controller
     }
 
     public function update(Secondment $secondment, Request $request)
-    {   
+    {
         if(isset($request->input()['schools-select'])){
             $secondment->preferences_json = $request->input()['selectionOrder'];
         } else {
             $secondment->preferences_json = null;
         }
+        if($request->action == 'preview'){
+            return view('microapps.secondments.toPDF', ['secondment' => $secondment, 'selectionOrder' => $request->input()['selectionOrder']]);
+        }
+        //Αποθήκευσε τα στοιχεία της αίτησης χωρίς το submitted
         try{
             $secondment->update($request->input());
-            return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
+            //return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
         } catch(\Exception $e) {
             return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
         }
+        //Δημιούργησε το pdf
+        $this->createPDF($secondment, $request->input()['selectionOrder']);
+        //Στείλε την αίτηση στο πρωτόκολλο
+       $this->sendToProtocol($secondment);
+        //Ανανέωσε το submitted
+        $secondment->submitted = true;
+        try{
+            $secondment->update();
+            return redirect(route('secondments.create'))->with('success', 'Επιτυχής οριστικοποίηση αίτησης.');
+        } catch(\Exception $e) {
+            return back()->with('failure', 'Αποτυχία οριστικοποίησης αίτησης.');
+        }
+        
+
     }
     public function create() 
     {
@@ -75,7 +99,7 @@ class SecondmentController extends Controller
         }
         
     }
-    
+
     public function getSchoolChoices($klados, $org_eae){
 
         switch($klados){
@@ -101,10 +125,49 @@ class SecondmentController extends Controller
         return $schools;
     }
 
-    public function createPDF(Secondment $secondment)
-    {
-        $pdf = PDF::loadView('microapps.secondments.toPDF', ['secondment' => $secondment]);
-        return $pdf->download('secondment.pdf');
+    public function createPDF(Secondment $secondment, $selectionOrder){
+        $secondment->teacher->afm;
+        $pdf = PDF::loadView('microapps.secondments.toPDF', ['secondment' => $secondment, 'selectionOrder' => $selectionOrder]);
+        Storage::makeDirectory('secondments');
+        $path = storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf");
+        $pdf->save($path);
+        //$path = $pdf->storeAs('secondments', 'application.pdf', 'local');
+        return;
+             //return $pdf->download('secondment.pdf');
+    }
+
+    public function sendToProtocol(Secondment $secondment){
+        $data = [
+            [
+                'name'     => 'Afm',
+                'contents' => $secondment->teacher->afm
+            ],
+            [
+                'name'     => 'Files',
+                'contents' => fopen(storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf"), 'r')
+            ],
+        ];
+        if($secondment->preferences_json){
+            $selectedCodes = json_decode($secondment->preferences_json);
+            foreach($selectedCodes as $schoolCode){
+                $data[] = [
+                    'name'     => 'Schools',
+                    'contents' => $schoolCode,
+                ];
+            }
+        }
+
+        $client = new Client();
+        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/secondment', [
+            'headers' => [
+                'X-API-Key' => 'mysecretapikey',
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+        return;
     }
 
 }

@@ -130,15 +130,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="input-group mb-2">
-                        <div class="form-check form-switch">
-                            <input type="hidden" name="special_needs_position" value="0">
-                            <input class="form-check-input" type="checkbox" name="special_needs_position" value="1" id="special_needs_position_checked" @if($teacher->org_eae == 1) checked @endif>
-                            <label class="form-check-label" for="post_graduate_studies">Έχω οργανική θέση στην Ειδική Αγωγή</label>
-                        </div>
-                    </div>
-                </div>
                 
                 <div class="text-center">
                     <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2">

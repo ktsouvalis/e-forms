@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use App\Models\microapps\Ticket;
 use Illuminate\Mail\Mailables\Content;
@@ -12,11 +11,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class TicketUpdated extends Mailable
 {
-    use Queueable, SerializesModels;
-
+    use SerializesModels;
+    
     protected $id;
     
-
     /**
      * Create a new message instance.
      */

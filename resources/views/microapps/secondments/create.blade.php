@@ -125,7 +125,7 @@
                 <div class="form-group">
                     <div class="input-group mb-2">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="application_for_reposition">
                             <label class="form-check-label" for="flexSwitchCheckDefault">Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2024</label>
                         </div>
                     </div>

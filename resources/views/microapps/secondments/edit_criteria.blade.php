@@ -38,7 +38,7 @@
                             <div class="input-group-text"><i class="fa-regular fa-user text-info"></i></div>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="name_surname" name="name_surname" placeholder="" value={{$teacher->surname}} {{$teacher->name}} disabled>
+                            <input type="text" class="form-control" id="name_surname" name="name_surname" placeholder="" value="{{$teacher->surname}} {{$teacher->name}}" disabled>
                             <label for="name_surname">Ονοματεπώνυμο</label>
                         </div>
                         <div class="form-floating">
@@ -70,7 +70,7 @@
                             <div class="input-group-text"><i class="fa-solid fa-school-circle-check text-info"></i></div>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="schoool" name="school" placeholder="Οργανική Θέση" value={{$teacher->organiki->name}} disabled>
+                            <input type="text" class="form-control" id="schoool" name="school" placeholder="Οργανική Θέση" value="{{$teacher->organiki->name}}" disabled>
                             <label for="school">Οργανική Θέση</label>
                         </div>
                     </div>
@@ -87,18 +87,14 @@
                             <input type="text" class="form-control" id="days" name="days" value="5 Μήνες" disabled>
                             <input type="text" class="form-control" id="days" name="days" value="24 Ημέρες" disabled>
                             <label for="days" class="px-2" >έως 31-8-2024</label>
-                        
                     </div>
                 </div>
             </div>
-            
         </div>
-        </div>
-
-        
+        </div>        
 	</div>
 
-    {{-- Μοριοδοτούμενα Κριτήρια - Β Τμήμα Αίτησης --}}
+    {{-- Μοριοδοτούμενα Κριτήρια - Α Τμήμα Αίτησης --}}
     <div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0">
@@ -109,7 +105,7 @@
                 </div>
             </div>
             <div class="card-body p-3">
-            <form action="{{route('secondments.update', ['secondment' => $secondment, 'phase' => '1'])}}" method="post">
+            <form action="{{route('secondments.update', ['secondment' => $secondment, 'criteriaOrPreferences' => '1'])}}" method="post">
                 @method('PUT')
                 @csrf
                 <!--ειδική Κατηγορία-->
@@ -156,7 +152,7 @@
                         <div class="form-group">
                         <div class="input-group mb-2">
                             <div class="px-2 form-label input-group-text">Αριθμός τέκνων ( αφορά ανήλικα ή σπουδάζοντα τέκνα):</div>
-                                <input type="number" min="0" max="11" name="nr_of_children" @if($secondment->nr_of_children) value = {{$secondment->nr_of_children}} @endif>
+                                <input type="number" min="0" max="11" name="nr_of_children" value="{{ $secondment->nr_of_children }}">
                             </div>
                         </div>
                     </div>
@@ -359,7 +355,7 @@
                 <div class="row justify-content-right">
                     <form action="{{ route('secondments.edit', ['secondment' => $secondment]) }}" method="get">
                         <div class="text-center">
-                            <input type="hidden" name="phase" value="2"> {{-- Βήμα 2 - Δήλωση Σχολείων --}}
+                            <input type="hidden" name="criteriaOrPreferences" value="2"> {{-- Βήμα 2 - Δήλωση Σχολείων --}}
                             <input type="submit" value="Βήμα 2 - Δήλωση Σχολείων" class="btn btn-info btn-block rounded-2 py-2">
                         </div>
                     </form>

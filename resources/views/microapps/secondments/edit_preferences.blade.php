@@ -138,7 +138,7 @@
         </div>
         </div> 
 	</div>
-    {{-- Μοριοδοτούμενα Κριτήρια - Β Τμήμα Αίτησης --}}
+    {{-- Δήλωση Σχολείων Προτίμησης - Β Τμήμα Αίτησης --}}
     <div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0">
@@ -200,19 +200,29 @@
                         <textarea class="form-control" name="preferences_comments" id="preferences_comments" rows="4">{{$secondment->preferences_comments}}</textarea>
                     </div>
                 </div>
-                <div class="text-center">
-                    <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
-                    <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();"> Προεπισκόπηση</button>
-                    <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
-                    {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
-                </div>
-            </form>
+                @if($secondment->submitted == 0)
+                    <div class="text-center">
+                        <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
+                        <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();"> Προεπισκόπηση</button>
+                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
+                        {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
+                    </div>
+                </form>
+                @else
+                </form>
+                    <div class="text-center">
+                        <form action="{{route('secondments.download_file', ['secondment'=>$secondment->id, 'file_type'=>'application_form'])}}" method="get">
+                            <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
+                        </form>
+                        Η αίτηση έχει υποβληθεί οριστικά και δε μπορεί να τροποποιηθεί.
+                    </div>
+                @endif
         </div>   
-        </div>
     </div>
+</div>
+</div>
 
-    <div class="row justify-content-center">
-		<div class="col-12 col-md-8 col-lg-8 pb-5">
+    <div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0">
             <div class="card-header p-0">
                 <div class="bg-info text-white text-center py-2">
@@ -224,7 +234,7 @@
                 <div class="row justify-content-right">
                     <form action="{{ route('secondments.edit', ['secondment' => $secondment]) }}" method="get">
                         <div class="text-center">
-                            <input type="hidden" value="1" name="phase">
+                            <input type="hidden" value="1" name="criteriaOrPreferences">
                             <input type="submit" value="Βήμα 1 - Μοριοδοτούμενα κριτήρια" class="btn btn-info btn-block rounded-2 py-2">
                         </div>
                     </form>

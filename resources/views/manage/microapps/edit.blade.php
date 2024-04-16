@@ -132,7 +132,7 @@
             @if($microapp->stakeholders->count())
             
             <div class="table-responsive py-3">
-                <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails ενδιαφερόμενων</button>
+                {{-- <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails ενδιαφερόμενων</button> --}}
                 <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
                 <thead>
                     <tr>

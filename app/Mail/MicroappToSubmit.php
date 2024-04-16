@@ -15,6 +15,13 @@ class MicroappToSubmit extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+    /**
+     * The maximum number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 2;
+    
     protected $name;
     /**
      * Create a new message instance.

@@ -27,9 +27,9 @@
   </head>
   @php
     $sec = App\Models\microapps\Secondment::find($secondment);
-    $selectedOnes = json_decode($sec->preferences_json);
   @endphp
   <body>
+    
     <div style="width: 100%; ">
       {{-- <div style="margin-right: -15px; margin-left: -15px;"> --}}
           <div style="display: flex; flex-wrap: wrap; justify-content: center;">
@@ -72,22 +72,25 @@
                           </table>
                           <div>
                             @php
-                                $schools = App\Models\School::where('primary', 1)->get();
+                        
                                 $schools_array = [];
-                                foreach($schools as $school){
-                                    $schools_array[] = $school->name;
+                                $selectedSchools = [];
+                                $selectedSchools = json_decode($selectionOrder); 
+                                foreach($selectedSchools as $schoolCode){
+                                    $school = App\Models\School::where('code', $schoolCode)->first();
+                                    array_push($schools_array, $school->name);
                                 }
                                 $c=1;
                             @endphp
                             <div style="display: flex; flex-wrap: wrap;">
                                 <div style="flex: 0 0 100%;">
                                     <table style="width: 100%; border-left: 1px solid #dee2e6; color: #212529;">
-                                        @for($i=0; $i<20; $i++)
+                                        @for($i=0; $i<count($schools_array); $i++)
                                             <tr>
                                                 <td>{{$c++}}.</td>
                                                 <td style="width: 50%;">{{str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$i])}}</td>
-                                                <td>{{$c + 20}}.</td>
-                                                <td style="width: 50%;">{{str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$i + 20])}}</td>
+                                                {{-- <td>{{$c + 20}}.</td>
+                                                <td style="width: 50%;">{{str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$i + 20])}}</td> --}}
                                             </tr>
                                         @endfor
                                     </table>

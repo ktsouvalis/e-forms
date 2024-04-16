@@ -1,12 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use PDF;
 use App\Models\School;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\microapps\Secondment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+
 class SecondmentController extends Controller
 {
     //
@@ -16,18 +21,36 @@ class SecondmentController extends Controller
     }
 
     public function update(Secondment $secondment, Request $request)
-    {   
+    {
         if(isset($request->input()['schools-select'])){
             $secondment->preferences_json = $request->input()['selectionOrder'];
         } else {
             $secondment->preferences_json = null;
         }
+        if($request->action == 'preview'){
+            return view('microapps.secondments.toPDF', ['secondment' => $secondment, 'selectionOrder' => $request->input()['selectionOrder']]);
+        }
+        //Αποθήκευσε τα στοιχεία της αίτησης χωρίς το submitted
         try{
             $secondment->update($request->input());
-            return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
+            //return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
         } catch(\Exception $e) {
             return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
         }
+        //Δημιούργησε το pdf
+        $this->createPDF($secondment, $request->input()['selectionOrder']);
+        //Στείλε την αίτηση στο πρωτόκολλο
+       
+        //Ανανέωσε το submitted
+        $secondment->submitted = true;
+        try{
+            $secondment->update();
+            return redirect(route('secondments.create'))->with('success', 'Επιτυχής οριστικοποίηση αίτησης.');
+        } catch(\Exception $e) {
+            return back()->with('failure', 'Αποτυχία οριστικοποίησης αίτησης.');
+        }
+        
+
     }
     public function create() 
     {
@@ -75,7 +98,7 @@ class SecondmentController extends Controller
         }
         
     }
-    
+
     public function getSchoolChoices($klados, $org_eae){
 
         switch($klados){
@@ -101,10 +124,30 @@ class SecondmentController extends Controller
         return $schools;
     }
 
-    public function createPDF(Secondment $secondment)
-    {
-        $pdf = PDF::loadView('microapps.secondments.toPDF', ['secondment' => $secondment]);
-        return $pdf->download('secondment.pdf');
+    public function createPDF(Secondment $secondment, $selectionOrder){
+        $secondment->teacher->afm;
+        $pdf = PDF::loadView('microapps.secondments.toPDF', ['secondment' => $secondment, 'selectionOrder' => $selectionOrder]);
+        Storage::makeDirectory('secondments');
+        $path = storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf");
+        $pdf->save($path);
+        //$path = $pdf->storeAs('secondments', 'application.pdf', 'local');
+        return;
+             //return $pdf->download('secondment.pdf');
+    }
+
+    public function sendToProtocol(Secondment $secondment){
+        
+        if($res->getStatusCode() == 201){
+            // DB::table('last_update_edirectorate')->updateOrInsert(
+            //     ['id' => 1],
+            //     ['date_updated' => now()]
+            // );
+            // $output = "eDirectorate updated successfully ".$res->getBody();
+        }
+        else{
+            // $output = "eDirectorate update failed ".$res->getBody();  
+        }
+        // Log::channel('commands_executed')->info($this->username. " Queue Job UpdateEDirectorateJob: ".$output);
     }
 
 }

@@ -165,11 +165,6 @@
                    // alert(selectedOnes);
                 </script>
             @endpush
-            <div class="text-end">
-                <form action="{{route('secondments.view_preferences', ['secondment' => $secondment->id])}}">
-                    <input type="submit" value="Προεπισκόπηση Προτιμήσεων" class="btn btn-info btn-block rounded-2 py-2">   
-                </form>
-            </div>
             <form action="{{route('secondments.update', ['secondment' => $secondment])}}" method="post">
                 @method('PUT')
                 @csrf
@@ -206,8 +201,9 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button type="submit" action="save" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
-                    <button type="submit" action="save" value="submit" class="btn btn-danger m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
+                    <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
+                    <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();"> Προεπισκόπηση</button>
+                    <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
                     {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                 </div>
             </form>

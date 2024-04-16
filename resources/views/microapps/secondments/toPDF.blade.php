@@ -47,7 +47,7 @@
                               <tbody>
                                   <tr>
                                       <td colspan="2" style="padding: .75rem; border-top: 1px solid #dee2e6; border-left: 1px solid #dee2e6; text-align: right; ">Ονοματεπώνυμο: </td>
-                                      <td colspan="2" style="padding: .75rem; border-top: 1px solid #dee2e6; border-left: 1px solid #dee2e6; text-align: left;">Στεφανόπουλος Κωνσταντίνος</td>
+                                      <td colspan="2" style="padding: .75rem; border-top: 1px solid #dee2e6; border-left: 1px solid #dee2e6; text-align: left;">{{$secondment->teacher->surname}}</td>
                                     </tr>
                                     <tr>
                                       <td colspan="2" style="padding: .75rem; border-top: 1px solid #dee2e6; border-left: 1px solid #dee2e6; text-align: right; ">Κλάδος: </td>

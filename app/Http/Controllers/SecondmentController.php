@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use PDF;
 use App\Models\School;
 use GuzzleHttp\Client;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\microapps\Secondment;
@@ -40,7 +41,7 @@ class SecondmentController extends Controller
         //Δημιούργησε το pdf
         $this->createPDF($secondment, $request->input()['selectionOrder']);
         //Στείλε την αίτηση στο πρωτόκολλο
-       
+       $this->sendToProtocol($secondment);
         //Ανανέωσε το submitted
         $secondment->submitted = true;
         try{
@@ -136,18 +137,37 @@ class SecondmentController extends Controller
     }
 
     public function sendToProtocol(Secondment $secondment){
-        
-        if($res->getStatusCode() == 201){
-            // DB::table('last_update_edirectorate')->updateOrInsert(
-            //     ['id' => 1],
-            //     ['date_updated' => now()]
-            // );
-            // $output = "eDirectorate updated successfully ".$res->getBody();
+        $data = [
+            [
+                'name'     => 'Afm',
+                'contents' => $secondment->teacher->afm
+            ],
+            [
+                'name'     => 'Files',
+                'contents' => fopen(storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf"), 'r')
+            ],
+        ];
+        if($secondment->preferences_json){
+            $selectedCodes = json_decode($secondment->preferences_json);
+            foreach($selectedCodes as $schoolCode){
+                $data[] = [
+                    'name'     => 'Schools',
+                    'contents' => $schoolCode,
+                ];
+            }
         }
-        else{
-            // $output = "eDirectorate update failed ".$res->getBody();  
-        }
-        // Log::channel('commands_executed')->info($this->username. " Queue Job UpdateEDirectorateJob: ".$output);
+
+        $client = new Client();
+        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/secondment', [
+            'headers' => [
+                'X-API-Key' => 'mysecretapikey',
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+        return;
     }
 
 }

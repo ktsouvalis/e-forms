@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
             ->monthly();
             // ->appendOutputTo(storage_path('logs/custom_cron_commands.log'));
 
-        $schedule->command('update-e-directorate')
-            ->dailyAt('16:00');
+        // $schedule->command('update-e-directorate')
+        //     ->dailyAt('16:00');
 
         $schedule->command('queue:work --stop-when-empty')
             ->everyMinute(); 

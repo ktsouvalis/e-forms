@@ -31,8 +31,10 @@ class EnrollmentController extends Controller
     }
 
     public function save($select, Request $request){
+        $rule = null;
         $school = Auth::guard('school')->user();
-        $filename = $request->file('file')->getClientOriginalName();
+        if($request->file('file'))
+            $filename = $request->file('file')->getClientOriginalName();
             
         //handle the file
         switch($select) {
@@ -58,21 +60,25 @@ class EnrollmentController extends Controller
                     $rule = [
                         'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                     ];
+                
+                    $filename_to_store = "enrollments2_".$school->code.".xlsx";
+                    $values = array(
+                        'nr_of_students1_all_day1' => $request->input('nr_of_students1_all_day1'),
+                        'all_day_file1' => $filename
+                    ); 
                 }
-                $filename_to_store = "enrollments2_".$school->code.".xlsx";
-                $values = array(
-                    'nr_of_students1_all_day1' => $request->input('nr_of_students1_all_day1'),
-                    'all_day_file1' => $filename
-                ); 
+                else {
+                    $values = array(
+                        'nr_of_students1_all_day1' => $request->input('nr_of_students1_all_day1')
+                    );
+                }
 
             break;
             case 'extra_section':
                 if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
-                if($request->file('file')){
-                    $rule = [
-                        'file' => 'mimetypes:application/pdf'
-                    ];
-                }
+                $rule = [
+                    'file' => 'mimetypes:application/pdf|required'
+                ];
                 $filename_to_store = "enrollments3_".$school->code.".pdf";
                 $values = array(
                     'extra_section_file1' => $filename
@@ -81,11 +87,9 @@ class EnrollmentController extends Controller
             break;
             case 'boundary_students':
                 if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
-                if($request->file('file')){
-                    $rule = [
-                        'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                    ];
-                }
+                $rule = [
+                    'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|required'
+                ];
                 $filename_to_store = "enrollments4_".$school->code.".xlsx";
                 $values = array(
                     'boundaries_st_file1' => $filename
@@ -96,25 +100,28 @@ class EnrollmentController extends Controller
                 return back()->with('failure', 'Κάτι δεν πήγε καλά. Δοκιμάστε ξανά.');
             break;
         }
-        $validator = Validator::make($request->all(), $rule);
-        if($validator->fails()){ 
-            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+        if($rule){
+            $validator = Validator::make($request->all(), $rule);
+            if($validator->fails()){ 
+                return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
+            }
+            try{
+                $path = $request->file('file')->storeAs('enrollments', $filename_to_store);
+            }
+            catch(Throwable $e){
+                try{
+                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create enrollments file error ".$e->getMessage());
+                }
+                catch(Throwable $e){
+        
+                }
+                return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
+            }
         }
         
         //store the file
        
-        try{
-            $path = $request->file('file')->storeAs('enrollments', $filename_to_store);
-        }
-        catch(Throwable $e){
-            try{
-                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." create enrollments file error ".$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
-            return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
-        }
+        
         if($this->microapp->accepts){
             try{
                 Enrollment::updateOrCreate(

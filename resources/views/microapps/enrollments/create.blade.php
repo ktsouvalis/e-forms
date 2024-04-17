@@ -7,8 +7,10 @@
         $app_name = $microapp->name;
         if($school->enrollments){
             $old_data = $school->enrollments;
+            $required ='';
         }else{
             $old_data = null;
+            $required = 'required';
         }
     @endphp
     
@@ -68,7 +70,7 @@
                                 <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
                             </td>
                             <td>
-                                <input name="file" type="file" class="form-control">
+                                <input name="file" type="file" class="form-control" $required>
                                 @if(!$accepts)
                                     <div class='alert alert-warning text-center my-2'>
                                         <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
@@ -157,7 +159,7 @@
                             <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
                         </td>
                         <td>
-                            <input name="file" type="file" class="form-control">
+                            <input name="file" type="file" class="form-control" $required>
                             @if(!$accepts)
                                 <div class='alert alert-warning text-center my-2'>
                                     <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές </strong>

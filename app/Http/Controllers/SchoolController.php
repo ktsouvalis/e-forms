@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Events\SchoolsTeachersUpdated;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -116,11 +117,11 @@ class SchoolController extends Controller
         $schools_array = session('schools_array');
         session()->forget('schools_array');
         $error=false;
-        $existing = School::all();
+        $wasChanged = false;
         foreach($schools_array as $school){
             // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE, update existing records based on 'code' field
             try{
-                School::updateOrCreate(
+                $schoolModel = School::updateOrCreate(
                     [
                         'code' => $school['code']
                     ],
@@ -142,6 +143,9 @@ class SchoolController extends Controller
                         'address' => $school['address'],
                     ]
                 );
+                if ($schoolModel->wasRecentlyCreated or $schoolModel->wasChanged()) {
+                    $wasChanged = true;
+                }
             }
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code'].' '.$e->getMessage());
@@ -149,9 +153,10 @@ class SchoolController extends Controller
                 continue;    
             }
         }
-        if(School::all()!=$existing){
+        if ($wasChanged) {
             DB::table('last_update_schools')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
-        }
+            event(new SchoolsTeachersUpdated());
+        }   
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools');
             return redirect(url('/schools'))
@@ -264,8 +269,10 @@ class SchoolController extends Controller
                 $school = School::find($one_director['school_id']);
                 $school_director = Teacher::find($one_director['teacher_id']);
                 $school->director_id = $school_director->id;
-                $school->save();
-                $done_at_least_once=true;
+                if($school->isDirty()){
+                    $school->save();
+                    $done_at_least_once=true;
+                }
             }
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id'].' '.$e->getMessage());
@@ -276,6 +283,7 @@ class SchoolController extends Controller
         }
         if($done_at_least_once){
             DB::table('last_update_directors')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
+            event(new SchoolsTeachersUpdated());
         }
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertDirectors');

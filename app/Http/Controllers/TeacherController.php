@@ -14,26 +14,15 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Events\SchoolsTeachersUpdated;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class TeacherController extends Controller
 {
-    /**
-     * Return the generic view for forms
-     *
-     * @param Form $form The form model instance.
-     * @return \Illuminate\View\View The rendered view.
-     */
-    public function makeForm(Form $form){
-    
-        return view('teacher_view', ['form' => $form]);
-    }
-
     public function login($md5){ 
-       
         $teacher = Teacher::where('md5', $md5)->firstOrFail();
         //logs the teacher in using the 'teacher' guard
         Auth::guard('teacher')->login($teacher);
@@ -97,6 +86,7 @@ class TeacherController extends Controller
         $error=0;
         $rowSumValue="1";
         $error=false;
+        $wasChanged=false;
         while ($rowSumValue != "" && $row<10000){
             $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
             $teacher_afm = substr($afm,2,-1); // remove from start =" and remove from end "
@@ -125,7 +115,10 @@ class TeacherController extends Controller
                     $structure = app("App\\Models\\$model")->where($field, $var_field_straight)->first();   
                     $teacher->ypiretisi_id = $structure->id;
                     $teacher->ypiretisi_type = "App\\Models\\$model";
-                    $teacher->save();    
+                    if($teacher->isDirty()){
+                        $wasChanged = true;
+                        $teacher->save();
+                    }    
                 }
             }
             $row++;
@@ -133,6 +126,10 @@ class TeacherController extends Controller
             for($col=1;$col<=54;$col++){
                 $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
             }
+        }
+        if($wasChanged){
+            DB::table('last_update_teachers')->updateOrInsert(['id' => 1],['date_updated' => now()]);
+            event(new SchoolsTeachersUpdated());
         }
         return $error;
     }
@@ -343,11 +340,11 @@ class TeacherController extends Controller
         $teachers_array = session('teachers_array');
         session()->forget('teachers_array');
         $error=false;
-        $existing = Teacher::all();
+        $wasChanged=false;
         // CREATE OR UPDATE (based on 'afm' field) EXISTING TEACHERS
         foreach($teachers_array as $teacher){
             try{
-                Teacher::updateOrcreate(
+                $teacherModel = Teacher::updateOrcreate(
                     [
                         'afm'=> $teacher['afm'] 
                     ],
@@ -373,7 +370,9 @@ class TeacherController extends Controller
                         'active'=>1
                     ]
                 );
-                
+                if($teacherModel->wasRecentlyCreated or $teacherModel->wasChanged()){
+                    $wasChanged = true;
+                }
             }
             catch(Throwable $e){
                 // Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
@@ -385,8 +384,10 @@ class TeacherController extends Controller
         // make not active the teachers that exist in database but not in 4.1 and 4.2
         Teacher::whereNotIn('afm', collect($teachers_array)->pluck('afm'))->update(['active' => 0]);
         
-        if(Teacher::all()!=$existing)
-            DB::table('last_update_teachers')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
+        if($wasChanged){
+            DB::table('last_update_teachers')->updateOrInsert(['id' => 1],['date_updated' => now()]);
+            event(new SchoolsTeachersUpdated());
+        }
         
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertTeachers');

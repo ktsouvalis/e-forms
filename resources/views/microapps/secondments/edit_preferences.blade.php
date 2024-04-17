@@ -38,23 +38,29 @@
                 });
                
                 if(selectedOnes.length >0){
-                //    selectedOnes = selectedOnes.map(function(item){
-                //         return '"' + item + '"';
-                //     });
-                    // Sort the <option> elements based on the order of the values in selectedOnes
-                $('#schools-select option').sort(function(a, b) {
-                    var aValue = selectedOnes.indexOf(a.value);
-                    var bValue = selectedOnes.indexOf(b.value);
-                    return aValue - bValue;
-                }).appendTo('#schools-select');
+                    //    selectedOnes = selectedOnes.map(function(item){
+                    //         return '"' + item + '"';
+                    //     });
+                        // Sort the <option> elements based on the order of the values in selectedOnes
+                    $('#schools-select option').sort(function(a, b) {
+                        var aValue = selectedOnes.indexOf(a.value);
+                        var bValue = selectedOnes.indexOf(b.value);
+                        return aValue - bValue;
+                    }).appendTo('#schools-select');
 
-                // Select the options and refresh the multi-select dropdown
-                selectedOnes.forEach(function(item) {
-                    $('#schools-select').multiSelect('select', item);
-                });
-                $('#schools-select').multiSelect('refresh');
-                    
+                    // Select the options and refresh the multi-select dropdown
+                    selectedOnes.forEach(function(item) {
+                        $('#schools-select').multiSelect('select', item);
+                    });
+                    $('#schools-select').multiSelect('refresh');
                 }
+                //if secondment application is submitted, disable the school choices
+                var isSubmitted = {!! json_encode($secondment->submitted) !!};
+                if (isSubmitted == 1) {
+                    $('#schools-select option').prop('disabled', true);
+                    $('#schools-select').multiSelect('refresh');
+                }
+                
                     
             });
             function getSelectedInOrder() {
@@ -165,7 +171,7 @@
                    // alert(selectedOnes);
                 </script>
             @endpush
-            <form action="{{route('secondments.update', ['secondment' => $secondment])}}" method="post">
+            <form action="{{route('secondments.update', ['secondment' => $secondment,'criteriaOrPreferences' => '2'])}}" method="post">
                 @method('PUT')
                 @csrf
                 <!--Σχολικές Μονάδες-->
@@ -178,7 +184,7 @@
                     <div class="col-12 col-md-12">
                         <div class="input-group mb-2">
                             <input type="hidden" id="selectionOrderInput" name="selectionOrder">
-                            <select multiple="multiple" id="schools-select" name="schools-select[]">
+                            <select multiple="multiple" id="schools-select" name="schools-select[]" @if($secondment->submitted == 1)  @endif>
                                 @foreach($schoolChoices as $school)
                                     <option value="{{$school->code}}" @if(in_array($school->code, old('schools-select', []))) selected @endif>{{$school->name}}</option>
                                 @endforeach
@@ -211,7 +217,7 @@
                 @else
                 </form>
                     <div class="text-center">
-                        <form action="{{route('secondments.download_file', ['secondment'=>$secondment->id, 'file_type'=>'application_form'])}}" method="get">
+                        <form action="{{route('secondments.download_file', ['file'=>'125827324_application_form.pdf', 'download_file_name'=>'ΑΓΓΕΛΑΚΟΠΟΥΛΟΥ_Δήλωση_Προτιμήσεων.pdf'])}}" method="get">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
                         </form>
                         Η αίτηση έχει υποβληθεί οριστικά και δε μπορεί να τροποποιηθεί.

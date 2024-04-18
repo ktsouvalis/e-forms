@@ -218,6 +218,8 @@ Route::view('/secondments/{secondment}', 'microapps.secondments.toPDF')->name('s
 
 Route::get('/secondments/createPDF/{secondment}', [SecondmentController::class, 'createPDF'])->name('secondments.createPDF');
 
+Route::get("/{file}/{download_file_name}", [SecondmentController::class, 'download_file'])->name('secondments.download_file');
+
 //Route::view('/secondments', 'microapps.secondments.create');
 
 //DESKS ROUTES

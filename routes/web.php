@@ -35,6 +35,7 @@ use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
@@ -209,6 +210,9 @@ Route::group(['prefix' => 'microapps'], function(){
 
     Route::post("/onoff/{microapp}",[MicroappController::class, 'onOff'])->name('microapps.onoff')->middleware('can:deactivate,'. Microapp::class);
 });
+
+//NOTIFICATIONS ROUTES
+Route::resource('notifications', NotificationController::class)->middleware('auth');
 
 //SECONDMENTS ROUTES
 

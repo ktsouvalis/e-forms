@@ -20,16 +20,16 @@ class MicroappToSubmit extends Mailable implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 2;
-    
+    public $username; 
     protected $name;
     /**
      * Create a new message instance.
      */
-    public function __construct(public MicroappStakeholder $stakeholder)
+    public function __construct(public MicroappStakeholder $stakeholder, $username='system')
     {
         //
         $this->name = $this->stakeholder->microapp->name;
+        $this->username = $username;
     }
 
     /**

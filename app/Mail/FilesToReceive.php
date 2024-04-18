@@ -20,16 +20,16 @@ class FilesToReceive extends Mailable implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 2;
-    
+    public $username;
     protected $name;
     /**
      * Create a new message instance.
      */
-    public function __construct(public Fileshare $fileshare, public FileshareStakeholder $stakeholder)
+    public function __construct(public Fileshare $fileshare, public FileshareStakeholder $stakeholder, $username='system')
     {
         //
         $this->name = $this->fileshare->name;
+        $this->username = $username;
     }
 
     /**

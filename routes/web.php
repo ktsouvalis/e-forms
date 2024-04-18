@@ -12,7 +12,6 @@ use App\Models\Operation;
 use App\Models\Consultant;
 use App\Models\Filecollect;
 use Illuminate\Http\Request;
-use App\Mail\MicroappToSubmit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
 use App\Jobs\UpdateEDirectorateJob;

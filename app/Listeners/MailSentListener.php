@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Mail\FilesToUpload;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Queue\InteractsWithQueue;

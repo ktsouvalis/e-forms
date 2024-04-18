@@ -21,15 +21,16 @@ class FilesToUpload extends Mailable implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 2;
+    public $username;
     protected $name;
     /**
      * Create a new message instance.
      */
-    public function __construct(public Filecollect $filecollect, public FilecollectStakeholder $stakeholder)
+    public function __construct(public Filecollect $filecollect, public FilecollectStakeholder $stakeholder, $username='system')
     {
         //
         $this->name = $this->filecollect->name;
+        $this->username = $username;
     }
 
     /**

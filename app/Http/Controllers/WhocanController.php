@@ -353,17 +353,17 @@ class WhocanController extends Controller
     public function preview_mail_to_all($my_app, $my_id){
         if($my_app=="microapp"){
             $stakeholder = Microapp::find($my_id)->stakeholders->first();
-            return new MicroappToSubmit($stakeholder);
+            return new MicroappToSubmit($stakeholder, Auth::user()->username);
         }
         else if($my_app=="fileshare"){
             $fileshare = Fileshare::find($my_id);
             $stakeholder = $fileshare->stakeholders->first();
-            return new FilesToReceive($fileshare, $stakeholder);
+            return new FilesToReceive($fileshare, $stakeholder, Auth::user()->username);
         }
         else if($my_app=="filecollect"){
             $filecollect = Filecollect::find($my_id);
             $stakeholder = $filecollect->stakeholders->first();  
-            return new FilesToUpload($filecollect, $stakeholder);
+            return new FilesToUpload($filecollect, $stakeholder, Auth::user()->username);
         }
     }
     
@@ -381,7 +381,7 @@ class WhocanController extends Controller
             $stakeholders = $fileshare->stakeholders;
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+                Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder, Auth::user()->username));
             }
             Log::channel('mails')->info(Auth::user()->username. " Fileshare $fileshare->id, MailToStakeholders try");
         }
@@ -390,7 +390,7 @@ class WhocanController extends Controller
             $stakeholders = $microapp->stakeholders;  
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                Mail::to($mail)->send(new MicroappToSubmit($stakeholder, Auth::user()->username));
             }
             Log::channel('mails')->info(Auth::user()->username." Microapp $microapp->name, MailToStakeholders try");
         }
@@ -399,7 +399,7 @@ class WhocanController extends Controller
             $stakeholders = $filecollect->stakeholders;
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));
+                Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder, Auth::user()->username));
             }  
             Log::channel('mails')->info(Auth::user()->username." Filecollect $filecollect->id, MailToStakeholders try");
         }
@@ -423,12 +423,12 @@ class WhocanController extends Controller
                 if($microapp->url == "/all_day_school"){
                     // επειδή το ολοήμερο είναι μηνιαία υποβολή, ενημερώνεται το σχολείο αν δεν έχει υποβάλλει τον τρέχοντα μήνα
                     if(!$stakeholder->stakeholder->all_day_schools->where('month_id', Month::getActiveMonth()->id)->count()){
-                        Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                        Mail::to($mail)->send(new MicroappToSubmit($stakeholder, Auth::user()->username));
                     }
                 }
                 else{
                     if(!$stakeholder->hasAnswer){
-                        Mail::to($mail)->send(new MicroappToSubmit($stakeholder));
+                        Mail::to($mail)->send(new MicroappToSubmit($stakeholder, Auth::user()->username));
                     }  
                 }
             }
@@ -443,7 +443,7 @@ class WhocanController extends Controller
         if($stakeholders->count())
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+                Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder, Auth::user()->username));
             }
         else{
             return back()->with('warning','Δεν υπάρχουν αποδέκτες');
@@ -459,7 +459,7 @@ class WhocanController extends Controller
         if($stakeholders->count())
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+                Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder, Auth::user()->username));
             }
         else{
             return back()->with('warning','Δεν υπάρχουν αποδέκτες');
@@ -471,7 +471,7 @@ class WhocanController extends Controller
 
     public function personal_fileshare_mail(Fileshare $fileshare, Request $request, FileshareStakeholder $stakeholder){
         $mail = $stakeholder->stakeholder->mail;
-        Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder));
+        Mail::to($mail)->send(new FilesToReceive($fileshare, $stakeholder, Auth::user()->username));
         Log::channel('mails')->info(Auth::user()->username." Fileshare $fileshare->id, personal MailToStakeholder try: $mail"); 
        
         return back()->with('success', 'Θα ενημερωθεί ο ενδιαφερόμενος. Μπορείτε να παρακολουθήσετε την πρόοδο της αποστολής στο log mails');
@@ -482,7 +482,7 @@ class WhocanController extends Controller
         if($stakeholders->count())
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));  
+                Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder, Auth::user()->username));  
             }
         else{
             return back()->with('warning','Δεν υπάρχουν αποδέκτες');
@@ -497,7 +497,7 @@ class WhocanController extends Controller
         if($stakeholders->count())
             foreach($stakeholders as $stakeholder){
                 $mail = $stakeholder->stakeholder->mail;
-                Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder)); 
+                Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder, Auth::user()->username)); 
             }
         else{
             return back()->with('warning','Δεν υπάρχουν αποδέκτες');
@@ -509,7 +509,7 @@ class WhocanController extends Controller
 
     public function personal_filecollect_mail(Filecollect $filecollect, Request $request, FilecollectStakeholder $stakeholder){
         $mail = $stakeholder->stakeholder->mail;
-        Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder));
+        Mail::to($mail)->send(new FilesToUpload($filecollect, $stakeholder, Auth::user()->username));
         Log::channel('mails')->info(Auth::user()->username." Filecollect $filecollect->id, personal MailToStakeholder success: $mail");  
 
         return back()->with('success', 'Θα ενημερωθεί ο ενδιαφερόμενος. Μπορείτε να παρακολουθήσετε την πρόοδο της αποστολής στο log mails');

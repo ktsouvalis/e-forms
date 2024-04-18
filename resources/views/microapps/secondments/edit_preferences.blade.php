@@ -2,7 +2,8 @@
     @php
         $teacher = Auth::guard('teacher')->user(); //check which teacher is logged in
        // $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
-       // $accepts = $microapp->accepts; //fetch microapp 'accepts' field                                           
+       // $accepts = $microapp->accepts; //fetch microapp 'accepts' field    
+       $organiki_school_code = $teacher->organiki->code;                                       
     @endphp
     @push('links')
         <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
@@ -36,7 +37,14 @@
                         });
                     }
                 });
-               
+
+                // Remove the school where the teacher is currently working from the list of available schools
+                $('#schools-select option[value= {!! json_encode($organiki_school_code) !!} ]').remove();
+                $('#schools-select option[value= "9999999" ]').remove();
+                $('#schools-select option[value= "9060439" ]').remove();
+                $('#schools-select option[value= "9060552" ]').remove();
+                $('#schools-select').multiSelect('refresh');
+
                 if(selectedOnes.length >0){
                     //    selectedOnes = selectedOnes.map(function(item){
                     //         return '"' + item + '"';
@@ -90,11 +98,11 @@
                             <div class="input-group-text"><i class="fa-regular fa-user text-info"></i></div>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="name_surname" name="name_surname" placeholder="" value={{$teacher->surname}} {{$teacher->name}} disabled>
+                            <input type="text" class="form-control" id="name_surname" name="name_surname" placeholder="" value="{{$teacher->surname}} {{$teacher->name}}" disabled>
                             <label for="name_surname">Ονοματεπώνυμο</label>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="fathers_name" name="fathers_name" placeholder="" value={{$teacher->fname}} disabled>
+                            <input type="text" class="form-control" id="fathers_name" name="fathers_name" placeholder="" value="{{$teacher->fname}}" disabled>
                             <label for="fathers_name">Πατρώνυμο</label>
                         </div>
                     </div>
@@ -106,11 +114,11 @@
                             <div class="input-group-text"><i class="fa-solid fa-person-chalkboard text-info"></i></div>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="specialty" name="specialty" placeholder="" value={{$teacher->klados}} disabled>
+                            <input type="text" class="form-control" id="specialty" name="specialty" placeholder="" value="{{$teacher->klados}}" disabled>
                             <label for="specialty">Κλάδος</label>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="am" name="am" placeholder="" value={{$teacher->am}} disabled>
+                            <input type="text" class="form-control" id="am" name="am" placeholder="" value="{{$teacher->am}}" disabled>
                             <label for="am">Αριθμός Μητρώου</label>
                         </div>
                     </div>
@@ -122,7 +130,7 @@
                             <div class="input-group-text"><i class="fa-solid fa-school-circle-check text-info"></i></div>
                         </div>
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="schoool" name="school" placeholder="Οργανική Θέση" value={{$teacher->organiki->name}} disabled>
+                            <input type="text" class="form-control" id="schoool" name="school" placeholder="Οργανική Θέση" value="{{$teacher->organiki->name}}" disabled>
                             <label for="school">Οργανική Θέση</label>
                         </div>
                     </div>
@@ -184,7 +192,7 @@
                     <div class="col-12 col-md-12">
                         <div class="input-group mb-2">
                             <input type="hidden" id="selectionOrderInput" name="selectionOrder">
-                            <select multiple="multiple" id="schools-select" name="schools-select[]" @if($secondment->submitted == 1)  @endif>
+                            <select multiple="multiple" id="schools-select" name="schools-select[]">
                                 @foreach($schoolChoices as $school)
                                     <option value="{{$school->code}}" @if(in_array($school->code, old('schools-select', []))) selected @endif>{{$school->name}}</option>
                                 @endforeach
@@ -203,13 +211,14 @@
                 <div class="form-group">
                     <div class="input-group mb-2">
                         <div class="px-2 input-group-text">Επισήμανση για τα Σχολεία Προτίμησης:</div>
-                        <textarea class="form-control" name="preferences_comments" id="preferences_comments" rows="4">{{$secondment->preferences_comments}}</textarea>
+                        <textarea class="form-control" name="preferences_comments" id="preferences_comments" rows="4"
+                        @if($secondment->submitted == 1) disabled @endif >{{$secondment->preferences_comments}}</textarea>
                     </div>
                 </div>
                 @if($secondment->submitted == 0)
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
-                        <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();"> Προεπισκόπηση</button>
+                        <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
                         <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
                         {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                     </div>
@@ -220,7 +229,7 @@
                         <form action="{{route('secondments.download_file', ['file'=>'125827324_application_form.pdf', 'download_file_name'=>'ΑΓΓΕΛΑΚΟΠΟΥΛΟΥ_Δήλωση_Προτιμήσεων.pdf'])}}" method="get">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
                         </form>
-                        Η αίτηση έχει υποβληθεί οριστικά και δε μπορεί να τροποποιηθεί.
+                        Η αίτηση έχει υποβληθεί οριστικά με αριθ. πρωτ {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας και δε μπορεί να τροποποιηθεί.
                     </div>
                 @endif
         </div>   

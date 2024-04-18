@@ -32,9 +32,7 @@
   </head>
   <body>
     <header>
-
     </header>
-    
         <table style="width: 95%; border: 1px solid #0a58ca; margin-bottom: 1rem; margin-top: 75px; color: #212529; margin-left: auto; margin-right: auto;">
             <thead>
                 <tr>
@@ -103,9 +101,9 @@
             @if(($i >= 0 && $i < 15) || ($i >= 30 && $i < 50) || ($i >= 70 && $i < 90) || ($i >= 110 && $i < 130) || ($i >= 150 && $i < 170))
                     <tr>
                         <td style="width: 5%;">{{isset($schools_array[$i])? $cLeft++ : ''}}</td>
-                        <td style="width: 45%; word-wrap: break-word;">{{isset($schools_array[$i]) ?str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$i]) : ''}}</td>
+                        <td style="width: 45%; word-wrap: break-word;">{{isset($schools_array[$i]) ?str_replace(["ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "ΝΗΠΙΑΓΩΓΕΙΟ"],["Δ.Σ.", "ΝΗΠ."], $schools_array[$i]) : ''}}</td>
                         <td style="width: 5%;">{{isset($schools_array[$j]) ? $cRight: ''}}</td>
-                        <td style="width: 45%; word-wrap: break-word;">{{isset($schools_array[$j]) ? str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$j]) : ''}}</td>
+                        <td style="width: 45%; word-wrap: break-word;">{{isset($schools_array[$j]) ? str_replace(["ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "ΝΗΠΙΑΓΩΓΕΙΟ"],["Δ.Σ.", "ΝΗΠ."], $schools_array[$j]) : ''}}</td>
                     </tr>
             @endif
         @endfor

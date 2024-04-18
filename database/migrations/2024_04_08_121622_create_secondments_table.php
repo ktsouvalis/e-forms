@@ -37,6 +37,8 @@ return new class extends Migration
             $table->text('files_json')->nullable();
             $table->text('preferences_json')->nullable();
             $table->text('preferences_comments')->nullable();
+            $table->string('protocol_nr')->nullable();
+            $table->string('protocol_date')->nullable();
             $table->timestamps();
         });
     }

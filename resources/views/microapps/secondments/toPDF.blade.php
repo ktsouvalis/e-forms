@@ -30,9 +30,6 @@
         }
     </style>
   </head>
-  @php
-    $sec = App\Models\microapps\Secondment::find($secondment);
-  @endphp
   <body>
     <header>
 
@@ -81,35 +78,56 @@
                 $school = App\Models\School::where('code', $schoolCode)->first();
                 array_push($schools_array, $school->name);
             }
-        $cLeft=1;
         @endphp
-        
-        @for($i=0; $i<150; $i++)
-            @php 
-                $j=$i + 15; 
-                $cRight = $cLeft + 15; 
+        <table style='width: 93%; color: #212529; margin-left: auto; margin-right: auto;'>
+            <tbody>
+        @for($i=0; $i<190; $i++)
+            @php
+                if($i<=15)
+                    $j=$i + 15;
+                else
+                    $j=$i + 20;
+                $cLeft = $i + 1;
+                $cRight = $j + 1; 
                 if($i == count($schools_array)) 
                     break;
             @endphp
 
-            @if($cLeft == 1) <table style='width: 93%; color: #212529; margin-left: auto; margin-right: auto;'>
-            <tbody> @endif
-            @if($cLeft == 16)
+           
+            @if($i == 30 || $i == 70 || $i == 110 || $i == 150)
                 </tbody></table>
                 <hr><div style='page-break-before: always;'></div><hr>
                 <table style='width: 93%; color: #212529; margin-left: auto; margin-right: auto;'>
                 <tbody>
             @endif
+            @if(($i >= 0 && $i < 15) || ($i >= 30 && $i < 50) || ($i >= 70 && $i < 90) || ($i >= 110 && $i < 130) || ($i >= 150 && $i < 170))
                     <tr>
                         <td style="width: 5%;">{{isset($schools_array[$i])? $cLeft++ : ''}}</td>
                         <td style="width: 45%; word-wrap: break-word;">{{isset($schools_array[$i]) ?str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$i]) : ''}}</td>
                         <td style="width: 5%;">{{isset($schools_array[$j]) ? $cRight: ''}}</td>
                         <td style="width: 45%; word-wrap: break-word;">{{isset($schools_array[$j]) ? str_replace("ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ", "Δ.Σ.", $schools_array[$j]) : ''}}</td>
                     </tr>
+            @endif
         @endfor
     </tbody></table>
-    {{-- <footer>
+
+    <table style='width: 93%; color: #212529; margin-left: auto; margin-right: auto;'>
+        <tbody>
+            <tr>
+                <td style="text-align: left;">Παρατήρηση - Επισήμανση: {{$secondment->preferences_comments}}.</td>
+            </tr>
+        </tbody>
+    </table>
+    <table style='width: 93%; color: #212529; margin-left: auto; margin-right: auto;'>
+        <tbody>
+            <tr>
+                <td style="text-align: left;">{{isset($secondment->submit_date)?$secondment->submit_date->format('d/m/Y'):''}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div></div>
+    <footer>
         Αυτόματη δημιουργία εγγράφου από Ηλεκτρονικές Φόρμες της Δ/νσης Π.Ε. Αχαΐας
-    </footer> --}}
+    </footer>
   </body>
 </html>

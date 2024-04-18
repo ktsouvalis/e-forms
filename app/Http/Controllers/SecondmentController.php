@@ -68,7 +68,8 @@ class SecondmentController extends Controller
             }
             
             //Στείλε την αίτηση στο πρωτόκολλο
-            if(!$this->sendToProtocol($secondment)){
+            $protocol_message = $this->sendToProtocol($secondment);
+            if($protocol_message == false){
                 return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η αποστολή στο πρωτόκολλο. Προσπαθήστε ξανά. Σε περίπτωση προβλήματος παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
 
@@ -76,7 +77,7 @@ class SecondmentController extends Controller
             try{
                 $secondment->submitted = false;
                 $secondment->update();
-                return redirect(route('secondments.create'))->with('success', 'Επιτυχής οριστικοποίηση αίτησης.');
+                return back()->with('success', 'Επιτυχής οριστικοποίηση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $protocol_message . '.');
             } catch(\Exception $e) {
                 return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
             }
@@ -199,7 +200,11 @@ class SecondmentController extends Controller
         // Get the response body
         $status = $response->getStatusCode();
         $body = $response->getBody();
-        return true;
+        if($status != 200){
+            return false;
+        } else {
+            return $body;
+        }
     }
 
     public function download_file($file, $download_file_name = null){

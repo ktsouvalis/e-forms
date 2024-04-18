@@ -75,11 +75,14 @@ class SecondmentController extends Controller
 
             //Ανανέωσε το submitted
             try{
-                $secondment->submitted = false;
+                $secondment->protocol_nr = $protocol_message[0];
+                $secondment->protocol_date = (string) $protocol_message[1];
+                $secondment->submitted = 1;
                 $secondment->update();
                 return back()->with('success', 'Επιτυχής οριστικοποίηση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $protocol_message . '.');
             } catch(\Exception $e) {
-                return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
+                return back()->with('failure', $e->getMessage());
+                //return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
             }
         }
         
@@ -137,21 +140,23 @@ class SecondmentController extends Controller
 
         switch($klados){
             case "ΠΕ60":
+            case "ΠΕ60.50":
                 if($org_eae == 0){
-                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 0)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();          
+                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 0)->
+                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();          
                 } else {
-                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
+                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->
+                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 }
             break;
-            case "ΠΕ70":
-                if($org_eae == 0){
-                    $schools = School::where('primary', '=', 1)->where('special_needs', '=', 0)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
-                } else {
-                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
-                }   
-            break;
             default:
-                $schools = School::all();
+                if($org_eae == 0){
+                    $schools = School::where('primary', '=', 1)->where('special_needs', '=', 0)->
+                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
+                } else {
+                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->
+                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
+                }   
             break;
             
         }
@@ -203,7 +208,9 @@ class SecondmentController extends Controller
         if($status != 200){
             return false;
         } else {
-            return $body;
+            $protocol = [];
+            $protocol = explode(" - ", $body);
+            return $protocol;
         }
     }
 

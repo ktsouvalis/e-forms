@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 class UpdateEDirectorateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    protected $username;
+    public $username;
     /**
      * Create a new job instance.
      */
@@ -33,25 +33,18 @@ class UpdateEDirectorateJob implements ShouldQueue
     {
         //
         $client = new Client();
-        try{
-            $res = $client->request('GET', 'http://194.63.234.132/eprotocolapi/api/migration/catalogs', [
-                'timeout' => 180,
-            ]);
-        }
-        catch(\Exception $e){
-            Log::channel('commands_executed')->error($this->username. " Queue Job UpdateEDirectorateJob: ".$e->getMessage());
-            return;
-        }
+        $res = $client->request('GET', env('E_DIRECTORATE')."/migration/catalogs", [
+            'timeout' => 180,
+        ]);
         if($res->getStatusCode() == 201){
             DB::table('last_update_edirectorate')->updateOrInsert(
                 ['id' => 1],
                 ['date_updated' => now()]
             );
-            $output = "eDirectorate updated successfully ".$res->getBody();
+            Log::channel('commands_executed')->info($this->username. " UpdateEDirectorateJob:  ".$res->getBody());
         }
         else{
-            $output = "eDirectorate update failed ".$res->getBody();  
-        }
-        Log::channel('commands_executed')->info($this->username. " Queue Job UpdateEDirectorateJob: ".$output);
+            throw new \Exception("UpdateEDirectorateJob: ".$res->getBody()); 
+        } 
     }
 }

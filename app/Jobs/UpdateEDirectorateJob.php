@@ -33,7 +33,7 @@ class UpdateEDirectorateJob implements ShouldQueue
     {
         //
         $client = new Client();
-        $res = $client->request('GET', env('E_DIRECTORATE'), [
+        $res = $client->request('GET', env('E_DIRECTORATE')."/migration/catalogs", [
             'timeout' => 180,
         ]);
         if($res->getStatusCode() == 201){

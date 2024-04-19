@@ -193,6 +193,8 @@ Route::view('/evaluation', 'evaluation');
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
+Route::post('/evaluation/upload_csv', [EvaluationController::class, 'upload_csv']);
+
 //////// MANAGING OPERATIONS ROUTES
 Route::resource('operations', OperationController::class)->middleware('boss');
 
@@ -218,11 +220,13 @@ Route::resource('notifications', NotificationController::class)->middleware('aut
 
 Route::resource('secondments', SecondmentController::class);//->middleware('canViewMicroapp');
 
-Route::view('/secondments/{secondment}', 'microapps.secondments.toPDF')->name('secondments.view_preferences');
+Route::group(['prefix' => 'secondments'], function () {
+    Route::view('/{secondment}', 'microapps.secondments.toPDF')->name('secondments.view_preferences');
 
-Route::get('/secondments/createPDF/{secondment}', [SecondmentController::class, 'createPDF'])->name('secondments.createPDF');
+    Route::get('/createPDF/{secondment}', [SecondmentController::class, 'createPDF'])->name('secondments.createPDF');
 
-Route::get("/{file}/{download_file_name}", [SecondmentController::class, 'download_file'])->name('secondments.download_file');
+    Route::get("/{file}/{download_file_name}", [SecondmentController::class, 'download_file'])->name('secondments.download_file');
+});
 
 //Route::view('/secondments', 'microapps.secondments.create');
 

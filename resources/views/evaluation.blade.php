@@ -201,6 +201,27 @@
 
 <div>
     <nav class="navbar navbar-light bg-light">
+        <form action="{{url("/evaluation/upload_csv")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+            @csrf
+            <div class="input-group">
+                <span class="input-group-text w-25"></span>
+                <span class="input-group-text w-75"><strong>Ανέβασμα αρχείου από Θυρίδες</strong></span>
+            </div>
+            <div class="input-group my-2">
+                <span class="input-group-text w-5 text-wrap">Αρχείο A1:</span>
+                <input name="a1" id="a1" type="file" class="form-control" placeholder="Επιλέξτε Αρχείο" aria-label="α1" aria-describedby="basic-addon2">
+                <button type="submit" class="btn btn-primary m-2" name="action" value="a1"><div class="fa-solid fa-headset"></div> Υποβολή</button>
+                <span class="input-group-text w-5 text-wrap">Αρχείο A2:</span>
+                <input name="a2" id="a2" type="file" class="form-control" placeholder="Επιλέξτε Αρχείο" aria-label="α2" aria-describedby="basic-addon2">
+                <button type="submit" class="btn btn-primary m-2" name="action" value="a2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
+                <span class="input-group-text w-5 text-wrap">Αρχείο B:</span>
+                <input name="b" id="b" type="file" class="form-control" placeholder="Επιλέξτε Αρχείο" aria-label="β" aria-describedby="basic-addon2">
+                <button type="submit" class="btn btn-primary m-2" name="action" value="b"><div class="fa-solid fa-headset"></div> Υποβολή</button>
+
+            
+        </form>
+    </nav>
+    <nav class="navbar navbar-light bg-light">
         <form action="{{url("/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
             @csrf
             <div class="input-group">

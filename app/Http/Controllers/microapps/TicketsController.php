@@ -4,6 +4,7 @@ namespace App\Http\Controllers\microapps;
 
 use Exception;
 use Throwable;
+use App\Models\User;
 use App\Models\Month;
 use App\Models\School;
 use App\Models\Microapp;
@@ -22,6 +23,7 @@ use App\Models\microapps\AllDaySchool;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\TicketUpdatedOrCreated;
 
 class TicketsController extends Controller
 {
@@ -102,12 +104,8 @@ class TicketsController extends Controller
     private function send_creation_mails(Ticket $new_ticket){
         $success=true;
 
-        try{
-            Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketCreated($new_ticket));
-        }
-        catch(Throwable $e){
-            $success=false;
-            Log::channel('tickets')->info("new ticket ".$new_ticket->id." mail failure to plinet ".$e->getMessage());
+        foreach(Superadmin::all() as $superadmin){
+            $superadmin->user->notify(new TicketUpdatedOrCreated("To ".$new_ticket->school->name." δημιούργησε δελτίο με θέμα: ".$new_ticket->subject, "Νέο δελτίο $new_ticket->id"));
         }
 
         try{
@@ -123,12 +121,8 @@ class TicketsController extends Controller
     private function send_update_mails(Ticket $ticket, $new_string){
         $success=true;
 
-        try{
-            Mail::to("plinet_pe@dipe.ach.sch.gr")->send(new TicketUpdated($ticket, $new_string, "Γραφείο Πλη.Νε.Τ.", ""));
-        }
-        catch(Throwable $e){
-            $success=false;
-            Log::channel('tickets')->info("update ticket ".$ticket->id." mail failure to plinet ".$e->getMessage());
+        foreach(Superadmin::all() as $superadmin){
+            $superadmin->user->notify(new TicketUpdatedOrCreated(substr($new_string, 0, 100), 'Ανανέωση δελτίου '.$ticket->id));
         }
 
         try{

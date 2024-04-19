@@ -10,6 +10,7 @@
             <thead>
                 <tr>
                     <th>Τύπος</th>
+                    <th>Σύνοψη</th>
                     <th>Ημερομηνία</th>
                 </tr>
             </thead>
@@ -24,8 +25,8 @@
                     }
                 @endphp
                     <tr class="{{$color}}">
-                        <td><a href="{{ route('notifications.show', $notification->id) }}">{{ $notification->type }}</a></td>
-                        <td>{{ $notification->data['summary'] }}</td>
+                        <td>{{ $notification->type }}</td>
+                        <td><a href="{{ route('notifications.show', $notification->id) }}">{{ $notification->data['summary'] }}</a></td>
                         <td>{{ $notification->created_at }}</td>
                     </tr>
                 @endforeach

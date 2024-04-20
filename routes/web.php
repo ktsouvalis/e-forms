@@ -217,6 +217,12 @@ Route::group(['prefix' => 'microapps'], function(){
 //NOTIFICATIONS ROUTES
 Route::resource('notifications', NotificationController::class)->middleware('auth');
 
+Route::group(['prefix' => 'notifications'], function(){
+    Route::post('/mark_as_read/{notification}', [NotificationController::class, 'markNotificationAsRead'])->name('notifications.mark_as_read');
+
+    Route::post('/mark_all_as_read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark_all_as_read');
+});
+
 //SECONDMENTS ROUTES
 
 Route::resource('secondments', SecondmentController::class);//->middleware('canViewMicroapp');

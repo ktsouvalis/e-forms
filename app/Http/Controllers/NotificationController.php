@@ -25,4 +25,24 @@ class NotificationController extends Controller
         $notification->markAsRead();
         return view('notifications.show', ['notification'=>$notification]);
     }
+
+    public function destroy($notification)
+    {
+        $the_notification = auth()->user()->notifications->find($notification);
+        $the_notification->delete();
+        return response()->json(['message'=>'notification deleted']);
+    }
+
+    public function markAllAsRead()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->route('notifications.index');
+    }
+
+    public function markNotificationAsRead($notification)
+    {
+        $the_notification = auth()->user()->notifications->find($notification);
+        $the_notification->markAsRead();
+        return response()->json(['message'=>'marked as read']);
+    }
 }

@@ -7,7 +7,7 @@
                Λεπτομέρειες
             </div>
             <div class="card-body">
-                <p class="card-text">{{ $notification->data['message'] }}</p>
+                <p class="card-text">{!! $notification->data['message'] !!}</p>
                 <p class="card-text"><small class="text-muted">{{ $notification->created_at }}</small></p>
             </div>
         </div>

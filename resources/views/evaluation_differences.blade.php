@@ -21,7 +21,7 @@
         <p class="h4">Αξιολόγηση</p>
         <p>
             <form action="evaluation">
-                <button type="submit" class="btn btn-primary">Αξιολόγηση</button>
+                <button type="submit" class="btn btn-primary">Εμφάνιση ανά πεδίο αξιολόγησης</button>
             </form>
         </p>
     </div>

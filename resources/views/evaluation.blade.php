@@ -21,9 +21,12 @@
         <p class="h4">Αξιολόγηση</p>
         <p>
             <form action="{{url("/evaluation_differences")}}">
-                <button type="submit" class="btn btn-primary">Εικόνα ανά εκπαιδευτικό</button>
+                <button type="submit" class="btn btn-primary">Εμφάνιση ανά εκπαιδευτικό</button>
             </form>
         </p>
+    </div>
+    <div>
+        <p class="h4">Εμφάνιση αναλυτικά ανά Πεδίο Αξιολόγησης</p>
     </div>
     <div class="table-responsive py-2" style="align-self:flex-start">
         <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">

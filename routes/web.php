@@ -33,6 +33,7 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\NotificationController;
@@ -193,7 +194,7 @@ Route::view('/evaluation', 'evaluation');
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
-Route::post('/evaluation/upload_csv', [EvaluationController::class, 'upload_csv']);
+Route::post('/evaluation/upload_csv', [EvaluationController::class, 'upload_csv'])->name('evaluation.upload_csv');
 
 //////// MANAGING OPERATIONS ROUTES
 Route::resource('operations', OperationController::class)->middleware('boss');
@@ -397,7 +398,6 @@ Route::post('/count_criteria_teachers/{access_criteria}', [WhocanController::cla
 
 
 // MAIL Routes
-
 Route::post("/send_mail_all_whocans/{my_app}/{my_id}", [WhocanController::class, 'send_to_all']);
 
 Route::post("/send_to_those_whocans_without_answer/{my_app}/{my_id}", [WhocanController::class, 'send_to_all_that_have_not_submitted']);

@@ -43,24 +43,38 @@
                 <th id="search">Αξ. 2 - Όνομα</th>
                 <th id="search">Αξ. 2 - Επώνυμο</th>
                 <th id="search">Αξ. 2 - ΑΦΜ</th>
-                <th id="search">Κατηγορία</th>
-                <th id="">Ολοκλήρωση (επίδοση έκθεσης)</th>
-                <th id="">ΑΜ</th>
-                <th id="">Κλάδος</th>
+                <th id="search">ΑΜ</th>
+                <th id="search">Κλάδος</th>
             </tr>
         </thead>
         <tbody>
         {{-- Αξιολόγηση Α1 --}}
-            @php
+        @php
             $evaluation_a1 = DB::table('teachers')
          ->join('evaluation_a1', 'teachers.afm', '=', 'evaluation_a1.teacher_afm')
          ->select('teachers.*', 'evaluation_a1.*')
          ->get();
-         @endphp
+
+        @endphp
          
          @foreach($evaluation_a1 as $teacher)
+         @php
+            if($teacher->self_evaluation_date){
+                if($teacher->date_completed_timestamp){
+                    $state = "Ανάρτηση Τελικής Έκθεσης";
+                } else {
+                    $state = "Ανάρτηση Αυτοαξιολόγησης";
+                }
+            } else {
+                if($teacher->date_completed_timestamp){
+                    $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                } else {
+                    $state = "Εκκρεμής";
+                }
+            }
+         @endphp
                  <tr>
-                     <td> Α1 </td>
+                     <td> Α1 {{$state}}</td>
                      <td>{{$teacher->name}}</td>
                      <td> {{$teacher->surname}}</td>
                      <td> {{$teacher->afm}}</td>
@@ -72,19 +86,19 @@
                          <td> {{$evaluator_1->surname}} </td>
                          <td> {{$evaluator_1->afm}} </td>
                      @else
-                         <td> - </td>
-                         <td> - </td>
-                         <td> - </td>
+                        @if($teacher->evaluator_afm_comments)
+                            <td></td>
+                            <td>{{$teacher->evaluator_afm_comments}}</td>
+                            <td>{{$teacher->evaluator_afm}}</td>
+                        @else
+                            <td> - </td>
+                            <td> - </td>
+                            <td> - </td>
+                        @endif
                      @endif
                          <td> - </td>
                          <td> - </td>
                          <td> - </td>
-                     <td> {{$teacher->category}} </td> 
-                     @if($teacher->completed_n_given == false)
-                         <td> Εκκρεμότητα </td>
-                     @else
-                         <td> Ολοκλήρωση </td>
-                     @endif
                      <td> {{$teacher->am}} </td>
                      <td> {{$teacher->klados}} </td>
                  </tr>
@@ -98,8 +112,23 @@
          @endphp
          
          @foreach($evaluation_a2 as $teacher)
+         @php
+            if($teacher->self_evaluation_date){
+                if($teacher->date_completed_timestamp){
+                    $state = "Ανάρτηση Τελικής Έκθεσης";
+                } else {
+                    $state = "Ανάρτηση Αυτοαξιολόγησης";
+                }
+            } else {
+                if($teacher->date_completed_timestamp){
+                    $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                } else {
+                    $state = "Εκκρεμής";
+                }
+            }
+         @endphp
                  <tr>
-                     <td> Α2 </td> 
+                     <td> Α2 {{$state}} </td> 
                      <td>{{$teacher->name}}</td>
                      <td> {{$teacher->surname}}</td>
                      <td> {{$teacher->afm}}</td>
@@ -111,20 +140,21 @@
                          <td> {{$evaluator_1->surname}} </td>
                          <td> {{$evaluator_1->afm}} </td>
                      @else
-                         <td> - </td>
-                         <td> - </td>
-                         <td> - </td>
+                        @if($teacher->evaluator_afm_comments)
+                            <td></td>
+                            <td>{{$teacher->evaluator_afm_comments}}</td>
+                            <td>{{$teacher->evaluator_afm}}</td>
+                        @else
+                            <td> - </td>
+                            <td> - </td>
+                            <td> - </td>
+                        @endif
+                         
                      @endif
                     <td> - </td>
                     <td> - </td>
                     <td> - </td>
-                    <td> {{$teacher->category}} </td> 
-                    @if($teacher->completed_n_given == false)
-                        <td> Εκκρεμότητα </td>
-                    @else
-                        <td> Ολοκλήρωση </td>
-                    @endif
-                     <td> {{$teacher->am}} </td>
+                    <td> {{$teacher->am}} </td>
                      <td> {{$teacher->klados}} </td>
                  </tr>
      @endforeach
@@ -139,9 +169,24 @@
             @foreach($evaluation_b as $teacher_db)
                 @php
                 $teacher = App\Models\Teacher::find($teacher_db->id);
-                @endphp 
+                @endphp
+                @php
+                if($teacher_db->self_evaluation_date){
+                    if($teacher_db->date_completed_timestamp){
+                        $state = "Ανάρτηση Τελικής Έκθεσης";
+                    } else {
+                        $state = "Ανάρτηση Αυτοαξιολόγησης";
+                    }
+                } else {
+                    if($teacher_db->date_completed_timestamp){
+                        $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                    } else {
+                        $state = "Εκκρεμής";
+                    }
+                }
+             @endphp
                 <tr>
-                    <td> Β </td> 
+                    <td> Β {{$state}}</td> 
                     <td>{{$teacher_db->name}}</td>
                     <td> {{$teacher_db->surname}}</td>
                     <td> {{$teacher_db->afm}}</td>
@@ -183,13 +228,7 @@
                             <td> - </td>
                             <td> - </td>
                             
-                        @endif
-                        <td> {{$teacher->category}} </td> 
-                        @if($teacher->completed_n_given == false)
-                            <td> Εκκρεμότητα </td>
-                        @else
-                            <td> Ολοκλήρωση </td>
-                        @endif
+                        @endif 
                         <td> {{$teacher->am}} </td>
                         <td> {{$teacher->klados}} </td>
                     </tr>

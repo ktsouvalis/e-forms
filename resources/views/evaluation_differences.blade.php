@@ -78,7 +78,24 @@
                         $a1 = DB::table('evaluation_a1')->where('teacher_afm', $teacher->afm)->first();
                     @endphp
                     @if($a1)
-                        <td>Α1</td>
+                        
+                        @php
+                        $evaluator_a1 = App\Models\Teacher::where('afm', $a1->evaluator_afm)->first();
+                        if($a1->self_evaluation_date){
+                            if($a1->date_completed_timestamp){
+                                $state = "Ανάρτηση Τελικής Έκθεσης";
+                            } else {
+                                $state = "Ανάρτηση Αυτοαξιολόγησης";
+                            }
+                        } else {
+                            if($a1->date_completed_timestamp){
+                                $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                            } else {
+                                $state = "Εκκρεμής";
+                            }
+                        }
+                        @endphp
+                        <td> @if($evaluator_a1) {{$evaluator_a1->surname}} {{$evaluator_a1->name}} @else {{$a1->evaluator_afm_comments}} @endif {{$state}}</td>
                     @else
                         <td>-</td>
                     @endif  
@@ -89,7 +106,22 @@
                         }
                     @endphp
                     @if($a2)
-                        <td>Α2 @if($evaluator_a2){{$evaluator_a2->surname}} {{$evaluator_a2->name}} @endif </td>
+                    @php
+                    if($a2->self_evaluation_date){
+                        if($a2->date_completed_timestamp){
+                            $state = "Ανάρτηση Τελικής Έκθεσης";
+                        } else {
+                            $state = "Ανάρτηση Αυτοαξιολόγησης";
+                        }
+                    } else {
+                        if($a2->date_completed_timestamp){
+                            $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                        } else {
+                            $state = "Εκκρεμής";
+                        }
+                    }
+                    @endphp
+                        <td> @if($evaluator_a2){{$evaluator_a2->surname}} {{$evaluator_a2->name}} @else {{$a2->evaluator_afm_comments}} @endif {{$state}} </td>
                     @else
                         <td>-</td>
                     @endif 
@@ -100,7 +132,22 @@
                         }   
                     @endphp
                     @if($b)
-                        <td>Β @if($evaluator_b){{$evaluator_b->surname}} {{$evaluator_b->name}} @endif </td>
+                    @php
+                    if($b->self_evaluation_date){
+                        if($b->date_completed_timestamp){
+                            $state = "Ανάρτηση Τελικής Έκθεσης";
+                        } else {
+                            $state = "Ανάρτηση Αυτοαξιολόγησης";
+                        }
+                    } else {
+                        if($b->date_completed_timestamp){
+                            $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                        } else {
+                            $state = "Εκκρεμής";
+                        }
+                    }
+                    @endphp
+                        <td>@if($evaluator_b){{$evaluator_b->surname}} {{$evaluator_b->name}} @endif {{$state}} </td>
                     @else
                         <td>-</td>
                     @endif

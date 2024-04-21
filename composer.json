@@ -5,12 +5,12 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "barryvdh/laravel-dompdf": "^2.1",
-        "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^10.8",
-        "laravel/sanctum": "^3.2",
+        "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.0",
+        "nesbot/carbon": "^3.0",
         "laravel/tinker": "^2.8",
         "phpoffice/phpspreadsheet": "^1.28"
     },
@@ -19,7 +19,7 @@
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
+        "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "^10.1",
         "spatie/laravel-ignition": "^2.0"
     },

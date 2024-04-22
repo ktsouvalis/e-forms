@@ -17,7 +17,6 @@
         <table class="m-2 align-middle table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Τύπος</th>
                     <th>Σύνοψη</th>
                     <th>Ημερομηνία</th>
                     <th>Διαβάστηκε</th>
@@ -35,7 +34,6 @@
                     }
                 @endphp
                     <tr class="{{$color}}" id="notification-{{$notification->id}}">
-                        <td>{{ $notification->type }}</td>
                         <td><a href="{{ route('notifications.show', $notification->id) }}">{{ $notification->data['summary'] }}</a></td>
                         <td>{{ $notification->created_at }}</td>
                         <td class="mark-{{$notification->id}}" style="text-align:center">

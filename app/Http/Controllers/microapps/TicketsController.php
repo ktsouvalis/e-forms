@@ -20,10 +20,10 @@ use App\Models\microapps\TicketPost;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\microapps\AllDaySchool;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\TicketUpdatedOrCreated;
 
 class TicketsController extends Controller
 {
@@ -105,7 +105,7 @@ class TicketsController extends Controller
         $success=true;
 
         foreach(Superadmin::all() as $superadmin){
-            $superadmin->user->notify(new TicketUpdatedOrCreated("To ".$new_ticket->school->name." δημιούργησε δελτίο με θέμα: ".$new_ticket->subject, "Νέο δελτίο $new_ticket->id"));
+            $superadmin->user->notify(new UserNotification("To ".$new_ticket->school->name." δημιούργησε δελτίο με θέμα: ".$new_ticket->subject, "Νέο δελτίο $new_ticket->id"));
         }
 
         try{
@@ -122,7 +122,7 @@ class TicketsController extends Controller
         $success=true;
 
         foreach(Superadmin::all() as $superadmin){
-            $superadmin->user->notify(new TicketUpdatedOrCreated("Απόσπασμα μηνύματος: '".substr($new_string, 0, 100).".........'", 'Ανανέωση δελτίου '.$ticket->id));
+            $superadmin->user->notify(new UserNotification("Απόσπασμα μηνύματος: '".substr($new_string, 0, 100).".........'", 'Ανανέωση δελτίου '.$ticket->id));
         }
 
         try{

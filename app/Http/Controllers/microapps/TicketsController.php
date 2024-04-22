@@ -122,7 +122,7 @@ class TicketsController extends Controller
         $success=true;
 
         foreach(Superadmin::all() as $superadmin){
-            $superadmin->user->notify(new UserNotification("Απόσπασμα μηνύματος: '".substr($new_string, 0, 100).".........'", 'Ανανέωση δελτίου '.$ticket->id));
+            $superadmin->user->notify(new UserNotification("Απόσπασμα μηνύματος: '".substr($new_string, 0, 150)."...'", 'Ανανέωση δελτίου '.$ticket->id));
         }
 
         try{

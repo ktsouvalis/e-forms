@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SchoolsTeachersUpdated;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -60,6 +61,7 @@ class SchoolController extends Controller
             }else{
                 $error=1;
                 $check['municipality']="";
+                Auth::user()->notify(new UserNotification("Στη γραμμή $row o Δήμος $municipality_name δεν υπάρχει στη βάση δεδομένων", 'Σφάλμα: Άγνωστος Δήμος '. $municipality_name));
             }
 
             //check other obvious fields
@@ -150,6 +152,7 @@ class SchoolController extends Controller
             catch(Throwable $e){
                 Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code'].' '.$e->getMessage());
                 $error=true;
+                // Auth::user()->notify(new UserNotification("Υπήρξε σφάλμα κατά την εισαγωγή του σχολείου ".$school['code'].' με μήνυμα '.$e->getMessage() , 'Σφάλμα κατά την εισαγωγή σχολείου '. $school['code']));
                 continue;    
             }
         }
@@ -219,6 +222,7 @@ class SchoolController extends Controller
             if(!School::where('code', $check['code'])->count()){
                 $check['code'] = 'Άγνωστος κωδικός σχολείου';
                 $error = 1;
+                Auth::user()->notify(new UserNotification("Στη γραμμή $row ο κωδικός σχολείου ".$check['code']." δεν υπάρχει στη βάση δεδομένων", 'Σφάλμα ενημέρωσης διευθυντών: Κωδικός Σχολείου '. $check['code']));
             }
             else{
                 $school = School::where('code', $check['code'])->first();
@@ -228,6 +232,7 @@ class SchoolController extends Controller
             if(!Teacher::where('afm', $check['afm'])->count()){
                 $check['afm'] = 'Άγνωστος ΑΦΜ Εκπαιδευτικού';
                 $error = 1;
+                Auth::user()->notify(new UserNotification("Στη γραμμή $row ο ΑΦΜ ".$check['afm']." δεν υπάρχει στη βάση δεδομένων", 'Σφάλμα ενημέρωσης διευθυντών: Κωδικός Σχολείου '. $check['code']));
             }
             else{
                 $teacher = Teacher::where('afm', $check['afm'])->first();

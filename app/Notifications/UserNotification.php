@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class MailFailed extends Notification implements ShouldQueue
+class UserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -52,8 +52,8 @@ class MailFailed extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'message'=>$this->message,
-            'summary'=>$this->summary
+            'message' => $this->message,
+            'summary' => $this->summary,
         ];
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SchoolsTeachersUpdated;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
@@ -100,6 +101,7 @@ class TeacherController extends Controller
             if(!Teacher::where('afm', $teacher_afm)->count()){
                 $row++;
                 Log::channel('throwable_db')->error("update $word afm error: ".$teacher_afm);
+                Auth::user()->notify(new UserNotification("Δε βρέθηκε το ΑΦΜ $teacher_afm κατά την ενημέρωση: $word2", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
                 $error=true;
                 continue;
             }
@@ -108,6 +110,7 @@ class TeacherController extends Controller
                 if(!app("App\\Models\\$model")->where($field, $var_field_straight)->count()){
                     $row++;
                     Log::channel('throwable_db')->error("update $word $field error: ".$var_field_straight);
+                    Auth::user()->notify(new UserNotification("Δε βρέθηκε φορέας ($var_field_straight - $model) κατά την ενημέρωση: $word2", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
                     $error=true;
                     continue;
                 }
@@ -201,6 +204,7 @@ class TeacherController extends Controller
             else{
                 $error = 1;
                 $check['sxesi_ergasias'] = "Error: Άγνωστη Σχέση Εργασίας";
+                Auth::user()->notify(new UserNotification("Error: Άγνωστη Σχέση Εργασίας στη γραμμή $row κατά την ενημέρωση Οργανικής για το ΑΦΜ: ".$check['afm'], "Ενημέρωση οργανικής: Σφάλμα ΑΦΜ ".$check['afm']));
             }
             
             //myschool stores the organiki like eg "=999999999"
@@ -280,6 +284,7 @@ class TeacherController extends Controller
             else{
                 $error = 1;
                 $check['sxesi_ergasias'] = "Error: Άγνωστη Σχέση Εργασίας";
+                Auth::user()->notify(new UserNotification("Error: Άγνωστη Σχέση Εργασίας στη γραμμή $row κατά την ενημέρωση Απόσπασης για το ΑΦΜ: ".$check['afm'], "Ενημέρωση απόσπασης: Σφάλμα ΑΦΜ ".$check['afm']));
             }
 
             $ignore_record = 0;
@@ -301,6 +306,7 @@ class TeacherController extends Controller
                 else{
                     $error=1;
                     $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
+                    Auth::user()->notify(new UserNotification("Error: Άγνωστος κωδικός οργανικής στη γραμμή $row κατά την ενημέρωση Απόσπασης για το ΑΦΜ ".$check['afm'], "Ενημέρωση απόσπασης: Σφάλμα ΑΦΜ ".$check['afm']));
                 }
             }
             else{
@@ -377,6 +383,7 @@ class TeacherController extends Controller
             catch(Throwable $e){
                 // Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
                 Log::channel('throwable_db')->error($teacher['afm'].' '.$e->getMessage());
+                // Auth::user()->notify(new UserNotification("Κατά την εισαγωγή του εκπαιδευτικού με ΑΦΜ ".$teacher['afm']." προέκυψε το σφάλμα ".$e->getMessage(), "Εισαγωγή εκπαιδευτικών: Σφάλμα ΑΦΜ ".$teacher['afm']));
                 $error=true;
                 continue; 
             }

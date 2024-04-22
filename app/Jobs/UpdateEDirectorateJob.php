@@ -8,12 +8,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use App\Notifications\UpdateEDirectorateNotification;
 
 class UpdateEDirectorateJob implements ShouldQueue
 {
@@ -49,7 +49,7 @@ class UpdateEDirectorateJob implements ShouldQueue
                 Log::channel('commands_executed')->info($this->username. " UpdateEDirectorateJob success:  ".$res->getBody());
                 foreach(User::all() as $user){
                     if(Superadmin::where('user_id', $user->id)->exists() or $user->username == $this->username){
-                        $user->notify(new UpdateEDirectorateNotification("Η εφαρμογή πρωτοκόλλου ενημερώθηκε επιτυχώς για τις αλλαγές στη Βάση Δεδομένων. Το api request έγινε από $this->username", 'Επιτυχία API UpdateEDirectorate'));
+                        $user->notify(new UserNotification("Η εφαρμογή πρωτοκόλλου ενημερώθηκε επιτυχώς για τις αλλαγές στη Βάση Δεδομένων. Το api request έγινε από $this->username", 'Επιτυχία API UpdateEDirectorate'));
                     }
                 }
             } 

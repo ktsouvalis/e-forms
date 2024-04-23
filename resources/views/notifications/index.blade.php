@@ -6,6 +6,7 @@
             var deleteNotificationUrl = '{{ route("notifications.destroy", ["notification" =>"mpla"]) }}';
         </script>
         <script src="{{asset('mark_notification_as_read.js')}}"></script>
+        <script src="{{asset('delete_notification.js')}}"></script>
     @endpush
     @push('title')
         <title>Ειδοποιήσεις</title>

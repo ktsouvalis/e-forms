@@ -16,9 +16,10 @@ $(document).ready(function () {
             type: 'POST',
             success: function (response) {
                 // Handle the response here, update the page as needed
-                $('.mark-'+notificationId).find('.mark-notification').remove();
-                $('.mark-'+notificationId).append('<button class="btn btn-secondary bi bi-check2" disabled></button>');
-                $('#notification-' + notificationId).removeClass('table-warning');
+                $('.mark-' + notificationId).append('<i class="text-secondary fa-regular fa-envelope-open" data-toggle="tooltip" title="Αναγνωσμένο"></i>');//add the read icon
+                $('.mark-' + notificationId).find('#icon'+notificationId).remove(); //remove the unread icon
+                $('#actions' + notificationId).find('#mark' + notificationId).remove(); //remove the mark as read button 
+                $('#notification-' + notificationId).removeClass('table-secondary'); //remove the unread background color
             },
             error: function (error) {
                 // Handle errors

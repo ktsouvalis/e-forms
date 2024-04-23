@@ -36,7 +36,7 @@ class NotificationController extends Controller
     public function markAllAsRead()
     {
         auth()->user()->unreadNotifications->markAsRead();
-        return redirect()->route('notifications.index');
+        return redirect()->route('notifications.index')->with('success', 'Επιτυχής σήμανση όλων ως αναγνωσμένα');
     }
 
     public function markNotificationAsRead($notification)

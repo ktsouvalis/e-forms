@@ -53,9 +53,9 @@
       @stack('app-icon')
       <div class="hstack justify-content-start gap-2">
         @if(Auth::user()->notifications->where('read_at',null)->count()>0)
-          <a href="{{route('notifications.index')}}" class="text-danger bi bi-bell-fill" style="text-decoration:none; " data-toggle="tooltip" title="Ειδοποιήσεις"></a>
+          <a href="{{route('notifications.index')}}" class="text-danger" style="text-decoration:none; " data-toggle="tooltip" title="Ειδοποιήσεις"><i class="fa-solid fa-bell"></i></a>
         @else
-          <a href="{{route('notifications.index')}}" class="text-dark bi bi-bell" style="text-decoration:none; " data-toggle="tooltip" title="Ειδοποιήσεις"> </a>
+          <a href="{{route('notifications.index')}}" class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Ειδοποιήσεις"><i class="fa-regular fa-bell"></i> </a>
         @endif
         @if(Illuminate\Support\Facades\Request::path()!='index_user')
           <div class=" d-flex "><a href='{{url('/index_user')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   

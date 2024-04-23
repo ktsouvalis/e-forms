@@ -35,16 +35,6 @@ class School extends Authenticatable
         'id'
     ];
 
-    /**
-     * required method for laravel 11
-     *
-     * returns the password column of the model
-     */
-    public function getAuthPasswordName()
-    {
-        return 'md5';
-    }
-
     public function organikis()
     {
         return $this->morphMany(Teacher::class, 'organiki');

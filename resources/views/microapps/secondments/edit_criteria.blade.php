@@ -20,6 +20,14 @@
         <title>Αποσπάσεις</title>
     @endpush
 <div class="container">
+    @if($errors->any())
+    
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ $errors->first() }}
+            
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <h2 class="text-center">Αίτηση Απόσπασης εντός ΠΥΣΠΕ Αχαΐας</h2>
 	<div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
@@ -358,6 +366,59 @@
                 </div>
             </form>
         </div>   
+        </div>
+    </div>
+    <div class="col-12 col-md-8 col-lg-8 pb-5">
+        <div class="card border-primary rounded-0">
+            <div class="card-header p-0">
+                <div class="bg-info text-white text-center py-2">
+                    <h3><i class="fa-regular fa-file-lines"></i> Υποβολή Δικαιολογητικών</h3>
+                    <p class="m-0">Υποβάλλονται δικαιολογητικά σε μορφή .pdf, .jpeg .png < 10MB ανά υποβολή</p>
+                </div>
+            </div>
+            
+            <div class="card-body p-3">
+                <div class="row justify-content-right">
+                    <div class="text-center py-2">
+                        <p class="m-0">Μπορείτε να ανεβάσετε και περισσότερα από ένα αρχεία
+                            ,
+                        </p>
+                    </div>
+                    <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                        @csrf
+                        <div class="text-center">
+                            <input  type="file" id="files" name="files[]" multiple required>
+                            <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2">
+                        </div>
+                    </form>
+                  
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="row justify-content-right">
+                    <div class="text-center py-2">
+                        <p class="m-0">Αρχεία που έχουν υποβληθεί:</p>
+                        @if($secondment->files_json)
+                            @php $count = 1; @endphp
+                            @foreach(json_decode($secondment->files_json) as $file)
+                            @php
+                                $extension = pathinfo($file, PATHINFO_EXTENSION);
+                                $file_name = Auth::guard('teacher')->user()->afm . '_' . $count . '.' . $extension;
+                            @endphp
+                            <form action="{{route('secondments.download_file', ['file' => $file_name, 'download_file_name' => $file])}}" method="get">
+                            <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1" value="{{$file}}" >
+                            </form>
+                            <form action="{{route('secondments.delete_file', ['file' => $file_name, 'download_file_name' => $file])}}" method="get">
+                            <input type="submit" class="btn btn-danger btn-block rounded-2 py-2 m-1" value="Διαγραφή" >
+                            </form>
+                            @php $count++; @endphp
+                            @endforeach
+                        @else
+                            <p class="m-0">Δεν έχει υποβληθεί κάποιο δικαιολογητικό</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-12 col-md-8 col-lg-8 pb-5">

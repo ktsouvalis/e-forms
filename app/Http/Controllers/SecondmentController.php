@@ -13,6 +13,7 @@ use App\Models\microapps\Secondment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\FilesController;
 
 class SecondmentController extends Controller
 {
@@ -134,6 +135,52 @@ class SecondmentController extends Controller
             }
         }
         
+    }
+
+    //Διαγραφή αρχείου
+    public function delete_file(Request $request, Secondment $secondment){
+    
+    }
+    //Ανέβασμα αρχείων
+    public function upload_files(Request $request, Secondment $secondment){
+        
+        $request->validate([
+            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ]);
+        $files = $request->file('files');
+        $fileNames = [];
+        //Βρες πόσα αρχεία έχει ήδη ανεβάσει
+        if($secondment->files_json){
+            $fileNames = json_decode($secondment->files_json);
+            $filesCount = count($fileNames);
+        } else {
+            $filesCount = 0;
+        }
+        $directory = "secondments";
+        $teacherAfm = Auth::guard('teacher')->user()->afm;
+        foreach($files as $file){
+            array_push($fileNames, $file->getClientOriginalName());
+            $fileHandler = new FilesController();
+            $filesCount++;
+            $file_name_to_store = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
+            $uploaded = $fileHandler->upload_file($directory, $file, 'local', $file_name_to_store);
+            
+            if($uploaded->getStatusCode() == 500){
+                Log::channel('files')->error($teacherAfm." Files failed to upload");
+                return back()->with('failure', 'Δοκιμάστε ξανά');
+            }
+        }
+        $secondment->files_json = json_encode($fileNames);
+       
+        try{
+            $secondment->update();
+        } catch(\Exception $e) {
+            dd($e->getMessage());
+            Log::channel('files')->error($teacherAfm." Files failed to upload");
+            return back()->with('failure', 'Δοκιμάστε ξανά');
+        }
+        Log::channel('files')->info($teacherAfm." Files successfully uploaded");
+        return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς');
     }
 
     public function getSchoolChoices($klados, $org_eae){

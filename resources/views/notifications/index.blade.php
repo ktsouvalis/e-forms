@@ -1,6 +1,7 @@
 <x-layout>
+    
     @push('scripts')
-    <script>
+        <script>
             var markNotificationAsReadUrl = '{{ route("notifications.mark_as_read", ["notification" =>"mpla"]) }}';
             var deleteNotificationUrl = '{{ route("notifications.destroy", ["notification" =>"mpla"]) }}';
         </script>
@@ -14,43 +15,46 @@
     @if($notifications->count() == 0)
         <div class="alert alert-info">Δεν υπάρχουν ειδοποιήσεις</div>
     @else
-        <table class="m-2 align-middle table table-striped table-hover">
-            <thead>
+        <table id="dataTable" class="m-2 align-middle table" style="text-align:center">
+            <thead >
                 <tr>
-                    <th>Σύνοψη</th>
-                    <th>Ημερομηνία</th>
-                    <th>Διαβάστηκε</th>
-                    <th>Διαγραφή</th>
+                    <th id="">Κατάσταση</th>
+                    <th id="">Σύνοψη</th>
+                    <th id="">Ημερομηνία</th>
+                    <th id="">Διαγραφή</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($notifications as $notification)
                 @php
                     if($notification->read_at == null){
-                        $color = 'table-warning';
+                        $color = 'table-secondary';
                     }
                     else{
                         $color = '';
                     }
                 @endphp
                     <tr class="{{$color}}" id="notification-{{$notification->id}}">
-                        <td><a href="{{ route('notifications.show', $notification->id) }}">{{ $notification->data['summary'] }}</a></td>
-                        <td>{{ $notification->created_at }}</td>
                         <td class="mark-{{$notification->id}}" style="text-align:center">
                         @if($notification->read_at == null)
-                           <button class="btn btn-success bi bi-check2 mark-notification" data-notification-id="{{ $notification->id }}"></button>
+                            <i id="icon{{$notification->id}}" class="text-primary fa-regular fa-envelope" data-toggle="tooltip" title="Μη Αναγνωσμένο"></i>
                         @else
-                            <button class="btn btn-secondary bi bi-check2" disabled></button>
+                            <i class="text-secondary fa-regular fa-envelope-open" data-toggle="tooltip" title="Αναγνωσμένο"></i>
                         @endif
                         </td>
-                        <td style="text-align:center"><button class="btn btn-danger bi bi-trash delete-notification" data-notification-id="{{ $notification->id }}"></button></td>
+                        <td><a href="{{ route('notifications.show', $notification->id) }}">{{ $notification->data['summary'] }}</a></td>
+                        <td>{{ $notification->created_at }}</td>
+                        
+                        <td id="actions{{$notification->id}}" style="text-align:center">@if($notification->read_at == null)<button id="mark{{$notification->id}}" class="btn btn-primary bi bi-check2-circle mark-notification" data-toggle="tooltip" title="Σήμανση ως Αναγνωσμένο" data-notification-id="{{ $notification->id }}"></button>@endif <button class="btn btn-outline-danger bi bi-trash delete-notification" data-notification-id="{{ $notification->id }}" data-toggle="tooltip" title="Διαγραφή"></button></td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        <form action="{{route("notifications.mark_all_as_read")}}" method="post">
-            @csrf
-            <button type="submit" class="m-2 btn btn-dark bi bi-check2"> Διαβάστηκαν όλες οι ειδοποιήσεις</button>
-        </form>
+        @if($notifications->whereNull('read_at')->count() > 1)
+            <form action="{{route("notifications.mark_all_as_read")}}" method="post">
+                @csrf
+                <button type="submit" class="m-2 btn btn-primary"><i class="bi bi-check2-circle"></i> Σήμανση όλων ως αναγνωσμένα</button>
+            </form>
+        @endif
     @endif
 </x-layout>

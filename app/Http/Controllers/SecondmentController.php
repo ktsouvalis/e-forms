@@ -138,12 +138,26 @@ class SecondmentController extends Controller
     }
 
     //Διαγραφή αρχείου
-    public function delete_file(Request $request, Secondment $secondment){
-    
+    public function delete_file(Secondment $secondment, $serverFileName){
+        $fileHandler = new FilesController();
+        $files = json_decode($secondment->files_json, true);
+        try{
+            $fileHandler->delete_file('secondments', $serverFileName, 'local');
+            $databaseFileName = $files[$serverFileName];
+            $key = array_search($databaseFileName, $files);
+            if ($key !== false) {
+                unset($files[$key]);
+            }
+            //dd($files);
+            $secondment->files_json = json_encode($files);
+            $secondment->update();
+        } catch(\Exception $e) {
+            return back()->with('failure', 'Αποτυχία διαγραφής αρχείου.');
+        }
+        return back()->with('success', 'Επιτυχής διαγραφή αρχείου: "'.$databaseFileName.'"');
     }
     //Ανέβασμα αρχείων
     public function upload_files(Request $request, Secondment $secondment){
-        
         $request->validate([
             'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
@@ -151,33 +165,36 @@ class SecondmentController extends Controller
         $fileNames = [];
         //Βρες πόσα αρχεία έχει ήδη ανεβάσει
         if($secondment->files_json){
-            $fileNames = json_decode($secondment->files_json);
-            $filesCount = count($fileNames);
+            $fileNames = json_decode($secondment->files_json, true);
+            end($fileNames);
+            $lastServerFileName = key($fileNames);
+            $underScorePosition = strpos($lastServerFileName, '_');
+            $filesCount = substr($lastServerFileName, $underScorePosition + 1, strpos($lastServerFileName, '.') - $underScorePosition -1) ;
         } else {
             $filesCount = 0;
         }
         $directory = "secondments";
         $teacherAfm = Auth::guard('teacher')->user()->afm;
         foreach($files as $file){
-            array_push($fileNames, $file->getClientOriginalName());
-            $fileHandler = new FilesController();
             $filesCount++;
-            $file_name_to_store = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
-            $uploaded = $fileHandler->upload_file($directory, $file, 'local', $file_name_to_store);
+            $serverFileName = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
+            $fileNames[$serverFileName] = $file->getClientOriginalName();
+            $fileHandler = new FilesController();
+            
+            $uploaded = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);
             
             if($uploaded->getStatusCode() == 500){
                 Log::channel('files')->error($teacherAfm." Files failed to upload");
-                return back()->with('failure', 'Δοκιμάστε ξανά');
+                return back()->with('failure', 'Αποτυχία στην υποβολή των αρχείων. Δοκιμάστε ξανά');
             }
         }
         $secondment->files_json = json_encode($fileNames);
-       
         try{
             $secondment->update();
         } catch(\Exception $e) {
             dd($e->getMessage());
-            Log::channel('files')->error($teacherAfm." Files failed to upload");
-            return back()->with('failure', 'Δοκιμάστε ξανά');
+            Log::channel('files')->error($teacherAfm." Files failed to update database field files_json");
+            return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
         }
         Log::channel('files')->info($teacherAfm." Files successfully uploaded");
         return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς');
@@ -259,6 +276,12 @@ class SecondmentController extends Controller
             $protocol = explode(" - ", $body);
             return $protocol;
         }
+    }
+
+    public function recall(Secondment $secondment){
+        $secondment->submitted = 0;
+        $secondment->update();
+        return back()->with('success', 'Η αίτηση ανακλήθηκε επιτυχώς');
     }
 
     public function download_file($file, $download_file_name = null){

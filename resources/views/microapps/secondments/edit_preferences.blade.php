@@ -224,12 +224,22 @@
                     </div>
                 </form>
                 @else
+                @php
+                    $serverFileName = $secondment->teacher->afm.'_application_form.pdf';
+                    $databaseFileName = $secondment->teacher->surname.'_Δήλωση_Προτιμήσεων.pdf';
+                @endphp
                 </form>
                     <div class="text-center">
-                        <form action="{{route('secondments.download_file', ['file'=>'125827324_application_form.pdf', 'download_file_name'=>'ΑΓΓΕΛΑΚΟΠΟΥΛΟΥ_Δήλωση_Προτιμήσεων.pdf'])}}" method="get">
+                        <form action="{{route('secondments.download_file', ['serverFileName'=>$serverFileName, 'databaseFileName'=>$databaseFileName])}}" method="get">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
                         </form>
                         Η αίτηση έχει υποβληθεί οριστικά με αριθ. πρωτ {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας και δε μπορεί να τροποποιηθεί.
+                    </div>
+                    <div class="text-center">
+                        <form action="{{route('secondments.recall', ['secondment'=>$secondment])}}" method="get">
+                            <button class="btn btn-danger bi bi-arrow-counterclockwise" title="recall">Ανάκληση</button>
+                        </form>
+                        Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
                     </div>
                 @endif
         </div>   

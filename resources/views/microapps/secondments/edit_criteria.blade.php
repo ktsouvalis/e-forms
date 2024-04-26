@@ -380,15 +380,14 @@
             <div class="card-body p-3">
                 <div class="row justify-content-right">
                     <div class="text-center py-2">
-                        <p class="m-0">Μπορείτε να ανεβάσετε και περισσότερα από ένα αρχεία
-                            ,
-                        </p>
+                        <p class="m-0">Μπορείτε να επιλέξετε και να ανεβάσετε και περισσότερα από ένα αρχεία ταυτόχρονα.</p>
                     </div>
                     <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" method="post" class="container-fluid" enctype="multipart/form-data">
                         @csrf
                         <div class="text-center">
-                            <input  type="file" id="files" name="files[]" multiple required>
-                            <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2">
+                            <input  type="file" id="files" name="files[]" multiple required @if($secondment->submitted == 1) disabled @endif>
+                            <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
+                            @if($secondment->submitted == 1) disabled @endif >
                         </div>
                     </form>
                   
@@ -399,18 +398,21 @@
                     <div class="text-center py-2">
                         <p class="m-0">Αρχεία που έχουν υποβληθεί:</p>
                         @if($secondment->files_json)
-                            @php $count = 1; @endphp
-                            @foreach(json_decode($secondment->files_json) as $file)
-                            @php
-                                $extension = pathinfo($file, PATHINFO_EXTENSION);
-                                $file_name = Auth::guard('teacher')->user()->afm . '_' . $count . '.' . $extension;
+                            @php 
+                                $count = 1;
+                                $fileNames = json_decode($secondment->files_json, true);
                             @endphp
-                            <form action="{{route('secondments.download_file', ['file' => $file_name, 'download_file_name' => $file])}}" method="get">
-                            <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1" value="{{$file}}" >
-                            </form>
-                            <form action="{{route('secondments.delete_file', ['file' => $file_name, 'download_file_name' => $file])}}" method="get">
-                            <input type="submit" class="btn btn-danger btn-block rounded-2 py-2 m-1" value="Διαγραφή" >
-                            </form>
+                            @foreach($fileNames as $serverFileName => $databaseFileName)
+                            
+                            <div class="d-flex justify-content-between">
+                                <form action="{{route('secondments.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get">
+                                    <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1" value="{{$databaseFileName}}" >
+                                </form>
+                                <form action="{{route('secondments.delete_file', [ 'secondment' => $secondment, 'serverFileName' => $serverFileName ])}}" method="get">
+                                    <input type="submit" class="btn btn-danger btn-block rounded-3" value="Διαγραφή" 
+                                    @if($secondment->submitted == 1) disabled @endif >
+                                </form>
+                            </div>
                             @php $count++; @endphp
                             @endforeach
                         @else

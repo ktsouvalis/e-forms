@@ -14,7 +14,6 @@ class FilesController extends Controller
 
     public function upload_file($directory, $file, $driver, $desiredFilename = null){
         $filename = $file->getClientOriginalName();
-        
         if($desiredFilename){
             if(strpos(substr($desiredFilename, -6), ".")){//if there is an extension to given filename
                 $filename = $desiredFilename;
@@ -34,10 +33,11 @@ class FilesController extends Controller
 
     public function download_file($directory, $original_filename, $driver, $desiredFilename = null){
         if($desiredFilename){
-            if(strpos(substr($desiredFilename, -6), ".")){//if there is an extension to given filename
+            $extension = pathinfo($desiredFilename, PATHINFO_EXTENSION);
+            if($extension){//if there is an extension to given filename
                 $filename = $desiredFilename;
             } else {//find the extension and add it to the given filename
-                $extension = $file->extension();
+                $extension = pathinfo($original_filename, PATHINFO_EXTENSION);
                 $filename = $desiredFilename.$extension;
             }
         } else {

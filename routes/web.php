@@ -232,11 +232,13 @@ Route::group(['prefix' => 'secondments'], function () {
 
     Route::get('/createPDF/{secondment}', [SecondmentController::class, 'createPDF'])->name('secondments.createPDF');
 
-    Route::get("/{file}/{download_file_name}", [SecondmentController::class, 'download_file'])->name('secondments.download_file');
+    Route::get("/{serverFileName}/{databaseFileName}", [SecondmentController::class, 'download_file'])->name('secondments.download_file');
 
     Route::post("/upload_files/{secondment}", [SecondmentController::class, 'upload_files'])->name('secondments.upload_files');
 
-    Route::get("/delete_file/{file_name}", [SecondmentController::class, 'delete_file'])->name('secondments.delete_file');
+    Route::get("/delete_file/{secondment}/{serverFileName}", [SecondmentController::class, 'delete_file'])->name('secondments.delete_file');
+
+    Route::get("/recall/{secondment}", [SecondmentController::class, 'recall'])->name('secondments.recall');
 });
 
 //Route::view('/secondments', 'microapps.secondments.create');

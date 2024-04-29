@@ -45,6 +45,10 @@
                 <th id="search">Όνομα</th>
                 <th id="search">Επώνυμο</th>
                 <th id="search">ΑΦΜ</th>
+                <th id="search">Κινητό</th>
+                <th id="search">e-mail</th>
+                <th id="search">Σχολείο</th>
+                <th id="search">e-mail Σχολείου</th>
                 <th id="search">Α1</th>                
                 <th id="search">Α2</th>
                 <th id="search">Β</th>
@@ -71,9 +75,19 @@
                  <tr>
                     <td>{{$teacher->appointment_date}}</td>
                     <td> {{$teacher->klados}} </td>
-                    <td>{{$teacher->name}}</td>
-                     <td> {{$teacher->surname}}</td>
-                     <td> {{$teacher->afm}}</td>
+                    <td>{{$teacher->name}} </td>
+                     <td> {{$teacher->surname}} </td>
+                     <td> {{$teacher->afm}} </td>
+                     <td> {{$teacher->telephone}} </td>
+                     <td> {{$teacher->mail}} </td>
+                     @if($teacher->ypiretisi == null)
+                        <td> Πειραματικό Σχολείο Παν/μίου Πατρών </td>
+                        <td> Πειραματικό Σχολείο Παν/μίου Πατρών </td>
+                     @else
+                        <td> {{$teacher->ypiretisi->name}} </td>
+                        <td> {{$teacher->ypiretisi->mail}} </td>
+                     @endif
+                     
                      @php
                         $a1 = DB::table('evaluation_a1')->where('teacher_afm', $teacher->afm)->first();
                     @endphp

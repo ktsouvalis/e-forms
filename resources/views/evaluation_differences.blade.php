@@ -49,6 +49,7 @@
                 <th id="search">e-mail</th>
                 <th id="search">Σχολείο</th>
                 <th id="search">e-mail Σχολείου</th>
+                <th id="search">Αξιολογητής Α1</th>
                 <th id="search">Α1</th>                
                 <th id="search">Α2</th>
                 <th id="search">Β</th>
@@ -109,8 +110,10 @@
                             }
                         }
                         @endphp
-                        <td> @if($evaluator_a1) {{$evaluator_a1->surname}} {{$evaluator_a1->name}} @else {{$a1->evaluator_afm_comments}} @endif {{$state}}</td>
+                        <td>@if($evaluator_a1) {{$evaluator_a1->surname}} {{$evaluator_a1->name}} @else {{$a1->evaluator_afm_comments}} @endif</td>
+                        <td> {{$state}} </td>
                     @else
+                        <td>-</td>
                         <td>-</td>
                     @endif  
                     @php
@@ -120,22 +123,23 @@
                         }
                     @endphp
                     @if($a2)
-                    @php
-                    if($a2->self_evaluation_date){
-                        if($a2->date_completed_timestamp){
-                            $state = "Ανάρτηση Τελικής Έκθεσης";
+                        @php
+                        if($a2->self_evaluation_date){
+                            if($a2->date_completed_timestamp){
+                                $state = "Ανάρτηση Τελικής Έκθεσης";
+                            } else {
+                                $state = "Ανάρτηση Αυτοαξιολόγησης";
+                            }
                         } else {
-                            $state = "Ανάρτηση Αυτοαξιολόγησης";
+                            if($a2->date_completed_timestamp){
+                                $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                            } else {
+                                $state = "Εκκρεμής";
+                            }
                         }
-                    } else {
-                        if($a2->date_completed_timestamp){
-                            $state = "Ανάρτηση Μονομερούς Πρακτικού";
-                        } else {
-                            $state = "Εκκρεμής";
-                        }
-                    }
-                    @endphp
-                        <td> @if($evaluator_a2){{$evaluator_a2->surname}} {{$evaluator_a2->name}} @else {{$a2->evaluator_afm_comments}} @endif {{$state}} </td>
+                        @endphp
+                        {{-- <td> @if($evaluator_a2){{$evaluator_a2->surname}} {{$evaluator_a2->name}} @else {{$a2->evaluator_afm_comments}} @endif {{$state}} </td> --}}
+                        <td> {{$state}} </td>
                     @else
                         <td>-</td>
                     @endif 
@@ -146,27 +150,27 @@
                         }   
                     @endphp
                     @if($b)
-                    @php
-                    if($b->self_evaluation_date){
-                        if($b->date_completed_timestamp){
-                            $state = "Ανάρτηση Τελικής Έκθεσης";
+                        @php
+                        if($b->self_evaluation_date){
+                            if($b->date_completed_timestamp){
+                                $state = "Ανάρτηση Τελικής Έκθεσης";
+                            } else {
+                                $state = "Ανάρτηση Αυτοαξιολόγησης";
+                            }
                         } else {
-                            $state = "Ανάρτηση Αυτοαξιολόγησης";
+                            if($b->date_completed_timestamp){
+                                $state = "Ανάρτηση Μονομερούς Πρακτικού";
+                            } else {
+                                $state = "Εκκρεμής";
+                            }
                         }
-                    } else {
-                        if($b->date_completed_timestamp){
-                            $state = "Ανάρτηση Μονομερούς Πρακτικού";
-                        } else {
-                            $state = "Εκκρεμής";
-                        }
-                    }
-                    @endphp
-                        <td>@if($evaluator_b){{$evaluator_b->surname}} {{$evaluator_b->name}} @endif {{$state}} </td>
+                        @endphp
+                        {{-- <td>@if($evaluator_b){{$evaluator_b->surname}} {{$evaluator_b->name}} @endif {{$state}} </td> --}}
+                        <td> {{$state}} </td>
                     @else
                         <td>-</td>
-                    @endif
-                            
-                        <td> {{$teacher->am}} </td>
+                    @endif     
+                    <td> {{$teacher->am}} </td>
                     </tr>
         @endforeach
         </tbody>

@@ -13,16 +13,21 @@
         <script src="{{asset('summernote-0.8.18-dist/summernote-lite.min.js')}}"></script>
         <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script>
-            $(document).ready(function() {
-                $('a[data-toggle="modal"]').on('mousedown', function (event) {
+           $(document).ready(function() {
+                $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
                     var stakeholderName = $(this).data('stakeholder-name');
                     $('#messageModal .modal-header').text('Μήνυμα προς ' + stakeholderName);
-                    event.preventDefault();
+
                     var stakeholderId = $(this).data('stakeholder-id');
                     $('#stakeholderId').val(stakeholderId);
+
                     setTimeout(function() {
                         $('#messageModal').modal('show');
                     }, 50);
+
                     $('#messageModal').on('shown.bs.modal', function() {
                         $('#message').focus();
                     });
@@ -235,7 +240,6 @@
                     <div class="modal-content">
                         <div class="modal-header bg-primary text-light">
                             <h5 class="modal-title" id="messageModalLabel">Αποστολή μηνύματος</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{{url("/filecollects/send_personal_message")}}" method="post">
                             @csrf

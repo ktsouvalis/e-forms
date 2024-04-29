@@ -71,14 +71,14 @@
                                 @endphp
                             
                             <td >
-                                <form action="{{url("/change_status/$one_filecollect->id")}}" method="post">
+                                <form action="{{url("/filecollects/change_status/$one_filecollect->id")}}" method="post">
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_vis_status">
                                 <button type="submit" class="btn btn-secondary bi bi-binoculars" data-toggle="tooltip" title="{{$tooltip_vis}}" style="{{$opacity_vis}}" onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> </button>
                                 </form>
                             </td>
                             <td >
-                                <form action="{{url("/change_status/$one_filecollect->id")}}" method="post">
+                                <form action="{{url("/filecollects/change_status/$one_filecollect->id")}}" method="post">
                                 @csrf
                                 <input name="asks_to" type="hidden" value="ch_acc_status">
                                 <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down" style="{{$opacity_acc}}" data-toggle="tooltip" title="{{$tooltip_acc}}" {{$hidden_acc}}></button>

@@ -50,14 +50,14 @@
     <form action="{{route('microapps.change_status', $microapp->id)}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_vis_status">
-        <button type="submit" class="btn btn-secondary bi bi-binoculars"  onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> {{$tooltip_vis}}</button>
+        <button type="submit" class="btn btn-primary bi bi-binoculars"  onclick="return confirm('Με την αλλαγή της ορατότητας, η φόρμα δε θα δέχεται υποβολές\n')"> {{$tooltip_vis}}</button>
     </form>
 
     {{-- <form action="{{url("/manage/microapps/change_microapp_status/$microapp->id")}}" method="post"> --}}
     <form action="{{route('microapps.change_status', $microapp->id)}}" method="post">
         @csrf
         <input name="asks_to" type="hidden" value="ch_acc_status">
-        <button type="submit" class="btn btn-secondary bi bi-journal-arrow-down"  {{$hidden_acc}}> {{$tooltip_acc}}</button>
+        <button type="submit" class="btn btn-primary bi bi-journal-arrow-down"  {{$hidden_acc}}> {{$tooltip_acc}}</button>
     </form>
     @endcan
     @if(!$microapp->accepts)

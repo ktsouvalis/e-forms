@@ -642,7 +642,6 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
         $password = env('DB_PASSWORD');
         $database = env('DB_DATABASE');
         $backupFilePath = date('Y-m-d_H-i-s') . '_backup.sql';
-        $sudoRequired = env('SUDO_REQUIRED');
         $command = "mysqldump -h $host -u $username -p$password --databases $database > " . storage_path('app/' . $backupFilePath);
         try{
              exec($command);
@@ -654,7 +653,7 @@ Route::group(['middleware' => "can:executeCommands," .Operation::class], functio
             catch(\Exception $e){
     
             }
-            return back()->with('failure', $e->getMessage());
+            return back()->with('failure', 'Something went wrong, check logs (user_memorable_actions) for more info');
         }
         try{
             Log::channel('user_memorable_actions')->info(Auth::user()->username." successfully backup db");

@@ -24,7 +24,25 @@
     @stack('links')
   </head>
   <body>
-  
+    <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1050; display: none;">
+    <div id="loadingSpinner" class="hstack gap-4" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="spinner-grow text-dark" role="status" style="width: 2rem; height: 2rem;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="spinner-grow text-dark" role="status" style="width: 2rem; height: 2rem;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="spinner-grow text-dark" role="status" style="width: 2rem; height: 2rem;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="spinner-grow text-dark" role="status" style="width: 2rem; height: 2rem;">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="spinner-grow text-dark" role="status" style="width: 2rem; height: 2rem;">
+        <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  </div>
   @auth
     @php
       $user = Auth::user();
@@ -65,9 +83,12 @@
       </div>
     </div>
   @endauth
- 
+  
   <div class="mx-5"> <!-- Custom container --> 
   @include('components/messages')    <!-- Show Notifications --> 
+  
+ 
+  
   {{$slot}}
   </div> <!-- End of custom container --> 
 
@@ -81,6 +102,7 @@
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
     crossorigin="anonymous">
   </script>
+  <script src="{{asset('spinner.js')}}"></script>
   @stack('scripts')
   </div> <!-- container closing -->
     <div class="d-flex justify-content-center"><p class="h3" style="color:black"> {{env('APP_NAME')}}</p></div>

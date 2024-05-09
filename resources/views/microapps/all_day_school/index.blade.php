@@ -31,7 +31,7 @@
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Δημοτικών</strong></span>
                     </div>
                     <div class="input-group w-75">
-                        <input name="template_file" type="file" class="form-control"><br>
+                        <input name="template_file" type="file" class="form-control" required><br>
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
@@ -52,7 +52,7 @@
                         <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου Νηπιαγωγείων</strong></span>
                     </div>
                     <div class="input-group w-75">
-                        <input name="template_file" type="file" class="form-control"><br>
+                        <input name="template_file" type="file" class="form-control" required><br>
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>

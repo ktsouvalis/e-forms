@@ -169,7 +169,7 @@
                         </td>
                         <td >{{$school->code}}</td> 
                         <td>
-                            <a href="#" data-toggle="modal" data-target="#infoModal" data-school-id="{{$school->id}}">{{$school->name}}</a>
+                            <a href="#" class="no-spinner" data-toggle="modal" data-target="#infoModal" data-school-id="{{$school->id}}">{{$school->name}}</a>
                         </td>
                         @if($school->director)
                             <td >{{$school->director->surname}} {{$school->director->name}}</td>

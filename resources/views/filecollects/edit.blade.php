@@ -294,7 +294,7 @@
                             $name = $one_stakeholder->stakeholder->surname . ' ' . $one_stakeholder->stakeholder->name;
                     @endphp
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}" data-stakeholder-name = "{{$name}}">
+                        <a href="#" class="no-spinner" data-toggle="modal" data-target="#messageModal" data-stakeholder-id="{{$one_stakeholder->id}}" data-stakeholder-name = "{{$name}}">
                             {{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}
                         </a>
                     </td>
@@ -355,12 +355,12 @@
                     @csrf
                     <button type="submit" class="btn btn-warning bi bi-envelope-at" onclick="return confirm('Επιβεβαίωση αποστολής email;')"> Αποστολή email σε όσους <strong>δεν</strong> έχουν στείλει αρχείο</button>
                 </form>
-                <form action="{{url("/filecollects/download_directory/$filecollect->id")}}" method="post">
+                <form action="{{url("/filecollects/download_directory/$filecollect->id")}}" method="post" data-export>
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-cloud-download" > Λήψη αρχείων</button>
                 </form>
                 @if(Auth::user()->isAdmin() and $filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' and $filecollect->lines_to_extract)
-                <form action="{{url("/filecollects/extract_xlsx_file/$filecollect->id")}}" method="post">
+                <form action="{{url("/filecollects/extract_xlsx_file/$filecollect->id")}}" method="post" data-export>
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-filetype-xlsx" > Εξαγωγή συγκεντρωτικού αρχείου</button>
                 </form>

@@ -87,13 +87,13 @@
                                 </div>
                                 <div class="py-2" style="text-align:center">
                                 @if($one_operation->url == "/month")
-                                    <a  class="text-dark" style="text-decoration:none;" href="#" data-toggle="modal1" data-target="#monthModal">
+                                    <a  class="text-dark no-spinner" style="text-decoration:none;" href="#" data-toggle="modal1" data-target="#monthModal">
                                     <div class="h5 card-title {{$one_operation->icon}}"></div>
                                     <div >{{$one_operation->name}}</div>
                                     </a> 
                                 @else
                                     @if($one_operation->url == "/commands")
-                                        <a  class="text-dark" style="text-decoration:none;" href="#" data-toggle="modal2" data-target="#commandsModal">
+                                        <a  class="text-dark no-spinner" style="text-decoration:none;" href="#" data-toggle="modal2" data-target="#commandsModal">
                                         <div class="h5 card-title {{$one_operation->icon}}"></div>
                                         <div >{{$one_operation->name}}</div>
                                         </a>

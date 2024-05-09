@@ -20,7 +20,7 @@
             <div class="col">
                 Εξαγωγή προγράμματος μήνα σε excel: <p><small><em>(15/2/2024 - Έχει διορθωθεί εσφαλμένη εμφάνιση ημερομηνιών στο εξαγόμενο αρχείο)</em></small></p>
                 {{-- <form action="{{url("/work_planning/extract_work_plan/$yearWeek")}}" method="post"> --}}
-                <form action="{{route('work_planning.extract_work_plan', ['yearWeek' => $yearWeek])}}" method="post">
+                <form action="{{route('work_planning.extract_work_plan', ['yearWeek' => $yearWeek])}}" method="post" data-export>
                 @csrf
                 <input type="image" src="{{asset('favicon/xlsx.jpg')}}" alt="xlsx" width="20" height="20">
                 </form>

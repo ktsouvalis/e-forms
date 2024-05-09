@@ -164,7 +164,7 @@
                     </td>
                     <td>{{$teacher->afm}}</td>
                     <td>
-                        <a href="#" data-toggle="modal" data-target="#infoModal" data-teacher-id="{{$teacher->id}}">
+                        <a href="#" class="no-spinner" data-toggle="modal" data-target="#infoModal" data-teacher-id="{{$teacher->id}}">
                             {{$teacher->surname}}
                         </a>
                     </td>

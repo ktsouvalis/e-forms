@@ -19,7 +19,7 @@
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-arrow-repeat"> Ενημέρωση Εφαρμογής</button>
                 </form>
-                <form class="col-md py-2" action="{{url('/db_backup')}}" method="post">
+                <form class="col-md py-2" action="{{url('/db_backup')}}" method="post" data-export>
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-database-down"> Database Backup</button>
                 </form>

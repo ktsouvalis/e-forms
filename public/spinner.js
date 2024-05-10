@@ -16,4 +16,9 @@ $(document).ready(function () {
         $('#loadingOverlay').hide();
         $('#loadingSpinner').hide();
     });
+
+    $(window).on('pageshow', function () {
+        $('#loadingOverlay').hide();
+        $('#loadingSpinner').hide();
+    });
 });

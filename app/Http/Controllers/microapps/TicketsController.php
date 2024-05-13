@@ -105,7 +105,7 @@ class TicketsController extends Controller
         $success=true;
 
         foreach(Superadmin::all() as $superadmin){
-            $superadmin->user->notify(new UserNotification("To ".$new_ticket->school->name." δημιούργησε δελτίο με θέμα: ".$new_ticket->subject, "Νέο δελτίο $new_ticket->id"));
+            $superadmin->user->notify(new UserNotification("Δείτε <a href='".route('tickets.edit', ['ticket' => $new_ticket->id])."'>εδώ</a> το δελτίο", "Νέο δελτίο $new_ticket->id"));
         }
 
         try{
@@ -122,7 +122,7 @@ class TicketsController extends Controller
         $success=true;
 
         foreach(Superadmin::all() as $superadmin){
-            $superadmin->user->notify(new UserNotification("Απόσπασμα μηνύματος: '".substr($new_string, 0, 150)."...'", 'Ανανέωση δελτίου '.$ticket->id));
+            $superadmin->user->notify(new UserNotification("Δείτε <a href='".route('tickets.edit', ['ticket' => $ticket->id])."'>εδώ</a> το δελτίο", 'Ανανέωση δελτίου '.$ticket->id));
         }
 
         try{

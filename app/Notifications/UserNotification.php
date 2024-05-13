@@ -6,10 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use romanzipp\QueueMonitor\Traits\IsMonitored;
 
 class UserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+    use isMonitored;
 
     private $message;
     private $summary;

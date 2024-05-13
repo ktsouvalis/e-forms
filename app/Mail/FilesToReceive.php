@@ -10,10 +10,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use romanzipp\QueueMonitor\Traits\IsMonitored;
 
 class FilesToReceive extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, isMonitored;
 
     /**
      * The maximum number of times the job may be attempted.
@@ -31,7 +32,7 @@ class FilesToReceive extends Mailable implements ShouldQueue
         $this->name = $this->fileshare->name;
         $this->username = $username;
     }
-
+    
     /**
      * Get the message envelope.
      */

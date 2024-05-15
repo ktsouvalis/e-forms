@@ -19,6 +19,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Rehash Option (Update of Laravel 11.0)
+    |--------------------------------------------------------------------------
+    |Laravel 11 will automatically rehash your user's passwords during 
+    |authentication if your hashing algorithm's "work factor" has been updated 
+    |since the password was last hashed. If you would like to disable this
+    |behavior, you may set the rehash option to false.
+    |
+    */
+
+
+    'rehash_on_login' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Bcrypt Options
     |--------------------------------------------------------------------------
     |

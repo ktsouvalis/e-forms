@@ -94,7 +94,8 @@ class TicketsController extends Controller
             ]); 
         }
         catch(Throwable $e){
-            Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create ticket db error '.$e->getMessage());
+            $user = Auth::check() ? Auth::user() : Auth::guard('school')->user();
+            Log::channel('throwable_db')->error($user->name.' create ticket db error '.$e->getMessage());
             return 'error';
         }
         Log::channel('tickets')->info($new_ticket->school->name." ticket $new_ticket->id creation success");

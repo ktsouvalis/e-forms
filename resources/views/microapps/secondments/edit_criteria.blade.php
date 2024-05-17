@@ -97,6 +97,23 @@
                             <label for="days" class="px-2" >έως 31-8-2024</label>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fa-solid fa-user-check text-info"></i></div>
+                        </div>
+                        <div class="input-group-text">Υπεύθυνες Δηλώσεις:</div>
+                        <div class="form-check form-switch">    
+                            <input type="checkbox" class="form-check-input" id="statement_of_declaration" name="statement_of_declaration" @if($secondment->statement_of_declaration==1) checked @endif disabled>
+                            <label for="application_for_reposition" class="form-check-label" >Δεν έχω οριστεί στέλεχος εκπαίδευσης και ότι δεν υπηρετώ σε θέση με θητεία που λήγει μετά τις 31-08-2024.</label>
+                        </div>
+                        <div class="form-check form-switch"> 
+                            <input type="checkbox" class="form-check-input" id="application_for_reposition" name="application_for_reposition" @if($secondment->application_for_reposition==1) checked @endif disabled>
+                            <label for="application_for_reposition" class="form-check-label" >Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2024</label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         </div>        
@@ -150,7 +167,7 @@
                                 <div class="px-2 input-group-text">Οικογενειακή Κατάσταση:</div>
                                 <select name="marital_status" id="marital_status" class="form-select" 
                                 @if($secondment->submitted == 1) disabled @endif>
-                                    <option value="0" @if($secondment->marital_status == 1) selected @endif >Δηλώστε μόνο σε περίπτωση που ζητάτε να μοριοδοτηθείτε</option>
+                                    <option value="0" @if($secondment->marital_status == 0) selected @endif >Δηλώστε μόνο σε περίπτωση που ζητάτε να μοριοδοτηθείτε</option>
                                     <option value="1" @if($secondment->marital_status == 1) selected @endif >Άγαμος</option>
                                     <option value="2" @if($secondment->marital_status == 2) selected @endif >Έγγαμος - Σύμφωνο συμβίωσης</option>
                                     <option value="3" @if($secondment->marital_status == 3) selected @endif >Διαζευγμένος - Σε διάσταση</option>

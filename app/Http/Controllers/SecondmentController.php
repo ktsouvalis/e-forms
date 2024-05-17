@@ -30,6 +30,7 @@ class SecondmentController extends Controller
                 $secondment->update($request->input());
                 return back()->with('success', 'Τα στοιχεία αποθηκεύτηκαν.');
             } catch(\Exception $e) {
+                //dd($e->getMessage());
                 return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
             }
         } else {                                                    //Αποθήκευση προτιμήσεων, οριστικοποίηση και αποστολή
@@ -64,16 +65,14 @@ class SecondmentController extends Controller
             try{
                 $this->createPDF($secondment, $request->input()['selectionOrder']);
             } catch(\Exception $e) {
-                dd($e->getMessage());
+                //dd($e->getMessage());
                 return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η δημιουργία του pdf αρχείου. Προσπαθήστε ξανά. Σε περίπτωση προβλήματος παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
-            
             //Στείλε την αίτηση στο πρωτόκολλο
             $protocol_message = $this->sendToProtocol($secondment);
             if($protocol_message == false){
                 return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η αποστολή στο πρωτόκολλο. Προσπαθήστε ξανά. Σε περίπτωση προβλήματος παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
-
             //Ανανέωσε το submitted
             try{
                 $secondment->protocol_nr = $protocol_message[0];
@@ -131,6 +130,7 @@ class SecondmentController extends Controller
                 $secondment->save();
                 return redirect(route('secondments.edit', ['secondment' => $secondment->id]))->with('success',"Επιτυχής αποθήκευση αίτησης. Μπορείτε να προχωρήσετε σε δήλωση μοριοδοτούμενων κριτηρίων.");
             } catch(\Exception $e) {
+                dd($e);
                 return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
             }
         }
@@ -239,16 +239,49 @@ class SecondmentController extends Controller
     }
 
     public function sendToProtocol(Secondment $secondment){
+        
+        if($secondment->teacher->organiki_type == "App\Models\School"){
+            $organicDirectorateCode = '9060101';
+            $organicSchoolCode = $secondment->teacher->organiki->code;
+        } else {
+            $organicDirectorateCode = $secondment->teacher->organiki->code;
+            $organicSchoolCode = '';
+        }
         $data = [
-            [
-                'name'     => 'Afm',
-                'contents' => $secondment->teacher->afm
-            ],
+            ['name' => 'Afm', 'contents' => $secondment->teacher->afm ],
+            ['name' => 'StatementOfDeclaration', 'contents' => ($secondment->statement_of_declaration == 1? 'true' : 'false')],
+            ['name' => 'ApplicationForReposition', 'contents' => ($secondment->application_for_reposition == 1? 'true' : 'false')],
+            ['name' => 'SpecialCategory', 'contents' => ($secondment->special_category == 1? 'true' : 'false')],
+            ['name' => 'HealthIssues', 'contents' => $secondment->health_issues],
+            ['name' => 'ParentsHealthIssues', 'contents' => $secondment->parents_health_issues],
+            ['name' => 'SiblingsHealthIssues', 'contents' => $secondment->siblings_health_issues],
+            ['name' => 'IVF', 'contents' => ($secondment->IVF == 1? 'true' : 'false')],
+            ['name' => 'PostGraduateStudies', 'contents' => ($secondment->post_graduate_studies == 1? 'true' : 'false')],
+            ['name' => 'MaritalStatus', 'contents' => $secondment->marital_status],
+            ['name' => 'NrOfChildren', 'contents' => $secondment->nr_of_children],
+            ['name' => 'OrganicDirectorateCode', 'contents' => $organicDirectorateCode],
+            ['name' => 'OrganicSchoolCode', 'contents' => $organicSchoolCode],
             [
                 'name'     => 'Files',
                 'contents' => fopen(storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf"), 'r')
             ],
         ];
+        if($secondment->preferences_comments)
+           $data[] = ['name' => 'PreferencesComments', 'contents' => $secondment->preferences_comments];
+        if($secondment->comments)
+           $data[] = ['name' => 'Comments', 'contents' => $secondment->comments];
+        if($secondment->parents_municipality)
+           $data[] = ['name' => 'ParentsMunicipality', 'contents' => $secondment->parents_municipality];
+        if($secondment->siblings_municipality)
+           $data[] = ['name' => 'SiblingsMunicipality', 'contents' => $secondment->siblings_municipality];
+        if($secondment->studies_municipality)
+           $data[] = ['name' => 'StudiesMunicipality', 'contents' => $secondment->studies_municipality];
+        if($secondment->civil_status_municipality)
+           $data[] = ['name' => 'CivilStatusMunicipality', 'contents' => $secondment->civil_status_municipality];
+        if($secondment->living_municipality)
+           $data[] = ['name' => 'LivingMunicipality', 'contents' => $secondment->living_municipality];
+        if($secondment->partner_working_municipality)
+           $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
         if($secondment->preferences_json){
             $selectedCodes = json_decode($secondment->preferences_json);
             foreach($selectedCodes as $schoolCode){

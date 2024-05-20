@@ -74,6 +74,7 @@ class TeacherController extends Controller
     }
 
     private function readFileAndUpdateTeachers($word, $col_of_interest, $model, $field, $request){
+        ini_set('max_execution_time', '300'); //300 seconds = 5 minutes
         //store the file
         $filename = "teachers_file_$word".Auth::id().".xlsx";
         $path = $request->file('import_teachers')->storeAs('files', $filename);
@@ -100,6 +101,10 @@ class TeacherController extends Controller
             } 
             if(!Teacher::where('afm', $teacher_afm)->count()){
                 $row++;
+                $rowSumValue="";
+                for($col=1;$col<=54;$col++){
+                    $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                }
                 Log::channel('throwable_db')->error("update $word afm error: ".$teacher_afm);
                 Auth::user()->notify(new UserNotification("Δε βρέθηκε το ΑΦΜ $teacher_afm κατά την ενημέρωση: $word", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
                 $error=true;
@@ -109,6 +114,10 @@ class TeacherController extends Controller
                 $teacher = Teacher::where('afm', $teacher_afm)->first();
                 if(!app("App\\Models\\$model")->where($field, $var_field_straight)->count()){
                     $row++;
+                    $rowSumValue="";
+                    for($col=1;$col<=54;$col++){
+                        $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                    }
                     Log::channel('throwable_db')->error("update $word $field error: ".$var_field_straight);
                     Auth::user()->notify(new UserNotification("Δε βρέθηκε φορέας ($var_field_straight - $model) κατά την ενημέρωση: $word", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
                     $error=true;

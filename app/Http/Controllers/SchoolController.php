@@ -44,7 +44,7 @@ class SchoolController extends Controller
         $mime = Storage::mimeType($path);
         $spreadsheet = IOFactory::load("../storage/app/$path");
         $schools_array=array();
-        $row=2;
+        $row=3;
         $error=0;
         $rowSumValue="1";
 
@@ -70,11 +70,12 @@ class SchoolController extends Controller
                 $check['primary']= 1;
             $check['leitourgikotita']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue():0;
             $check['organikotita']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue():0;
-            $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(17, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(17, $row)->getValue():"-";
-            $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(26, $row)->getValue()=="Ναί")?0:1;
-            $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue()=="Όχι")?1:0;
-            $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue():"-";
-            $check['address']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue():"-";
+            $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue():"-";
+            $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="True")?0:1;
+            $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(51, $row)->getValue()=="True")?0:1;
+            $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)->getValue():"-";
+            $check['address'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue():"-";
+            $check['has_integration_section'] = ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue()=="True")?1:0;
 
             $check['special_needs']=0;
             if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Ειδικής Αγωγής"))
@@ -84,9 +85,9 @@ class SchoolController extends Controller
             if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Πειραματικό"))
                 $check['experimental']= 1;
 
-            $check['international']=0;
+            $check['public']=0;
             if(!str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue(), "Ιδιωτικά Σχολεία"))
-                $check['international']= 1;
+                $check['public']= 1;
 
             $check['md5']="";
 
@@ -141,7 +142,8 @@ class SchoolController extends Controller
                         'mail' => $school['mail'],
                         'experimental' => $school['experimental'],
                         'special_needs' => $school['special_needs'],
-                        'international' => $school['international'],
+                        'public' => $school['public'],
+                        'has_integration_section' => $school['has_integration_section'],
                         'address' => $school['address'],
                     ]
                 );

@@ -42,7 +42,7 @@
                         <td>{{$school['md5']}}</td>
                         <td>{{$school['primary']}}</td>
                         <td>{{$school['special_needs']}}</td>
-                        <td>{{$school['international']}}</td>
+                        <td>{{$school['public']}}</td>
                     </tr>
                     
                 @endforeach

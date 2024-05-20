@@ -1,10 +1,14 @@
 <x-layout>
     <div class="container">
         @if(!session()->has('asks_to'))
+        
         <nav class="navbar navbar-light bg-light">
             <form action="{{url('/upload_schools_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
-                <input type="file" name="import_schools" >    
+                <div class="hstack gap-3">
+                    <span class="">Εκτεταμένα Στοιχεία Σχολικών Μονάδων (2.2)</span>
+                    <input type="file" name="import_schools" >    
+                </div>
                 <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
             </form>
         </nav>
@@ -45,7 +49,7 @@
                         <td style='color: red'> Αγνωστος Δήμος </td>
                     @endif
                     <td>{{$school['special_needs']}}</td>
-                    <td>{{$school['international']}}</td>
+                    <td>{{$school['public']}}</td>
                     
             @endforeach
         </table>

@@ -10,6 +10,7 @@ use App\Models\NoSchool;
 use App\Models\Directory;
 use Illuminate\Http\Request;
 use App\Models\SxesiErgasias;
+use App\Models\WorkExperience;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -324,7 +325,6 @@ class TeacherController extends Controller
             }
         }
     
-        
         //push the prepared array in session for later use
         session(['teachers_array' => $teachers_array]);
 
@@ -406,5 +406,80 @@ class TeacherController extends Controller
             return redirect(url('/teachers'))
                 ->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db');
         }
+    }
+
+    public function import_work_experience(Request $request) {
+        
+        //validate the input file type
+        $rule = [
+            'work_experience_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+        $validator = Validator::make($request->all(), $rule);
+        if($validator->fails()){ 
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
+        }
+        //store the files
+        $filename = "teachers_files_work_experience".Auth::id().".xlsx";
+        $path = $request->file('work_experience_file')->storeAs('files', $filename);
+        //load the file
+        $spreadsheet = IOFactory::load("../storage/app/$path");
+        $teachers_array=array();
+        $row=2;
+        $error=0;
+        $rowSumValue="1";
+        $validationDate = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(38, 1)->getValue();
+        if($validationDate !== "Εκπαιδευτική Υπηρεσία μέχρι και 31/8/2024 Έτη"){
+            $messg = 'Η ημερομηνία υπολογισμού της προϋπηρεσίας είναι "'.$validationDate.'" αντί για 31/8/2024';
+            return back()->with('failure', $messg);
+        }
+       
+        while ($rowSumValue != "" && $row<10000){
+            $check=array();
+            $check['years'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(38, $row)->getValue();
+            $check['months']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(39, $row)->getValue();
+            $check['days']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(40, $row)->getValue();
+            //myschool stores the afm like eg "=999999999"
+            $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
+            $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
+            array_push($teachers_array, $check);
+            $row++;
+            $rowSumValue="";
+            for($col=1;$col<=54;$col++){
+                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+            }
+        }
+        
+        //write data to db
+        foreach($teachers_array as $teacher){
+            $teacherModel = Teacher::where('afm', $teacher['afm'])->first();
+            if($teacherModel){
+               
+                try{
+                    $workExperienceModel = WorkExperience::updateOrcreate(
+                        [
+                            'teacher_id'=> $teacherModel->id 
+                        ],
+                        [
+                            'years' => $teacher['years'],
+                            'months'=> $teacher['months'],
+                            'days'=> $teacher['days'],
+                        ]
+                    );
+                }
+                catch(Throwable $e){
+                    //dd($e->getMessage());
+                    // Log::channel('throwable_db')->error(Auth::user()->username.' create teacher error '.$teacher['afm']);
+                    Log::channel('throwable_db')->error($teacher['afm'].' '.$e->getMessage());
+                    // Auth::user()->notify(new UserNotification("Κατά την εισαγωγή του εκπαιδευτικού με ΑΦΜ ".$teacher['afm']." προέκυψε το σφάλμα ".$e->getMessage(), "Εισαγωγή εκπαιδευτικών: Σφάλμα ΑΦΜ ".$teacher['afm']));
+                    $error=true;
+                    continue; 
+                }
+            }
+        }
+        if(!$error)
+            return redirect(url('/teachers'))->with('success', "Επιτυχής ενημέρωση εκπαιδευτικών");
+        else
+            return redirect(url('/teachers'))->with('warning', "Επιτυχής ενημέρωση εκπαιδευτικών με σφάλματα που καταγράφηκαν στο log throwable_db");
+        
     }
 }

@@ -75,15 +75,16 @@ class SecondmentController extends Controller
             }
             //Ανανέωσε το submitted
             try{
+                $protocol_message = explode(" - ", $protocol_message);
                 $secondment->protocol_nr = $protocol_message[0];
-                $secondment->protocol_date = (string) $protocol_message[1];
+                $secondment->protocol_date = $protocol_message[1];
                 $secondment->submitted = 1;
                 $secondment->update();
-                return back()->with('success', 'Επιτυχής οριστικοποίηση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $protocol_message . '.');
             } catch(\Exception $e) {
                 return back()->with('failure', $e->getMessage());
                 //return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
             }
+            return back()->with('success', 'Επιτυχής οριστικοποίηση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $protocol_message[0] . '-' . $protocol_message[1]. '.');
         }
         
     }
@@ -241,7 +242,7 @@ class SecondmentController extends Controller
     public function sendToProtocol(Secondment $secondment){
         
         if($secondment->teacher->organiki_type == "App\Models\School"){
-            $organicDirectorateCode = '9060101';
+            $organicDirectorateCode = '9906101';
             $organicSchoolCode = $secondment->teacher->organiki->code;
         } else {
             $organicDirectorateCode = $secondment->teacher->organiki->code;
@@ -266,6 +267,23 @@ class SecondmentController extends Controller
                 'contents' => fopen(storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf"), 'r')
             ],
         ];
+        if($secondment->files_json){
+            $fileNames = json_decode($secondment->files_json, true);
+            foreach($fileNames as $serverFileName => $databaseFileName){
+                $data[] = [
+                    'name'     => 'Files',
+                    'contents' => fopen(storage_path("app/secondments/$serverFileName"), 'r'),
+                ];
+            }
+        }
+                                
+                           
+        
+        if($secondment->teacher->work_experience){
+            $data[] = ['name' => 'WorkExperienceYears', 'contents' => $secondment->teacher->work_experience->years];
+            $data[] = ['name' => 'WorkExperienceMonths', 'contents' => $secondment->teacher->work_experience->months];
+            $data[] = ['name' => 'WorkExperienceDays', 'contents' => $secondment->teacher->work_experience->days];
+        }
         if($secondment->preferences_comments)
            $data[] = ['name' => 'PreferencesComments', 'contents' => $secondment->preferences_comments];
         if($secondment->comments)
@@ -291,7 +309,6 @@ class SecondmentController extends Controller
                 ];
             }
         }
-
         $client = new Client();
         $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/secondment', [
             'headers' => [
@@ -305,9 +322,7 @@ class SecondmentController extends Controller
         if($status != 200){
             return false;
         } else {
-            $protocol = [];
-            $protocol = explode(" - ", $body);
-            return $protocol;
+            return $body;
         }
     }
 

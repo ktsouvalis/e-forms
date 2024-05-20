@@ -3,7 +3,7 @@
         $teacher = Auth::guard('teacher')->user(); //check which teacher is logged in
        // $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
        // $accepts = $microapp->accepts; //fetch microapp 'accepts' field
-        $municipalities = App\Models\Municipality::all();                                            
+        $municipalities = App\Models\Municipality::all();                                    
     @endphp
     @push('links')
         <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
@@ -15,6 +15,17 @@
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
+        <script>
+            document.getElementById('marital_status').addEventListener('change', function() {
+                var selectedValue = this.value;
+        
+                // Replace '1', '2', '3' with the actual values that should trigger the file upload
+                if (selectedValue === '1' || selectedValue === '2' || selectedValue === '3') {
+                    var uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
+                    uploadModal.show();
+                }
+            });
+        </script>
     @endpush
     @push('title')
         <title>Αποσπάσεις</title>
@@ -65,6 +76,7 @@
                             <input type="text" class="form-control" id="specialty" name="specialty" placeholder="" value={{$teacher->klados}} disabled>
                             <label for="specialty">Κλάδος</label>
                         </div>
+                
                         <div class="form-floating">
                             <input type="text" class="form-control" id="am" name="am" placeholder="" value={{$teacher->am}} disabled>
                             <label for="am">Αριθμός Μητρώου</label>
@@ -90,11 +102,14 @@
                             <div class="input-group-text"><i class="fa-solid fa-calendar-check text-info"></i></div>
                         </div>
                         <label for="years" class="px-2" >Προϋπηρεσία</label>
-                            <input type="text" class="form-control" id="years" name="years" placeholder="" value="17 Έτη" disabled>
-                            
-                            <input type="text" class="form-control" id="days" name="days" value="5 Μήνες" disabled>
-                            <input type="text" class="form-control" id="days" name="days" value="24 Ημέρες" disabled>
-                            <label for="days" class="px-2" >έως 31-8-2024</label>
+                            @if($teacher->work_experience)
+                                <input type="text" class="form-control" id="years" name="years" placeholder="" value="{{$teacher->work_experience->years}} Έτη" disabled>
+                                <input type="text" class="form-control" id="days" name="days" value="{{$teacher->work_experience->months}} Μήνες" disabled>
+                                <input type="text" class="form-control" id="days" name="days" value="{{$teacher->work_experience->days}} Ημέρες" disabled>
+                                <label for="days" class="px-2" >έως 31-8-2024</label>
+                            @else
+                                <input type="text" class="form-control" id="years" name="work_experience" placeholder="" value="Δεν έχει καταχωρηθεί προϋπηρεσία" disabled>
+                            @endif 
                     </div>
                 </div>
 
@@ -120,6 +135,31 @@
 	</div>
 
     {{-- Μοριοδοτούμενα Κριτήρια - Α Τμήμα Αίτησης --}}
+    <div class="modal" tabindex="-1" id="uploadModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Υποβολή Δικαιολογητικών Οικογενειακής Κατάστασης και Εντοπιότητας</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                    @csrf
+                    <div class="text-center">
+                        <input  type="file" id="files" name="files[]" multiple required @if($secondment->submitted == 1) disabled @endif>
+                        
+                    </div>
+                
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
+                        @if($secondment->submitted == 1) disabled @endif >
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
     <div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0">
@@ -161,6 +201,7 @@
                     <div class="col-md-12">
                         <h4>Οικογενειακά Κριτήρια</h4>
                     </div>
+                    
                     <div class=" col-12 col-md-12">
                         <div class="form-group">
                             <div class="input-group mb-2">
@@ -185,6 +226,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="col-12 col-md-6">
                         <div class="input-group mb-2">
                             <div class="form-group">

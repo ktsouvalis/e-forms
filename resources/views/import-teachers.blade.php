@@ -48,6 +48,28 @@
                 </div>
             </form>
         </nav>
+
+        <hr>
+        <nav class="navbar navbar-light bg-light">
+            <form action="{{url('/upload_work_experience_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="vstack gap-3">
+                    <div class="input-group">
+                        <strong>Εισαγωγή προϋπηρεσίας εκπαιδευτικών μέχρι 31-8</strong>
+                    </div>
+                    <div class="hstack gap-1">
+                        <input type="radio" id="work_experience" name="work_experience" value="work_experience_up_to_31_8">
+                        <label class="px-1" for="work_experience">Προϋπηρεσία έως 31-8 </label><br> 
+                        <div>(4.19: Με ημερομηνία 31-8 του τρέχοντος σχολικού έτους)</div>
+                    </div> 
+                    <input type="file" name="work_experience_file" required>     
+                    <div>
+                        <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
+                    </div>
+                </div>
+            </form>
+        </nav>
         @else
         
         <div style="p-3 mb-2 bg-info text-dark">

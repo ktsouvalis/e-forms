@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\WorkExperience;
 use App\Models\microapps\Secondment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,6 +40,10 @@ class Teacher extends Authenticatable
 
     public function secondment(){
         return $this->hasOne(Secondment::class);
+    }
+
+    public function work_experience(){
+        return $this->hasOne(WorkExperience::class, 'teacher_id');
     }
 
     public function filecollects(){

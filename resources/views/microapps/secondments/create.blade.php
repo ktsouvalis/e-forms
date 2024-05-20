@@ -83,12 +83,14 @@
                             <div class="input-group-text"><i class="fa-solid fa-calendar-check text-info"></i></div>
                         </div>
                         <label for="years" class="px-2" >Προϋπηρεσία</label>
-                            <input type="text" class="form-control" id="years" name="years" placeholder="" value="17 Έτη" disabled>
-                            
-                            <input type="text" class="form-control" id="days" name="days" value="5 Μήνες" disabled>
-                            <input type="text" class="form-control" id="days" name="days" value="24 Ημέρες" disabled>
+                        @if($teacher->work_experience)
+                            <input type="text" class="form-control" id="years" name="years" placeholder="" value="{{$teacher->work_experience->years}} Έτη" disabled>
+                            <input type="text" class="form-control" id="days" name="days" value="{{$teacher->work_experience->months}} Μήνες" disabled>
+                            <input type="text" class="form-control" id="days" name="days" value="{{$teacher->work_experience->days}} Ημέρες" disabled>
                             <label for="days" class="px-2" >έως 31-8-2024</label>
-                        
+                        @else
+                            <input type="text" class="form-control" id="years" name="work_experience" placeholder="" value="Δεν έχει καταχωρηθεί προϋπηρεσία" disabled>
+                        @endif
                     </div>
                 </div>
             </div>

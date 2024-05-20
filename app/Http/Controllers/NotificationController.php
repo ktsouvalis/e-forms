@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -44,5 +45,12 @@ class NotificationController extends Controller
         $the_notification = auth()->user()->notifications->find($notification);
         $the_notification->markAsRead();
         return response()->json(['message'=>'marked as read']);
+    }
+
+    public function deleteAll(User $user){
+        foreach ($user->notifications as $notification) {
+            $notification->delete();
+        }
+        return redirect()->route('notifications.index')->with('success', 'Επιτυχής διαγραφή όλων των ειδοποιήσεων');
     }
 }

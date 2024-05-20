@@ -252,9 +252,16 @@ class OutingsController extends Controller
         $out_sections = $outing->sections;
         $counting = array();
         foreach($out_sections as $section){
+            $sec_count = 0;
             $sec_name = $section->section->name;
-            $sec_count = $section->section->outings->count();
+            $sec_id = $section->section->id;
+            $sec_outings = $section->section->outings;
+            foreach($sec_outings as $sec_outing){
+                if($sec_outing->outing->outingtype_id != 4)
+                    $sec_count++;
+            } 
             $counting[$sec_name] = $sec_count;
+            
         }
         return response()->json(['sections' => json_encode($counting)]);
     }

@@ -89,6 +89,47 @@
                 });
             });
         </script>
+        <script>
+            //if all checkoboxes in the page are selected, the select all checkbox is selected and disabled
+            function updateCheckAll() {
+                var all = $('.check-checkbox').length;
+                var allChecked = $('.check-checkbox:not(:checked)').length === 0;
+                if(all==0){
+                    $('#check-all').prop('checked', false);
+                    $('#check-all').prop('disabled', true);
+                }
+                else{
+                    $('#check-all').prop('checked', allChecked);
+                    $('#check-all').prop('disabled', allChecked);
+                }
+            }
+
+            $('#check-all').click(function(e) { // when "Select All" is clicked
+                e.stopPropagation(); // prevent the click event from being propagated to the table row
+            }).change(function() {
+                if (this.checked) { 
+                    $('.check-checkbox:not(:checked)').prop('checked', true).trigger('change'); // check all unchecked checkboxes
+                }
+                updateCheckAll(); // disable if necessary
+            });
+
+            $('.check-checkbox').change(updateCheckAll); // update "Select All" every time a checkbox is clicked
+            
+            $(document).ready(function() {
+                updateCheckAll();
+
+                // Ensure DataTables has been initialized
+                if ($.fn.dataTable.isDataTable('#dataTable')) {
+                    // Retrieve existing DataTables instance
+                    var table = $('#dataTable').DataTable();
+
+                    // Update "Select All" checkbox when table is redrawn
+                    table.on('draw.dt', function() {
+                        updateCheckAll();
+                    });
+                }
+            });
+        </script>
         <script src="{{asset('charcount.js')}}"></script>
     @endpush
     @push('title')
@@ -259,6 +300,9 @@
                 </div>
             </div>
             <div class="table-responsive">
+                @if(Auth::user()->department->filecollects->find($filecollect->id))
+                    <input type="checkbox" id="check-all"><strong> Σημείωση όλων των αρχείων που έχουν υποβληθεί (και φαίνονται στη σελίδα) ως ελεγμένα</strong>
+                @endif
                 <table  id="dataTable" class="align-middle table table-sm table-striped table-hover">
                 <thead>
                     <tr>
@@ -308,7 +352,7 @@
                             </form>
                         </td>
                     @else
-                        <td> - </td>
+                        <td style="colοr:red"> ΟΧΙ </td>
                     @endif
                     @if($one_stakeholder->stake_comment)
                         <td>
@@ -323,12 +367,12 @@
                     <td>-</td>
                     @endif
                     
-                    @if($one_stakeholder->file and Auth::user()->department->filecollects->find($one_stakeholder->filecollect_id))
-                    <td style="text-align:center;">
-                        <input type="checkbox" class="check-checkbox" data-stakeholder-id="{{ $one_stakeholder->id }}" {{ $one_stakeholder->checked ? 'checked' : '' }}>
-                    </td>
+                    @if($one_stakeholder->file and Auth::user()->department->filecollects->find($filecollect->id))
+                        <td style="text-align:center;">
+                            <input type="checkbox" class="check-checkbox" data-stakeholder-id="{{ $one_stakeholder->id }}" {{ $one_stakeholder->checked ? 'checked' : '' }}>
+                        </td>
                     @else
-                    <td style="text-align:center;">-</td>
+                        <td style="text-align:center;">-</td>
                     @endif
                     <td> 
                         <form action="{{url("/delete_one_whocan/filecollect/$one_stakeholder->id")}}" method="post">

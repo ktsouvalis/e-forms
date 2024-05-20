@@ -101,7 +101,7 @@ class TeacherController extends Controller
             if(!Teacher::where('afm', $teacher_afm)->count()){
                 $row++;
                 Log::channel('throwable_db')->error("update $word afm error: ".$teacher_afm);
-                Auth::user()->notify(new UserNotification("Δε βρέθηκε το ΑΦΜ $teacher_afm κατά την ενημέρωση: $word2", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
+                Auth::user()->notify(new UserNotification("Δε βρέθηκε το ΑΦΜ $teacher_afm κατά την ενημέρωση: $word", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
                 $error=true;
                 continue;
             }
@@ -110,7 +110,7 @@ class TeacherController extends Controller
                 if(!app("App\\Models\\$model")->where($field, $var_field_straight)->count()){
                     $row++;
                     Log::channel('throwable_db')->error("update $word $field error: ".$var_field_straight);
-                    Auth::user()->notify(new UserNotification("Δε βρέθηκε φορέας ($var_field_straight - $model) κατά την ενημέρωση: $word2", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
+                    Auth::user()->notify(new UserNotification("Δε βρέθηκε φορέας ($var_field_straight - $model) κατά την ενημέρωση: $word", "Ενημέρωση $word: Σφάλμα ΑΦΜ $teacher_afm"));
                     $error=true;
                     continue;
                 }

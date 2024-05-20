@@ -221,6 +221,8 @@ Route::group(['prefix' => 'notifications'], function(){
     Route::post('/mark_as_read/{notification}', [NotificationController::class, 'markNotificationAsRead'])->name('notifications.mark_as_read');
 
     Route::post('/mark_all_as_read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark_all_as_read');
+
+    Route::post('/delete_all/{user}', [NotificationController::class, 'deleteAll'])->name('notifications.delete_all');
 });
 
 //SECONDMENTS ROUTES

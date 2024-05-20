@@ -15,6 +15,19 @@
     @if($notifications->count() == 0)
         <div class="alert alert-info">Δεν υπάρχουν ειδοποιήσεις</div>
     @else
+        @if($notifications->whereNull('read_at')->count() > 1)
+            <form action="{{route("notifications.mark_all_as_read")}}" method="post">
+                @csrf
+                <button type="submit" class="m-2 btn btn-primary"><i class="bi bi-check2-circle"></i> Σήμανση όλων ως αναγνωσμένα</button>
+            </form>
+        @endif
+        @php
+            $user = Auth::user();
+        @endphp
+        <form action="{{route("notifications.delete_all", $user) }}" method="post">
+            @csrf
+            <button type="submit" class="m-2 btn btn-danger"><i class="bi bi-x-circle"></i> Διαγραφή Όλων</button>
+        </form>
         <table id="dataTable" class="m-2 align-middle table" style="text-align:center">
             <thead >
                 <tr>
@@ -50,11 +63,6 @@
                 @endforeach
             </tbody>
         </table>
-        @if($notifications->whereNull('read_at')->count() > 1)
-            <form action="{{route("notifications.mark_all_as_read")}}" method="post">
-                @csrf
-                <button type="submit" class="m-2 btn btn-primary"><i class="bi bi-check2-circle"></i> Σήμανση όλων ως αναγνωσμένα</button>
-            </form>
-        @endif
+        
     @endif
 </x-layout>

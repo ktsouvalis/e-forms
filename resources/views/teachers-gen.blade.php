@@ -171,18 +171,9 @@
                     <td>{{$teacher->name}}</td>
                     <td>{{$teacher->klados}}</td>
                     <td>{{$teacher->sxesi_ergasias->name}}</td>
-                    <td>{{$teacher->mail}}</td>
-                    @if($teacher->ypiretisi_id!=null)
-                        <td>{{$teacher->ypiretisi->name}}</td>
-                        @if($teacher->ypiretisi->municipality)
-                            <td>{{$teacher->ypiretisi->municipality->name}}</td>
-                        @else
-                            <td>-</td>
-                        @endif
-                    @else
-                        <td>-</td>
-                        <td>-</td>
-                    @endif
+                    <td>{{$teacher->mail}}</td>                       
+                    <td>{{optional($teacher->ypiretisi)->name}}</td>
+                    <td>{{optional(optional($teacher->ypiretisi)->municipality)->name}}</td>
                     <td>{{$teacher->organiki->name}}</td>
                 </tr>
             @endif  

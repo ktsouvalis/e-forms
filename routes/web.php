@@ -198,6 +198,13 @@ Route::view('/evaluation_differences', 'evaluation_differences');
 
 Route::post('/evaluation/upload_csv', [EvaluationController::class, 'upload_csv'])->name('evaluation.upload_csv');
 
+//PRIVATE EDUCATION ROUTES
+Route::view('/private_education', 'private_education')->middleware('can:viewPrivateEducation,' . Operation::class);
+
+Route::get('/private_education/{application}', function($application){
+    return view("microapps.$application.private_education_index");    
+})->middleware('can:viewPrivateEducation,' . Operation::class);
+
 //////// MANAGING OPERATIONS ROUTES
 Route::resource('operations', OperationController::class)->middleware('boss');
 

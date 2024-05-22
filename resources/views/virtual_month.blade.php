@@ -34,11 +34,12 @@
                     <tr>
                         <td >{{$school->name}}</td>
                         <td >{{$school->code}}</td>
-                        @if($school->director)
+                        {{-- @if($school->director)
                         <td>{{$school->director->surname}} {{$school->director->name}}</td>
                         @else
                         <td> - </td>
-                        @endif
+                        @endif --}}
+                        <td>{{optional($school->director)->surname}} {{optional($school->director)->name}}</td>
                         @if($school->vmonth and $school->vmonth->vmonth != 0)
                         <td style="color:red"><strong>{{App\Models\Month::where('number',$school->vmonth->vmonth)->first()->name}}</strong></td>
                         @else

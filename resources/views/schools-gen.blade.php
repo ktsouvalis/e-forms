@@ -171,13 +171,9 @@
                         <td>
                             <a href="#" class="no-spinner" data-toggle="modal" data-target="#infoModal" data-school-id="{{$school->id}}">{{$school->name}}</a>
                         </td>
-                        @if($school->director)
-                            <td >{{$school->director->surname}} {{$school->director->name}}</td>
-                        @else
-                            <td> - </td>
-                        @endif
+                        <td >{{optional($school->director)->surname}} {{optional($school->director)->name}}</td>
                         <td >{{$school->municipality->name}}</td>
-                        <td >{{$school->schregion->consultant->surname}} {{$school->schregion->consultant->name}}</td>
+                        <td >{{optional(optional($school->schregion)->consultant)->surname}} {{optional(optional($school->schregion)->consultant)->name}}</td>
                         <td >{{$school->mail}}</td>
                         <td >{{$school->organikotita}}</td>
                         <td >{{$school->leitourgikotita}}</td>      

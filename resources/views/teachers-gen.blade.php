@@ -1,6 +1,6 @@
 
     @php
-        $all_teachers = App\Models\Teacher::all();
+        $all_teachers = App\Models\Teacher::with('work_experience')->get();
     @endphp
     @push('links')
         <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
@@ -56,12 +56,14 @@
                     event.preventDefault();
                     var teacherId = $(this).data('teacher-id');
                     var teacher = teachers.find(teacher => teacher.id == teacherId);
+                    var workExperience = teachers.find(teacher => teacher.id == teacherId).work_experience;
                     $('#infoModal .modal-body p:eq(0)').text('Επώνυμο: ' + teacher.surname);
                     $('#infoModal .modal-body p:eq(1)').text('Όνομα: ' + teacher.name);
                     $('#infoModal .modal-body p:eq(2)').text('Α.Μ.: ' + teacher.am);
                     $('#infoModal .modal-body p:eq(3)').text('Τηλέφωνο: ' + teacher.telephone);
                     $('#infoModal .modal-body p:eq(4)').text('Mail ΠΣΔ: ' + teacher.sch_mail);
-                    $('#infoModal .modal-body p:eq(5)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
+                    $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες' + teacher.work_experience.days + ' ημέρες');
+                    $('#infoModal .modal-body p:eq(6)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
                     setTimeout(function() {
                         $('#infoModal').modal('show');
                     }, 50);
@@ -123,6 +125,7 @@
                     <p></p>
                     <p></p>
                     <b><p></p></b>
+                    <p></p>
                     <p></p>
                     <br>
                     <small style="text-align: end"><p class="text-muted"></p></small>

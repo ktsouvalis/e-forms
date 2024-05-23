@@ -2,7 +2,7 @@
     @php
         //check which teacher is logged in
         $teacher = Auth::guard('teacher')->user();
-         // $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $microapp = App\Models\Microapp::where('url', '/secondments')->first();
        // $accepts = $microapp->accepts; //fetch microapp 'accepts' field
        // $outings = $school->outings;
     @endphp
@@ -21,6 +21,12 @@
         <title>Αποσπάσεις</title>
     @endpush
 <div class="container">
+    @if($microapp->accepts == 0)
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <h2 class="text-center">Αίτηση Απόσπασης εντός ΠΥΣΠΕ Αχαΐας</h2>
 	<div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
@@ -134,7 +140,7 @@
                 </div>
                 
                 <div class="text-center">
-                    <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2">
+                    <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2" @if($microapp->accepts == 0) disabled @endif>
                 </div>
             </form>
             </div>

@@ -1,7 +1,7 @@
 <x-layout_teacher>
     @php
         $teacher = Auth::guard('teacher')->user(); //check which teacher is logged in
-       // $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
+        $microapp = App\Models\Microapp::where('url', '/secondments')->first();
        // $accepts = $microapp->accepts; //fetch microapp 'accepts' field    
        $organiki_school_code = $teacher->organiki->code;                                       
     @endphp
@@ -63,7 +63,7 @@
                     $('#schools-select').multiSelect('refresh');
                 }
                 //if secondment application is submitted, disable the school choices
-                var isSubmitted = {!! json_encode($secondment->submitted) !!};
+                var isSubmitted = {!! json_encode($secondment->submitted || $microapp->accepts == 0) !!};
                 if (isSubmitted == 1) {
                     $('#schools-select option').prop('disabled', true);
                     $('#schools-select').multiSelect('refresh');
@@ -80,7 +80,15 @@
         <title>Αποσπάσεις</title>
     @endpush
 <div class="container">
+    @if($microapp->accepts == 0)
+    
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <h2 class="text-center">Αίτηση Απόσπασης εντός ΠΥΣΠΕ Αχαΐας</h2>
+    <h5 class="text-center"> Βήμα 2 - Δήλωση Σχολικών Μονάδων</h5>
 	<div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0">
@@ -212,36 +220,48 @@
                     <div class="input-group mb-2">
                         <div class="px-2 input-group-text">Επισήμανση για τα Σχολεία Προτίμησης:</div>
                         <textarea class="form-control" name="preferences_comments" id="preferences_comments" rows="4"
-                        @if($secondment->submitted == 1) disabled @endif >{{$secondment->preferences_comments}}</textarea>
+                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif >{{$secondment->preferences_comments}}</textarea>
                     </div>
                 </div>
-                @if($secondment->submitted == 0)
+                @if($secondment->submitted == 0 && $microapp->accepts == 1)
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
                         <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
-                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
+                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); confirm('Θα γίνει οριστική υποβολή της αίτησης και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ.<br> Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
                         {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                     </div>
                 </form>
                 @else
-                @php
-                    $serverFileName = $secondment->teacher->afm.'_application_form.pdf';
-                    $databaseFileName = $secondment->teacher->surname.'_Δήλωση_Προτιμήσεων.pdf';
-                @endphp
                 </form>
-                    <div class="text-center">
-                        <form action="{{route('secondments.download_file', ['serverFileName'=>$serverFileName, 'databaseFileName'=>$databaseFileName])}}" method="get">
-                            <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
-                        </form>
-                        Η αίτηση έχει υποβληθεί οριστικά με αριθ. πρωτ {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας και δε μπορεί να τροποποιηθεί.
-                    </div>
-                    <div class="text-center">
-                        <form action="{{route('secondments.recall', ['secondment'=>$secondment])}}" method="get">
-                            <button class="btn btn-danger bi bi-arrow-counterclockwise" title="recall">Ανάκληση</button>
-                        </form>
-                        Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
-                    </div>
+                    @if($secondment->submitted == 1)
+                        @php
+                            $serverFileName = $secondment->teacher->afm.'_application_form.pdf';
+                            $databaseFileName = $secondment->teacher->surname.'_Δήλωση_Προτιμήσεων.pdf';
+                        @endphp
+                            <div class="text-center">
+                                <form action="{{route('secondments.download_file', ['serverFileName'=>$serverFileName, 'databaseFileName'=>$databaseFileName])}}" method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
+                                </form>
+                                Η αίτηση έχει υποβληθεί οριστικά με αριθ. πρωτ {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας και δε μπορεί να τροποποιηθεί.
+                            </div>
+                            <div class="text-center">
+                          
+                                <form action="{{route('secondments.revoke', ['secondment'=>$secondment])}}" method="post">
+                                @csrf
+                                    <button class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke" onclick="return confirm('Θα πραγματοποιηθεί διαγραφή της αίτησης και ανάκληση από το Πρωτόκολλο του ΠΥΣΠΕ. Είστε βέβαιοι;')">Ανάκληση</button>
+                                </form>
+                                {{-- <a href="{{route('secondments.revoke', ['secondment'=>$secondment])}}" class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke">Ανάκληση</a> --}}
+                                Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
+                            </div>
+                            
+                    @else
+                        <div class="text-center">
+                            Η υποβολή αιτήσεων απόσπασης δεν είναι ενεργή.
+                            Δεν έχετε υποβάλλει κάποια αίτηση.
+                        </div>
+                    @endif
                 @endif
+                
         </div>   
     </div>
 </div>
@@ -257,12 +277,14 @@
             </div>
             <div class="card-body p-3">
                 <div class="row justify-content-right">
-                    <form action="{{ route('secondments.edit', ['secondment' => $secondment]) }}" method="get">
+                    {{-- <form action="{{ route('secondments.edit', ['secondment' => $secondment]) }}" method="get">
                         <div class="text-center">
                             <input type="hidden" value="1" name="criteriaOrPreferences">
                             <input type="submit" value="Βήμα 1 - Μοριοδοτούμενα κριτήρια" class="btn btn-info btn-block rounded-2 py-2">
                         </div>
-                    </form>
+                    </form> --}}
+                    <a href="{{ route('secondments.edit', ['secondment' => $secondment, 'criteriaOrPreferences' => '1']) }}" class="btn btn-info rounded-2 py-2">Βήμα 1 - Δήλωση Κριτηρίων</a>
+               
                 </div>
             </div>
         </div>

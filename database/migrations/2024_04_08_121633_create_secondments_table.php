@@ -33,6 +33,7 @@ return new class extends Migration
             $table->text('comments')->nullable();
             $table->date('submit_date')->nullable();
             $table->boolean('submitted')->default(0);
+            $table->boolean('revoked')->default(0)->comment('Ανακλημένη αίτηση');
             $table->text('files_json')->nullable();
             $table->text('preferences_json')->nullable();
             $table->text('preferences_comments')->nullable();

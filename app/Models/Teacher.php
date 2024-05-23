@@ -39,7 +39,7 @@ class Teacher extends Authenticatable
     }
 
     public function secondment(){
-        return $this->hasOne(Secondment::class);
+        return $this->hasMany(Secondment::class)->where('revoked', 0)->first();
     }
 
     public function work_experience(){

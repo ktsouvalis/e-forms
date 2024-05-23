@@ -48,13 +48,9 @@
                     <td>{{$school->name}}</td>
                     <td>{{$school->mail}}</td>
                     <td>{{$school->telephone}}</td>
-                    @if($school->director)
-                    <td>{{$school->director->surname}} {{$school->director->name}}</td>
-                    <td>{{$school->director->telephone}}</td>
-                    @else
-                    <td> - </td>
-                    <td> - </td>
-                    @endif
+                    <td>{{optional($school->director)->surname}} {{optional($school->director)->name}}</td>
+                    <td>{{optional($school->director)->telephone}}</td>
+                    
                 </tr>
         
             @endforeach

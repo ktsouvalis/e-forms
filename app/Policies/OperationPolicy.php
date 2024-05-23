@@ -95,4 +95,11 @@ class OperationPolicy
         return ($operation->users->where('user_id', $user->id)->count());
         return false;
     }
+
+    public function viewPrivateEducation(User $user){
+        if($user->isAdmin()) return true;
+        $operation = Operation::where('url','/private_education')->first();
+        return ($operation->users->where('user_id', $user->id)->count());
+        return false;
+    }
 }

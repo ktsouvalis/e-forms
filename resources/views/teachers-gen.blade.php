@@ -62,7 +62,7 @@
                     $('#infoModal .modal-body p:eq(2)').text('Α.Μ.: ' + teacher.am);
                     $('#infoModal .modal-body p:eq(3)').text('Τηλέφωνο: ' + teacher.telephone);
                     $('#infoModal .modal-body p:eq(4)').text('Mail ΠΣΔ: ' + teacher.sch_mail);
-                    $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες' + teacher.work_experience.days + ' ημέρες');
+                    $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2024: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες' + teacher.work_experience.days + ' ημέρες');
                     $('#infoModal .modal-body p:eq(6)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
                     setTimeout(function() {
                         $('#infoModal').modal('show');

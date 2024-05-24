@@ -85,17 +85,16 @@ class SecondmentController extends Controller
                 //return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
             }
             return back()->with('success', 'Επιτυχής οριστικοποίηση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $protocol_message[0] . '-' . $protocol_message[1]. '.');
-        }
-        
+        }  
     }
 
     public function create() 
     {
-        if(Auth::guard('teacher')->user()->secondment)
-        {
-            $secondment = Auth::guard('teacher')->user()->secondment;
+        if(Auth::guard('teacher')->user()->secondment()){
+            $secondment = Auth::guard('teacher')->user()->secondment();
             return redirect(route('secondments.edit', ['secondment' => $secondment->id, 'criteriaOrPreferences' => 1]));
         }
+        
         return view('microapps.secondments.create');
     }
     //Επεξεργασία αίτησης
@@ -208,19 +207,19 @@ class SecondmentController extends Controller
             case "ΠΕ60.50":
                 if($org_eae == 0){
                     $schools = School::where('primary', '=', 0)->where('special_needs', '=', 0)->
-                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();          
+                    where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();          
                 } else {
                     $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->
-                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
+                    where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 }
             break;
             default:
                 if($org_eae == 0){
                     $schools = School::where('primary', '=', 1)->where('special_needs', '=', 0)->
-                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
+                    where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 } else {
                     $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->
-                    where('international', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
+                    where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 }   
             break;
             
@@ -326,12 +325,6 @@ class SecondmentController extends Controller
         }
     }
 
-    public function recall(Secondment $secondment){
-        $secondment->submitted = 0;
-        $secondment->update();
-        return back()->with('success', 'Η αίτηση ανακλήθηκε επιτυχώς');
-    }
-
     public function download_file($file, $download_file_name = null){
         $username = Auth::check() ? Auth::user()->username : Auth::guard('teacher')->user()->afm;
         $directory = "secondments";
@@ -343,6 +336,38 @@ class SecondmentController extends Controller
         }
         Log::channel('files')->info($username." File $file successfully downloaded");
         return $download;
+    }
+
+    public function revoke(Secondment $secondment){
+        $protocolElements = explode("/", $secondment->protocol_date);
+        $protocolYear = $protocolElements[2];
+        try{
+            $secondment->revoked = 1;
+            $data = [
+                ['name' => 'ProtocolNo', 'contents' => $secondment->protocol_nr],
+                ['name' => 'ProtocolYear', 'contents' => $protocolYear],
+            ];
+            $client = new Client();
+            // $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/revoke', [
+            //     'headers' => [
+            //         'X-API-Key' => 'mysecretapikey',
+            //     ],
+            //     'multipart' => $data,
+            // ]);
+            // // Get the response body
+            // $status = $response->getStatusCode();
+            // $body = $response->getBody();
+            // if($status != 200){
+            //     return false;
+            // } else {
+            //     return $body;
+            // }
+            $secondment->save();
+        } catch(\Exception $e) {
+            dd($e->getMessage());
+            return back()->with('failure', 'Αποτυχία ανάκλησης αίτησης. Δοκιμάστε ξανά.');
+        }
+        return redirect()->route('secondments.create')->with('success', 'Η αίτηση ανακλήθηκε επιτυχώς και διαγράφηκε από το Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ');
     }
 
 }

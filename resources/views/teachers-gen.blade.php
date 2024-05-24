@@ -1,6 +1,6 @@
 
     @php
-        $all_teachers = App\Models\Teacher::with('work_experience')->get();
+        $all_teachers = App\Models\Teacher::with('work_experience', 'ypiretisi', 'organiki', 'sxesi_ergasias')->get();
     @endphp
     @push('links')
         <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
@@ -62,7 +62,7 @@
                     $('#infoModal .modal-body p:eq(2)').text('Α.Μ.: ' + teacher.am);
                     $('#infoModal .modal-body p:eq(3)').text('Τηλέφωνο: ' + teacher.telephone);
                     $('#infoModal .modal-body p:eq(4)').text('Mail ΠΣΔ: ' + teacher.sch_mail);
-                    $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2024: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες' + teacher.work_experience.days + ' ημέρες');
+                    $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2024: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες ' + teacher.work_experience.days + ' ημέρες');
                     $('#infoModal .modal-body p:eq(6)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
                     setTimeout(function() {
                         $('#infoModal').modal('show');
@@ -185,11 +185,8 @@
         </table>
     </div>
         
-    @can('upload', App\Models\Teacher::class)
-        @php
-            $dir_info = DB::table('directorate_info')->find(1);
-        @endphp
-        @if($dir_info)
+    @can('upload', App\Models\Teacher::class) 
+        @if(DB::table('directorate_info')->find(1))
             <a href="{{url('/import_teachers')}}" class="btn btn-primary bi bi-person-lines-fill my-2"> Μαζική Εισαγωγή Εκπαιδευτικών</a>
         @else
         <div class='alert alert-danger text-center'>

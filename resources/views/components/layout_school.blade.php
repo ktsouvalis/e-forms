@@ -24,7 +24,7 @@
     @stack('links')
   </head> 
   <body>
-
+    @include('components.spinner')
   @auth('school')
   @php
     $user = Auth::guard('school')->user();
@@ -123,10 +123,11 @@
     </footer>
     <script src="{{asset('bootstrap/js/bootstrap.js')}}"></script>
     <script
-                src="https://code.jquery.com/jquery-3.6.4.min.js"
-                integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
-                crossorigin="anonymous">
+        src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+        crossorigin="anonymous">
     </script>
+    <script src="{{asset('spinner.js')}}"></script>
     @stack('scripts')
    
     <div class="d-flex justify-content-center"><p class="h3" style="color:black"> {{env('APP_NAME')}}</p></div>

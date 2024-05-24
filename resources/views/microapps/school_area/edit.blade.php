@@ -19,7 +19,7 @@
     <div class="container px-5"> 
        <h4>{{$school->name}}</h4>
             <div>
-                <a href="https://dipeach.ddns.net/e-forms/school_areas" target="_blank">Καταγραφή Ορίων Σχολικής Περιφέρειας Σχολικών Μονάδων Π.Ε. Αχαΐας</a>
+                <a href="https://dipeach.ddns.net/e-forms/school_areas" target="_blank" class="no-spinner">Καταγραφή Ορίων Σχολικής Περιφέρειας Σχολικών Μονάδων Π.Ε. Αχαΐας</a>
             </div>
             <nav class="navbar navbar-light bg-light">
                 {{-- <form action="{{url("/school_area/$school->id")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}

@@ -177,40 +177,4 @@
         </table>
     </div> <!-- table responsive closure -->
 </div>
-
-<div>
-    <nav class="navbar navbar-light bg-light">
-        <form action="{{url("/admin_create_ticket")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-            @csrf
-            <div class="input-group">
-                <span class="input-group-text w-25"></span>
-                <span class="input-group-text w-75"><strong>Καταχώρηση Εκπαιδευτικού</strong></span>
-            </div>
-                
-            <div class="input-group my-2">
-                <span class="input-group-text w-25 text-wrap">Εκπαιδευτικός:</span>
-                <input name="teacher_afm" id="teacher_afm" type="text" class="form-control" placeholder="Επιλέξτε Εκπαιδευτικό" aria-label="Εκπαιδευτικός" aria-describedby="basic-addon2" required list="teacherOptions">
-                <datalist id="teacherOptions">
-                    @foreach(App\Models\Teacher::all() as $teacher)
-                        <option value="{{ $teacher->afm }}">{{ $teacher->surname }} {{ $teacher->name }}, {{ $teacher->klados }} {{ $teacher->afm }}</option>
-                    @endforeach
-                </datalist>
-            </div>
-            
-            <div class="input-group my-2">
-                <span class="input-group-text w-25 text-wrap">Α1, Α2 ή Β:</span>
-                <input name="evaluation" id="evaluation" type="text" class="form-control" placeholder="Α1, Α2 ή Β" aria-label="Α1, Α2 ή Β" aria-describedby="basic-addon2" required>
-            </div>
-            <div class="input-group">
-                <div class="input-group justify-content-center">
-                <textarea name="comments" id="comments" class="form-control"></textarea>
-                </div>
-            </div>
-            <div class="input-group">
-                <button type="submit" class="btn btn-primary m-2"><div class="fa-solid fa-headset"></div> Υποβολή</button>
-            </div>
-        </form>
-    </nav>
-</div>
-
 </x-layout>

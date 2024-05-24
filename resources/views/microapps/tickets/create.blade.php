@@ -48,7 +48,11 @@
                             $maxPostUpdate = $ticket->posts->isNotEmpty() ? $ticket->posts->max('updated_at') : null;
                             $text = max($ticket->updated_at, $maxPostUpdate);
                         @endphp
-                        <tr>
+                        @if($ticket->unread_by_school)
+                            <tr class="table-warning">
+                        @else
+                            <tr>
+                        @endif 
                             {{-- <td><a href="{{url("/tickets/$ticket->id/edit#bottom")}}">{{$ticket->id}}</a></td> --}}
                             <td><a href="{{route('tickets.edit', ['ticket' => $ticket->id])}}#bottom">{{$ticket->id}}</td>
                             <td>{{$ticket->subject}}</td> 

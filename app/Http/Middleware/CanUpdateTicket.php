@@ -21,7 +21,11 @@ class CanUpdateTicket
     {
         $microapp = Microapp::where('url','/tickets')->first();
         if($microapp->active and $microapp->visible and $microapp->accepts){
-            $ticket = $request->route('ticket'); // takes the {ticket} argument from the route, which is Ticket model
+            $ticketParam = $request->route('ticket');
+            //If you're making an AJAX request and passing the ticket ID in the URL, 
+            // Laravel's route model binding won't automatically inject the Ticket model instance. 
+            // In this case, you do need to manually find the Ticket model using Ticket::find().
+            $ticket = $ticketParam instanceof Ticket ? $ticketParam : Ticket::find($ticketParam);
             if(Auth::check()){
                 $user = Auth::guard('web')->user();
                 if($user->isAdmin()){

@@ -46,10 +46,16 @@ class TicketsController extends Controller
     }
 
     public function edit(Ticket $ticket){
-        if(Auth::check())
+        if(Auth::check()){
+            $ticket->unread_by_admin=0;
+            $ticket->save();
             return view('microapps.tickets.ticket-profile-admin', compact('ticket'));
-        else if(Auth::guard('school')->check())
+        }
+        else if(Auth::guard('school')->check()){
+            $ticket->unread_by_school=0;
+            $ticket->save();
             return view('microapps.tickets.ticket-profile-school', compact('ticket'));
+        }
     }
 
     private function validate_request(Request $request){
@@ -90,7 +96,9 @@ class TicketsController extends Controller
                 'school_id' => $school_id,
                 'subject' => $subject,
                 'comments' => $sanitizedComments,
-                'solved' => 0
+                'solved' => 0,
+                'unread_by_admin' => 1,
+                'unread_by_school' => 0
             ]); 
         }
         catch(Throwable $e){
@@ -193,6 +201,12 @@ class TicketsController extends Controller
             Log::channel('throwable_db')->error($name.' update ticket db error '.$e->getMessage());
             return false;
         }
+        $ticket = Ticket::find($ticket_id);
+        if($type=='App\Models\User')
+            $ticket->unread_by_school=1;
+        else if($type=='App\Models\School')
+            $ticket->unread_by_admin=1;
+        $ticket->save();
         return true;
     }
 
@@ -227,7 +241,6 @@ class TicketsController extends Controller
                     throw new Exception('Failed to add post');
                 }
             }
-
             DB::commit();
         } 
         catch (\Exception $e) {
@@ -235,8 +248,6 @@ class TicketsController extends Controller
             return back()->with('failure','Κάποιο σφάλμα προέκυψε, προσπαθήστε ξανά');
         }
 
-        
-        
         //check if there is a new post and add it
         if($request->input('comments')){
             $mails_comments = false;
@@ -353,9 +364,15 @@ class TicketsController extends Controller
         if($request->input('text')!=$old_text){
             $post->text = $request->input('text')."<p><em><small>Επεξεργασμένο</small></em></p>";
             $post->save();
+            if($ticketer->getMorphClass()=='App\Models\User')
+                $post->ticket->unread_by_school=1;
+            else if($ticketer->getMorphClass()=='App\Models\School')
+                $post->ticket->unread_by_admin=1;
+            $post->ticket->save();
             if($post->ticket->solved){
                 $open = $this->open_in_db($post->ticket);
-                $new_post = add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
+                $new_post = $this->add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
+                dd($new_post);
             }
             $id = $post->ticket->id;
             Log::channel('tickets')->info($name." ticket $id updated post");

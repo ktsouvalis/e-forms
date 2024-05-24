@@ -32,6 +32,13 @@
                         <tr>
                             <th>Στοιχεία</th>
                             <th>@if($school->primary == 1) Τάξη Α' @else Προνήπια / Νήπια @endif</th>
+                            @if($school->primary == 1)
+                                <th>Β' Τάξη</th>
+                                <th>Γ' Τάξη</th>
+                                <th>Δ' Τάξη</th>
+                                <th>Ε' Τάξη</th>
+                                <th>Στ' Τάξη</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -62,6 +69,23 @@
                             <td>
                                 <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
                             </td>
+                            @if($school->primary == 1)
+                            <td>
+                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
+                            </td>
+                            <td>
+                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
+                            </td>
+                            <td>
+                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
+                            </td>
+                            <td>
+                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
+                            </td>
+                            <td>
+                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
+                            </td>
+                            @endif
                         </tr>
                         
                         <tr>

@@ -15,6 +15,9 @@ class Enrollment extends Model
         'id'
     ];
 
+    public function enrollmentClasses(){
+        return $this->hasOne(EnrollmentsClasses::class);
+    }
     public function school(){
         return $this->belongsTo(School::class);
     }

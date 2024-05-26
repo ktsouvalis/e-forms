@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\microapps\Enrollment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
+use App\Models\microapps\EnrollmentsClasses;
 
 class EnrollmentController extends Controller
 {
@@ -31,6 +33,7 @@ class EnrollmentController extends Controller
     }
 
     public function save($select, Request $request){
+        
         $rule = null;
         $school = Auth::guard('school')->user();
         if($request->file('file'))
@@ -53,6 +56,12 @@ class EnrollmentController extends Controller
                         'nr_of_students1' => $request->input('nr_of_students1')
                     );
                 } 
+            break;
+            case 'total_students':
+                if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
+                $values = array(
+                    'total_students_nr' => $request->input('total_students_nr')
+                );
             break;
             case 'all_day':
                 if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
@@ -96,6 +105,58 @@ class EnrollmentController extends Controller
                 ); 
 
             break;
+            case 'update_parameters':
+                $values = array(
+                    'schoolYear' => $request->input('schoolYear'),
+                    // 'date' => $request->input('date'),
+                    'nextYearPlanning' => $request->input('nextYearPlanning')
+                );
+                $configPath = config_path('enrollments.php');
+                $configContent = "<?php\n\nreturn " . var_export($values, true) . ";\n";
+                File::put($configPath, $configContent);
+                return back()->with('success', 'Οι παράμετροι αποθηκεύτηκαν');
+            break;
+            case 'nextYearNumbers':
+                if(!$school->enrollments)
+                    return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
+                //dd($request->input());
+                    $sections = [];
+                for($i=1; $i<=6; $i++){
+                    $section = [];
+                    if($request->input('leitourgikotita'.$i) !== null)
+                        $section['leitourgikotita'] = $request->input('leitourgikotita'.$i);
+                    if($request->input('nr_of_students'.$i) !== null)
+                        $section['nr_of_students'] = $request->input('nr_of_students'.$i);
+                    if($request->input('comment'.$i) !== null)
+                        $section['comment'] = $request->input('comment'.$i);
+                    $sections[] = $section;
+                }
+                
+                $sections = array_filter($sections, function ($section) {
+                    return !empty($section);
+                });
+                $sections_json = json_encode($sections);
+                try{
+                   EnrollmentsClasses::updateOrCreate(
+                        [
+                            'enrollment_id' => $school->enrollments->id
+                        ],
+                        [
+                            'morning_classes' => $sections_json
+                        ]
+                    );       
+                } catch(Throwable $e){
+                    try{
+                        Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create enrollments db error '.$e->getMessage());
+                    }
+                    catch(Throwable $e){
+            
+                    }
+                    return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+                }
+                return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
+                          
+            break;
             default:
                 return back()->with('failure', 'Κάτι δεν πήγε καλά. Δοκιμάστε ξανά.');
             break;
@@ -119,10 +180,9 @@ class EnrollmentController extends Controller
             }
         }
         
-        //store the file
-       
-        
+        //store
         if($this->microapp->accepts){
+            //dd($values);
             try{
                 Enrollment::updateOrCreate(
                     [
@@ -180,5 +240,32 @@ class EnrollmentController extends Controller
         }
         Log::channel('files')->info($username." File $file successfully downloaded");
         return $download;
+    }
+
+    public function parameters_update(Request $request){
+        dd('dfd');
+        $configArray = [
+            'schoolYear' => 2024,
+            'date' => '2024-05-23',
+            'phase_indicator' => 'alpha',
+        ];
+        
+    }
+
+    public static function nextYearsLeitourgikotita($leitourgikotita, $total_students_nr){
+        if($leitourgikotita < 6){
+            if($total_students_nr <=15) //Θα λειτουργήσει 1θέσιο
+                return 1;
+            if($total_students_nr > 15 && $total_students_nr <= 30) //Θα λειτουργήσει 2θέσιο
+                return 2;
+            if($total_students_nr > 30 && $total_students_nr <= 45) // Θα λειτουργήσει 3θέσιο
+                return 3;
+            if($total_students_nr > 45 && $total_students_nr <= 60) // Θα λειτουργήσει 4θέσιο
+                return 4;
+            if($total_students_nr > 61 && $total_students_nr <= 75) // Θα λειτουργήσει 5θέσιο--}}
+                return 5;
+        } else { // Είναι 6θέσιο και άνω --}}
+            return $leitourgikotita;
+        } 
     }
 }

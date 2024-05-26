@@ -22,113 +22,210 @@
         <div class="alert alert-info text-center">
             Στην καρτέλα αυτή θα δηλωθούν τα στοιχεία <strong>εγγραφέντων</strong> μαθητών για το σχ. έτος 2024-25.
             <br>Σε επόμενο χρόνο, στην ίδια καρτέλα, θα δηλωθούν τα στοιχεία για τον προγραμματισμό λειτουργίας του σχ. Έτους 2024-25.
-        </div>     
-        
-            <div class="container mt-5">
-                <h3>Στοιχεία εγγραφής μαθητών @if($school->primary == 1) στην Α' Τάξη @else στο Νηπιαγωγείο @endif</h3>  {{-- Εγγραφέντες στην Α' / Εγγραφέντες στο Νηπιαγωγείο --}}
-                <nav class="navbar navbar-light bg-light">
+        </div>
+          {{-- ΔΗΜΟΤΙΚΟ ΜΟΝΟ: Μόνο αν είναι Δημοτικό ζήτησε πρώτα το συνολικό αριθμό μαθητών  --}}
+        @if($school->primary == 1)
+        <div class="container mt-5">
+            <h3>Συνολικός αριθμός μαθητών</h3>
+            <nav class="navbar navbar-light bg-light">
+                {{-- <div style="display: flex; justify-content: space-between;"> --}}
                 <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Στοιχεία</th>
-                            <th>@if($school->primary == 1) Τάξη Α' @else Προνήπια / Νήπια @endif</th>
+                <thead>
+                    <tr>
+                        <th>Συνολικός αριθμός μαθητών που πρόκειται να φοιτήσουν το σχ. έτος {{config('enrollments.schoolYear')}}</th>
+                    </tr>
+                </thead>
+                <form action="{{route("enrollments.save", ['select'=>'total_students'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    @csrf
+                <tbody>
+                    <tr><td>
+                        <input type="number" name="total_students_nr" class="form-control" required value="@if($old_data){{$old_data->total_students_nr}}@endif">
+                    </td></tr>
+                    <tr><td>
+                        <button type="submit" class="btn btn-primary bi bi-plus-circle"> Υποβολή</button>
+                    </td></tr>
+                </tbody>
+                </form>
+                </table>
+                </div>
+            </nav>
+        </div>
+        @endif
+        {{-- ΔΗΜΟΤΙΚΟ ΜΟΝΟ ΤΕΛΟΣ --}}
+        {{-- ΣΤΟΙΧΕΙΑ ΕΓΓΡΑΦΩΝ - Όλα τα Σχολεία Δημοτικό: Εγγραφές στην Α' Δημοτικού, Νηπιαγωγείο: όλες οι εγγραφές --}}
+        <div class="container mt-5">
+            <h3>Στοιχεία εγγραφής μαθητών @if($school->primary == 1) στην Α' Τάξη @else στο Νηπιαγωγείο @endif</h3>  {{-- Εγγραφέντες στην Α' / Εγγραφέντες στο Νηπιαγωγείο --}}
+            <nav class="navbar navbar-light bg-light">
+            <div style="display: flex; justify-content: space-between;">
+            <table class="table table-bordered">    
+                <thead>
+                    <tr>
+                        <th>Στοιχεία</th>
+                        <th>@if($school->primary == 1) Τάξη Α' @else Προνήπια / Νήπια @endif</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Αρχείο για συμπλήρωση (Ενδεικτικό Υπόδειγμα)
+                        <p class="fw-lighter fst-italic fs-6"><small>(Το πρότυπο παρέχεται ενδεικτικά. Μπορείτε να ανεβάσετε οποιοδήποτε αρχείο excel.)</small></p>
+                        </td>
+                        <td>
                             @if($school->primary == 1)
-                                <th>Β' Τάξη</th>
-                                <th>Γ' Τάξη</th>
-                                <th>Δ' Τάξη</th>
-                                <th>Ε' Τάξη</th>
-                                <th>Στ' Τάξη</th>
+                                <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_primary_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
+                                </form>
+                                {{-- {{url("/$appname/1_enrollments_primary_school.xlsx/Εγγραφέντες.xlsx")}} --}}
+                            @else
+                                <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_nursery_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
+                                </form>
+                            @endif  
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                            @csrf
+                        <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  2024-25</td>
+                        </form>
+                        <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                            @csrf
+                        {{-- {{url("/enrollments/enrolled")}} --}}
+                        <td>
+                            <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
+                        </td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            Αρχείο Εγγραφέντων Μαθητών
+                            <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
+                        </td>
+                        <td>
+                            <input name="file" type="file" class="form-control" $required>
+                            @if(!$accepts)
+                                <div class='alert alert-warning text-center my-2'>
+                                    <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
+                                </div>
+                            @else
+                                <div class="input-group">
+                                    <span class="w-25"></span>
+                                    <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                                    <a href="{{route('enrollments.create')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                    {{-- {{url("/$appname/create")}} --}}
+                                    {{-- {{route('microapps.'.$appname.".create")}} --}}
+                                </div>
                             @endif
-                        </tr>
-                    </thead>
+                        </td>
+                    </form>
+                </tr>
+                    @if($old_data && $old_data->enrolled_file1)
+                        <tr><td> Αρχείο που έχει υποβληθεί: 
+                        <p class="fw-lighter fst-italic fs-6"><small>(Τελευταία υποβολή: {{$old_data->updated_at}})</small></p>
+                        </td>
+                        @php
+                            $file1 = $old_data->enrolled_file1;
+                        @endphp<td>
+                        <form action="{{route('enrollments.download_file',['file'=>"enrollments1_$school_code.xlsx", 'download_file_name' => $file1])}}" method="get"class="container-fluid">
+                            <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file1}} </button>
+                        </form>
+                        {{-- {{url("/enrollments/enrollments1_$school_code.xlsx/$file1")}} --}}
+                        </td>
+                    </tr>
+                    @endif
+                </tbody>
+            </table>
+            {{-- ΣΤΟΙΧΕΙΑ ΕΓΓΡΑΦΩΝ ΤΕΛΟΣ --}}
+            {{-- ΣΤΟΙΧΕΙΑ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΥ επόμενου σχ. έτους ΜΟΝΟ ΓΙΑ ΔΗΜΟΤΙΚΑ --}}
+            @if($school->primary == 1 && config('enrollments.nextYearPlanning') == 1)
+            @php 
+                $nextYearLeitourgikotita = App\Http\Controllers\Microapps\EnrollmentController::nextYearsLeitourgikotita($school->leitourgikotita, $old_data->total_students_nr);
+                $enrollments_classes = App\Models\Microapps\EnrollmentsClasses::where('enrollment_id', $old_data->id)->first();
+                $morning_classes_json = $enrollments_classes->morning_classes;
+                $morning_classes = json_decode($morning_classes_json);
+                //dd($morning_classes[1]->comment);
+            @endphp
+                    
+                <table class="table table-bordered">
+                    <thead><tr><th></th><th colspan="{{$nextYearLeitourgikotita}}"><h4>Στοιχεία προγραμματισμού λειτουργίας του σχ. έτους {{config('enrollments.schoolYear')}}</h4><th></tr>
+                        </tr></thead>
                     <tbody>
                         <tr>
-                            <td>
-                                Αρχείο για συμπλήρωση (Ενδεικτικό Υπόδειγμα)
-                            <p class="fw-lighter fst-italic fs-6"><small>(Το πρότυπο παρέχεται ενδεικτικά. Μπορείτε να ανεβάσετε οποιοδήποτε αρχείο excel.)</small></p>
-                            </td>
-                            <td>
-                                @if($school->primary == 1)
-                                    <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_primary_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
-                                        <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
-                                    </form>
-                                    {{-- {{url("/$appname/1_enrollments_primary_school.xlsx/Εγγραφέντες.xlsx")}} --}}
-                                @else
-                                    <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_nursery_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
-                                        <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
-                                    </form>
-                                @endif  
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                                @csrf
-                            <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  2024-25</td>
-                            {{-- {{url("/enrollments/enrolled")}} --}}
-                            <td>
-                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
-                            </td>
-                            @if($school->primary == 1)
-                            <td>
-                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
-                            </td>
-                            <td>
-                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
-                            </td>
-                            <td>
-                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
-                            </td>
-                            <td>
-                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
-                            </td>
-                            <td>
-                                <input name="nr_of_students1" id="nr_of_students1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1}}@endif">
-                            </td>
+                            <td>Ταξη</td>
+                            @if($nextYearLeitourgikotita == 1)
+                                <td>Α'-Β'-Γ'-Δ'-Ε'-Στ'</td>
                             @endif
+                            @if($nextYearLeitourgikotita == 2)
+                                <td>Τμήμα 1</td><td>Τμήμα 2</td>
+                            @endif
+                            @if($nextYearLeitourgikotita == 3)
+                                <td>Τμήμα 1</td><td>Τμήμα 2</td><td>Τμήμα 3</td>
+                            @endif
+                            @if($nextYearLeitourgikotita == 4)
+                                <td >Τμήμα 1</td><td >Τμήμα 2</td><td >Τμήμα 3</td><td >Τμήμα 4</td>
+                            @endif
+                            @if($nextYearLeitourgikotita == 5)
+                            <td >Τμήμα 1</td><td >Τμήμα 2</td><td >Τμήμα 3</td><td >Τμήμα 4</td><td >Τμήμα 5</td>
+                            @endif
+                            @if($nextYearLeitourgikotita >= 6)
+                                <td>Α'</td><td>Β'</td><td>Γ'</td><td>Δ'</td><td>Ε'</td><td>Στ'</td>
+                            @endif
+                            
                         </tr>
-                        
+                        <tr>
+                        <form action="{{route("enrollments.save", ['select'=>'nextYearNumbers'])}}" method="post" class="container-fluid">
+                            @csrf
+                        <td>
+                            Αριθμός μαθητών
+                        </td>
+                        @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
+                            @php 
+                                if(isset($morning_classes[$i-1]->nr_of_students)){ $nr_of_st = $morning_classes[$i-1]->nr_of_students; }
+                                else { $nr_of_st = 0; }
+                            @endphp
+
+                            <td>
+                                <input name="nr_of_students{{$i}}" id="nr_of_students{{$i}}" type="number" class="form-control input-sm" required value="{{$nr_of_st}}" >
+                            </td>
+                        @endfor
+                        </tr>
                         <tr>
                             <td>
-                                Αρχείο Εγγραφέντων Μαθητών
-                                <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
+                                Επισήμανση
                             </td>
-                            <td>
-                                <input name="file" type="file" class="form-control" $required>
-                                @if(!$accepts)
-                                    <div class='alert alert-warning text-center my-2'>
-                                        <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
-                                    </div>
-                                @else
-                                    <div class="input-group">
-                                        <span class="w-25"></span>
-                                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                                        <a href="{{route('enrollments.create')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
-                                        {{-- {{url("/$appname/create")}} --}}
-                                        {{-- {{route('microapps.'.$appname.".create")}} --}}
-                                    </div>
-                                @endif
-                            </td>
-                        </form>
-                    </tr>
-                        @if($old_data && $old_data->enrolled_file1)
-                            <tr><td> Αρχείο που έχει υποβληθεί: 
-                            <p class="fw-lighter fst-italic fs-6"><small>(Τελευταία υποβολή: {{$old_data->updated_at}})</small></p>
-                            </td>
-                            @php
-                                $file1 = $old_data->enrolled_file1;
-                            @endphp<td>
-                            <form action="{{route('enrollments.download_file',['file'=>"enrollments1_$school_code.xlsx", 'download_file_name' => $file1])}}" method="get"class="container-fluid">
-                                <button class="btn btn-success bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Λήψη αρχείου που έχει υποβληθεί"> {{$file1}} </button>
-                            </form>
-                            {{-- {{url("/enrollments/enrollments1_$school_code.xlsx/$file1")}} --}}
-                            </td>
+                            @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
+                                @php 
+                                    if(isset($morning_classes[$i-1]->comment)){ $com = $morning_classes[$i-1]->comment; }
+                                    else { $com = ''; }
+                                @endphp
+                                <td>
+                                    <input name="comment{{$i}}" id="comment{{$i}}" type="text" class="form-control input-sm" value="{{$com}}" >
+                                </td>
+                            @endfor
                         </tr>
-                        @endif
+                        <tr><td colspan="5">
+                            @if(config('enrollments.nextYearPlanning') == 0 || !$old_data)
+                                <div class='alert alert-warning text-center my-2'>
+                                    <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
+                                </div>
+                            @else
+                                <div class="input-group">
+                                    <span class="w-25"></span>
+                                    <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                                    <a href="{{route('enrollments.create')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                                </div>
+                            @endif
+                            </form>
                     </tbody>
                 </table>
-            </nav>
-            
+            @endif
+        </div>
+        </nav>
+        {{-- ΣΤΟΙΧΕΙΑ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΥ ΤΕΛΟΣ --}}
+        {{-- ΣΤΟΙΧΕΙΑ ΕΓΓΡΑΦΗΣ ΣΤΟ ΟΛΟΗΜΕΡΟ - Όλα τα Σχολεία  --}}
             <h3>Στοιχεία εγγραφής στο Ολοήμερο @if($school->primary == 1) πρόγραμμα. @else πρόγραμμα του Νηπιαγωγείου. @endif</h3>  {{-- ΔΗΜΟΤΙΚΑ:  / ΝΗΠΙΑΓΩΓΕΙΑ: Εγγραφέντες στο Ολοήμερο --}}     
             <nav class="navbar navbar-light bg-light">
             <table class="table table-bordered">
@@ -214,6 +311,8 @@
             </table>
         </form>
     </nav>
+     {{-- ΣΤΟΙΧΕΙΑ ΕΓΓΡΑΦΗΣ ΣΤΟ ΟΛΟΗΜΕΡΟ ΤΕΛΟΣ  --}}
+     {{-- ΔΗΜΙΟΥΡΓΙΑ ΕΠΙΠΛΕΟΝ ΤΜΗΜΑΤΟΣ / ΚΑΤΑΝΟΜΗ ΣΕ ΟΜΟΡΑ ΣΧΟΛΕΙΑ --}}
 <h3>Δημιουργία επιπλέον Τμήματος / Κατανομή μαθητών σε όμορα σχολεία</h3> {{-- ΔΗΜΟΤΙΚΑ: Αίτημα για δημιουργία επιπλέον Τμήματος ή μαθητές στα όρια / ΝΗΠΙΑΓΩΓΕΙΑ: Αίτημα για δημιουργία επιπλέον Τμήματος ή μαθητές στα όρια --}}        
     <nav class="navbar navbar-light bg-light">
     <table class="table table-bordered">

@@ -16,10 +16,39 @@
         <title>Εγγραφές 2024-25</title>
     @endpush
     @php
+        if(!file_exists(config_path('enrollments.php'))){
+            File::put(config_path('enrollments.php'), '<?php return []; ?>');
+            $schoolYear = "2024-25";
+            $nextYearPlanning = 0;
+        } else {
+            $schoolYear = config('enrollments.schoolYear');
+            $nextYearPlanning = config('enrollments.nextYearPlanning');
+        }
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     @endphp
+    
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
+
+    <nav class="container navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Παράμετροι:</span>
+            <form action="{{route('enrollments.save', ['select'=>'update_parameters'])}}" method="post">
+                @csrf
+                <div class="input-group">
+                    <span class="input-group-text">Σχολικό Έτος:</span>
+                    <input type="text" class="form-control" name="schoolYear" value="{{$schoolYear}}">
+                    <span class="input-group-text">Δεκτές υποβολές για προγραμματισμό:</span>
+                    <select class="form-control" name="nextYearPlanning">
+                        <option value=0 @if($nextYearPlanning == 0) selected @endif>Όχι</option>
+                        <option value=1 @if($nextYearPlanning == 1) selected @endif>Ναι</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Αλλαγή</button>
+                </div>
+            </form>
+        </div>
+    </nav>
+
         @if(Auth::user()->isAdmin())      
         <nav class="container navbar navbar-light bg-light">
             <div class="row">

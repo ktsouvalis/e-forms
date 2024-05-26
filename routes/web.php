@@ -267,6 +267,7 @@ Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], fun
     Route::post("/upload_file/{upload_file_name}", [EnrollmentController::class, 'upload_file'])->name('enrollments.upload_file');
 
     Route::get("/{file}/{download_file_name}", [EnrollmentController::class, 'download_file'])->name('enrollments.download_file');
+
 });
 
 // FRUITS ROUTES

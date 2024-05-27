@@ -237,7 +237,7 @@
                         @if($enrollments_classes)
                         <tr>
                             <td>
-                                Αριθμός τμημάτων  <br><small>αυτόματος υπολογισμός από το σύστημα - δεν επιτρέπεται η τροποποίηση<br>
+                                Αριθμός τμημάτων  <br><small>αυτόματος υπολογισμός από το σύστημα με βάση τον αριθμό εγγεγραμμένων μαθητών. <br><strong>Δεν επιτρέπεται η τροποποίηση.</strong><br>
                                Αν προγραμματίζετε τη λειτουργία επιπλέον τμήματος σημειώστε το στις παρατηρήσεις.</small>                            </td>
                             @if($nextYearLeitourgikotita >= 6) {{-- Αν τα τμήματα είναι περισσότερα από 6 --}}
                                 @for($i=1; $i<=6; $i++)
@@ -382,8 +382,6 @@
             {{-- Στοιχεία προγραμματισμού Ολοήμερου Προγράμματος --}}
             @if(config('enrollments.nextYearPlanningActive') == 1)
             <table class="table table-bordered">
-                <thead><tr><th><h4>Στοιχεία προγραμματισμού λειτουργίας Ολοήμερου Προγράμματος για το σχ. έτους {{config('enrollments.schoolYear')}}</h4><th></tr>
-                    </tr></thead>
                     @if($school->primary == 1)
                     
                 <tbody>
@@ -396,6 +394,7 @@
                             <form action="{{route('enrollments.download_file',['file'=>"5_next_year_planning_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_Προγραμματισμός_2024_25.xlsx"])}}" method="get"class="container-fluid">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title=""> Πίνακας </button>
                             </form>
+                            Σημείωση: <small><em>Κατά τη συμπλήρωση του αρχείου, το πεδίο <strong> Σύνολο Μαθητών Ολοήμερου</strong> συμπληρώνεται από το άθροισμα των μαθητών που αποχωρούν, στις επόμενες στήλες.</em></small>
                         </td>
                     </tr>
                     <form action="{{route("enrollments.save", ['select'=>'all_day_next_year_planning'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -448,12 +447,14 @@
                     }
                     
                     @endphp
+                    <thead>
                     <tr>
-                        <td></td>
-                        <td>Πρόωρη Υποδοχή</td>
-                        <td>Ολοήμερο Πρόγραμμα</td>
-                        <td>Διευρυμένο Ολοήμερο</td>
+                        <th>Στοιχεία προγραμματισμού λειτουργίας Ολοήμερου Προγράμματος για το σχ. έτους {{config('enrollments.schoolYear')}}</td>
+                        <th>Πρόωρη Υποδοχή</td>
+                        <th>Ολοήμερο Πρόγραμμα (έως 16:00)</td>
+                        <th>Διευρυμένο Ολοήμερο (έως 17:30)</td>
                     </tr>
+                    </thead>
                     <form action="{{route("enrollments.save", ['select'=>'all_day_next_year_planning'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                     <tr>

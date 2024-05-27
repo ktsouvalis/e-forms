@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\microapps\Enrollment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 use App\Models\microapps\EnrollmentsClasses;
@@ -93,7 +94,7 @@ class EnrollmentController extends Controller
                         $filename_to_store = "a1_a2_file_".$school->code.".xlsx";
                         $values = array(
                             'a1_a2_file' => $filename,
-                        ); 
+                        );
                     }
                     else {
                         return back()->with('failure', 'Πρέπει να ανεβάσετε το αρχείο');
@@ -161,31 +162,7 @@ class EnrollmentController extends Controller
                          return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
                      }
                      return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
-                }
-                
-                $sections = array_filter($sections, function ($section) {
-                    return !empty($section);
-                });
-                $sections_json = json_encode($sections);
-                try{
-                   EnrollmentsClasses::updateOrCreate(
-                        [
-                            'enrollment_id' => $school->enrollments->id,
-                        ],
-                        [
-                            'morning_classes' => $sections_json,
-                        ]
-                    );       
-                } catch(Throwable $e){
-                    try{
-                        Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create enrollments db error '.$e->getMessage());
-                    }
-                    catch(Throwable $e){
-            
-                    }
-                    return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
-                }
-                return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
+                }    
             break;
             case 'extra_section':   //Καταχώρηση αρχείου για αίτημα δημιουργίας επιπλέον τμήματος
                 if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
@@ -286,7 +263,9 @@ class EnrollmentController extends Controller
                 return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
         }
-        
+        if($school->primary == 1){
+            $readAllDayFileAndStore = $this->readAllDayFileAndStore();
+        }
         //store
         if($this->microapp->accepts || config('enrollments.nextYearPlanningAccepts') == 1){
             //dd($values);
@@ -312,6 +291,8 @@ class EnrollmentController extends Controller
                 $stakeholder->hasAnswer = 1;
                 $stakeholder->save();
             }
+            if( $readAllDayFileAndStore != '')
+                return back()->with('failure', "Το αρχείο υποβλήθηκε με τις ακόλουθες επισημάνσεις: $readAllDayFileAndStore");
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
         else{
@@ -416,5 +397,110 @@ class EnrollmentController extends Controller
                     return 5;
             }
         }
+    }
+
+    private function readAllDayFileAndStore(){
+        $school = Auth::guard('school')->user();
+        $filename = "a1_a2_file_".$school->code.".xlsx";
+        //load the file with phpspreadsheet
+        $spreadsheet = IOFactory::load("../storage/app/enrollments/$filename");
+        $spreadsheet->setActiveSheetIndex(0);
+        //Έλεγχοι
+        $check = ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, 3)->getFormattedValue() == "")? 'Λείπει το όνομα του Σχολείου από την 3η γραμμή.        ' : '';
+        if($school->has_extended_all_day == 1 && $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, 3)->getFormattedValue() != "Αναβαθμισμένο"){
+            $check .= 'Το Σχολείο είναι ορισμένο ως διευρυμένο ολοήμερο. Η τιμή στο κελί G3 (τύπος ολοήμερου) πρέπει να είναι Αναβαθμισμένο.        ';
+        }
+        if($school->has_extended_all_day == 0 && $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, 3)->getFormattedValue() != "Κλασικό"){
+            $check .= 'Το Σχολείο δεν είναι ορισμένο ως διευρυμένο ολοήμερο. Η τιμή στο κελί G3 (τύπος ολοήμερου) πρέπει να είναι Κλασικό.       ';
+        }
+        $morning_zone_nr_of_sections = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, 3)->getValue();
+        $all_day_school_type = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, 3)->getValue();
+        $all_day_sections_nr = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, 3)->getValue();
+        
+        $students_leaving_zone1 = ($all_day_school_type == 'Κλασικό')? $spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, 3)->getValue() : $spreadsheet->getActiveSheet()->getCellByColumnAndRow(10, 3)->getValue();
+        $students_leaving_zone2 = ($all_day_school_type == 'Κλασικό')? $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, 3)->getValue() : $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, 3)->getValue();
+        $students_leaving_zone3 = ($all_day_school_type == 'Κλασικό')? 0 : $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, 3)->getValue();
+        
+        $all_day_students_nr = $students_leaving_zone1 + $students_leaving_zone2 + $students_leaving_zone3;
+        $comments = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, 3)->getValue();
+        //Αποθήκευσε τις τιμές
+        $sections = [];
+        $section = [];
+        // Πρωινή ζώνη
+        $section['nr_of_students'] = 0;
+        $section['nr_of_sections'] = 0;
+        if($morning_zone_nr_of_sections > 0){
+            $section['nr_of_students'] = "";
+            $section['nr_of_sections'] = $morning_zone_nr_of_sections;
+        }
+        $sections[] = $section;
+        $sections_json = json_encode($sections);
+        try{
+            EnrollmentsClasses::updateOrCreate(
+                [
+                    'enrollment_id' => $school->enrollments->id
+                ],
+                [
+                    'morning_zone_classes' => $sections_json
+                ]
+            );       
+        } catch(Throwable $e){
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create enrollments db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+
+            }
+            return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+        }
+
+        $sections = [];
+        //Ολοήμερα Ζώνη 1
+        $section['nr_of_students'] = $all_day_students_nr;
+        $section['nr_of_sections'] = ($all_day_students_nr%25 == 0)? $all_day_students_nr/25 : (int)floor($all_day_students_nr/25)+1;
+        $sections[] = $section;
+        
+        //Ολοήμερα Ζώνη 2
+        $section = [];
+        $section['nr_of_students'] = 0;
+        $section['nr_of_sections'] = 0;
+        if($all_day_students_nr - $students_leaving_zone1 >= 0){
+            $remaining_students_nr = $all_day_students_nr - $students_leaving_zone1;
+            $section['nr_of_students'] = $remaining_students_nr;
+            $section['nr_of_sections'] = ($remaining_students_nr%25 == 0)? $remaining_students_nr/25 : (int)floor($remaining_students_nr/25)+1;
+        }
+        $sections[] = $section;
+        //Ολοήμερα Ζώνη 3
+        $section = [];
+        $section['nr_of_students'] = 0;
+        $section['nr_of_sections'] = 0;
+        if($remaining_students_nr - $students_leaving_zone2 >= 0){
+            $remaining_students_nr = $remaining_students_nr - $students_leaving_zone2;
+            $section['nr_of_students'] = $remaining_students_nr;
+            $section['nr_of_sections'] = ($remaining_students_nr%25 == 0)? $remaining_students_nr/25 : (int)floor($remaining_students_nr/25)+1;
+        }
+        $sections[] = $section;
+        $section = [];
+        $sections_json = json_encode($sections);
+
+        try{
+            EnrollmentsClasses::updateOrCreate(
+                [
+                    'enrollment_id' => $school->enrollments->id
+                ],
+                [
+                    'all_day_school_classes' => $sections_json
+                ]
+            );       
+        } catch(Throwable $e){
+            try{
+                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create enrollments db error '.$e->getMessage());
+            }
+            catch(Throwable $e){
+
+            }
+            return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
+        }
+        return $check;
     }
 }

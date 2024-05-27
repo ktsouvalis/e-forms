@@ -42,7 +42,7 @@ class EnrollmentController extends Controller
         if($request->file('file'))
             $filename = $request->file('file')->getClientOriginalName();
             
-        //handle the file
+        //handle the case
         switch($select) {
             case 'enrolled':    //Υποβολή Αρχείου Εγγραφέντων Μαθητών ή/και Αριθμού Εγγραφέντων
                 if($request->file('file')){
@@ -264,7 +264,8 @@ class EnrollmentController extends Controller
                 return back()->with('failure', 'Δεν έγινε η αποθήκευση του αρχείου, προσπαθήστε ξανά');     
             }
         }
-        if($school->primary == 1){
+        $readAllDayFileAndStore = '';
+        if($school->primary == 1 && $select == 'all_day_next_year_planning' ){
             $readAllDayFileAndStore = $this->readAllDayFileAndStore();
 
         }

@@ -25,7 +25,7 @@
             <br>καθώς και τα στοιχεία για τον προγραμματισμό λειτουργίας του σχ. Έτους {{config('enrollments.schoolYear')}}.
         </div>
           {{-- ΔΗΜΟΤΙΚΟ ΜΟΝΟ: Μόνο αν είναι Δημοτικό ζήτησε πρώτα το συνολικό αριθμό μαθητών  --}}
-        @if($school->primary == 1 && config('enrollments.nextYearPlanningActive') == 1)
+        @if($school->primary == 1 && config('enrollments.nextYearPlanningActive') == 1 && $school->public == 1)
         <div class="container mt-5">
             <h3>Συνολικός αριθμός μαθητών</h3>
             <nav class="navbar navbar-light bg-light">
@@ -237,7 +237,7 @@
                         @if($enrollments_classes)
                         <tr>
                             <td>
-                                Αριθμός τμημάτων  <br><small>αυτόματος υπολογισμός από το σύστημα με βάση τον αριθμό εγγεγραμμένων μαθητών. <br><strong>Δεν επιτρέπεται η τροποποίηση.</strong><br>
+                                Αριθμός τμημάτων  <br><small>αυτόματος υπολογισμός από το σύστημα με βάση τον αριθμό μαθητών (μετά την υποβολή). <br><strong>Δεν επιτρέπεται η τροποποίηση.</strong><br>
                                Αν προγραμματίζετε τη λειτουργία επιπλέον τμήματος σημειώστε το στις παρατηρήσεις.</small>                            </td>
                             @if($nextYearLeitourgikotita >= 6) {{-- Αν τα τμήματα είναι περισσότερα από 6 --}}
                                 @for($i=1; $i<=6; $i++)

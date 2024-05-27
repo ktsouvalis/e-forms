@@ -126,8 +126,7 @@ class EnrollmentController extends Controller
                      
                              }
                              return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
-                         }
-                       
+                         }  
                     }  
                     $sections = [];  
                     if($request->input('nr_of_students_all_day') !== null){

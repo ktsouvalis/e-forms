@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\microapps;
 
+use App\Models\User;
 use App\Models\Microapp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\microapps\Enrollment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use App\Notifications\UserNotification;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
@@ -265,6 +267,7 @@ class EnrollmentController extends Controller
         }
         if($school->primary == 1){
             $readAllDayFileAndStore = $this->readAllDayFileAndStore();
+
         }
         //store
         if($this->microapp->accepts || config('enrollments.nextYearPlanningAccepts') == 1){
@@ -291,8 +294,15 @@ class EnrollmentController extends Controller
                 $stakeholder->hasAnswer = 1;
                 $stakeholder->save();
             }
-            if( $readAllDayFileAndStore != '')
+            if( $readAllDayFileAndStore != ''){
+                $users = $this->microapp->users->where('can_edit', 1);
+                foreach($users as $user){
+                    $user->user->notify(new UserNotification(Auth::guard('school')->user()->name." ανέβασε αρχείο με πιθανό σφάλμα: ".$readAllDayFileAndStore, "Ειδοποίηση για πιθανά σφάλματα σε αρχειο."));
+                }
+                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." upload next years all day file with error: ".$readAllDayFileAndStore);
                 return back()->with('failure', "Το αρχείο υποβλήθηκε με τις ακόλουθες επισημάνσεις: $readAllDayFileAndStore");
+            }
+                
             return back()->with('success', 'Η εγγραφή αποθηκεύτηκε.');
         }
         else{

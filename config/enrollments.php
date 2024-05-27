@@ -2,5 +2,6 @@
 
 return array (
   'schoolYear' => '2024-25',
-  'nextYearPlanning' => '1',
+  'nextYearPlanningActive' => '1',
+  'nextYearPlanningAccepts' => '1',
 );

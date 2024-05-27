@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('enrollments_classes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('enrollment_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('morning_zone_classes')->nullable();
-            $table->string('morning_classes', 1000)->nullable();
-            $table->string('all_day_school_classes')->nullable();
+            $table->string('morning_zone_classes', 1000)->nullable();
+            $table->string('morning_classes', 2000)->nullable();
+            $table->string('all_day_school_classes', 1000)->nullable();
             $table->string('comment')->nullable();
             $table->timestamps();
         });

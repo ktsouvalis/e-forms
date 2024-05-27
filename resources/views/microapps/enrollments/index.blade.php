@@ -19,10 +19,12 @@
         if(!file_exists(config_path('enrollments.php'))){
             File::put(config_path('enrollments.php'), '<?php return []; ?>');
             $schoolYear = "2024-25";
-            $nextYearPlanning = 0;
+            $nextYearPlanningActive = 0;
+            $nextYearPlanningAccepts = 0;
         } else {
             $schoolYear = config('enrollments.schoolYear');
-            $nextYearPlanning = config('enrollments.nextYearPlanning');
+            $nextYearPlanningActive = config('enrollments.nextYearPlanningActive');
+            $nextYearPlanningAccepts = config('enrollments.nextYearPlanningAccepts');
         }
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
@@ -38,10 +40,15 @@
                 <div class="input-group">
                     <span class="input-group-text">Σχολικό Έτος:</span>
                     <input type="text" class="form-control" name="schoolYear" value="{{$schoolYear}}">
+                    <span class="input-group-text">Εμφάνιση στοιχείων προγραμματισμού:</span>
+                    <select class="form-control" name="nextYearPlanningActive">
+                        <option value=0 @if($nextYearPlanningActive == 0) selected @endif>Όχι</option>
+                        <option value=1 @if($nextYearPlanningActive == 1) selected @endif>Ναι</option>
+                    </select>
                     <span class="input-group-text">Δεκτές υποβολές για προγραμματισμό:</span>
-                    <select class="form-control" name="nextYearPlanning">
-                        <option value=0 @if($nextYearPlanning == 0) selected @endif>Όχι</option>
-                        <option value=1 @if($nextYearPlanning == 1) selected @endif>Ναι</option>
+                    <select class="form-control" name="nextYearPlanningAccepts">
+                        <option value=0 @if($nextYearPlanningAccepts == 0) selected @endif>Όχι</option>
+                        <option value=1 @if($nextYearPlanningAccepts == 1) selected @endif>Ναι</option>
                     </select>
                     <button type="submit" class="btn btn-primary">Αλλαγή</button>
                 </div>
@@ -257,6 +264,30 @@
                 <form action="{{route('enrollments.download_file', ['file' =>"4_boundary_students_nip.xlsx", 'download_file_name' => "4_boundary_students_nip.xlsx"] )}}" method="get">
                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Νηπ. - Μαθητές στα όρια </button>
                 </form>
+            </div>
+        </div>
+        <div class="row">
+                
+            <div class="col-6 hstack gap-3"> 
+            <form action="{{route("enrollments.upload_file",['upload_file_name'=>"5_next_year_planning_all_day_school.xlsx"])}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                @csrf
+                <div class="input-group">
+                    <span class="input-group-text w-75"><strong>Δημοτικο Προγραμματισμός Ολοήμερου</strong></span>
+                </div>
+                <div class="input-group w-75">
+                    <input name="file" type="file" class="form-control"><br>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
+                    <a href="{{route('enrollments.index')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
+                </div>
+            </form>
+            <form action="{{route('enrollments.download_file', ['file' =>"5_next_year_planning_all_day_school.xlsx", 'download_file_name' => "5_next_year_planning_all_day_school.xlsx"] )}}" method="get">
+                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Δημοτικό ΠΡογραμματισμός Ολοήμερου </button>
+            </form>
+            </div>
+            <div>
+
             </div>
         </div>
         </div>

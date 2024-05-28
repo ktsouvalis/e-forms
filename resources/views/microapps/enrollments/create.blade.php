@@ -26,6 +26,11 @@
         </div>
         @if(config('enrollments.nextYearPlanningActive') == "1")
         <div class="alert text-center">
+            <h5>Γενική Επισήμανση:</h5>
+            Η αριστερή στήλη περιλαμβάνει τα στοιχεία που αφορούν στις <strong> εγγραφές </strong>. Η δεξιά στήλη περιλαμβάνει τα στοιχεία για τον <strong>προγραμματισμό </strong>του σχ. έτους.<br>
+            Οι δύο στήλες συμπληρώνονται <strong>ανεξάρτητα</strong> μεταξύ τους.
+        </div>
+        <div class="alert text-center">
             <h5>Οδηγίες:</h5>
             @if($school->primary == 1) 
                 1) Υποβάλλετε το <strong>συνολικό αριθμό μαθητών</strong> που πρόκειται να φοιτήσουν το επόμενο σχ. έτος. <br>

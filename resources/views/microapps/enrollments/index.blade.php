@@ -43,7 +43,7 @@
                     <input type="text" class="form-control" name="schoolYear" value="{{$schoolYear}}">
                     <span class="input-group-text">Εμφάνιση στοιχείων προγραμματισμού:</span>
                     <select class="form-control" name="nextYearPlanningActive">
-                        <option value="0" @if(!$nextYearPlanningActive == "0") selected @endif>Όχι</option>
+                        <option value="0" @if($nextYearPlanningActive == "0") selected @endif>Όχι</option>
                         <option value="1" @if($nextYearPlanningActive == "1") selected @endif>Ναι</option>
                     </select>
                     <span class="input-group-text">Δεκτές υποβολές για προγραμματισμό:</span>

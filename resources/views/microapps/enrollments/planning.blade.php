@@ -47,6 +47,7 @@
                         if($morning_classes_json){
                             $morning_classes = json_decode($morning_classes_json);
                             if($plan->enrollment->school->leitourgikotita >= 6){
+                                
                                 $morning_classes_string = 'A:'.$morning_classes[0]->nr_of_students.' <strong>'.$morning_classes[0]->nr_of_sections.'</strong> '.optional($morning_classes[0])->comment.'<br>';
                                 $morning_classes_string .= 'B:'.$morning_classes[1]->nr_of_students.' <strong>'.$morning_classes[1]->nr_of_sections.'</strong> '.optional($morning_classes[1])->comment.'<br>';
                                 $morning_classes_string .= 'Γ:'.$morning_classes[2]->nr_of_students.' <strong>'.$morning_classes[2]->nr_of_sections.'</strong> '.optional($morning_classes[2])->comment.'<br>';
@@ -56,9 +57,12 @@
                                 $total_sections_number = $morning_classes[0]->nr_of_sections + $morning_classes[1]->nr_of_sections + $morning_classes[2]->nr_of_sections + $morning_classes[3]->nr_of_sections + $morning_classes[4]->nr_of_sections + $morning_classes[5]->nr_of_sections;
                             }
                             else{
-                                for($i=0; $i<count($morning_classes); $i++){
+                                for($i=0; $i<count($morning_classes)-1; $i++){
+                                    if(isset($morning_classes[$i]->nr_of_students)){
+
                                     $morning_classes_string .= 'Τμ.'.($i+1).': '.$morning_classes[$i]->nr_of_students.' <strong>'.$morning_classes[$i]->nr_of_sections.'</strong> '.optional($morning_classes[$i])->comment.'<br>';
                                     $total_sections_number += $morning_classes[$i]->nr_of_sections;
+                                }
                                 }
                             }
                         }
@@ -70,8 +74,10 @@
                     <td>{!! $morning_classes_string !!}</td>
                     @php
                         $morning_zone_classes_json = $plan->morning_zone_classes;
-                        $morning_zone_classes = json_decode($morning_zone_classes_json);
-                        $morning_zone_classes_string = ' <strong> '.$morning_zone_classes[0]->nr_of_sections.'</strong>';
+                        if($morning_zone_classes_json){
+                            $morning_zone_classes = json_decode($morning_zone_classes_json);
+                            $morning_zone_classes_string = ' <strong> '.$morning_zone_classes[0]->nr_of_sections.'</strong>';
+                        }
                     @endphp
                     <td>{!! $morning_zone_classes_string !!}</td>
                     @php

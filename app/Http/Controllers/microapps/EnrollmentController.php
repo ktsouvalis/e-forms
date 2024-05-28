@@ -35,6 +35,14 @@ class EnrollmentController extends Controller
         return view('microapps.enrollments.create', ['appname' => 'enrollments']);
     }
 
+    public function show($parameter){
+        if($parameter == 'planning')
+            return view('microapps.enrollments.planning');
+        else{
+            abort(404);
+        }
+    }
+
     public function save($select, Request $request){
         
         $rule = null;

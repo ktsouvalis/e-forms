@@ -299,7 +299,7 @@
                             <input type="hidden" name="personal" value="0">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                         </form>
-                        <form action="{{url("/delete_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/fileshares/delete_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
                             <input type="hidden" name="personal" value="0">
                             <button class="btn btn-danger bi bi-x-circle"></button>
@@ -321,7 +321,7 @@
                             <input type="hidden" name="personal" value="1">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$basename}}</button>
                         </form>
-                        <form action="{{url("/delete_file/$fileshare->id/$basename")}}" method="post">
+                        <form action="{{url("/fileshares/delete_file/$fileshare->id/$basename")}}" method="post">
                         @csrf
                             <input type="hidden" name="personal" value="1">
                             <button class="btn btn-danger bi bi-x-circle"></button>

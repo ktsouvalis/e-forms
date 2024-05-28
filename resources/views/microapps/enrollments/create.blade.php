@@ -148,9 +148,9 @@
             @if(($school->primary ==1 && $old_data->total_students_nr && config('enrollments.nextYearPlanningActive') == 1) || ($school->primary == 0 && $old_data->nr_of_students1 && config('enrollments.nextYearPlanningActive') == 1))
             @php
                 $total_st_number = ($school->primary ==1)? $old_data->total_students_nr : $old_data->nr_of_students1;
-                $nextYearLeitourgikotita = App\Http\Controllers\Microapps\EnrollmentController::nextYearsLeitourgikotita($school->primary, $school->leitourgikotita, $total_st_number);
+                $nextYearLeitourgikotita = App\Http\Controllers\microapps\EnrollmentController::nextYearsLeitourgikotita($school->primary, $school->leitourgikotita, $total_st_number);
                 $max_class_numbers = ($nextYearLeitourgikotita >= 6) ? 6 : $nextYearLeitourgikotita;
-                $enrollments_classes = App\Models\Microapps\EnrollmentsClasses::where('enrollment_id', $old_data->id)->first();
+                $enrollments_classes = App\Models\microapps\EnrollmentsClasses::where('enrollment_id', $old_data->id)->first();
                 if($enrollments_classes){
                     $morning_classes_json = $enrollments_classes->morning_classes;
                     $morning_classes = json_decode($morning_classes_json);

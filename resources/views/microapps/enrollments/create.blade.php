@@ -25,7 +25,7 @@
             <br>καθώς και τα στοιχεία για τον προγραμματισμό λειτουργίας του σχ. Έτους {{config('enrollments.schoolYear')}}.
         </div>
           {{-- ΔΗΜΟΤΙΚΟ ΜΟΝΟ: Μόνο αν είναι Δημοτικό ζήτησε πρώτα το συνολικό αριθμό μαθητών  --}}
-        @if($school->primary == 1 && config('enrollments.nextYearPlanningActive') == 1 && $school->public == 1)
+        @if($school->primary == 1 && config('enrollments.nextYearPlanningActive') == "1" && $school->public == 1)
         <div class="container mt-5">
             <h3>Συνολικός αριθμός μαθητών</h3>
             <nav class="navbar navbar-light bg-light">
@@ -43,7 +43,7 @@
                         <input type="number" name="total_students_nr" class="form-control" required value="@if($old_data){{$old_data->total_students_nr}}@endif">
                     </td></tr>
                     <tr><td>
-                        @if(config('enrollments.nextYearPlanningAccepts') == 0)
+                        @if(config('enrollments.nextYearPlanningAccepts') == "0")
                             <div class='alert alert-warning text-center my-2'>
                                 <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
                             </div>

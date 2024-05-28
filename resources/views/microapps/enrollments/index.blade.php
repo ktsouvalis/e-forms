@@ -19,8 +19,8 @@
         if(!file_exists(config_path('enrollments.php'))){
             File::put(config_path('enrollments.php'), '<?php return []; ?>');
             $schoolYear = "2024-25";
-            $nextYearPlanningActive = 0;
-            $nextYearPlanningAccepts = 0;
+            $nextYearPlanningActive = "0";
+            $nextYearPlanningAccepts = "0";
         } else {
             $schoolYear = config('enrollments.schoolYear');
             $nextYearPlanningActive = config('enrollments.nextYearPlanningActive');
@@ -28,6 +28,7 @@
         }
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
+        // dd($nextYearPlanningActive, $nextYearPlanningAccepts, $schoolYear, $accepts)
     @endphp
     
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
@@ -42,13 +43,13 @@
                     <input type="text" class="form-control" name="schoolYear" value="{{$schoolYear}}">
                     <span class="input-group-text">Εμφάνιση στοιχείων προγραμματισμού:</span>
                     <select class="form-control" name="nextYearPlanningActive">
-                        <option value=0 @if($nextYearPlanningActive == 0) selected @endif>Όχι</option>
-                        <option value=1 @if($nextYearPlanningActive == 1) selected @endif>Ναι</option>
+                        <option value="0" @if(!$nextYearPlanningActive == "0") selected @endif>Όχι</option>
+                        <option value="1" @if($nextYearPlanningActive == "1") selected @endif>Ναι</option>
                     </select>
                     <span class="input-group-text">Δεκτές υποβολές για προγραμματισμό:</span>
                     <select class="form-control" name="nextYearPlanningAccepts">
-                        <option value=0 @if($nextYearPlanningAccepts == 0) selected @endif>Όχι</option>
-                        <option value=1 @if($nextYearPlanningAccepts == 1) selected @endif>Ναι</option>
+                        <option value="0" @if($nextYearPlanningAccepts == "0") selected @endif>Όχι</option>
+                        <option value="1" @if($nextYearPlanningAccepts == "1") selected @endif>Ναι</option>
                     </select>
                     <button type="submit" class="btn btn-primary">Αλλαγή</button>
                 </div>

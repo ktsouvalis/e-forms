@@ -40,6 +40,7 @@
         <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
         <thead>
             <tr>
+                
                 <th id="search">Ημνία Διορισμού</th>
                 <th id="search">Κλάδος</th>
                 <th id="search">Όνομα</th>
@@ -62,6 +63,7 @@
             @php
             $evaluation_a1 = DB::table('teachers')
          ->join('evaluation_a1', 'teachers.afm', '=', 'evaluation_a1.teacher_afm')
+        //  ->where('teachers.organiki_type', '=', 'App\Models\School')
          ->select('teachers.*', 'evaluation_a1.*')
          ->get();
          @endphp
@@ -69,7 +71,10 @@
          @foreach($teachersAfms as $afm)
                 @php
                     $teacher = App\Models\Teacher::where('afm', $afm)->first();
-                    if($teacher == null || !in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ71']) || !in_array(substr($teacher->appointment_date, 0, 4), ['2020', '2021'])){
+                    if($teacher == null || 
+                    !in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ71']) || 
+                    !in_array(substr($teacher->appointment_date, 0, 4), ['2020', '2021']) || 
+                    str_contains($teacher->organiki->name, 'ΔΙΕΥΘΥΝΣΗ')){
                         continue;
                     }   
                 @endphp

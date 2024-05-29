@@ -16,19 +16,39 @@
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
         <script>
-            document.getElementById('marital_status').addEventListener('change', function() {
-                var selectedValue = this.value;
-        
-                // Replace '1', '2', '3' with the actual values that should trigger the file upload
-                var dispalyModal = {{ $secondment->application_for_reposition }};
-                
-                if(displayModal){
-                    if (selectedValue === '2' || selectedValue === '3' || selectedValue === '4') {
-                        var uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
-                        uploadModal.show();
+            var timesClickedNrOfChildren = 0;
+            function checkAndDisplayModal(){
+                var displayModal = false;
+                var maritalStatus = document.getElementById('marital_status').value;
+                var nrOfCholdren = document.getElementById('nr_of_children').value;
+                var applicationForReposition = {{ $secondment->application_for_reposition }};
+                if(applicationForReposition === 0){// μόνο γι αυτούς που δεν έχουν κάνει αίτηση βελτίωσης
+                    if (maritalStatus === '2' || maritalStatus === '4') { //αν είναι έγγαμοι ή σε χηρεία
+                        displayModal = true;
+                    }
+                    if(maritalStatus === '1' || maritalStatus === '3'){ //αν είναι άγαμοι ή διαζευγμένοι με παιδιά
+                        if(nrOfCholdren > 0){
+                            displayModal = true;
+                        }
                     }
                 }
-                
+
+                if(displayModal){
+                    var uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
+                    uploadModal.show();
+                }
+            
+            }
+            document.getElementById('marital_status').addEventListener('change', function() {
+                checkAndDisplayModal();
+            });
+            document.getElementById('nr_of_children').addEventListener('change', function() {
+                timesClickedNrOfChildren++;
+                if(timesClickedNrOfChildren === 1){
+                    setTimeout(function() {
+                        checkAndDisplayModal();
+                    }, 3000);
+                }                
             });
         </script>
     @endpush
@@ -233,7 +253,7 @@
                         <div class="form-group">
                         <div class="input-group mb-2">
                             <div class="px-2 form-label input-group-text">Αριθμός τέκνων ( αφορά ανήλικα ή σπουδάζοντα τέκνα):</div>
-                                <input type="number" min="0" max="11" name="nr_of_children" value="{{ $secondment->nr_of_children }}"
+                                <input type="number" min="0" max="11" name="nr_of_children" id="nr_of_children" value="{{ $secondment->nr_of_children }}"
                                 @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif >
                             </div>
                         </div>

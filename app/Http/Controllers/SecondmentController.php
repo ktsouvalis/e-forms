@@ -348,20 +348,20 @@ class SecondmentController extends Controller
                 ['name' => 'ProtocolYear', 'contents' => $protocolYear],
             ];
             $client = new Client();
-            // $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/revoke', [
-            //     'headers' => [
-            //         'X-API-Key' => 'mysecretapikey',
-            //     ],
-            //     'multipart' => $data,
-            // ]);
-            // // Get the response body
-            // $status = $response->getStatusCode();
-            // $body = $response->getBody();
-            // if($status != 200){
-            //     return false;
-            // } else {
-            //     return $body;
-            // }
+            $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/revoke', [
+                'headers' => [
+                    'X-API-Key' => 'mysecretapikey',
+                ],
+                'multipart' => $data,
+            ]);
+            // Get the response body
+            $status = $response->getStatusCode();
+            $body = $response->getBody();
+            if($status != 200){
+                return false;
+            } else {
+                return $body;
+            }
             $secondment->save();
         } catch(\Exception $e) {
             dd($e->getMessage());

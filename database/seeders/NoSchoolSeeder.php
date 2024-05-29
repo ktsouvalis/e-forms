@@ -41,5 +41,17 @@ class NoSchoolSeeder extends Seeder
         NoSchool::create([
             'name' => 'ΟΛΙΚΗ ΔΙΑΘΕΣΗ ΣΕ ΑΠΟΚΕΝΤΡΩΜΕΝΕΣ ΥΠΗΡΕΣΙΕΣ ΥΠ. ΠΑΙΔΕΙΑΣ'
         ]);
+
+        NoSchool::create([
+            'name' => 'ΟΛΙΚΗ ΔΙΑΘΕΣΗ ΠΕ11'
+        ]);
+
+        NoSchool::create([
+            'name' => 'ΜΗ ΑΠΟΔΕΣΜΕΥΣΗ'
+        ]);        
+
+        NoSchool::create([
+            'name' => 'ΔΙΑΔΟΧΙΚΕΣ ΒΡΑΧΥΧΡΟΝΙΕΣ ΑΔΕΙΕΣ'
+        ]);  
     }
 }

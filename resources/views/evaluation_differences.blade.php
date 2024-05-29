@@ -69,7 +69,7 @@
          @foreach($teachersAfms as $afm)
                 @php
                     $teacher = App\Models\Teacher::where('afm', $afm)->first();
-                    if($teacher == null){
+                    if($teacher == null || !in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ71']) || !in_array(substr($teacher->appointment_date, 0, 4), ['2020', '2021'])){
                         continue;
                     }   
                 @endphp

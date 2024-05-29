@@ -46,7 +46,7 @@
             @endif
         </div>
         @endif
-          {{-- ΔΗΜΟΤΙΚΟ ΜΟΝΟ: Μόνο αν είναι Δημοτικό ζήτησε πρώτα το συνολικό αριθμό μαθητών  --}}
+        {{-- ΔΗΜΟΤΙΚΟ ΜΟΝΟ: Μόνο αν είναι Δημοτικό ζήτησε πρώτα το συνολικό αριθμό μαθητών  --}}
         @if($school->primary == 1 && config('enrollments.nextYearPlanningActive') == "1" && $school->public == 1)
         <div class="container mt-5">
             <h3>Συνολικός αριθμός μαθητών</h3>
@@ -413,6 +413,7 @@
                             <p class="fw-lighter fst-italic fs-6"><small>(Να συμπληρωθεί υποχρεωτικά το παρεχόμενο πρότυπο)</small></p>
                         </td>
                         <td> 
+                            Αρχέιο Α1 & Α2 του ΥΠΑΙΘΑ
                             <form action="{{route('enrollments.download_file',['file'=>"5_next_year_planning_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_Προγραμματισμός_2024_25.xlsx"])}}" method="get"class="container-fluid">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title=""> Πίνακας </button>
                             </form>

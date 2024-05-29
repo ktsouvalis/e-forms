@@ -36,7 +36,13 @@
         <tbody>
             @foreach ($plans as $plan)
                 <tr>
-                    <td>{{ $plan->enrollment->school->name }}</td>
+                    <td>{{ $plan->enrollment->school->name }}
+                        @if($plan->enrollment->school->primary && file_exists(storage_path('app/public/enrollments/a1_a2_file_'.$plan->enrollment->school->code.'.xlsx')))
+                            <form action="{{route('enrollments.download_file', ['file' =>'a1_a2_file_'.$plan->enrollment->school->code.'.xlsx', 'download_file_name' => 'A1_A2_'.$plan->enrollment->school->name.'.xlsx'] )}}" method="get">
+                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Α1_Α2 </button>
+                            </form>
+                        @endif
+                    </td>
                     <td>{{ $plan->enrollment->school->organikotita }}</td>
                     <td>{{ $plan->enrollment->school->leitourgikotita }}</td>
                     @php

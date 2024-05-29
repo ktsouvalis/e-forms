@@ -405,7 +405,7 @@
             @if(config('enrollments.nextYearPlanningActive') == 1)
             <table class="table table-bordered">
                     @if($school->primary == 1)
-                    
+                <tr><th colspan="2">Προγραμματισμός Λειτουργίας Ολοήμερου</th></tr>   
                 <tbody>
                     <tr>
                         <td>

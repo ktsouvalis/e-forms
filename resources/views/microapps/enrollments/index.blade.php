@@ -32,7 +32,7 @@
     @endphp
     
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-    <a href="{{ route('enrollments.show', ['enrollment'=>'planning']) }}" target='_blank' class="btn btn-secondary no-spinner">Στοιχεία Προγραμματισμού</a>
+    <a href="{{ route('enrollments.show', ['enrollment'=>'planning']) }}" target='_blank' class="btn btn-secondary no-spinner"><i class="fa-regular fa-calendar"></i> Στοιχεία Προγραμματισμού</a>
     <nav class="container navbar navbar-light bg-light">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">Παράμετροι:</span>

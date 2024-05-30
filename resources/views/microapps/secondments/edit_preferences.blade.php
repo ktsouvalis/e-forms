@@ -89,77 +89,7 @@
     @endif
     <h2 class="text-center">Αίτηση Απόσπασης εντός ΠΥΣΠΕ Αχαΐας</h2>
     <h5 class="text-center"> Βήμα 2 - Δήλωση Σχολικών Μονάδων</h5>
-	<div class="row justify-content-center">
-		<div class="col-12 col-md-8 col-lg-8 pb-5">
-        <div class="card border-primary rounded-0">
-            <div class="card-header p-0">
-                <div class="bg-info text-white text-center py-2">
-                    <h3><i class="fa-solid fa-user"></i> Προσωπικά Στοιχεία</h3>
-                    <p class="m-0"></p>
-                </div>
-            </div>
-            <div class="card-body p-3">
-                <!--Body-->
-                <div class="form-group">
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="fa-regular fa-user text-info"></i></div>
-                        </div>
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="name_surname" name="name_surname" placeholder="" value="{{$teacher->surname}} {{$teacher->name}}" disabled>
-                            <label for="name_surname">Ονοματεπώνυμο</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="fathers_name" name="fathers_name" placeholder="" value="{{$teacher->fname}}" disabled>
-                            <label for="fathers_name">Πατρώνυμο</label>
-                        </div>
-                    </div>
-                </div>
-                {{-- Κλάδος και Αριθμός Μητρώου --}}
-                <div class="form-group">
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="fa-solid fa-person-chalkboard text-info"></i></div>
-                        </div>
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="specialty" name="specialty" placeholder="" value="{{$teacher->klados}}" disabled>
-                            <label for="specialty">Κλάδος</label>
-                        </div>
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="am" name="am" placeholder="" value="{{$teacher->am}}" disabled>
-                            <label for="am">Αριθμός Μητρώου</label>
-                        </div>
-                    </div>
-                </div>
-                {{-- Οργανική Θέση και προϋπηρεσία --}}
-                <div class="form-group">
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="fa-solid fa-school-circle-check text-info"></i></div>
-                        </div>
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="schoool" name="school" placeholder="Οργανική Θέση" value="{{$teacher->organiki->name}}" disabled>
-                            <label for="school">Οργανική Θέση</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="fa-solid fa-calendar-check text-info"></i></div>
-                        </div>
-                        <label for="years" class="px-2" >Προϋπηρεσία</label>
-                            <input type="text" class="form-control" id="years" name="years" placeholder="" value="17 Έτη" disabled>
-                            
-                            <input type="text" class="form-control" id="days" name="days" value="5 Μήνες" disabled>
-                            <input type="text" class="form-control" id="days" name="days" value="24 Ημέρες" disabled>
-                            <label for="days" class="px-2" >έως 31-8-2024</label>
-                    </div>
-                </div>
-            </div> 
-        </div>
-        </div> 
-	</div>
+	@include('microapps.secondments.inc_personal_data')
     {{-- Δήλωση Σχολείων Προτίμησης - Β Τμήμα Αίτησης --}}
     <div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
@@ -202,7 +132,9 @@
                             <input type="hidden" id="selectionOrderInput" name="selectionOrder">
                             <select multiple="multiple" id="schools-select" name="schools-select[]">
                                 @foreach($schoolChoices as $school)
-                                    <option value="{{$school->code}}" @if(in_array($school->code, old('schools-select', []))) selected @endif>{{$school->name}}</option>
+                                    <option value="{{$school->code}}" @if(in_array($school->code, old('schools-select', []))) selected @endif>{{$school->name}} 
+                                        @if($teacher->org_eae==1 && $school->has_integration_section==1) (Τ.Ε.)
+                                        @endif</option>
                                 @endforeach
                             </select>
                         </div>
@@ -227,7 +159,7 @@
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
                         <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
-                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); confirm('Θα γίνει οριστική υποβολή της αίτησης και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ.<br> Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
+                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); return confirm('Θα γίνει οριστική υποβολή της αίτησης και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ.<br> Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
                         {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                     </div>
                 </form>

@@ -250,6 +250,8 @@ Route::group(['prefix' => 'secondments'], function () {
     Route::get("/delete_file/{secondment}/{serverFileName}", [SecondmentController::class, 'delete_file'])->name('secondments.delete_file');
 
     Route::post("/revoke/{secondment}", [SecondmentController::class, 'revoke'])->name('secondments.revoke');
+
+    Route::post("/allow_extra_files/{secondment}", [SecondmentController::class, 'allow_extra_files'])->name('secondments.allow_extra_files');
 });
 
 //Route::view('/secondments', 'microapps.secondments.create');

@@ -169,10 +169,11 @@ class SecondmentController extends Controller
             end($fileNames);
             $lastServerFileName = key($fileNames);
             $underScorePosition = strpos($lastServerFileName, '_');
-            $filesCount = substr($lastServerFileName, $underScorePosition + 1, strpos($lastServerFileName, '.') - $underScorePosition -1) ;
+            $filesCount = substr($lastServerFileName, $underScorePosition + 1, strpos($lastServerFileName, '.') - $underScorePosition -1);
         } else {
             $filesCount = 0;
         }
+        $lastFileNumber = $filesCount; // κράτα τον αριθμό του τελευταίου αρχείου για την περίπτωση που θα ανεβάσει επιπλέον αρχεία
         $directory = "secondments";
         $teacherAfm = Auth::guard('teacher')->user()->afm;
         foreach($files as $file){
@@ -192,12 +193,55 @@ class SecondmentController extends Controller
         try{
             $secondment->update();
         } catch(\Exception $e) {
-            dd($e->getMessage());
+            //dd($e->getMessage());
             Log::channel('files')->error($teacherAfm." Files failed to update database field files_json");
             return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
         }
         Log::channel('files')->info($teacherAfm." Files successfully uploaded");
+        if($secondment->submitted == 1 && $secondment->extra_files_allowed == 1){
+            //βρες τα επιπλέον αρχεία που ανέβηκαν
+            $j = 0;
+            $extraFileNames = [];
+            $protocolElements = explode("/", $secondment->protocol_date);
+            $protocolYear = $protocolElements[2];
+            foreach($fileNames as $serverFileName => $databaseFileName){
+                $j++;
+                if($j > $lastFileNumber){
+                    $extraFileNames[$serverFileName] = $databaseFileName;
+                }
+            }
+            $data = [
+                ['name' => 'ProtocolNo', 'contents' => $secondment->protocol_nr],
+                ['name' => 'ProtocolYear', 'contents' => $protocolYear],
+            ];
+            //$fileNames = json_decode($secondment->files_json, true);
+            foreach($extraFileNames as $serverFileName => $databaseFileName){
+                $data[] = [
+                    'name'     => 'Files',
+                    'contents' => fopen(storage_path("app/secondments/$serverFileName"), 'r'),
+                ];
+            }
+            $client = new Client();
+            $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/attachments', [
+                'headers' => [
+                    'X-API-Key' => 'mysecretapikey',
+                ],
+                'multipart' => $data,
+            ]);
+            // Get the response body
+            $status = $response->getStatusCode();
+            $body = $response->getBody();
+            if($status != 200){
+                return false;
+            } else {
+                return $body;
+            }
+        }
+        if ($request->wantsJson()) {
+        return response()->json(['success' => 'Files uploaded successfully.']);
+        } else {
         return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς');
+        }
     }
 
     public function getSchoolChoices($klados, $org_eae){
@@ -209,7 +253,10 @@ class SecondmentController extends Controller
                     $schools = School::where('primary', '=', 0)->where('special_needs', '=', 0)->
                     where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();          
                 } else {
-                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->
+                    $schools = School::where('primary', '=', 0)->where(function($query) {
+                        $query->where('special_needs', '=', 1)
+                              ->orWhere('has_integration_section', '=', 1); // replace 'other_condition' with your actual column name
+                    })->
                     where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 }
             break;
@@ -218,7 +265,10 @@ class SecondmentController extends Controller
                     $schools = School::where('primary', '=', 1)->where('special_needs', '=', 0)->
                     where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 } else {
-                    $schools = School::where('primary', '=', 0)->where('special_needs', '=', 1)->
+                    $schools = School::where('primary', '=', 1)->where(function($query) {
+                        $query->where('special_needs', '=', 1)
+                              ->orWhere('has_integration_section', '=', 1); // replace 'other_condition' with your actual column name
+                    })->
                     where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();                
                 }   
             break;
@@ -368,6 +418,24 @@ class SecondmentController extends Controller
             return back()->with('failure', 'Αποτυχία ανάκλησης αίτησης. Δοκιμάστε ξανά.');
         }
         return redirect()->route('secondments.create')->with('success', 'Η αίτηση ανακλήθηκε επιτυχώς και διαγράφηκε από το Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ');
+    }
+
+    public function allow_extra_files(Secondment $secondment){
+        if($secondment->submitted == 1){
+            if($secondment->extra_files_allowed == 1){
+                $secondment->extra_files_allowed = 0;
+                $secondment->update();
+                return response()->json(['success' => 'Δεν επιτρέπονται επιπλέον αρχεία']);
+            } else {
+                $secondment->extra_files_allowed = 1;
+                $secondment->update();
+                return response()->json(['success' => 'Επιτρέπονται επιπλέον αρχεία']);
+            } 
+            
+        } else {
+            return response()->json(['failure' => 'Δεν έχει υποβληθεί οριστικά η αίτηση.']);
+        }
+        
     }
 
 }

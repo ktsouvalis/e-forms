@@ -34,6 +34,7 @@ return new class extends Migration
             $table->date('submit_date')->nullable();
             $table->boolean('submitted')->default(0);
             $table->boolean('revoked')->default(0)->comment('Ανακλημένη αίτηση');
+            $table->boolean('extra_files_allowed')->default(0)->comment('Επιτρέπονται επιπλέον αρχεία');  
             $table->text('files_json')->nullable();
             $table->text('preferences_json')->nullable();
             $table->text('preferences_comments')->nullable();

@@ -304,6 +304,7 @@
             <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
             <thead>
                 <tr>
+                    <th>Κωδικός</th>
                     <th id="search">Είδος</th>
                     <th id="search">Σχολείο</th>
                     <th id="search">Εγγραφέντες</th>
@@ -313,7 +314,6 @@
                     <th id="">Αίτημα επιπλ. τμ.</th>
                     <th id="">Μαθητές στα όρια</th>
                     <th>Τελευταία ενημέρωση</th>
-                    <th>Κωδικός</th>
                 </tr>
             </thead>
             <tbody>
@@ -330,6 +330,7 @@
                         // dd($school_name_filename);
                     @endphp
                         <tr>
+                            <td>{{$one_school->code}}</td>
                             <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
                             <td> {{$one_school->name}}</td>
                         @if($one)
@@ -376,7 +377,7 @@
                             <td>-</td>
                             <td>-</td>
                         @endif
-                        <td>{{$one_school->code}}</td>
+                       
                         </tr>
             @endforeach
             </tbody>

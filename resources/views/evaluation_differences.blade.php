@@ -33,6 +33,7 @@
     ->union(DB::table('evaluation_a2')->select('teacher_afm'))
     ->union(DB::table('evaluation_b')->select('teacher_afm'))
     ->pluck('teacher_afm');
+    
     @endphp
     
 

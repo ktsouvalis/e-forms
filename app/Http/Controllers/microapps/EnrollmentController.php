@@ -28,6 +28,7 @@ class EnrollmentController extends Controller
     }
 
     public function index(){
+       // return view('microapps.enrollments.for_niki', ['appname' => 'enrollments']);
         return view('microapps.enrollments.index', ['appname' => 'enrollments']);
     }
 

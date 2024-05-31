@@ -16,7 +16,11 @@
     @endpush
     @php
         $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
+    
+        $schools_not_having_planning = App\Models\School::whereDoesntHave('enrollments.enrollmentClasses')->get();
+    $schoolCount = 0;
     @endphp
+    
     <div class="table-responsive">
     <table id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
         <thead>
@@ -139,5 +143,26 @@
             @endforeach
         </tbody>
     </table>
+    </div>
+
+
+    <h3>Σχολεία που δεν έχουν υποβάλλει:</h3>
+    <div class="table-responsive">
+        <table>
+            <tr>
+                <th>AA</th>
+                <th id="search">Σχολείο</th>
+                <th id="search">mail</th>
+            </tr>
+            @foreach ($schools_not_having_planning as $school)
+                @if($school->public == 1 && $school->special_needs == 0 && $school->experimental == 0)
+                <tr>
+                    <td> {{ ++$schoolCount }} </td>
+                    <td>{{ $school->name }}</td>
+                    <td>{{ $school->mail }}</td>
+                </tr>
+                @endif
+            @endforeach
+        </table>
     </div>
 </x-layout>

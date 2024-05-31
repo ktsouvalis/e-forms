@@ -29,7 +29,7 @@
         <p class="h4">Εμφάνιση ανα εκπαιδευτικό</p>
     </div>
     @php
-       $teachersAfms = DB::table('evaluation_a1')->select('teacher_afm')
+    $teachersAfms = DB::table('evaluation_a1')->select('teacher_afm')
     ->union(DB::table('evaluation_a2')->select('teacher_afm'))
     ->union(DB::table('evaluation_b')->select('teacher_afm'))
     ->pluck('teacher_afm');
@@ -71,10 +71,11 @@
          @foreach($teachersAfms as $afm)
                 @php
                     $teacher = App\Models\Teacher::where('afm', $afm)->first();
-                    if($teacher == null || 
-                    !in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ71']) || 
-                    !in_array(substr($teacher->appointment_date, 0, 4), ['2020', '2021']) || 
-                    str_contains($teacher->organiki->name, 'ΔΙΕΥΘΥΝΣΗ')){
+                    if($teacher == null){
+                    //  || 
+                    // !in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ71']) || 
+                    // !in_array(substr($teacher->appointment_date, 0, 4), ['2020', '2021']) ){
+                    // || str_contains($teacher->organiki->name, 'ΔΙΕΥΘΥΝΣΗ')){
                         continue;
                     }   
                 @endphp

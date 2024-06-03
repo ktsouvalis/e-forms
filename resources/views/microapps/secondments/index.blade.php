@@ -56,5 +56,5 @@
             </tbody>  
         </table>    
     </div> <!-- table responsive closure -->
-    @include('microapps.microapps_admin_after') <!--email to those who haven't submitted an answer-->
+    
 </x-layout>

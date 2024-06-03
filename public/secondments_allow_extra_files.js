@@ -18,11 +18,11 @@ $(document).ready(function () {
             },
             success: function (response) {
                 // Handle the response here, update the page as needed
-                alert("Success: " + response);
+                alert("Η αλλαγή έγινε!");
             },
             error: function (error) {
                 // Handle errors
-                console.log("An error occurred: " + error);
+                alert("Δεν έγινε η αλλαγή. Δοκιμάστε ξανά!");
             }
         });
     });

@@ -221,26 +221,20 @@ class SecondmentController extends Controller
                     'contents' => fopen(storage_path("app/secondments/$serverFileName"), 'r'),
                 ];
             }
-            $client = new Client();
-            $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/attachments', [
-                'headers' => [
-                    'X-API-Key' => 'mysecretapikey',
-                ],
-                'multipart' => $data,
-            ]);
-            // Get the response body
-            $status = $response->getStatusCode();
-            $body = $response->getBody();
-            if($status != 200){
-                return false;
-            } else {
-                return $body;
-            }
-        }
+            $extraFilesToProtocol = $this->sendExtraFilesToProtocol($data);
+            if($extraFilesToProtocol == false){
+                return back()->with('failure', 'Τα αρχεία υποβλήθηκαν με επιτυχία. Απέτυχε η αποστολή τους στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ. Παρακαλούμε αναφέρετε οπωσδήποτε το πρόβλημα στο it@dipe.ach.sch.gr.');
+            }  
+        } // Τέλος της διαδικασίας ανέβασματος επιπλέον αρχείων
         if ($request->wantsJson()) {
-        return response()->json(['success' => 'Files uploaded successfully.']);
+            return response()->json(['success' => 'Τα αρχεία ανέβηκαν επιτυχώς.']);
         } else {
-        return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς');
+            if($extraFilesToProtocol){
+                $extraFilesMessage = " και υποβλήθηκαν συμπληρωματικά στην αίτησή σας στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ.";
+            } else {
+                $extraFilesMessage = ".";
+            }
+            return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς'.$extraFilesMessage);
         }
     }
 
@@ -326,8 +320,6 @@ class SecondmentController extends Controller
             }
         }
                                 
-                           
-        
         if($secondment->teacher->work_experience){
             $data[] = ['name' => 'WorkExperienceYears', 'contents' => $secondment->teacher->work_experience->years];
             $data[] = ['name' => 'WorkExperienceMonths', 'contents' => $secondment->teacher->work_experience->months];
@@ -375,6 +367,42 @@ class SecondmentController extends Controller
         }
     }
 
+    public function sendExtraFilesToProtocol($data){
+        $client = new Client();
+        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/attachments', [
+            'headers' => [
+                'X-API-Key' => 'mysecretapikey',
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+        if($status != 200){
+            return false;
+        } else {
+            return $body;
+        }
+    }
+
+    public function sendRevokeToProtocol($data){
+        $client = new Client();
+        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/revoke', [
+            'headers' => [
+                'X-API-Key' => 'mysecretapikey',
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+        if($status != 200){
+            return false;
+        } else {
+            return $body;
+        }
+    }
+
     public function download_file($file, $download_file_name = null){
         $username = Auth::check() ? Auth::user()->username : Auth::guard('teacher')->user()->afm;
         $directory = "secondments";
@@ -397,24 +425,17 @@ class SecondmentController extends Controller
                 ['name' => 'ProtocolNo', 'contents' => $secondment->protocol_nr],
                 ['name' => 'ProtocolYear', 'contents' => $protocolYear],
             ];
-            $client = new Client();
-            $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/revoke', [
-                'headers' => [
-                    'X-API-Key' => 'mysecretapikey',
-                ],
-                'multipart' => $data,
-            ]);
-            // Get the response body
-            $status = $response->getStatusCode();
-            $body = $response->getBody();
-            if($status != 200){
-                return false;
+            $protocolRevoke = $this->sendRevokeToProtocol($data);
+
+            if($protocolRevoke){
+                $secondment->save();
+                return back()->with('success', 'Η αίτηση ανακλήθηκε και ακυρώθηκε από το Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας.');
             } else {
-                return $body;
+                return back()->with('failure', 'Αποτυχία ανάκλησης αίτησης. Δοκιμάστε ξανά.');
             }
-            $secondment->save();
+                
         } catch(\Exception $e) {
-            dd($e->getMessage());
+            //dd($e->getMessage());
             return back()->with('failure', 'Αποτυχία ανάκλησης αίτησης. Δοκιμάστε ξανά.');
         }
         return redirect()->route('secondments.create')->with('success', 'Η αίτηση ανακλήθηκε επιτυχώς και διαγράφηκε από το Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ');

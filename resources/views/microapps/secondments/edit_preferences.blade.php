@@ -21,7 +21,7 @@
             var selectionOrder = [];
             var selectedOnes = [];
             $(document).ready(function() {
-                
+                // Στήσε το multi-select dropdown
                 $('#schools-select').multiSelect({
                     keepOrder: true,
                     selectableHeader: "<div class='custom-header'>Διαθέσιμα Σχολεία:</div>",
@@ -81,15 +81,47 @@
     @endpush
 <div class="container">
     @if($microapp->accepts == 0)
-    
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if($secondment->submitted == 1)
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            Η αίτηση έχει υποβληθεί οριστικά και δε μπορεί να τροποποιηθεί.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
     <h2 class="text-center">Αίτηση Απόσπασης εντός ΠΥΣΠΕ Αχαΐας</h2>
     <h5 class="text-center"> Βήμα 2 - Δήλωση Σχολικών Μονάδων</h5>
 	@include('microapps.secondments.inc_personal_data')
+    {{-- Modal START --}}
+    <div class="modal" tabindex="-1" id="submitModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Οριστική Υποβολή Αίτησης Απόσπασης</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" id="uploadFilesModalForm" method="post" class="container-fluid" enctype="multipart/form-data" data-export>
+                    @csrf
+                    <div class="text-center">
+                        <input  type="file" id="files" name="files[]" multiple required @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                        
+                    </div>
+                
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
+                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif >
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{-- Modal END --}}
     {{-- Δήλωση Σχολείων Προτίμησης - Β Τμήμα Αίτησης --}}
     <div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
@@ -159,7 +191,7 @@
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
                         <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
-                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); return confirm('Θα γίνει οριστική υποβολή της αίτησης και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ.<br> Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
+                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); return confirm('1) Βεβαιωθείτε ότι έχετε υποβάλλει όλα τα απαραίτητα δικαιολογητικά. 2) Με την ενέργεια αυτή θα γίνει οριστική υποβολή της αίτησης και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ. 3) Μετά την υποβολή μην κλείσετε το παράθυρο μέχρις ότου εμφανιστεί ένα μήνυμα επιτυχίας ή αποτυχίας. Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
                         {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                     </div>
                 </form>

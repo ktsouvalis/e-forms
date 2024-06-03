@@ -97,11 +97,11 @@
     <h5 class="text-center"> Βήμα 1 - Δήλωση Μοριοδοτούμενων Κριτηρίων</h5>
     @include('microapps.secondments.inc_personal_data')
     {{-- Μοριοδοτούμενα Κριτήρια - Α Τμήμα Αίτησης --}}
-    <div class="modal" tabindex="-1" id="uploadModal">
+    <div class="modal" tabindex="-1" id="uploadModal"> {{-- Modal START --}}
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Υποβολή Δικαιολογητικών Οικογενειακής Κατάστασης και Εντοπιότητας</h5>
+              <h5 class="modal-title">Υποβολή Δικαιολογητικών</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -109,9 +109,7 @@
                     @csrf
                     <div class="text-center">
                         <input  type="file" id="files" name="files[]" multiple required @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif>
-                        
                     </div>
-                
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -71,9 +71,12 @@
         //get selected schools in order and create an array with their names
             $schools_array = [];
             $selectedSchools = [];
-            $selectedSchools = json_decode($selectionOrder); 
+            $selectedSchools = json_decode($selectionOrder);
+            $teacher = Auth::guard('teacher')->user(); //check which teacher is logged in
             foreach($selectedSchools as $schoolCode){
                 $school = App\Models\School::where('code', $schoolCode)->first();
+                if($teacher->org_eae == 1 && $school->special_needs == 0)
+                    $school->name = $school->name . ' (Τ.Ε.)';
                 array_push($schools_array, $school->name);
             }
         @endphp

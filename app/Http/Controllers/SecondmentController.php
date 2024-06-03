@@ -79,7 +79,7 @@ class SecondmentController extends Controller
                 $secondment->protocol_nr = $protocol_message[0];
                 $secondment->protocol_date = $protocol_message[1];
                 $secondment->submitted = 1;
-                $secondment->update();
+                $secondment->save();
             } catch(\Exception $e) {
                 return back()->with('failure', $e->getMessage());
                 //return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
@@ -168,7 +168,7 @@ class SecondmentController extends Controller
             $fileNames = json_decode($secondment->files_json, true);
             end($fileNames);
             $lastServerFileName = key($fileNames);
-            $underScorePosition = strpos($lastServerFileName, '_');
+            $underScorePosition = strpos($lastServerFileName, '_');// βρες τον αριθμό που περιλαμβάνεται στο όνομα του τελευταίου αρχείου μετά το _
             $filesCount = substr($lastServerFileName, $underScorePosition + 1, strpos($lastServerFileName, '.') - $underScorePosition -1);
         } else {
             $filesCount = 0;
@@ -179,9 +179,8 @@ class SecondmentController extends Controller
         foreach($files as $file){
             $filesCount++;
             $serverFileName = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
-            $fileNames[$serverFileName] = $file->getClientOriginalName();
+            $fileNames[$serverFileName] = $file->getClientOriginalName();//πρόσθεσε στον πίνακα το όνομα του αρχείου που θα ανεβάσεις
             $fileHandler = new FilesController();
-            
             $uploaded = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);
             
             if($uploaded->getStatusCode() == 500){
@@ -191,7 +190,7 @@ class SecondmentController extends Controller
         }
         $secondment->files_json = json_encode($fileNames);
         try{
-            $secondment->update();
+            $secondment->save();
         } catch(\Exception $e) {
             //dd($e->getMessage());
             Log::channel('files')->error($teacherAfm." Files failed to update database field files_json");
@@ -445,11 +444,11 @@ class SecondmentController extends Controller
         if($secondment->submitted == 1){
             if($secondment->extra_files_allowed == 1){
                 $secondment->extra_files_allowed = 0;
-                $secondment->update();
+                $secondment->save();
                 return response()->json(['success' => 'Δεν επιτρέπονται επιπλέον αρχεία']);
             } else {
                 $secondment->extra_files_allowed = 1;
-                $secondment->update();
+                $secondment->save();
                 return response()->json(['success' => 'Επιτρέπονται επιπλέον αρχεία']);
             } 
             

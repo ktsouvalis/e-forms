@@ -50,7 +50,6 @@
                     <td>{{ $plan->enrollment->school->organikotita }}</td>
                     <td>{{ $plan->enrollment->school->leitourgikotita }}</td>
                     @php
-                        $kostas = 5;
                         $morning_classes_string = '';
                         $morning_classes_json = $plan->morning_classes;
                         $total_sections_number = 0;

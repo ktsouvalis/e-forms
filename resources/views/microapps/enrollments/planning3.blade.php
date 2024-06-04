@@ -12,15 +12,21 @@
         <script src="{{ asset('datatable_init.js') }}"></script>
     @endpush
     @push('title')
-        <title>Προγραμματισμός 2024-25</title>
+        <title>Αριθμητικά Στοιχεία Νηπιαγωγείων για Προγραμματισμό 2024-25</title>
     @endpush
     @php
-        $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
-    
-        $schools_not_having_planning = App\Models\School::whereDoesntHave('enrollments.enrollmentClasses')->get();
+        // $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
+        $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')
+            ->whereHas('enrollment.school', function ($query) {
+                $query->where('primary', 0);
+            })
+            ->get();
+        $schools_not_having_planning = App\Models\School::where('primary',0)->where('is_active',1)->whereDoesntHave('enrollments.enrollmentClasses')->get();
         $schoolCount = 0;
     @endphp
-    
+    <div class="h4">
+        Αριθμητικά Στοιχεία Νηπιαγωγείων για Προγραμματισμό 2024-25
+    </div>
     <div class="table-responsive">
     <table id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
         <thead>
@@ -47,7 +53,7 @@
         </thead>
         <tbody>
             @foreach ($plans as $plan)
-            @if(!$plan->enrollment->school->primary)
+            {{-- @if(!$plan->enrollment->school->primary) --}}
                 <tr>
                     <td>{{ $plan->enrollment->school->code }} </td>
                     <td>{{ $plan->enrollment->school->name }} </td>
@@ -62,12 +68,12 @@
                                 if(isset($morning_classes[$i]->nr_of_students)){
                                     echo '<td>'.$morning_classes[$i]->nr_of_students.'</td><td>'.$morning_classes[$i]->nr_of_sections.'</td>';
                                 } else {
-                                    echo '<td>-</td><td>-</td>';
+                                    echo '<td></td><td></td>';
                                 }  
                             }
                         } 
                         else {
-                            echo '<td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td>';
+                            echo '<td ></td><td ></td><td ></td><td ></td><td ></td><td ></td><td ></td><td ></td>';
                         }
                     @endphp
                     
@@ -77,7 +83,7 @@
                             $morning_zone_classes = json_decode($morning_zone_classes_json);
                             echo '<td>'.$morning_zone_classes[0]->nr_of_students.'</td><td>'.$morning_zone_classes[0]->nr_of_sections.'</td>';        
                         } else {
-                            echo '<td>-</td><td>-</td>';
+                            echo '<td></td><td></td>';
                         }
                     @endphp
                     {{-- Ολοήμερο --}}
@@ -89,25 +95,25 @@
                             if(isset($all_day_school_classes[$i]->nr_of_students)){
                                 echo '<td>'.$all_day_school_classes[$i]->nr_of_students.'</td><td>'.$all_day_school_classes[$i]->nr_of_sections.'</td>';
                             } else {
-                                echo '<td>-</td><td>-</td>';
+                                echo '<td></td><td></td>';
                             }
                         }
                     }
                     else{
-                        echo '<td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td><td >Δεν έχει δηλωθεί</td>';
+                        echo '<td ></td><td ></td><td ></td><td ></td>';
                     }
                     @endphp
                 </tr> 
-            @endif  
+            {{-- @endif   --}}
             @endforeach
         </tbody>
     </table>
     </div>
 
 
-    <h3>Σχολεία που δεν έχουν υποβάλλει:</h3>
+    <div class="my-3"><div class="h5">Σχολεία που δεν έχουν υποβάλλει</div>
     <div class="table-responsive">
-        <table>
+        <table class="table table-bordered">
             <tr>
                 <th>AA</th>
                 <th id="search">Σχολείο</th>
@@ -123,5 +129,6 @@
                 @endif
             @endforeach
         </table>
+    </div>
     </div>
 </x-layout>

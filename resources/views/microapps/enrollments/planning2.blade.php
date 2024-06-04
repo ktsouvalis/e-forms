@@ -16,7 +16,6 @@
     @endpush
     @php
         $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
-    
         $schools_not_having_planning = App\Models\School::whereDoesntHave('enrollments.enrollmentClasses')->get();
     $schoolCount = 0;
     @endphp

@@ -38,10 +38,14 @@ class EnrollmentController extends Controller
 
     public function show($parameter){
         if($parameter == 'planning')
+            return view('microapps.enrollments.planning');
+        elseif($parameter == 'planning2')
             return view('microapps.enrollments.planning2');
-        else{
+        elseif($parameter == 'planning3')
+            return view('microapps.enrollments.planning3');
+        else
             abort(404);
-        }
+        
     }
 
     public function save($select, Request $request){

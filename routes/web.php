@@ -36,6 +36,7 @@ use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
@@ -358,6 +359,9 @@ Route::group(['prefix' => 'work_planning', 'middleware'=>'canViewMicroapp'], fun
 
     Route::post('/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->name('work_planning.extract_work_plan')->middleware('isConsultant');
 });
+
+//REQUESTS ROUTES
+Route::resource('interactions', InteractionController::class);
 
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);

@@ -54,6 +54,10 @@ class Teacher extends Authenticatable
         return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
     }
 
+    public function interactions(){
+        return $this->morphMany(Interaction::class, 'stakeholder');
+    }
+
     public function addedbys()
     {
         return $this->morphMany(FileshareStakeholder::class, 'addedby');

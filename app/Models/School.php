@@ -76,6 +76,10 @@ class School extends Authenticatable
         return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
     }
 
+    public function interactions(){
+        return $this->morphMany(Interaction::class, 'stakeholder');
+    }
+
     public function enrollments(){
         return $this->hasOne(Enrollment::class);
     }
@@ -110,10 +114,6 @@ class School extends Authenticatable
 
     public function immigrants(){
         return $this->hasMany(Immigrant::class);
-    }
-
-    public function defibrillators(){
-        return $this->hasOne(Defibrillator::class);
     }
 
     public function sections(){

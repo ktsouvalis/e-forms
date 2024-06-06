@@ -15,7 +15,8 @@ class InteractionController extends Controller
     public function catalogue(InteractionType $interactionType)
     {
         $interactions = Interaction::where('interaction_type_id', $interactionType->id)->get();
-        return view('interactions.catalogue', compact('interactions'));
+        $name = $interactionType->name;
+        return view('interactions.catalogue', compact('interactions', 'name'));
     }
 
     public function store(Request $request){
@@ -48,6 +49,7 @@ class InteractionController extends Controller
         
         return redirect(route('interactions.create'))->with('success', 'Η αίτηση καταχωρήθηκε επιτυχώς');
     }
+
     public function create()
     {
         //
@@ -57,5 +59,17 @@ class InteractionController extends Controller
         else if(Auth::guard('teacher')->check()){
             return view('interactions.create-teacher');
         }
+    }
+
+    public function download_file(Interaction $interaction, $filename){
+        $fileHandler = new FilesController();
+        $directory = "interactions/$interaction->id";
+        return $fileHandler->download_file($directory, $filename,'local');
+    }
+
+    public function resolve(Request $request, Interaction $interaction){
+        $interaction->resolved = $request->resolved;
+        $interaction->save();
+        return response()->json(['success' => 'Status changed successfully.', 'resolved' => $request->resolved]);
     }
 }

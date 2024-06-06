@@ -90,8 +90,8 @@
                 <input type="text" id="folder" name="folder" class="form-control" required>
             </div>
              <div class="form-group">
-                <label for="stakes"><strong>Απευθύνεται σε</strong></label>
-                <select id="stakes" name="stakes" class="form-control">
+                <label for="stakes_to"><strong>Απευθύνεται σε</strong></label>
+                <select id="stakes_to" name="stakes_to" class="form-control">
                     <option value="s">Σχολεία</option>
                     <option value="t">Εκπαιδευτικούς</option>
                 </select>

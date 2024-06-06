@@ -366,6 +366,10 @@ Route::resource('interactions', InteractionController::class);
 
 Route::group(['prefix' => 'interactions'], function(){
     Route::get('/display_catalogue/{interaction_type}', [InteractionController::class, 'catalogue'])->name('interactions.display_catalogue');
+
+    Route::get('/download_file/{interaction}/{filename}', [InteractionController::class, 'download_file'])->name('interactions.download_file');
+
+    Route::post('/resolve/{interaction}', [InteractionController::class, 'resolve'])->name('interactions.resolve');
 });
 
 //INTERACTION TYPES ROUTES

@@ -41,6 +41,8 @@ class InteractionTypePolicy
     public function update(User $user, InteractionType $InteractionType): bool
     {
         //
+        if(Interaction::where('interaction_type_id', $InteractionType->id)->exists())
+            return false;
         return $this->view($user, $InteractionType);
     }
 

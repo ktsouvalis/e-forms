@@ -26,6 +26,7 @@ class InteractionTypesController extends Controller
         $interactionType->name = $request->all()['name'];
         $interactionType->folder = $request->all()['folder'];
         $interactionType->department_id = $department_id;
+        $interactionType->stakes_to = $request->all()['stakes_to'];
         $interactionType->save();
 
         return redirect()->route('interaction_types.index')->with('success', 'Τύπος Επικοινωνίας δημιουργήθηκε επιτυχώς');
@@ -34,12 +35,17 @@ class InteractionTypesController extends Controller
     public function update(Request $request, InteractionType $interaction_type){
         $field = $request->field;
         $interaction_type->$field = $request->value;
-        $interaction_type->save();
-        return response()->json(['success' => 'Status changed successfully.', 'field_type' => $request->field, 'field_value' => $request->value]);
+        if($interaction_type->isDirty()){
+            $interaction_type->save();
+            return response()->json(['success' => 'Status changed successfully.', 'field_type' => $request->field, 'field_value' => $request->value]);
+        }
+        else{
+            return response()->json(['success' => 'No changes made.']);
+        }
     }
 
-    public function destroy(InteractionType $type){
-        $type->delete();
+    public function destroy(InteractionType $interaction_type){
+        $interaction_type->delete();
         return redirect()->route('interaction_types.index')->with('success', 'Διαγράφηκε επιτυχώς');
     }
 

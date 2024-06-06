@@ -17,7 +17,6 @@
     @if($user->isAdmin())
     <div class="badge text-wrap py-2" style="width: 10rem; background-color:Gainsboro; text-align:center;">
         <div class="text-dark fa-solid fa-users"></div>
-        {{-- <a href="{{url("/manage_users")}}" style="color:black; text-decoration:none;" class=""> Χρήστες</a> --}}
         <a href="{{route("users.index")}}" style="color:black; text-decoration:none;" class=""> Χρήστες</a>
     </div>
     @endif
@@ -45,6 +44,10 @@
     <div class="badge text-wrap py-2" style="width: 10rem; background-color:#4bac97; text-align:center;">
         <div class="text-dark fa-solid fa-file"></div>
         <a href="{{url('/filecollects')}}" style="color:black; text-decoration:none;" class=""> Συλλογή Αρχείων </a>
+    </div>
+    <div class="badge text-wrap py-2" style="width: 10rem; background-color:#fcab63; text-align:center;">
+        <div class="text-dark fa-solid fa-paper-plane"></div>
+        <a href="{{route('interaction_types.index')}}" style="color:black; text-decoration:none;" class=""> Ανοιχτές Υποβολές </a>
     </div>
 </nav>
 <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(71, 151, 209);">

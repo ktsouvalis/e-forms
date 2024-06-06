@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Interaction;
 use Illuminate\Http\Request;
+use App\Models\InteractionType;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\FilesController;
 
 class InteractionController extends Controller
 {
     //
+
+    public function catalogue(InteractionType $interactionType)
+    {
+        $interactions = Interaction::where('interaction_type_id', $interactionType->id)->get();
+        return view('interactions.catalogue', compact('interactions'));
+    }
+
     public function store(Request $request){
         $user = Auth::guard('teacher')->check() ? Auth::guard('teacher')->user() : Auth::guard('school')->user();
         $data = request()->validate([

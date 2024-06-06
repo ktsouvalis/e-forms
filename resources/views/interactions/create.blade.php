@@ -48,7 +48,7 @@
     <div class="form-group my-2">
         <label for="type"><strong>Θέμα</strong></label>
         <select id="type" name="interaction_type_id" class="form-control">
-            @foreach(App\Models\InteractionType::all() as $type)
+            @foreach($interaction_types as $type)
                 <option value="{{ $type->id }}">{{ $type->name }}</option>
             @endforeach
             <option value="0">Άλλο</option>

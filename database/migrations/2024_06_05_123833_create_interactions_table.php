@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('resolved')->default(false);
             $table->timestamps();
 
-            $table->foreign('interaction_type_id')->references('id')->on('interaction_types')->onUpdate('cascade');
+            $table->foreign('interaction_type_id')->references('id')->on('interaction_types')->onUpdate('cascade')->onDelete('set null');
         });
     }
 

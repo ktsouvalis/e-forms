@@ -27,6 +27,10 @@ class Department extends Model
         return $this->hasMany(Filecollect::class);
     }
 
+    public function interactionTypes(){
+        return $this->hasMany(InteractionType::class);
+    }
+
     public function interactions()
     {
         return $this->hasManyThrough(

@@ -73,6 +73,13 @@ return [
             'days' => 90,
         ],
 
+        'interactions'=> [
+            'driver' => 'daily',
+            'path' => storage_path('logs/interactions.log'),
+            'level' => 'debug',
+            'days' => 90,
+        ],
+
         'commands_executed' => [
             'driver' => 'daily',
             'path' => storage_path('logs/commands_executed.log'),

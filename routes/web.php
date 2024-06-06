@@ -39,6 +39,7 @@ use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\microapps\DesksController;
+use App\Http\Controllers\InteractionTypesController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
@@ -360,8 +361,19 @@ Route::group(['prefix' => 'work_planning', 'middleware'=>'canViewMicroapp'], fun
     Route::post('/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->name('work_planning.extract_work_plan')->middleware('isConsultant');
 });
 
-//REQUESTS ROUTES
+//INTERACTIONS ROUTES
 Route::resource('interactions', InteractionController::class);
+
+Route::group(['prefix' => 'interactions'], function(){
+    Route::get('/display_catalogue/{interaction_type}', [InteractionController::class, 'catalogue'])->name('interactions.display_catalogue');
+});
+
+//INTERACTION TYPES ROUTES
+Route::resource('interaction_types', InteractionTypesController::class)->middleware('auth');
+
+Route::group(['prefix' => 'interaction_types'], function(){
+    Route::post('/change_status/{type}', [InteractionTypesController::class, 'changeStatus'])->name('interaction_types.changeStatus');
+});
 
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);

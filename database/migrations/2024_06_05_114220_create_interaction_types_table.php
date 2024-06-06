@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('folder');
             $table->foreignId('department_id');
+            $table->boolean('active')->default(false);
+            $table->timestamps();
         });
     }
 

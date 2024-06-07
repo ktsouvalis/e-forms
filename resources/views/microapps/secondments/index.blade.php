@@ -17,7 +17,7 @@
     @php
         //fetch microapp data
         $microapp = App\Models\Microapp::where('url', '/secondments')->first();
-        $secondments = App\Models\Microapps\Secondment::all();
+        $secondments = App\Models\microapps\Secondment::all();
     @endphp
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     <div class="container">

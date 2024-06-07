@@ -191,7 +191,7 @@
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
                         <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
-                        <button type="submit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); return confirm('1) Βεβαιωθείτε ότι έχετε υποβάλλει όλα τα απαραίτητα δικαιολογητικά. 2) Με την ενέργεια αυτή θα γίνει οριστική υποβολή της αίτησης και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ. 3) Μετά την υποβολή μην κλείσετε το παράθυρο μέχρις ότου εμφανιστεί ένα μήνυμα επιτυχίας ή αποτυχίας. Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
+                        <button type="submit"  id="preferencesFinalSubmit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); return confirm('1) Με την ενέργεια αυτή θα γίνει οριστική υποβολή της δήλωσης προτίμησης Σχολείων και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ. 2) Μετά την υποβολή μην κλείσετε το παράθυρο μέχρις ότου εμφανιστεί ένα μήνυμα επιτυχίας ή αποτυχίας. Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
                         {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
                     </div>
                 </form>
@@ -202,20 +202,31 @@
                             $serverFileName = $secondment->teacher->afm.'_application_form.pdf';
                             $databaseFileName = $secondment->teacher->surname.'_Δήλωση_Προτιμήσεων.pdf';
                         @endphp
+                           
                             <div class="text-center">
                                 <form action="{{route('secondments.download_file', ['serverFileName'=>$serverFileName, 'databaseFileName'=>$databaseFileName])}}" method="get">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου">Λήψη Υποβληθείσας Αίτησης</button>
                                 </form>
-                                Η αίτηση έχει υποβληθεί οριστικά με αριθ. πρωτ {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας και δε μπορεί να τροποποιηθεί.
+                                <div class="py-3">Η αίτηση έχει υποβληθεί οριστικά με αριθ. πρωτ {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας.</div>
                             </div>
-                            <div class="text-center">
-                          
-                                <form action="{{route('secondments.revoke', ['secondment'=>$secondment])}}" method="post">
-                                @csrf
-                                    <button class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke" onclick="return confirm('Θα πραγματοποιηθεί διαγραφή της αίτησης και ανάκληση από το Πρωτόκολλο του ΠΥΣΠΕ. Είστε βέβαιοι;')">Ανάκληση</button>
-                                </form>
-                                {{-- <a href="{{route('secondments.revoke', ['secondment'=>$secondment])}}" class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke">Ανάκληση</a> --}}
-                                Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
+                            <hr>
+                            <div class="row">
+                                <div class="col col-6 text-center">
+                                    <form action="{{route('secondments.revoke', ['secondment'=>$secondment])}}" method="post">
+                                    @csrf
+                                        <button class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke" onclick="return confirm('Θα πραγματοποιηθεί διαγραφή της αίτησης και ανάκληση από το Πρωτόκολλο του ΠΥΣΠΕ. Είστε βέβαιοι;')">Ανάκληση</button>
+                                    </form>
+                                    Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
+                                </div>
+                                <div class="col col-6 text-center">
+                            
+                                    <form action="{{route('secondments.modify', ['secondment'=>$secondment])}}" method="post">
+                                    @csrf
+                                        <button class="btn btn-info bi bi-arrow-counterclockwise" title="modify">Τροποποίηση</button>
+                                    </form>
+                                    {{-- <a href="{{route('secondments.revoke', ['secondment'=>$secondment])}}" class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke">Ανάκληση</a> --}}
+                                    Πατώντας τροποποίηση, η αίτηση θα ενεργοποιηθεί εκ νέου για Δήλωση Σχολείων.
+                                </div>
                             </div>
                             
                     @else

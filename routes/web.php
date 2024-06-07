@@ -252,6 +252,8 @@ Route::group(['prefix' => 'secondments'], function () {
     Route::post("/revoke/{secondment}", [SecondmentController::class, 'revoke'])->name('secondments.revoke');
 
     Route::post("/allow_extra_files/{secondment}", [SecondmentController::class, 'allow_extra_files'])->name('secondments.allow_extra_files');
+
+    Route::post("/modify/{secondment}", [SecondmentController::class, 'modify'])->name('secondments.modify');
 });
 
 //Route::view('/secondments', 'microapps.secondments.create');

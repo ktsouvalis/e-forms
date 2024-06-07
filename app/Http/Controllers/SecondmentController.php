@@ -24,43 +24,84 @@ class SecondmentController extends Controller
     }
     //Επεξεργασία, προσωρινή αποθήκευση, προεπισκόπηση και οριστική υποβολή αίτησης
     public function update(Secondment $secondment, Request $request){
-        //dd($request->input());
+        // dd($request->input('action'));
         if($request->input()['criteriaOrPreferences'] == 1){        //Αποθήκευση μοριοδοτούμενων κριτηρίων
-            try{
-                $secondment->update($request->input());
-                return back()->with('success', 'Τα στοιχεία αποθηκεύτηκαν.');
-            } catch(\Exception $e) {
-                //dd($e->getMessage());
-                return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
-            }
-        } else {                                                    //Αποθήκευση προτιμήσεων, οριστικοποίηση και αποστολή
+            if($request->input('action') == "submit"){ //Ζητάει οριστική υποβολή κριτηρίων
+                // Αποθήκευσε την αίτηση
+                try{
+                    $secondment->update($request->input());
+                } catch(\Exception $e) {
+                    //dd($e->getMessage());
+                    return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
+                }
+                //Δημιούργησε το pdf
+                try{
+                    $this->createPDF($secondment, $selectionOrder=null);
+                } catch(\Exception $e) {
+                    //dd($e->getMessage());
+                    return back()->with('failure', 'Απέτυχε η δημιουργία του pdf αρχείου. Προσπαθήστε ξανά. Σε περίπτωση προβλήματος παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
+                }
+                //Στείλε την αίτηση στο πρωτόκολλο
+                try{
+                    $protocol_message = $this->sendSecondmentToProtocol($secondment , $crOrPreferences = 1);
+                    if($protocol_message == false){
+                        return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η αποστολή στο πρωτόκολλο. Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
+                    }
+                    $protocol_message = explode(" - ", $protocol_message);
+                    $secondment->protocol_nr = $protocol_message[0];
+                    $secondment->protocol_date = $protocol_message[1];
+                    $secondment->save();
+                } catch(\Exception $e) {
+                    //dd($e->getMessage());
+                    return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο του ΠΥΣΠΕ. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
+                }
+                //Οριστικοποίησε την αίτηση - criteria_submitted = 1
+                try{
+                    $secondment->criteria_submitted = 1;
+                    $secondment->save();
+                } catch(\Exception $e) {
+                    //dd($e->getMessage());
+                    return back()->with('failure', 'Η αίτηση αποθηκεύτηκε, πρωτοκολλήθηκε με επιτυχία στο Πρωτόκολλο του ΠΥΣΠΕ αλλά απέτυχε η οριστικοποίησή της. Παρακαλούμε επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής στο  it@dipe.ach.sch.gr.');
+                }
+                return back()->with('success', 'Επιτυχής αποθήκευση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $secondment->protocol_nr . '-' . $secondment->protocol_date. '.');
+            } else {    //Τέλος οριστικής υποβολής κριτηρίων
+                //Zητάει μόνο αποθήκευση
+                try{
+                    $secondment->update($request->input());
+                } catch(\Exception $e) {
+                    //dd($e->getMessage());
+                    return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
+                }
+                return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
+            } //ΤΕΛΟΣ ΑΠΟΘΗΚΕΥΣΗΣ ΚΡΙΤΗΡΙΩΝ 
+        //ΤΕΛΟΣ ΚΡΙΤΗΡΙΩΝ
+        } else { //ΑΡΧΗ ΑΠΟΘΗΚΕΥΣΗ ΠΡΟΤΙΜΗΣΕΩΝ, οριστικοποίηση και αποστολή
             //Αν έχει συμπληρώσει επιλογές στον πίνακα προτιμήσεων πάρε τις προτιμήσεις με τη σειρά που έχουν συμπληρωθεί
             if(isset($request->input()['schools-select'])){
                 $secondment->preferences_json = $request->input()['selectionOrder'];//φέρε την πραγματική σειρά που έχει συμπληρωθεί με javascript κάθε φορά που αλλάζει σχολεία
             } else {
                 $secondment->preferences_json = null;
             }
-            if($request->action == 'preview'){//Αν ζητήσει προεπισκόπηση
+            if($request->action == 'preview'){//Αν ζητάει προεπισκόπηση φύγε δείχνοντας την προεπισκόπηση
                 return view('microapps.secondments.toPDF', ['secondment' => $secondment, 'selectionOrder' => $request->input()['selectionOrder']]);
             }
             //Δε ζητάει προεπισκόπηση - ζητάει αποθήκευση ή οριστική υποβολή - Αποθήκευσε τα στοιχεία
             try{
+                //Αποθήκευσε τις προτιμήσεις
                 $secondment->update($request->input());
-                if($request->action == 'save'){//Αν ζητάει μόνο αποθήκευση επέστρεψε με μήνυμα επιτυχίας
+                if($request->action == 'update'){ //Αν ζητάει μόνο αποθήκευση επέστρεψε με μήνυμα επιτυχίας
                     return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
                 }
                 //Αν ζητάει οριστική υποβολή αλλά έχει κενές τις προτιμήσεις, έχοντας κρατήσει τις τιμές, επέστρεψε με μήνυμα αποτυχίας
                 if($request->action == 'submit' && $request->input()['selectionOrder']=="[]"){
                     return back()->with('failure', 'Δε μπορεί να πραγματοποιηθεί οριστική υποβολή χωρίς προτιμήσεις. Αν επιθυμείτε να ακυρώσετε την αίτησή σας παρακαλούμε αφήστε τη σε κατάσταση προσωρινής αποθήκευσης και δε θα ληφθεί υπόψη.');
                 }
-                if($request->action == 'update'){
-                    return back()->with('success', 'Επιτυχής αποθήκευση αίτησης.');
-                }
+                
             } catch(\Exception $e) {
                 //dd($e->getMessage());
                 return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
             }
-            //Ζητάει οριστική υποβολή και έχει συμπληρώσει τις προτιμήσεις
+            //Αφού δεν έχει γυρίσει ούτε από preview ούτε από update, ζητάει οριστική υποβολή και έχει συμπληρώσει τις προτιμήσεις
             //Δημιούργησε το pdf
             try{
                 $this->createPDF($secondment, $request->input()['selectionOrder']);
@@ -68,24 +109,21 @@ class SecondmentController extends Controller
                 //dd($e->getMessage());
                 return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η δημιουργία του pdf αρχείου. Προσπαθήστε ξανά. Σε περίπτωση προβλήματος παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
-            //Στείλε την αίτηση στο πρωτόκολλο
-            $protocol_message = $this->sendToProtocol($secondment);
+            //Στείλε τις προτιμήσεις στο πρωτόκολλο
+            $protocol_message = $this->sendSchoolsToProtocol($secondment, $crOrPreferences = 2);
             if($protocol_message == false){
                 return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η αποστολή στο πρωτόκολλο. Προσπαθήστε ξανά. Σε περίπτωση προβλήματος παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
             //Ανανέωσε το submitted
             try{
-                $protocol_message = explode(" - ", $protocol_message);
-                $secondment->protocol_nr = $protocol_message[0];
-                $secondment->protocol_date = $protocol_message[1];
                 $secondment->submitted = 1;
                 $secondment->save();
             } catch(\Exception $e) {
-                return back()->with('failure', $e->getMessage());
-                //return back()->with('failure', 'Η αίτηση πρωτοκολλήθηκε αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής 2610229262 it@dipe.ach.sch.gr.');
+                //dd($e->getMessage());
+                return back()->with('failure', 'Η δήλωση προτιμήσεων αποθηκεύτηκε, στάλθηκε με επιτυχία στο Πρωτόκολλο του ΠΥΣΠΕ αλλά απέτυχε η οριστικοποίησή της. Επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
             }
-            return back()->with('success', 'Επιτυχής οριστικοποίηση αίτησης. Η αίτησή σας πρωτοκολλήθηκε αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $protocol_message[0] . '-' . $protocol_message[1]. '.');
-        }  
+            return back()->with('success', 'Επιτυχής Οριστική Υποβολή αίτησης δήλωσης Σχολείων. Η αίτησή σας μαζί με τη δήλωση Σχολείων έχει πρωτοκολληθεί αυτόματα στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας με αρ. πρωτ.: '. $secondment->protocol_nr . '-' . $secondment->protocol_date. '.');
+        }  //ΤΕΛΟΣ ΑΠΟΘΗΚΕΥΣΗΣ ΠΡΟΤΙΜΗΣΕΩΝ, οριστικοποίηση και αποστολή στο Πρωτόκολλο
     }
 
     public function create() 
@@ -107,6 +145,12 @@ class SecondmentController extends Controller
         if($criteriaOrPreferences == 1){
             return view('microapps.secondments.edit_criteria', ['secondment' => $secondment]);
         } else if ($criteriaOrPreferences == 2){
+            if($secondment->criteria_submitted == 0){
+                return back()->with('failure', 'Πρέπει πρώτα να οριστικοποιήσετε τα μοριοδοτούμενα κριτήρια πριν προχωρήσετε στις προτιμήσεις.');
+            }
+            if($secondment->teacher->klados != "ΠΕ70" && $secondment->teacher->klados != "ΠΕ60"){
+                return back()->with('failure', 'Η δήλωση Σχολείων για Εκπαιδευτικούς ειδικοτήτων θα πραγματοποιηθεί μετά την ανακοίνωση των Σχολείων.');
+            }
             return view('microapps.secondments.edit_preferences', ['secondment' => $secondment]);
         }
     }
@@ -130,13 +174,18 @@ class SecondmentController extends Controller
                 $secondment->save();
                 return redirect(route('secondments.edit', ['secondment' => $secondment->id]))->with('success',"Επιτυχής αποθήκευση αίτησης. Μπορείτε να προχωρήσετε σε δήλωση μοριοδοτούμενων κριτηρίων.");
             } catch(\Exception $e) {
-                dd($e);
+                //dd($e);
                 return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
             }
         }
         
     }
 
+    public function modify(Secondment $secondment){
+        $secondment->submitted = 0;
+        $secondment->save();
+        return back()->with('success', 'Η δήλωση σχολείων ενεργοποιήθηκε για τροποποίηση. Μπορείτε να την επεξεργαστείτε και να την υποβάλλετε ξανά.');
+    }
     //Διαγραφή αρχείου
     public function delete_file(Secondment $secondment, $serverFileName){
         $fileHandler = new FilesController();
@@ -158,25 +207,25 @@ class SecondmentController extends Controller
     }
     //Ανέβασμα αρχείων
     public function upload_files(Request $request, Secondment $secondment){
-        $request->validate([
+        $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
             'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
         $files = $request->file('files');
         $fileNames = [];
         //Βρες πόσα αρχεία έχει ήδη ανεβάσει
-        if($secondment->files_json){
+        if($secondment->files_json){ // Αν έχει ανεβάσει ήδη, βρες τον αριθμό του τελευταίου αρχείου από το όνομά του
             $fileNames = json_decode($secondment->files_json, true);
             end($fileNames);
             $lastServerFileName = key($fileNames);
             $underScorePosition = strpos($lastServerFileName, '_');// βρες τον αριθμό που περιλαμβάνεται στο όνομα του τελευταίου αρχείου μετά το _
             $filesCount = substr($lastServerFileName, $underScorePosition + 1, strpos($lastServerFileName, '.') - $underScorePosition -1);
-        } else {
+        } else { //Αν δεν έχει ανεβάσει ακόμη αρχεία, βάλε τον αριθμό 0
             $filesCount = 0;
         }
         $lastFileNumber = $filesCount; // κράτα τον αριθμό του τελευταίου αρχείου για την περίπτωση που θα ανεβάσει επιπλέον αρχεία
         $directory = "secondments";
         $teacherAfm = Auth::guard('teacher')->user()->afm;
-        foreach($files as $file){
+        foreach($files as $file){ // Για κάθε αρχείο που ανεβάζεις
             $filesCount++;
             $serverFileName = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
             $fileNames[$serverFileName] = $file->getClientOriginalName();//πρόσθεσε στον πίνακα το όνομα του αρχείου που θα ανεβάσεις
@@ -193,11 +242,13 @@ class SecondmentController extends Controller
             $secondment->save();
         } catch(\Exception $e) {
             //dd($e->getMessage());
-            Log::channel('files')->error($teacherAfm." Files failed to update database field files_json");
+            Log::channel('files')->error($teacherAfm." Secondment Files failed to update database field files_json");
             return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
         }
-        Log::channel('files')->info($teacherAfm." Files successfully uploaded");
-        if($secondment->submitted == 1 && $secondment->extra_files_allowed == 1){
+        Log::channel('files')->info($teacherAfm." Secondment Files successfully uploaded");
+        //Αν είμαστε σε κατάσταση που επιτρέπεται η υποβολή επιπλέον αρχείων
+        $extraFilesToProtocol = false;
+        if($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 1){
             //βρες τα επιπλέον αρχεία που ανέβηκαν
             $j = 0;
             $extraFileNames = [];
@@ -220,7 +271,7 @@ class SecondmentController extends Controller
                     'contents' => fopen(storage_path("app/secondments/$serverFileName"), 'r'),
                 ];
             }
-            $extraFilesToProtocol = $this->sendExtraFilesToProtocol($data);
+            $extraFilesToProtocol = $this->sendAttachmentsToProtocol($data);
             if($extraFilesToProtocol == false){
                 return back()->with('failure', 'Τα αρχεία υποβλήθηκαν με επιτυχία. Απέτυχε η αποστολή τους στο Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ. Παρακαλούμε αναφέρετε οπωσδήποτε το πρόβλημα στο it@dipe.ach.sch.gr.');
             }  
@@ -281,8 +332,8 @@ class SecondmentController extends Controller
              //return $pdf->download('secondment.pdf');
     }
 
-    public function sendToProtocol(Secondment $secondment){
-        
+    public function sendSecondmentToProtocol(Secondment $secondment, $criteriaOrPreferences){
+
         if($secondment->teacher->organiki_type == "App\Models\School"){
             $organicDirectorateCode = '9906101';
             $organicSchoolCode = $secondment->teacher->organiki->code;
@@ -340,6 +391,50 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'LivingMunicipality', 'contents' => $secondment->living_municipality];
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
+        
+        $client = new Client();
+        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/secondment', [
+            'headers' => [
+                'X-API-Key' => 'mysecretapikey',
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+        if($status != 200){
+            return false;
+        } else {
+            return $body;
+        }
+    }
+
+    public function sendAttachmentsToProtocol($data){
+        $client = new Client();
+        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/attachments', [
+            'headers' => [
+                'X-API-Key' => 'mysecretapikey',
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody();
+        if($status != 200){
+            return false;
+        } else {
+            return $body;
+        }
+    }
+
+    public function sendSchoolsToProtocol(Secondment $secondment){
+        $data = [];
+        $protocolElements = explode("/", $secondment->protocol_date);
+        $protocolYear = $protocolElements[2];
+        $data = [
+            ['name' => 'ProtocolNo', 'contents' => $secondment->protocol_nr],
+            ['name' => 'ProtocolYear', 'contents' => $protocolYear],
+        ];
         if($secondment->preferences_json){
             $selectedCodes = json_decode($secondment->preferences_json);
             foreach($selectedCodes as $schoolCode){
@@ -349,26 +444,9 @@ class SecondmentController extends Controller
                 ];
             }
         }
-        $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/secondment', [
-            'headers' => [
-                'X-API-Key' => 'mysecretapikey',
-            ],
-            'multipart' => $data,
-        ]);
-        // Get the response body
-        $status = $response->getStatusCode();
-        $body = $response->getBody();
-        if($status != 200){
-            return false;
-        } else {
-            return $body;
-        }
-    }
 
-    public function sendExtraFilesToProtocol($data){
         $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/attachments', [
+        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/schools', [
             'headers' => [
                 'X-API-Key' => 'mysecretapikey',
             ],
@@ -382,11 +460,12 @@ class SecondmentController extends Controller
         } else {
             return $body;
         }
+
     }
 
     public function sendRevokeToProtocol($data){
         $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.138/eprotocolapi/api/application/revoke', [
+        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/revoke', [
             'headers' => [
                 'X-API-Key' => 'mysecretapikey',
             ],
@@ -428,7 +507,7 @@ class SecondmentController extends Controller
 
             if($protocolRevoke){
                 $secondment->save();
-                return back()->with('success', 'Η αίτηση ανακλήθηκε και ακυρώθηκε από το Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας.');
+                // return back()->with('success', 'Η αίτηση ανακλήθηκε και ακυρώθηκε από το Ηλεκτρονικό Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας.');
             } else {
                 return back()->with('failure', 'Αποτυχία ανάκλησης αίτησης. Δοκιμάστε ξανά.');
             }
@@ -441,7 +520,7 @@ class SecondmentController extends Controller
     }
 
     public function allow_extra_files(Secondment $secondment){
-        if($secondment->submitted == 1){
+        if($secondment->criteria_submitted == 1){
             if($secondment->extra_files_allowed == 1){
                 $secondment->extra_files_allowed = 0;
                 $secondment->save();

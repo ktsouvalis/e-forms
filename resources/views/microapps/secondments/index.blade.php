@@ -41,10 +41,10 @@
                         <td>{{$secondment->teacher->surname}} {{$secondment->teacher->name}}</td>
                         <td>{{$secondment->teacher->klados}}</td>
                         <td>
-                            @if($secondment->submitted == 1 && $secondment->extra_files_allowed == 0)
+                            @if($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0)
                                 <input type="checkbox" class="secondment-extra-files-checkbox" data-secondment-id="{{ $secondment->id }}" >
                                 {{-- <div class="check_td_{{$outing->id}}"> {{$text}}</div> --}}
-                            @elseif($secondment->submitted == 1 && $secondment->extra_files_allowed == 1)
+                            @elseif($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 1)
                                 <input type="checkbox" class="secondment-extra-files-checkbox" data-secondment-id="{{ $secondment->id }}" checked >
                                 {{-- <div class="check_td_{{$outing->id}}"> {{$text}}</div> --}}
                             @else

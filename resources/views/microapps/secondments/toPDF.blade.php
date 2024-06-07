@@ -58,7 +58,7 @@
             </tr>
             </tbody>
         </table>
-                        
+        @if(isset($selectionOrder))              
         <table style="width: 95%; color: #212529; margin-left: auto; margin-right: auto;">
             <tbody>
                 <tr>
@@ -122,10 +122,13 @@
     <table style='width: 93%; color: #212529; margin-left: auto; margin-right: auto;'>
         <tbody>
             <tr>
-                <td style="text-align: left;">{{isset($secondment->submit_date)?$secondment->submit_date->format('d/m/Y'):''}}</td>
+                <td style="text-align: left; font-weight: 100;"><small>Σημείωση: Η παρούσα Δήλωση Προτίμησης Σχολείων έχει πρωτοκολληθεί στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας στις {{$secondment->updated_at->format('d/m/Y')}} και έχει αριθμό πρωτοκόλλου {{$secondment->protocol_nr}}-{{$secondment->protocol_date}}.
+                    Καθώς είναι δυνατή η τροποποίηση της αίτησης ακόμα και μετά την οριστική υποβολή, κατά τη διαδικασία αποσπάσεων θα ληφθεί υπόψη η τελευταία οριστικοποιημένη αίτηση.
+                </small></td>
             </tr>
         </tbody>
     </table>
+    @endif
     <div></div>
     <footer>
         Αυτόματη δημιουργία εγγράφου από Ηλεκτρονικές Φόρμες της Δ/νσης Π.Ε. Αχαΐας

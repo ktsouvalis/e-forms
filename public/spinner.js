@@ -11,6 +11,22 @@ $(document).ready(function () {
         $('#loadingSpinner').css('display', 'flex'); // or 'block'
     });
 
+    var criteriaFinalButton = document.getElementById('criteriaFinalSubmit');
+    if(criteriaFinalButton) {
+        criteriaFinalButton.addEventListener('click', function() {
+            $('#protocolContactCriteriaOverlay').show();
+            $('#protocolContactCriteriaSpinner').css('display', 'flex');
+        });
+    }
+    
+    var preferencesFinalButton = document.getElementById('preferencesFinalSubmit');
+    if(preferencesFinalButton) {
+        preferencesFinalButton.addEventListener('click', function() {
+            $('#protocolContactPreferencesOverlay').show();
+            $('#protocolContactPreferencesSpinner').css('display', 'flex');
+        });
+    }
+    
     // Hide spinner when page is fully loaded
     $(window).on('load', function () {
         $('#loadingOverlay').hide();
@@ -20,5 +36,25 @@ $(document).ready(function () {
     $(window).on('pageshow', function () {
         $('#loadingOverlay').hide();
         $('#loadingSpinner').hide();
+    });
+
+    $(window).on('load', function () {
+        $('#protocolContactCriteriaOverlay').hide();
+        $('#protocolContactCriteriaSpinner').hide();
+    });
+
+    $(window).on('pageshow', function () {
+        $('#protocolContactCriteriaOverlay').hide();
+        $('#protocolContactCriteriaSpinner').hide();
+    });
+
+    $(window).on('load', function () {
+        $('#protocolContactPreferencesOverlay').hide();
+        $('#protocolContactPreferencesSpinner').hide();
+    });
+
+    $(window).on('pageshow', function () {
+        $('#protocolContactPreferencesOverlay').hide();
+        $('#protocolContactPreferencesSpinner').hide();
     });
 });

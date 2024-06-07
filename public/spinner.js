@@ -12,18 +12,42 @@ $(document).ready(function () {
     });
 
     var criteriaFinalButton = document.getElementById('criteriaFinalSubmit');
+    var criteriaForm = document.getElementById('criteriaForm');
+    var hiddenButton = document.getElementById('hiddenButton');
     if(criteriaFinalButton) {
-        criteriaFinalButton.addEventListener('click', function() {
-            $('#protocolContactCriteriaOverlay').show();
-            $('#protocolContactCriteriaSpinner').css('display', 'flex');
+        criteriaFinalButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            if(confirm('1) Βεβαιωθείτε ότι έχετε υποβάλλει όλα τα απαραίτητα δικαιολογητικά. 2) Με την οριστική υποβολή θα αποσταλεί η αίτηση στο Πρωτόκολλο του ΠΥΣΠΕ και θα πρωτοκολληθεί. Είστε βέβαιοι;')){
+                console.log('criteriaFinalButton clicked if statement');
+                if(hiddenButton) {
+                    hiddenButton.click();
+                }
+                $('#protocolContactCriteriaOverlay').show();
+                $('#protocolContactCriteriaSpinner').css('display', 'flex');
+            } else {
+                console.log('criteriaFinalButton clicked else statement');
+                return false;
+            }
         });
     }
     
     var preferencesFinalButton = document.getElementById('preferencesFinalSubmit');
+    var preferencesForm = document.getElementById('preferencesForm');
+    var hiddenButton = document.getElementById('hiddenButton');
     if(preferencesFinalButton) {
-        preferencesFinalButton.addEventListener('click', function() {
-            $('#protocolContactPreferencesOverlay').show();
-            $('#protocolContactPreferencesSpinner').css('display', 'flex');
+        preferencesFinalButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            if(confirm('1) Με την οριστική υποβολή θα αποσταλούν οι προτιμήσεις σας στο Πρωτόκολλο του ΠΥΣΠΕ και θα ενημερωθεί η αίτησή σας. Είστε βέβαιοι;')){
+                console.log('preferencesFinalButton: clicked if statement');
+                if(hiddenButton) {
+                    hiddenButton.click();
+                }
+                $('#protocolContactPreferencesOverlay').show();
+                $('#protocolContactPreferencesSpinner').css('display', 'flex');
+            } else {
+                console.log('preferencesFinalButton: clicked else statement');
+                return false;
+            }
         });
     }
     

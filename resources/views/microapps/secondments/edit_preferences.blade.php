@@ -149,7 +149,7 @@
                    // alert(selectedOnes);
                 </script>
             @endpush
-            <form action="{{route('secondments.update', ['secondment' => $secondment,'criteriaOrPreferences' => '2'])}}" method="post">
+            <form action="{{route('secondments.update', ['secondment' => $secondment,'criteriaOrPreferences' => '2'])}}" method="post" id="preferencesForm">
                 @method('PUT')
                 @csrf
                 <!--Σχολικές Μονάδες-->
@@ -191,8 +191,12 @@
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
                         <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
-                        <button type="submit"  id="preferencesFinalSubmit" name="action" value="submit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill" onclick="getSelectedInOrder(); return confirm('1) Με την ενέργεια αυτή θα γίνει οριστική υποβολή της δήλωσης προτίμησης Σχολείων και θα αποσταλεί στο Πρωτόκολλο του ΠΥΣΠΕ. 2) Μετά την υποβολή μην κλείσετε το παράθυρο μέχρις ότου εμφανιστεί ένα μήνυμα επιτυχίας ή αποτυχίας. Είστε βέβαιοι;')"> Οριστική Υποβολή</button>
-                        {{-- <input type="submit" value="Αποθήκευση" class="btn btn-info btn-block rounded-2 py-2" onclick="getSelectedInOrder();"> --}}
+                        {{-- Το κουμπί Οριστική Υποβολή ενεργοποιεί javascript στο αρχείο spinner.js που ζηταει confirmation --}}
+                        <button type="submit" id="preferencesFinalSubmit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill"
+                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif data-export onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
+                        {{-- Αν ο χρήστης πατήσει ΟΚ η υποβολή γίνεται με javascript με click() στο hiddenButton --}}
+                        <button type="submit" name="action" id="hiddenButton" value="submit" style="display: none;"
+                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif data-export onclick="getSelectedInOrder();"></button>
                     </div>
                 </form>
                 @else

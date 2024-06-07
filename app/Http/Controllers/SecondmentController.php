@@ -148,7 +148,7 @@ class SecondmentController extends Controller
             if($secondment->criteria_submitted == 0){
                 return back()->with('failure', 'Πρέπει πρώτα να οριστικοποιήσετε τα μοριοδοτούμενα κριτήρια πριν προχωρήσετε στις προτιμήσεις.');
             }
-            if($secondment->teacher->klados != "ΠΕ70" && $secondment->teacher->klados != "ΠΕ60"){
+            if(!in_array($secondment->teacher->klados, ["ΠΕ70", "ΠΕ60", "ΠΕ71", "ΠΕ70.50", "ΠΕ60.50"])){
                 return back()->with('failure', 'Η δήλωση Σχολείων για Εκπαιδευτικούς ειδικοτήτων θα πραγματοποιηθεί μετά την ανακοίνωση των Σχολείων.');
             }
             return view('microapps.secondments.edit_preferences', ['secondment' => $secondment]);
@@ -393,7 +393,7 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
         
         $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/secondment', [
+        $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [
                 'X-API-Key' => 'mysecretapikey',
             ],
@@ -411,7 +411,7 @@ class SecondmentController extends Controller
 
     public function sendAttachmentsToProtocol($data){
         $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/attachments', [
+        $response = $client->request('POST', env('E_DIRECTORATE').'/application/attachments', [
             'headers' => [
                 'X-API-Key' => 'mysecretapikey',
             ],
@@ -446,7 +446,7 @@ class SecondmentController extends Controller
         }
 
         $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/schools', [
+        $response = $client->request('POST', env('E_DIRECTORATE').'/application/schools', [
             'headers' => [
                 'X-API-Key' => 'mysecretapikey',
             ],
@@ -465,7 +465,7 @@ class SecondmentController extends Controller
 
     public function sendRevokeToProtocol($data){
         $client = new Client();
-        $response = $client->request('POST', 'http://10.35.249.179/eprotocolapi/api/application/revoke', [
+        $response = $client->request('POST', env('E_DIRECTORATE').'/application/revoke', [
             'headers' => [
                 'X-API-Key' => 'mysecretapikey',
             ],

@@ -109,29 +109,6 @@
         </div>
     </div>
 @include('components/messages')
-<div class="row bg-dark bg-gradient p-5 m-2  border border-danger rounded shadow text-white justify-content-md-center">
-    Οι Ηλεκτρονικές Φόρμες είναι ένα Πληροφοριακό Σύστημα που έχει αναπτυχθεί στη Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας προκειμένου μέσα από αυτό να επιτυγχάνεται 
-        γρήγορη ανταλλαγή (συλλογή και διαμοιρασμός) στοιχείων και αρχείων μεταξύ της Υπηρεσίας και των Σχολικών Μονάδων καθώς και των Εκπαιδευτικών.
-</div>
-<div class="row justify-content-md-center m-2">
-    <div class="col p-5 my-2 me-2 bg-success border border-danger shadow rounded text-white">
-        <p>Παρουσίαση λειτουργιών:</p>
-        <ul>
-            <li><a target="_blank" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/v6EviCZKyfI">Συλλογή Αρχείου</a></li>
-            <li><a target="_blank" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/V8TlBVjCSs4">Αποστολή Αρχείων</a> <span><em>(και <a target="_blank" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/0i41NzpvJv8">Παραγωγή εγγράφων</a> για αυτόματη αποστολή.</em></span>)</li>
-        </ul>
-        
-    </div>
-    <div class="col p-5 my-2 mx-2 bg-primary bg-gradient border border-danger shadow rounded text-light">
-        Η σύνδεση κάθε Σχολείου αλλά και κάθε Εκπαιδευτικού αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέσα από ένα <strong>μοναδικό σύνδεσμο / μοναδική καρτέλα</strong> τον οποίο μπορείτε κάθε στιγμή να ανακτήσετε
-        μέσα από αυτή τη σελίδα
-    </div>
-    <div class="col p-5 my-2 ms-2 bg-warning border border-danger shadow rounded text-dark">
-        <p>Δεν επιτρέπεται πρόσβαση στις Ηλεκτρονικές Φόρμες για μη εξουσιοδοτημένους χρήστες.</p>
-        <p>Υποστήριξη: it@dipe.ach.sch.gr</p>
-    </div>
-    
-</div>
 
 <div class="row justify-content-md-center">
     <div class="col"></div>
@@ -155,7 +132,31 @@
         
     </div>
     <div class="col"></div>
-</div>            
+</div>   
+<div class="row bg-dark bg-gradient p-5 m-2  border border-danger rounded shadow text-white justify-content-md-center">
+    Οι Ηλεκτρονικές Φόρμες είναι ένα Πληροφοριακό Σύστημα που έχει αναπτυχθεί στη Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας προκειμένου μέσα από αυτό να επιτυγχάνεται 
+        γρήγορη ανταλλαγή (συλλογή και διαμοιρασμός) στοιχείων και αρχείων μεταξύ της Υπηρεσίας και των Σχολικών Μονάδων καθώς και των Εκπαιδευτικών.
+</div>
+<div class="row justify-content-md-center m-2">
+    <div class="col p-5 my-2 me-2 bg-success border border-danger shadow rounded text-white">
+        <p>Παρουσίαση λειτουργιών:</p>
+        <ul>
+            <li><a target="_blank" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/v6EviCZKyfI">Συλλογή Αρχείου</a></li>
+            <li><a target="_blank" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/V8TlBVjCSs4">Αποστολή Αρχείων</a> <span><em>(και <a target="_blank" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/0i41NzpvJv8">Παραγωγή εγγράφων</a> για αυτόματη αποστολή.</em></span>)</li>
+        </ul>
+        
+    </div>
+    <div class="col p-5 my-2 mx-2 bg-primary bg-gradient border border-danger shadow rounded text-light">
+        Η σύνδεση κάθε Σχολείου αλλά και κάθε Εκπαιδευτικού αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέσα από ένα <strong>μοναδικό σύνδεσμο / μοναδική καρτέλα</strong> τον οποίο μπορείτε κάθε στιγμή να ανακτήσετε
+        μέσα από αυτή τη σελίδα
+    </div>
+    <div class="col p-5 my-2 ms-2 bg-warning border border-danger shadow rounded text-dark">
+        <p>Δεν επιτρέπεται πρόσβαση στις Ηλεκτρονικές Φόρμες για μη εξουσιοδοτημένους χρήστες.</p>
+        <p>Υποστήριξη: it@dipe.ach.sch.gr</p>
+    </div>
+    
+</div>
+         
 <!-- footer begins -->
 </div>
 

@@ -167,11 +167,12 @@ class SecondmentController extends Controller
         {
             try{
                 $teacher = Auth::guard('teacher')->user();
+                $appForRep = isset($request->application_for_reposition)? true : false;
                 $secondment = Secondment::updateOrCreate(
                     ['teacher_id' => $teacher->id,
                     'revoked' => 0],
-                    [$secondment->statement_of_declaration => true,
-                    $secondment->application_for_reposition = (isset($request->application_for_reposition)? true : false),
+                    ['statement_of_declaration' => true,
+                     'application_for_reposition' => $appForRep,
                     ]
                 );
                 return redirect(route('secondments.edit', ['secondment' => $secondment->id]))->with('success',"Επιτυχής αποθήκευση αίτησης. Μπορείτε να προχωρήσετε σε δήλωση μοριοδοτούμενων κριτηρίων.");

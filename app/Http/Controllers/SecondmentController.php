@@ -395,7 +395,7 @@ class SecondmentController extends Controller
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [
-                'X-API-Key' => 'mysecretapikey',
+                'X-API-Key' => env('API_KEY'),
             ],
             'multipart' => $data,
         ]);
@@ -403,6 +403,7 @@ class SecondmentController extends Controller
         $status = $response->getStatusCode();
         $body = $response->getBody();
         if($status != 200){
+            dd($body);
             return false;
         } else {
             return $body;
@@ -413,7 +414,7 @@ class SecondmentController extends Controller
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/attachments', [
             'headers' => [
-                'X-API-Key' => 'mysecretapikey',
+                'X-API-Key' => env('API_KEY'),
             ],
             'multipart' => $data,
         ]);
@@ -448,7 +449,7 @@ class SecondmentController extends Controller
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/schools', [
             'headers' => [
-                'X-API-Key' => 'mysecretapikey',
+                'X-API-Key' => env('API_KEY'),
             ],
             'multipart' => $data,
         ]);
@@ -467,7 +468,7 @@ class SecondmentController extends Controller
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/revoke', [
             'headers' => [
-                'X-API-Key' => 'mysecretapikey',
+                'X-API-Key' => env('API_KEY'),
             ],
             'multipart' => $data,
         ]);

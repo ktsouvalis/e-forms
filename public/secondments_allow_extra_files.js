@@ -11,7 +11,7 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: '/secondments/allow_extra_files/' + secondmentId,
+            url: '/e-forms/secondments/allow_extra_files/' + secondmentId,
             type: 'POST',
             data: {
                 _method: 'POST', // Laravel uses PATCH for updates

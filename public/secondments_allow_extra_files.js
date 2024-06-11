@@ -11,7 +11,7 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: '/e-forms/secondments/allow_extra_files/' + secondmentId,
+            url: allowExtraFilesURL.replace("mpla",secondmentId),
             type: 'POST',
             data: {
                 _method: 'POST', // Laravel uses PATCH for updates

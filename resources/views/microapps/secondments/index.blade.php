@@ -10,6 +10,10 @@
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
         <script src="{{asset('secondments_allow_extra_files.js')}}"></script>
+        <script>
+            var allowExtraFilesURL = '{{ route("secondments.allow_extra_files", ["secondment" =>"mpla"]) }}'
+        </script>
+        
     @endpush
     @push('title')
         <title>Αποσπάσεις</title>
@@ -32,7 +36,11 @@
                 <tr>
                     <th id="search">Ονοματεπώνυμο</th>
                     <th id="search">Κλάδος</th>
+                    <th id="search">Αίτηση Μετάθεσης</th>
+                    <th id="search">Κατάσταση Αίτησης</th>
+                    <th id="search">Ειδική Κατηγορία</th>
                     <th>Άνοιγμα για δικαιολογητικά</th>
+                    <th>Σχόλια (Κριτήρια)</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +48,17 @@
                     <tr>
                         <td>{{$secondment->teacher->surname}} {{$secondment->teacher->name}}</td>
                         <td>{{$secondment->teacher->klados}}</td>
+                        <td>{{$secondment->application_for_reposition==1?'ΝΑΙ':'οχι'}}</td>
+                        @if($secondment->criteria_submitted == 1)  {{-- Κατάσταση Αίτησης --}}
+                            @if($secondment->submitted == 1)
+                                <td>ΟΡΙΣΤΙΚΟΠΟΙΗΜΕΝΗ (και Σχολεία)</td>
+                            @else
+                                <td>Οριστική Υποβολή Κριτηρίων</td>
+                            @endif
+                        @else
+                            <td>Προσωρινή Αποθήκευση</td>
+                        @endif
+                        <td>{{$secondment->special_category==1?'ΝΑΙ':'οχι'}}</td>
                         <td>
                             @if($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0)
                                 <input type="checkbox" class="secondment-extra-files-checkbox" data-secondment-id="{{ $secondment->id }}" >
@@ -51,6 +70,7 @@
                                 Προσωρινή Αποθήκευση
                             @endif
                         </td>
+                        <td>{{$secondment->teacher->comments}}</td>
                     </tr>
                 @endforeach   
             </tbody>  

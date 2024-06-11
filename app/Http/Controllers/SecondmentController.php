@@ -334,7 +334,7 @@ class SecondmentController extends Controller
         return;
              //return $pdf->download('secondment.pdf');
     }
-
+    //Μέθοδος που στέλνει τα απαραίτητα στοιχεία κάθε φορά στο Πρωτόκολλο
     public function sendSecondmentToProtocol(Secondment $secondment, $criteriaOrPreferences){
 
         if($secondment->teacher->organiki_type == "App\Models\School"){
@@ -448,6 +448,10 @@ class SecondmentController extends Controller
                 ];
             }
         }
+        $data[] = [
+            'name'     => 'File',
+            'contents' => fopen(storage_path("app/secondments/{$secondment->teacher->afm}_application_form.pdf"), 'r')
+        ];
 
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/schools', [

@@ -450,9 +450,9 @@
                     <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" method="post" class="container-fluid" enctype="multipart/form-data">
                         @csrf
                         <div class="text-center">
-                            <input  type="file" id="files" name="files[]" multiple required @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || $microapp->accepts == 0) disabled @endif>
+                            <input  type="file" id="files" name="files[]" multiple required @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || ($microapp->accepts == 0 && $secondment->extra_files_allowed == 0)) disabled @endif>
                             <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
-                            @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || $microapp->accepts == 0) disabled @endif >
+                            @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || ($microapp->accepts == 0 && $secondment->extra_files_allowed == 0)) disabled @endif >
                         </div>
                     </form>
                   

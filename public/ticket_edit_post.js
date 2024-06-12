@@ -10,7 +10,7 @@ $(document).ready(function () {
     $('.save-button').click(function () {
         var markup = $(this).siblings('.summernote').summernote('code');
         var postId = $(this).data('id');
-        var ticketId = $(this).data('ticket-id');
+        const editPostUrl = $(this).data('edit-post-url');
         const csrfToken = $('meta[name="csrf-token"]').attr('content');
         $.ajaxSetup({
             headers: {
@@ -18,14 +18,13 @@ $(document).ready(function () {
             }
         });
         $.ajax({
-            url: editPostUrl.replace("mpla",ticketId),
+            url: editPostUrl,
             type: 'POST',
             data: {
-                // _token: '{{ csrf_token() }}',
                 id: postId,
                 text: markup
             },
-            success: (function (postTextElement) {
+            success: (function () {
                 return function () {
                     location.reload();
                 }

@@ -372,7 +372,7 @@ class TicketsController extends Controller
             if($post->ticket->solved){
                 $open = $this->open_in_db($post->ticket);
                 $new_post = $this->add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
-                dd($new_post);
+                // dd($new_post);
             }
             $id = $post->ticket->id;
             Log::channel('tickets')->info($name." ticket $id updated post");

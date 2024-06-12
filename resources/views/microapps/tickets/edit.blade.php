@@ -6,61 +6,10 @@
 @endpush
 @push('scripts')
     <script src="{{asset("summernote-0.8.18-dist/summernote-lite.min.js")}}"></script>
-    <script>
-        $(document).ready(function() {
-            $('.summernote').each(function() {
-                $(this).summernote({
-                    width:"100%",
-                    toolbar: [
-                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['list', ['ul', 'ol']],
-                        ['link', ['link']],
-                    ],
-                    lang: 'el-GR',
-                });
-            });
-        });
-    </script>
-    <script>
-        var ticketNeededVisitUrl = '{{ route("tickets.visit", ["ticket" =>"mpla"]) }}';
-        var editPostUrl = '{{ route("tickets.update_post", ["ticket" =>"mpla"]) }}'
-    </script>
+    <script src="{{asset("tickets_summernote_init.js")}}"></script>
+    <script src="{{asset("tickets_private_note.js")}}"></script>
     <script src="{{asset("ticket_visit.js")}}"></script>
     <script src="{{asset("ticket_edit_post.js")}}"></script>
-    <script>
-        var savePrivateNoteURL = '{{ route("tickets.save_private_note", ["ticket" =>"mpla"]) }}';
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('body').on('blur', '#private_note', function() {
-                
-                const textarea = document.getElementById('private_note');
-                const note = textarea.value;
-                const ticketId = $(this).data('ticket-id');
-                const csrfToken = $('meta[name="csrf-token"]').attr('content');
-                
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken
-                    }
-                });
-
-                $.ajax({
-                    url: savePrivateNoteURL.replace('mpla', ticketId),
-                    type: 'POST',
-                    data: {
-                        private_note: note
-                    },
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.log("An error occurred: " + error);
-                    }
-                });
-            });
-        });
-    </script>
 @endpush
 @php
     $accepts = App\Models\Microapp::where('url', '/tickets')->first()->accepts; //fetch microapp 'accepts' field
@@ -122,7 +71,7 @@
                                 
                                 <div class="post-editor" style="display: none;">
                                     <textarea class="summernote">{!!$one_post->text!!}</textarea>
-                                    <button class="save-button" data-id="{{$one_post->id}}" data-ticket-id="{{ $ticket->id }}">Save</button>
+                                    <button class="save-button" data-id="{{$one_post->id}}" data-ticket-id="{{ $ticket->id }}" data-edit-post-url = "{{route('tickets.update_post', ['ticket' => $ticket->id]) }}">Save</button>
                                     <button class="cancel-button">Cancel</button>
                                 </div>
                             </div>
@@ -180,7 +129,7 @@
         </form>
     @endif
     @if(Auth::user())
-        <input type="checkbox" id="visit" class="ticket-checkbox" data-ticket-id="{{ $ticket->id }}" {{ $ticket->needed_visit ? 'checked' : '' }}>
+        <input type="checkbox" id="visit" class="ticket-checkbox" data-ticket-id="{{ $ticket->id }}" data-needed-visit-url="{{ route('tickets.visit', ['ticket' => $ticket->id]) }}" {{ $ticket->needed_visit ? 'checked' : '' }}>
         <label for="visit"> Πραγματοποιήθηκε επίσκεψη;</label>
     @endif
     @php
@@ -232,7 +181,7 @@
     @auth
         <div class="input-group my-3">
             <span class="input-group-text w-25 text-wrap"><b>Εσωτερικό Σημείωμα</b> </span>
-            <textarea name="private_note" id="private_note" class="form-control" data-ticket-id="{{ $ticket->id }}" cols="30" rows="5" style="resize: none;" >{{$ticket->private_note}}</textarea>
+            <textarea name="private_note" id="private_note" class="form-control" data-ticket-id="{{ $ticket->id }}" data-private-note-url="{{ route('tickets.save_private_note', ['ticket' => $ticket->id]) }}" cols="30" rows="5" style="resize: none;" >{{$ticket->private_note}}</textarea>
         </div>
     @endauth
     </div>

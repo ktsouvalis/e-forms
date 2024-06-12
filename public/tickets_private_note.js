@@ -1,10 +1,12 @@
 $(document).ready(function () {
-    $('body').on('change', '.ticket-checkbox', function () {
+    $('body').on('blur', '#private_note', function () {
 
+        const textarea = document.getElementById('private_note');
+        const note = textarea.value;
         const ticketId = $(this).data('ticket-id');
-        const isChecked = $(this).is(':checked');
         const csrfToken = $('meta[name="csrf-token"]').attr('content');
-        const ticketNeededVisitUrl = $(this).data('needed-visit-url');
+        const savePrivateNoteURL = $(this).data('private-note-url'); 
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': csrfToken
@@ -12,10 +14,10 @@ $(document).ready(function () {
         });
 
         $.ajax({
-            url: ticketNeededVisitUrl,
+            url: savePrivateNoteURL,
             type: 'POST',
             data: {
-                checked: isChecked
+                private_note: note
             },
             success: function (response) {
                 console.log(response);

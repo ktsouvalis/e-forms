@@ -298,6 +298,8 @@ Route::group(['prefix' => 'tickets', 'middleware' =>'canViewMicroapp'], function
     Route::post('/admin_create_ticket', [TicketsController::class, 'admin_create_ticket'])->name('tickets.admin_create_ticket')->middleware('boss');
 
     Route::post('/microapp_create_ticket/{appname}', [TicketsController::class, 'microapp_create_ticket'])->name('tickets.microapp_create_ticket');
+
+    Route::post('/save_private_note/{ticket}', [TicketsController::class, 'save_private_note'])->name('tickets.save_private_note')->middleware('auth')->middleware('canUpdateTicket');
 });
 
 // OUTINGS ROUTES

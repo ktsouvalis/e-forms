@@ -27,7 +27,40 @@
     </script>
     <script src="{{asset("ticket_visit.js")}}"></script>
     <script src="{{asset("ticket_edit_post.js")}}"></script>
-    <script></script>
+    <script>
+        var savePrivateNoteURL = '{{ route("tickets.save_private_note", ["ticket" =>"mpla"]) }}';
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('body').on('blur', '#private_note', function() {
+                
+                const textarea = document.getElementById('private_note');
+                const note = textarea.value;
+                const ticketId = $(this).data('ticket-id');
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+
+                $.ajax({
+                    url: savePrivateNoteURL.replace('mpla', ticketId),
+                    type: 'POST',
+                    data: {
+                        private_note: note
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log("An error occurred: " + error);
+                    }
+                });
+            });
+        });
+    </script>
 @endpush
 @php
     $accepts = App\Models\Microapp::where('url', '/tickets')->first()->accepts; //fetch microapp 'accepts' field
@@ -161,7 +194,7 @@
         </div>
     </div>
 
-     @if(Auth::check())
+    @if(Auth::check())
         @push('scripts')
             <script src="{{asset('copylink.js')}}"></script>
         @endpush
@@ -170,6 +203,7 @@
         @endphp
         {{-- <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{url("/school/$url")}}"> </button> --}}
         <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{route('school_login', ['md5' => $url])}}"> </button>
+       
     @endif
     </div>
     <div class="files m-2">
@@ -195,6 +229,12 @@
         </div>
         @endif
     </div>
+    @auth
+        <div class="input-group my-3">
+            <span class="input-group-text w-25 text-wrap"><b>Εσωτερικό Σημείωμα</b> </span>
+            <textarea name="private_note" id="private_note" class="form-control" data-ticket-id="{{ $ticket->id }}" cols="30" rows="5" style="resize: none;" >{{$ticket->private_note}}</textarea>
+        </div>
+    @endauth
     </div>
 <div id="bottom"></div>    
 </div>

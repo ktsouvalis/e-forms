@@ -444,4 +444,15 @@ class TicketsController extends Controller
         }
         return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
     }
+
+    public function save_private_note(Ticket $ticket){
+        $ticket->private_note = request()->input('private_note');
+        if($ticket->isDirty('private_note')){
+            $ticket->timestamps = false;
+            $ticket->save();
+            $ticket->timestamps = true;
+            return response()->json(['message' => 'Η σημείωση αποθηκεύτηκε']);
+        }
+        return response()->json(['message' => 'Δεν έγιναν αλλαγές']);   
+    }
 }

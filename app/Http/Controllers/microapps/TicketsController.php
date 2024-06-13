@@ -372,7 +372,7 @@ class TicketsController extends Controller
             if($post->ticket->solved){
                 $open = $this->open_in_db($post->ticket);
                 $new_post = $this->add_post($post->ticket->id, $ticketer->id, $ticketer->getMorphClass(), "Άνοιξε το δελτίο (επεξεργασία παλαιότερου σχολίου)");
-                dd($new_post);
+                // dd($new_post);
             }
             $id = $post->ticket->id;
             Log::channel('tickets')->info($name." ticket $id updated post");
@@ -443,5 +443,16 @@ class TicketsController extends Controller
             $new_post = $this->add_post($new_ticket->id, $school->id,'App\Models\School' , "Προστέθηκε το αρχείο $original_filename");
         }
         return redirect()->route('tickets.edit', ['ticket' => $new_ticket->id])->with('success','Το δελτίο δημιουργήθηκε με επιτυχία!');
+    }
+
+    public function save_private_note(Ticket $ticket){
+        $ticket->private_note = request()->input('private_note');
+        if($ticket->isDirty('private_note')){
+            $ticket->timestamps = false;
+            $ticket->save();
+            $ticket->timestamps = true;
+            return response()->json(['message' => 'Η σημείωση αποθηκεύτηκε']);
+        }
+        return response()->json(['message' => 'Δεν έγιναν αλλαγές']);   
     }
 }

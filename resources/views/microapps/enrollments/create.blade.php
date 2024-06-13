@@ -132,7 +132,7 @@
                             <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
                         </td>
                         <td>
-                            <input name="file" type="file" class="form-control" $required>
+                            <input name="file" type="file" class="form-control" {{$required}}>
                             @if(!$accepts)
                                 <div class='alert alert-warning text-center my-2'>
                                     <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
@@ -167,6 +167,7 @@
             </table>
             {{-- ΣΤΟΙΧΕΙΑ ΕΓΓΡΑΦΩΝ ΤΕΛΟΣ --}}
             {{-- ΣΤΟΙΧΕΙΑ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΥ επόμενου σχ. έτους --}}
+            @if($old_data)
             @if(($school->primary ==1 && $old_data->total_students_nr && config('enrollments.nextYearPlanningActive') == 1) || ($school->primary == 0 && $old_data->nr_of_students1 && config('enrollments.nextYearPlanningActive') == 1))
             @php
                 $total_st_number = ($school->primary ==1)? $old_data->total_students_nr : $old_data->nr_of_students1;
@@ -312,6 +313,7 @@
                     </tbody>
                 </table>
             @endif
+            @endif
         </div>
         </nav>
         {{-- ΣΤΟΙΧΕΙΑ ΠΡΟΓΡΑΜΜΑΤΙΣΜΟΥ ΤΕΛΟΣ --}}
@@ -371,7 +373,7 @@
                             <p class="fw-lighter fst-italic fs-6"><small>(Δεκτά αρχεία μορφής .xlsx)</small></p>
                         </td>
                         <td>
-                            <input name="file" type="file" class="form-control" $required>
+                            <input name="file" type="file" class="form-control" {{$required}}>
                             @if(!$accepts)
                                 <div class='alert alert-warning text-center my-2'>
                                     <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές </strong>

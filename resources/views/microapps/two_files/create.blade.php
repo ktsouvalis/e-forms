@@ -11,7 +11,7 @@
 @endphp
 <div class="container mt-5">
     <h4>Υποβολή αρχείου ΔΕΙΚΤΩΝ σε μορφή .xlsx και .pdf</h4>
-    @if(file_exists(storage_path('app/two_files/Two_files_template.xlsx')))
+    @if(file_exists(storage_path('app/two_files/Two_Files_Template.xlsx')))
     <div class="row">
         <div class="col-md-6 p-3">
             <h6>Πρότυπο για συμπλήρωση:</h6>

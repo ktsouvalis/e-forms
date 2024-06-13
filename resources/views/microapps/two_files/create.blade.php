@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-md-6 p-3">
             <h6>Πρότυπο για συμπλήρωση:</h6>
-            <form action="{{route('two_files.download_file',['file'=>'Two_files_template.xlsx', 'download_file_name' => 'Αρχείο_Δεικτών_για_συμπλήρωση.xlsx'])}}" method="get"class="container-fluid">
+            <form action="{{route('two_files.download_file',['file'=>'Two_Files_Template.xlsx', 'download_file_name' => 'Αρχείο_Δεικτών_για_συμπλήρωση.xlsx'])}}" method="get"class="container-fluid">
                 <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title=""> Λήψη αρχείου για συμπλήρωση</button>
             </form>
         </div>

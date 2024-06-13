@@ -41,6 +41,7 @@ use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\TwoFilesController;
 use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\microapps\ImmigrantsController;
@@ -332,6 +333,15 @@ Route::group(['prefix' => 'immigrants', 'middleware' => 'canViewMicroapp'], func
     Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->name('immigrants.update_template')->middleware('boss');
 
     Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file'])->name('immigrants.download_file'); //access rights are checked inside the method
+});
+
+// TWO FILES ROUTES
+Route::resource('two_files', TwoFilesController::class)->middleware('canViewMicroapp');
+
+Route::group(['prefix' => 'two_files', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post("/upload_file/{upload_file_name}", [TwoFilesController::class, 'upload_file'])->name('two_files.upload_file');
+
+    Route::get("/{file}/{download_file_name}", [TwoFilesController::class, 'download_file'])->name('two_files.download_file');
 });
 
 // INTERNAL RULES ROUTES

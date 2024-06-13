@@ -8,6 +8,7 @@ use App\Models\microapps\Desks;
 use App\Models\microapps\Fruit;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
+use App\Models\microapps\TwoFile;
 use App\Models\microapps\Immigrant;
 use App\Models\microapps\Enrollment;
 use App\Models\microapps\SchoolArea;
@@ -82,6 +83,11 @@ class School extends Authenticatable
 
     public function fruit(){
         return $this->hasOne(Fruit::class);
+    }
+
+    public function twoFile()
+    {
+        return $this->hasOne(TwoFile::class);
     }
 
     public function desks(){

@@ -116,14 +116,14 @@
                     <span class="input-group-text w-25" id="basic-addon2">Ονομασία</span>
                     <input name="filecollect_name" type="text" class="form-control" placeholder="π.χ. Τμήμα Ένταξης, Εργαστήριο Πληροφορικής, κ.α." aria-label="filecollectname" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['filecollect_name']}}@endisset"><br>
                 </div>
-                <div class="input-group">
+                {{-- <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Τύπος Δεκτών Αρχείων</span>
                     <select name="filecollect_mime" class="form-control" required>
                         <option value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">Excel (.xlsx)</option>
                         <option value="application/pdf">Pdf (.pdf)</option>
                         <option value="application/vnd.openxmlformats-officedocument.wordprocessingml.document">Word (.docx)</option>
                     </select>
-                </div>
+                </div> --}}
                 @can('chooseDepartment',App\Models\Filecollect::class)
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>

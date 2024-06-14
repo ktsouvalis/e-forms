@@ -33,7 +33,7 @@
         </script>
     @endpush
 @endif
-@php
+{{-- @php
     $extension="";
     if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
         $extension ='.xlsx';
@@ -44,7 +44,7 @@
     else if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
         $extension = ".docx";
     }
-@endphp
+@endphp --}}
     <div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div>
     <div class="container">
         @push('title')
@@ -79,21 +79,26 @@
             </div>
             <div class="col">
                 @if($old_data->file)
-                <div class="input-group">
-                    <span class="input-group-text"><b>Αρχείο που έχετε υποβάλλει</b></span>
-                </div>
-                <div class="hstack gap-2">
-                    <form action="{{url("/filecollects/download_stake_file/$old_data->id")}}" method="get">
-                        @csrf
-                        <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$old_data->file}} </button>
-                    </form>
-                    @if($old_data->filecollect->accepts)
-                    <form action="{{url("/filecollects/delete_stake_file/$old_data->id")}}" method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-danger bi bi-x-circle" title="Διαγραφή αρχείου" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφεί το αρχείο σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> </button>
-                    </form>
-                    @endif
-                </div>
+                    <div class="input-group">
+                        <span class="input-group-text"><b>Αρχεία που έχετε υποβάλλει</b></span>
+                    </div>
+                    <div class="vstack gap-2">
+                        @foreach(json_decode($old_data->file, true) as $file)
+                        @php
+                            $filename = $file['filename'];
+                        @endphp
+                        <div class="hstack gap-2">
+                            <form action="{{url("/filecollects/download_stake_file/$old_data->id/$filename")}}" method="get">
+                                @csrf
+                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filename}} </button>
+                            </form>
+                            <form action="{{url("/filecollects/delete_stake_file/$old_data->id/$filename")}}" method="post">
+                                @csrf
+                                <button type="submit" class="btn btn-danger bi bi-x-circle" title="Διαγραφή αρχείου" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφεί το αρχείο σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> </button>
+                            </form>
+                        </div>
+                        @endforeach
+                    </div>
                 @endif
             </div>
             <div class="col">
@@ -114,10 +119,9 @@
             <div class="input-group">
                 <span class="input-group-text"><strong>Αποστολή αρχείου για τη συλλογή {{$filecollect->name}} </strong></span>
             </div>
-           
             <div class="input-group">
-                <span class="input-group-text w-25" id="basic-addon4">Αρχείο</span>
-                <input name="the_file" type="file" class="form-control" required><br>
+                <span class="input-group-text w-25" id="basic-addon4">Αρχεία</span>
+                <input name="the_file[]" type="file" class="form-control" multiple required><br>
             </div>
             @if(!$accepts)
                 <div class='alert alert-warning text-center my-2'>
@@ -126,26 +130,17 @@
             @else
                 <div class="input-group">
                     <span class="w-25"></span>
-                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτό αρχείο: {{$extension}}</small>
+                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτά αρχεία: pdf, xlsx, docx </small>
                 </div>
                 
             @endif
         </form>
         
         @if($old_data->file)
-            {{-- @if($old_data->checked)
-                <div class='alert alert-success text-center'>
-                    Το αρχείο σας έχει ελεγχθεί
-                </div>
-            @else
-                <div class='alert alert-warning text-center'>
-                    Το αρχείο σας δεν έχει ελεγχθεί
-                </div>
-            @endif --}}
             <div class="hstack gap-3">
             <div class="col-md-4 py-3" style="max-width:15rem">
                 <div class="card py-3" style="background-color:rgb(144, 187, 226); text-decoration:none; text-align:center; font-size:small">
-                    <div>Τελευταία ενημέρωση αρχείου <br><strong> {{$old_data->uploaded_at}}</strong></div>
+                    <div>Τελευταία ενημέρωση αρχείων <br><strong> {{$old_data->uploaded_at}}</strong></div>
                 </div>
             </div>
             @if($old_data->filecollect->accepts)

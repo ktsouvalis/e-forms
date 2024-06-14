@@ -141,7 +141,7 @@ class FilecollectController extends Controller
         $table = array();
         $table['name'] = $request->all()['filecollect_name'];
         $table['department_id'] = $department_id;
-        $table['fileMime'] = $request->all()['filecollect_mime'];
+        $table['fileMime'] = 'nothing';
         $table['visible'] = 0;
         $table['accepts'] = 0;
         return $table;
@@ -223,43 +223,53 @@ class FilecollectController extends Controller
                 abort(403);
             }
             else{
-                //prepare extension for file based on the fileMime
-                $extension="";
-                if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
-                    $extension ='.xlsx';
-                }
-                else if($filecollect->fileMime == "application/pdf"){
-                    $extension = ".pdf";
-                }
-                else if($filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                    $extension = ".docx";
-                }
-
                 //validate the input file
                 $rule = [
-                    'the_file' => "file|max:5000|mimetypes:$filecollect->fileMime"
+                    'the_file.*' => "file|max:5000|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 ];
                 $validator = Validator::make($request->all(), $rule);
                 if($validator->fails()){ 
                     return back()->with('failure', $validator->errors()->first());
                 }
 
-                //$file is for the file field of the database
-                $file = $request->file('the_file')->getClientOriginalName();
+                
+                $files_array_for_db =[];
+                if($request->hasFile('the_file')) {
+                    $files = $request->file('the_file');
+                    $index = 0;
+                    foreach ($files as $file) {
+                        $originalFilename = $file->getClientOriginalName();
+                        $filename = $identifier . '_' . $originalFilename;
 
-                //$filename is the name with which the file will be saved. save the file
-                $filename = $identifier.'_filecollect_'.$filecollect->id.$extension;
-                try{
-                    $path = $request->file('the_file')->storeAs("file_collects/$filecollect->id", $filename);
+                        try {
+                            $path = $file->storeAs("file_collects/$filecollect->id", $filename);
+                            
+                        } catch (\Exception $e) {
+                            Log::channel('files')->error($identifier . ' '. $originalFilename. ' failure to upload file for filecollect ' . $filecollect->id . ' ' . $e->getMessage());
+                            continue;
+                        }
+
+                        $files_array_for_db[] = [
+                            'index' => ++$index,
+                            'filename' => $filename
+                        ];
+                        Log::channel('files')->info($identifier . ' '. $originalFilename. ' success to upload file for filecollect ' . $filecollect->id);
+                    }
                 }
-                catch(\Exception $e){
-                    Log::channel('files')->error($identifier.' failure to upload file for filecollect '. $filecollect->id.' '.$e.getMessage());
-                    return back()->with('failure', 'Η ενέργεια απέτυχε (files). Επικοινωνήστε με τον διαχειριστή του συστήματος');
-                }
-                Log::channel('files')->info($identifier.' success to upload file for filecollect '. $filecollect->id);
 
                 //prepare the record to update and save it
-                $record_to_update->file = $file;
+                
+                if (!empty($record_to_update->file)) {
+                    $existingFiles = json_decode($record_to_update->file, true);
+                    $lastIndex = end($existingFiles)['index'];
+                    foreach ($files_array_for_db as $file) {
+                        $file['index'] = ++$lastIndex;
+                        $existingFiles[] = $file;
+                    }
+                    $record_to_update->file = json_encode($existingFiles, JSON_UNESCAPED_UNICODE);
+                } else {
+                    $record_to_update->file = json_encode($files_array_for_db, JSON_UNESCAPED_UNICODE);
+                }
                 $record_to_update->uploaded_at = Carbon::now();
                 $record_to_update->checked = false;
                 $record_to_update->stake_comment = null;
@@ -277,27 +287,15 @@ class FilecollectController extends Controller
             abort('403');
     }
 
-    public function download_stake_file(Request $request, FilecollectStakeholder $old_data){
-        $extension="";
-        if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
-            $extension ='.xlsx';
-        }
-        else if($old_data->filecollect->fileMime == "application/pdf"){
-            $extension = ".pdf";
-        }
-        else if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-            $extension = ".docx";
-        }
-
+    public function download_stake_file(Request $request, FilecollectStakeholder $old_data, $filename){
         if(get_class($old_data->stakeholder) == 'App\Models\School')
             $identifier = $old_data->stakeholder->code;
         else if(get_class($old_data->stakeholder) == 'App\Models\Teacher')
             $identifier = $old_data->stakeholder->afm;
         
-        $filename = $identifier.'_filecollect_'.$old_data->filecollect->id.$extension;
         $file = "file_collects/".$old_data->filecollect->id."/".$filename;
         if(Storage::disk('local')->exists($file)){
-            $response = Storage::disk('local')->download($file, $old_data->file);  
+            $response = Storage::disk('local')->download($file, $filename);  
             ob_end_clean();
             try{
                 return $response;
@@ -356,7 +354,7 @@ class FilecollectController extends Controller
         }
     }
 
-    public function delete_stakeholder_file(Request $request, FilecollectStakeholder $stakeholder){
+    public function delete_stakeholder_file(Request $request, FilecollectStakeholder $stakeholder, $filename){
         if($stakeholder->filecollect->accepts){
             if(Auth::guard('school')->check()){
                 $identifier = Auth::guard('school')->user()->code;
@@ -365,32 +363,39 @@ class FilecollectController extends Controller
                 $identifier = Auth::guard('teacher')->user()->afm;
             }
 
-            $extension="";
-            if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
-                $extension ='.xlsx';
-            }
-            else if($stakeholder->filecollect->fileMime == "application/pdf"){
-                $extension = ".pdf";
-            }
-            else if($stakeholder->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-                $extension = ".docx";
-            }
-
             $directory = "file_collects/$stakeholder->filecollect_id";
-            $original_filename = $identifier.'_filecollect_'.$stakeholder->filecollect_id.$extension;
+            
 
             $fileHandler = New FilesController;
             try{
-                $fileHandler->delete_file($directory, $original_filename, 'local');
+                $fileHandler->delete_file($directory, $filename, 'local');
             }
             catch(\Exception $e){
                 Log::channel('files')->error($identifier." failed to delete file from filecollect $stakeholder->filecollect_id ".$e->getMessage());
                 return back()->with('failure', 'Το αρχείο δε διαγράφηκε, προσπαθήστε αργότερα ή επικοινωνήστε με τον διαχειριστή του συστήματος');
             }
-            $stakeholder->uploaded_at = null;
-            $stakeholder->file = null;
-            $stakeholder->checked = null;
-            $stakeholder->stake_comment = null;
+
+            // Decode the JSON string to an array
+            $files = json_decode($stakeholder->file, true);
+
+            // Find the filename and remove the corresponding record
+            foreach ($files as $index => $file) {
+                if ($file['filename'] === $filename) {
+                    unset($files[$index]);
+                    break;
+                }
+            }
+
+           // Check if there are any files left
+            if (!empty($files)) {
+                $files = array_values($files);
+                $stakeholder->file = json_encode($files, JSON_UNESCAPED_UNICODE);
+            } else {
+                $stakeholder->file = null;
+                $stakeholder->checked = false;
+                $stakeholder->uploaded_at = null;
+            }
+    
             $stakeholder->save();
 
             Log::channel('files')->info($identifier." successfully deleted file from filecollect $stakeholder->filecollect_id");

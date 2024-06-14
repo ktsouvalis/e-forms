@@ -18,6 +18,7 @@ use App\Jobs\UpdateEDirectorateJob;
 use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use App\Models\FilecollectStakeholder;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
@@ -379,9 +380,9 @@ Route::resource('filecollects', FilecollectController::class);
 Route::group(['prefix' => 'filecollects'], function () {
     Route::get('/download_admin_file/{filecollect}/{type}', [FilecollectController::class, 'download_admin_file']);
 
-    Route::get('/download_stake_file/{old_data}', [FilecollectController::class,'download_stake_file']);
+    Route::get('/download_stake_file/{old_data}/{filename}', [FilecollectController::class,'download_stake_file']);
 
-    Route::post('/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
+    Route::post('/delete_stake_file/{stakeholder}/{filename}', [FilecollectController::class,'delete_stakeholder_file']);
 
     Route::post('/update_admin_file/{filecollect}/{type}', [FilecollectController::class, 'update_admin_file'])->middleware('can:view,filecollect');
 
@@ -779,3 +780,22 @@ Route::view('/sections', 'sections')->middleware('auth')->middleware('can:viewSe
 Route::post('/upload_sections_template', [SectionController::class, 'import_sections']);
 
 // Route::post('/delete_sections', [SectionController::class, 'delete_sections']);
+
+//misc routes
+
+Route::get('/convert_filecollects_to_json', function(){
+    $stakeholders = FilecollectStakeholder::all();
+
+    foreach ($stakeholders as $stakeholder) {
+        if($stakeholder->file==null)
+            continue;
+        $filename = $stakeholder->file;
+        $stakeholder->file = json_encode([
+            'index' => 1,
+            'filename' => $filename
+        ], JSON_UNESCAPED_UNICODE);
+        $stakeholder->save();
+    }
+
+    return redirect('/index_user')->with('success', 'ok');
+})->middleware('boss');

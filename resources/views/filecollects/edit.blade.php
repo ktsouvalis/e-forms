@@ -191,7 +191,7 @@
                     <span class="input-group-text w-25" id="">Τίτλος</span>
                     <input name="name" type="text" class="form-control" placeholder="Name" required value="{{$filecollect->name}}">
                 </div>
-                <div class="input-group">
+                {{-- <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Τύπος Δεκτών Αρχείων</span>
                     <select name="filecollect_mime" class="form-control" required>
                         <option value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
@@ -204,27 +204,30 @@
                         @if($filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') selected @endif
                         >Word (.docx)</option>
                     </select>
-                </div>
+                </div> --}}
                 <div class="input-group">
                     <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                     <a href="{{url("/filecollects/$filecollect->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                 </div>
                 </form>
         <hr>
-        @if(Auth::user()->isAdmin() and $filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        @if(Auth::user()->isAdmin())
                 <form action="{{url("/filecollects/num_of_lines/$filecollect->id")}}" method="post" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        <span class="input-group-text w-50"><strong>Εξαγωγή συγκεντρωτικού αρχείου</strong></span>
+                        <span class="input-group-text w-50"><strong>Εξαγωγή συγκεντρωτικού αρχείου*</strong></span>
                     </div>
                     <div class="input-group w-50">
                         <span class="input-group-text" id="basic-addon2">Αριθμός γραμμών για εξαγωγή</span>
                         <input name="lines" type="number" value="@if($filecollect->lines_to_extract){{$filecollect->lines_to_extract}}@endif" class="form-control" required>
                     </div>
+                    
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
                     </div>
+                    <div class="text-muted small">*Για τα αρχεία xlsx της συλλογής για τα οποία δίνεται πρότυπο</div>
                 </form>
+                
                 <hr>
         @endif
         <form action="{{url("/filecollects/update_comment/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
@@ -345,11 +348,18 @@
                     <td>{{$one_stakeholder->stakeholder->mail}}</td>
                     
                     @if($one_stakeholder->file)
-                        <td>
-                            <form action="{{url("/filecollects/download_stake_file/$one_stakeholder->id")}}" method="get">
-                                @csrf
-                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$one_stakeholder->file}} </button>
-                            </form>
+                        <td>   
+                            <div class="vstack gap-2">
+                                @foreach(json_decode($one_stakeholder->file, true) as $file)
+                                    @php
+                                        $filename = $file['filename'];
+                                    @endphp
+                                    <form action="{{url("/filecollects/download_stake_file/$one_stakeholder->id/$filename")}}" method="get">
+                                        @csrf
+                                        <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filename}} </button>
+                                    </form>
+                                @endforeach
+                            </div>
                         </td>
                     @else
                         <td style="colοr:red"> ΟΧΙ </td>
@@ -403,7 +413,7 @@
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-cloud-download" > Λήψη αρχείων</button>
                 </form>
-                @if(Auth::user()->isAdmin() and $filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' and $filecollect->lines_to_extract)
+                @if(Auth::user()->isAdmin() and $filecollect->lines_to_extract)
                 <form action="{{url("/filecollects/extract_xlsx_file/$filecollect->id")}}" method="post" data-export>
                     @csrf
                     <button type="submit" class="btn btn-success bi bi-filetype-xlsx" > Εξαγωγή συγκεντρωτικού αρχείου</button>

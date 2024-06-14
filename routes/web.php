@@ -785,17 +785,15 @@ Route::post('/upload_sections_template', [SectionController::class, 'import_sect
 
 Route::get('/convert_filecollects_to_json', function(){
     $stakeholders = FilecollectStakeholder::all();
-
     foreach ($stakeholders as $stakeholder) {
         if($stakeholder->file==null)
             continue;
         $filename = $stakeholder->file;
-        $stakeholder->file = json_encode([
+        $stakeholder->file = json_encode([[
             'index' => 1,
             'filename' => $filename
-        ], JSON_UNESCAPED_UNICODE);
+        ]], JSON_UNESCAPED_UNICODE);
         $stakeholder->save();
     }
-
     return redirect('/index_user')->with('success', 'ok');
 })->middleware('boss');

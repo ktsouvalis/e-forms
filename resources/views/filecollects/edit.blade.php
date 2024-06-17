@@ -342,6 +342,7 @@
                             <div class="vstack gap-2">
                                 @foreach(json_decode($one_stakeholder->file, true) as $file)
                                     @php
+                                        $icon = "bi bi-box-arrow-down";
                                         $filename = $file['original_filename'];
                                         if(substr($filename, -4) == "docx")
                                             $icon = "bi bi-file-word";

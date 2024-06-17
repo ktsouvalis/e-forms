@@ -57,6 +57,7 @@
             <div class="col">
                 @if($filecollect->base_file)
                     @php
+                        $icon = "bi bi-box-arrow-down"; 
                         $filename = $filecollect->base_file;
                         if(substr($filename, -4) == "docx")
                             $icon = "bi bi-file-word";
@@ -82,6 +83,7 @@
                     <div class="vstack gap-2">
                         @foreach(json_decode($old_data->file, true) as $file)
                         @php
+                            $icon = "bi bi-box-arrow-down";
                             $filename = $file['original_filename'];
                             if(substr($filename, -4) == "docx")
                                 $icon = "bi bi-file-word";
@@ -107,6 +109,7 @@
             <div class="col">
                 @if($filecollect->template_file)
                     @php
+                        $icon = "bi bi-box-arrow-down";
                         $filename = $filecollect->template_file;
                         if(substr($filename, -4) == "docx")
                             $icon = "bi bi-file-word";

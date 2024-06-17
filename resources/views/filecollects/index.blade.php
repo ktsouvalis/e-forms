@@ -116,14 +116,6 @@
                     <span class="input-group-text w-25" id="basic-addon2">Ονομασία</span>
                     <input name="filecollect_name" type="text" class="form-control" placeholder="π.χ. Τμήμα Ένταξης, Εργαστήριο Πληροφορικής, κ.α." aria-label="filecollectname" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['filecollect_name']}}@endisset"><br>
                 </div>
-                {{-- <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Τύπος Δεκτών Αρχείων</span>
-                    <select name="filecollect_mime" class="form-control" required>
-                        <option value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">Excel (.xlsx)</option>
-                        <option value="application/pdf">Pdf (.pdf)</option>
-                        <option value="application/vnd.openxmlformats-officedocument.wordprocessingml.document">Word (.docx)</option>
-                    </select>
-                </div> --}}
                 @can('chooseDepartment',App\Models\Filecollect::class)
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">Τμήμα</span>
@@ -139,6 +131,10 @@
                         </select>
                     </div>
                 @endcan
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon2">Μέγιστος Αριθμός Αρχείων</span> 
+                    <input name="no_of_files" type="number" class="form-control" placeholder="Όχι περισσότερα από 5" aria-label="maxfiles" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['max_files']}}@endisset"><br>  
+                </div>
                 <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>

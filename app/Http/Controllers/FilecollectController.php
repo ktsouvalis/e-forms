@@ -138,12 +138,18 @@ class FilecollectController extends Controller
         else{
             $department_id = $request->user()->department->id;
         }
+        if($request->all()['no_of_files'] > 5)
+            $no_of_files = 5;
+        else
+            $no_of_files = $request->all()['no_of_files'];
+
         $table = array();
         $table['name'] = $request->all()['filecollect_name'];
         $table['department_id'] = $department_id;
         $table['fileMime'] = 'nothing';
         $table['visible'] = 0;
         $table['accepts'] = 0;
+        $table['no_of_files'] = $no_of_files;
         return $table;
     }
 
@@ -167,7 +173,7 @@ class FilecollectController extends Controller
         $incomingFields = $request->all();
 
         $filecollect->name = $incomingFields['name'];
-        $filecollect->fileMime = $incomingFields['filecollect_mime'];
+        $filecollect->no_of_files = $incomingFields['no_of_files'];
         $edited=false;
             
         // check if changes happened to filecollect table
@@ -181,8 +187,10 @@ class FilecollectController extends Controller
                     return back()->with('failure',"Υπάρχει ήδη συλλογή αρχείων με όνομα $given_name.");
                 } 
             }
-            if($filecollect->isDirty('fileMime')){
-                $filecollect->lines_to_extract = null;
+            
+            if($filecollect->isDirty('no_of_files')){
+                if($filecollect->no_of_files > 5)
+                    $filecollect->no_of_files = 5;
             }
             $filecollect->save();
             $edited = true;
@@ -225,7 +233,7 @@ class FilecollectController extends Controller
             else{
                 //validate the input file
                 $rule = [
-                    'the_file.*' => "file|max:5000|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    'the_file.*' => "file|max:3000|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 ];
                 $validator = Validator::make($request->all(), $rule);
                 if($validator->fails()){ 
@@ -236,10 +244,23 @@ class FilecollectController extends Controller
                 $files_array_for_db =[];
                 if($request->hasFile('the_file')) {
                     $files = $request->file('the_file');
-                    $index = 0;
+                    $fileCount = count($files);
+                    if ($fileCount > $filecollect->no_of_files) {
+                        return back()->with('failure', 'Μπορείτε να ανεβάσετε το πολύ ' . $filecollect->no_of_files . ' αρχεία.');
+                    }
+                    $fileArray = !empty($record_to_update->file) ? json_decode($record_to_update->file, true) : [];
+                    if (count($fileArray) == $filecollect->no_of_files) 
+                        return back()->with('failure', 'Έχετε φτάσει το όριο του μέγιστου αριθμού αρχείων που μπορείτε να ανεβάσετε.');
+                    $index = !empty($fileArray) ? (end($fileArray)['index'] + 1) : 1;
                     foreach ($files as $file) {
                         $originalFilename = $file->getClientOriginalName();
-                        $filename = $identifier . '_' . $originalFilename;
+                        $fileArray = !empty($record_to_update->file) ? json_decode($record_to_update->file, true) : [];
+                        if (in_array($originalFilename, array_column($fileArray, 'original_filename'))) {
+                            return back()->with('failure', 'Το αρχείο ' . $originalFilename . ' υπάρχει ήδη');
+                        }
+                        
+                        $extension = $file->getClientOriginalExtension();
+                        $filename = $identifier . "_filecollect" . $filecollect->id . "(". $index . ")" . "." . $extension;
 
                         try {
                             $path = $file->storeAs("file_collects/$filecollect->id", $filename);
@@ -250,8 +271,9 @@ class FilecollectController extends Controller
                         }
 
                         $files_array_for_db[] = [
-                            'index' => ++$index,
-                            'filename' => $filename
+                            'index' => $index++,
+                            'filename' => $filename,
+                            'original_filename' => $originalFilename,
                         ];
                         Log::channel('files')->info($identifier . ' '. $originalFilename. ' success to upload file for filecollect ' . $filecollect->id);
                     }
@@ -277,7 +299,7 @@ class FilecollectController extends Controller
                     $record_to_update->save();
                 }
                 catch(Exception $e){
-                    Log::channel('throwable_db')->error($identifier.' failure to update database for filecollect '. $filecollect->id.' '.$e.getMessage()); 
+                    Log::channel('throwable_db')->error($identifier.' failure to update database for filecollect '. $filecollect->id.' '.$e->getMessage()); 
                     return back()->with('failure', 'Η ενέργεια απέτυχε (throwable_db). Επικοινωνήστε με τον διαχειριστή του συστήματος');  
                 }
                 return back()->with('success', 'Η ενέργεια ολοκληρώθηκε!');  
@@ -292,8 +314,19 @@ class FilecollectController extends Controller
             $identifier = $old_data->stakeholder->code;
         else if(get_class($old_data->stakeholder) == 'App\Models\Teacher')
             $identifier = $old_data->stakeholder->afm;
-        
-        $file = "file_collects/".$old_data->filecollect->id."/".$filename;
+
+        //find the saved filename
+        $files = json_decode($old_data->file, true);
+        $fileData = array_filter($files, function($file) use ($filename) {
+           return $file['original_filename'] == $filename;
+        });
+        if (!empty($fileData)) {
+            $fileData = reset($fileData);
+            $file = "file_collects/".$old_data->filecollect->id."/".$fileData['filename'];
+        }
+        else 
+            return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
+
         if(Storage::disk('local')->exists($file)){
             $response = Storage::disk('local')->download($file, $filename);  
             ob_end_clean();
@@ -306,7 +339,8 @@ class FilecollectController extends Controller
         } 
         else 
             return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
-        }
+        
+    }
     
     public function check_uncheck(Request $request, FilecollectStakeholder $stakeholder){
         $filecollect = Filecollect::find($stakeholder->filecollect_id);
@@ -364,8 +398,20 @@ class FilecollectController extends Controller
             }
 
             $directory = "file_collects/$stakeholder->filecollect_id";
-            
 
+            // Find the filename in the JSON string that matches the 'original_filename'
+            $files = json_decode($stakeholder->file, true);
+            $fileData = array_filter($files, function($file) use ($filename) {
+            return $file['original_filename'] == $filename;
+            });
+            if (!empty($fileData)) {
+                $fileData = reset($fileData);
+                $filename = $fileData['filename'];
+            }
+            else {
+                return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
+            }
+            // dd($filename);
             $fileHandler = New FilesController;
             try{
                 $fileHandler->delete_file($directory, $filename, 'local');

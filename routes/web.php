@@ -783,15 +783,34 @@ Route::post('/upload_sections_template', [SectionController::class, 'import_sect
 
 //misc routes
 
-Route::get('/convert_filecollects_to_json', function(){
+Route::get('/convert_old_filecollects_to_json', function(){
     $stakeholders = FilecollectStakeholder::all();
     foreach ($stakeholders as $stakeholder) {
         if($stakeholder->file==null)
             continue;
-        $filename = $stakeholder->file;
+
+        if($stakeholder->stakeholder_type == 'App\Models\School'){
+            $identifier = $stakeholder->stakeholder->code;
+        }
+        else if($stakeholder->stakeholder_type == 'App\Models\Teacher'){
+            $identifier = $stakeholder->stakeholder->afm;
+        }
+        
+
+        if(substr($stakeholder->file, -4) == 'xlsx')
+            $extension = 'xlsx';
+        else if(substr($stakeholder->file, -4)=='docx')
+            $extension = 'docx';
+        else if(substr($stakeholder->file, -4)=='.pdf')
+            $extension = 'pdf';
+
+        $filename = $identifier. '_filecollect_'.$stakeholder->filecollect_id.'.'.$extension;
+        
+        $original_filename = $stakeholder->file;
         $stakeholder->file = json_encode([[
             'index' => 1,
-            'filename' => $filename
+            'filename' => $filename,
+            'original_filename' => $original_filename
         ]], JSON_UNESCAPED_UNICODE);
         $stakeholder->save();
     }

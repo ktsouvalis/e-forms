@@ -191,20 +191,10 @@
                     <span class="input-group-text w-25" id="">Τίτλος</span>
                     <input name="name" type="text" class="form-control" placeholder="Name" required value="{{$filecollect->name}}">
                 </div>
-                {{-- <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Τύπος Δεκτών Αρχείων</span>
-                    <select name="filecollect_mime" class="form-control" required>
-                        <option value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
-                        @if($filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') selected @endif
-                        >Excel (.xlsx)</option>
-                        <option value="application/pdf"
-                        @if($filecollect->fileMime == 'application/pdf') selected @endif
-                        >Pdf (.pdf)</option>
-                        <option value="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        @if($filecollect->fileMime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') selected @endif
-                        >Word (.docx)</option>
-                    </select>
-                </div> --}}
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon2">Μέγιστος Αριθμός Αρχείων</span>
+                    <input name="no_of_files" type="number" class="form-control" placeholder="Όχι περισσότερα από 5" aria-label="maxfiles" aria-describedby="basic-addon2" required value="{{$filecollect->no_of_files}}"><br>
+                </div>
                 <div class="input-group">
                     <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                     <a href="{{url("/filecollects/$filecollect->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
@@ -352,11 +342,17 @@
                             <div class="vstack gap-2">
                                 @foreach(json_decode($one_stakeholder->file, true) as $file)
                                     @php
-                                        $filename = $file['filename'];
+                                        $filename = $file['original_filename'];
+                                        if(substr($filename, -4) == "docx")
+                                            $icon = "bi bi-file-word";
+                                        else if(substr($filename, -4) == "xlsx")
+                                            $icon = "bi bi-file-excel";
+                                        else if(substr($filename, -4) == ".pdf")
+                                            $icon = "bi bi-file-pdf";
                                     @endphp
                                     <form action="{{url("/filecollects/download_stake_file/$one_stakeholder->id/$filename")}}" method="get">
                                         @csrf
-                                        <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filename}} </button>
+                                        <button class="btn btn-outline-success {{$icon}}" title="Λήψη αρχείου"> {{$filename}} </button>
                                     </form>
                                 @endforeach
                             </div>

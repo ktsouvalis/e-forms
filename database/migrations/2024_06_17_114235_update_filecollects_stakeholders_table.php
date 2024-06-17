@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('filecollects_stakeholders', function (Blueprint $table) {
-            $table->string('file', 2048)->nullable()->change();
+            $table->longText('file')->nullable()->change();
         });
     }
 

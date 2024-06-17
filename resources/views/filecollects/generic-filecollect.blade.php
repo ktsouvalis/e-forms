@@ -33,18 +33,6 @@
         </script>
     @endpush
 @endif
-{{-- @php
-    $extension="";
-    if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
-        $extension ='.xlsx';
-    }
-    else if($old_data->filecollect->fileMime == "application/pdf"){
-        $extension = ".pdf";
-    }
-    else if($old_data->filecollect->fileMime == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-        $extension = ".docx";
-    }
-@endphp --}}
     <div class="h4">{{$filecollect->name}}: {{$filecollect->department->name}}</div>
     <div class="container">
         @push('title')
@@ -68,33 +56,48 @@
         <div class="row">
             <div class="col">
                 @if($filecollect->base_file)
+                    @php
+                        $filename = $filecollect->base_file;
+                        if(substr($filename, -4) == "docx")
+                            $icon = "bi bi-file-word";
+                        else if(substr($filename, -4) == "xlsx")
+                            $icon = "bi bi-file-excel";
+                        else if(substr($filename, -4) == ".pdf")
+                            $icon = "bi bi-file-pdf";
+                    @endphp
                     <form action="{{url("/filecollects/download_admin_file/$filecollect->id/base")}}" method="get">
                         @csrf
-                        <div class="input-group">
-                            <span class="input-group-text"><b>Σχετικό Έγγραφο</b></span>
+                        <div class="input-group my-2">
+                            <span ><b>Σχετικό Έγγραφο</b></span>
                         </div>
-                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
+                        <button class="btn btn-warning {{$icon}}" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
                     </form>
                 @endif
             </div>
             <div class="col">
                 @if($old_data->file)
-                    <div class="input-group">
-                        <span class="input-group-text"><b>Αρχεία που έχετε υποβάλλει</b></span>
+                    <div class="form-group my-2">
+                        <span ><b>Αρχεία που έχετε υποβάλλει</b></span>
                     </div>
                     <div class="vstack gap-2">
                         @foreach(json_decode($old_data->file, true) as $file)
                         @php
-                            $filename = $file['filename'];
+                            $filename = $file['original_filename'];
+                            if(substr($filename, -4) == "docx")
+                                $icon = "bi bi-file-word";
+                            else if(substr($filename, -4) == "xlsx")
+                                $icon = "bi bi-file-excel";
+                            else if(substr($filename, -4) == ".pdf")
+                                $icon = "bi bi-file-pdf";
                         @endphp
                         <div class="hstack gap-2">
                             <form action="{{url("/filecollects/download_stake_file/$old_data->id/$filename")}}" method="get">
                                 @csrf
-                                <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filename}} </button>
+                                <button class="btn btn-outline-success {{$icon}}" title="Λήψη αρχείου"> {{$filename}} </button>
                             </form>
                             <form action="{{url("/filecollects/delete_stake_file/$old_data->id/$filename")}}" method="post">
                                 @csrf
-                                <button type="submit" class="btn btn-danger bi bi-x-circle" title="Διαγραφή αρχείου" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφεί το αρχείο σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> </button>
+                                <button type="submit" class="btn btn-outline-danger bi bi-x-circle" title="Διαγραφή αρχείου" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφεί το αρχείο σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> </button>
                             </form>
                         </div>
                         @endforeach
@@ -103,12 +106,21 @@
             </div>
             <div class="col">
                 @if($filecollect->template_file)
+                    @php
+                        $filename = $filecollect->template_file;
+                        if(substr($filename, -4) == "docx")
+                            $icon = "bi bi-file-word";
+                        else if(substr($filename, -4) == "xlsx")
+                            $icon = "bi bi-file-excel";
+                        else if(substr($filename, -4) == ".pdf")
+                            $icon = "bi bi-file-pdf";
+                    @endphp
                     <form action="{{url("/filecollects/download_admin_file/$filecollect->id/template")}}" method="get">
                         @csrf
-                        <div class="input-group">
-                            <span class="input-group-text"><b>Πρότυπο Αρχείο</b></span>
+                        <div class="input-group my-2">
+                            <span ><b>Πρότυπο Αρχείο</b></span>
                         </div>
-                        <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
+                        <button class="btn btn-warning {{$icon}}" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
                     </form>
                 @endif
             </div>
@@ -130,7 +142,7 @@
             @else
                 <div class="input-group">
                     <span class="w-25"></span>
-                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτά αρχεία: pdf, xlsx, docx </small>
+                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτά αρχεία ({{$filecollect->no_of_files}}): pdf, xlsx, docx </small>
                 </div>
                 
             @endif

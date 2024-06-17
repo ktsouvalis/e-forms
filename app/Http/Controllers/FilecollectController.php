@@ -244,8 +244,11 @@ class FilecollectController extends Controller
                 $files_array_for_db =[];
                 if($request->hasFile('the_file')) {
                     $files = $request->file('the_file');
+                    $existing_files_number =0;
+                    if(!empty($record_to_update->file))
+                        $existing_files_number = count(json_decode($record_to_update->file, true));
                     $fileCount = count($files);
-                    if ($fileCount > $filecollect->no_of_files) {
+                    if ($fileCount + $existing_files_number > $filecollect->no_of_files) {
                         return back()->with('failure', 'Μπορείτε να ανεβάσετε το πολύ ' . $filecollect->no_of_files . ' αρχεία.');
                     }
                     $fileArray = !empty($record_to_update->file) ? json_decode($record_to_update->file, true) : [];

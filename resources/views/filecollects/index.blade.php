@@ -29,8 +29,8 @@
                     <th id="search">ID</th>
                     <th id="search">Name</th>
                     <th id="search">Τμήμα</th>
-                    <th id="search">Ορατή</th>
-                    <th id="search">Δέχεται</th>
+                    <th id="">Ορατή</th>
+                    <th id="">Δέχεται</th>
                     <th>Απαντήσεις</th>
                     <th>Διαγραφή</th>
                 </tr>
@@ -41,8 +41,7 @@
                             <tr >  
                                 <td>{{$one_filecollect->id}}</td>
                                 
-                                <td><div class="badge text-wrap" style="background-color:{{$one_filecollect->color}};"><a href="{{url("/filecollects/$one_filecollect->id/edit")}}" style="color:black; text-decoration:none;">{{$one_filecollect->name}}</a></div></td>
-                               
+                                <td><div class="text-wrap"><a href="{{url("/filecollects/$one_filecollect->id/edit")}}" style="color:black;">{{$one_filecollect->name}}</a></div></td>
                                 <td>
                                     {{$one_filecollect->department->name}}
                                 </td>

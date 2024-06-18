@@ -145,7 +145,7 @@
             @else
                 <div class="input-group">
                     <span class="w-25"></span>
-                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτά αρχεία ({{$filecollect->no_of_files}}): pdf, xlsx, docx </small>
+                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτά αρχεία ({{$filecollect->no_of_files}}): </small>
                 </div>
                 
             @endif

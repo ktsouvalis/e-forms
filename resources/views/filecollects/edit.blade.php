@@ -197,15 +197,27 @@
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Αριθμός pdf Αρχείων</span>
-                    <input name="no_of_pdf_files" type="number" class="form-control" required value="{{json_decode($filecollect->fileMime, true)['pdf']}}"><br>
+                    @php
+                        $fileMime = json_decode($filecollect->fileMime, true);
+                        $pdfCount = $fileMime && isset($fileMime['pdf']) ? $fileMime['pdf'] : 0;
+                    @endphp
+                    <input name="no_of_pdf_files" type="number" class="form-control" required value="{{$pdfCount}}"><br>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Αριθμός xlsx Αρχείων</span>
-                    <input name="no_of_xlsx_files" type="number" class="form-control" required value="{{json_decode($filecollect->fileMime, true)['xlsx']}}"><br>
+                    @php
+                        $fileMime = json_decode($filecollect->fileMime, true);
+                        $xlsxCount = $fileMime && isset($fileMime['xlsx']) ? $fileMime['xlsx'] : 0;
+                    @endphp
+                    <input name="no_of_xlsx_files" type="number" class="form-control" required value="{{$xlsxCount}}"><br>
                 </div>
                 <div class="input-group">
                     <span class="input-group-text w-25" id="basic-addon2">Αριθμός docx Αρχείων</span>
-                    <input name="no_of_docx_files" type="number" class="form-control" required value="{{json_decode($filecollect->fileMime, true)['docx']}}"><br>
+                    @php
+                        $fileMime = json_decode($filecollect->fileMime, true);
+                        $docxCount = $fileMime && isset($fileMime['docx']) ? $fileMime['docx'] : 0;
+                    @endphp
+                    <input name="no_of_docx_files" type="number" class="form-control" required value="{{$docxCount}}"><br>
                 </div>
                 <div class="input-group">
                     <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>

@@ -171,6 +171,8 @@ class FilecollectController extends Controller
     public function update(Filecollect $filecollect, Request $request){
         $this->authorize('view', $filecollect);
         $incomingFields = $request->all();
+        if($incomingFields['no_of_files'] > 5 or $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files']>5)
+            return back()->with('failure', 'Ο αριθμός των αρχείων προς υποβολή δεν πρέπει να ξεπερνάει το 5');
         if($incomingFields['no_of_files']!= $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files']){
             return back()->with('failure', 'Ο αριθμός των αρχείων δεν ταιριάζει με τον αριθμό των αρχείων pdf, docx και xlsx');
         }
@@ -189,12 +191,7 @@ class FilecollectController extends Controller
                 if(Filecollect::where('name', $given_name)->count()){
                     return back()->with('failure',"Υπάρχει ήδη συλλογή αρχείων με όνομα $given_name.");
                 } 
-            }
-            
-            if($filecollect->isDirty('no_of_files')){
-                if($filecollect->no_of_files > 5)
-                    $filecollect->no_of_files = 5;
-            }
+            } 
             $filecollect->save();
             $edited = true;
         }

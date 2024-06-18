@@ -96,13 +96,13 @@
                             <form action="{{url("/filecollects/download_stake_file/$old_data->id/$filename")}}" method="get">
                                 @csrf
                                 <button class="btn btn-outline-success {{$icon}}" title="Λήψη αρχείου"> {{$filename}} </button>
-                            </form>
-                            <form action="{{url("/filecollects/delete_stake_file/$old_data->id/$filename")}}" method="post">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-danger bi bi-x-circle" title="Διαγραφή αρχείου" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφεί το αρχείο σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> </button>
-                            </form>
+                            </form>  
                         </div>
                         @endforeach
+                        <form action="{{url("/filecollects/delete_stake_file/$old_data->id")}}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφούν ΟΛΑ τα αρχεία σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')"> Διαγραφή Αρχείων </button>
+                        </form>
                     </div>
                 @endif
             </div>
@@ -129,15 +129,36 @@
             </div>
         </div>
         <hr>
+        @php
+            $pdf = json_decode($filecollect->fileMime, true)['pdf'];
+            $xlsx = json_decode($filecollect->fileMime, true)['xlsx'];
+            $docx = json_decode($filecollect->fileMime, true)['docx'];
+        @endphp
+        
         <form action="{{url("/filecollects/upload_stake_file/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid">
             @csrf
             <div class="input-group">
-                <span class="input-group-text"><strong>Αποστολή αρχείου για τη συλλογή {{$filecollect->name}} </strong></span>
+                <span class="input-group-text"><strong>Αποστολή αρχείων για τη συλλογή {{$filecollect->name}} </strong>@if($pdf+$xlsx+$docx>1) <div class="text-muted input-group mx-2"><small> (Τα αρχεία υποβάλλονται όλα μαζί)</small></div> @endif</span>
+
             </div>
-            <div class="input-group">
-                <span class="input-group-text w-25" id="basic-addon4">Αρχεία</span>
-                <input name="the_file[]" type="file" class="form-control" multiple required><br>
-            </div>
+            @for($i=1; $i<=$pdf; $i++)
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon4">{{$i}}ο Αρχείο pdf</span>
+                    <input name="the_file_pdf{{$i}}" type="file" class="form-control" accept="application/pdf" required><br>
+                </div>
+            @endfor
+            @for($i=1; $i<=$xlsx; $i++)
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon4">{{$i}}ο Αρχείο xlsx</span>
+                    <input name="the_file_xlsx{{$i}}" type="file" class="form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required><br>
+                </div>
+            @endfor
+            @for($i=1; $i<=$docx; $i++)
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon4">{{$i}}ο Αρχείο docx</span>
+                    <input name="the_file_docx{{$i}}" type="file" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document" required><br>
+                </div>
+            @endfor
             @if(!$accepts)
                 <div class='alert alert-warning text-center my-2'>
                     <strong> <i class="bi bi-bricks"> </i> Η συλλογή αρχείου {{$filecollect->name}} δε δέχεται υποβολές</strong>
@@ -145,7 +166,7 @@
             @else
                 <div class="input-group">
                     <span class="w-25"></span>
-                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button><small class="text-muted m-3">Δεκτά αρχεία ({{$filecollect->no_of_files}}): pdf, xlsx, docx </small>
+                    <button type="submit" class="btn btn-primary my-2 bi bi-plus-circle"> Υποβολή</button>
                 </div>
                 
             @endif

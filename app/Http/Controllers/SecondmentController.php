@@ -20,7 +20,7 @@ class SecondmentController extends Controller
     //
     public function index()
     {
-        if(Auth::guard('user')){
+        if(Auth::guard('user')->check()){
             return view('microapps.secondments.index');
         }
         

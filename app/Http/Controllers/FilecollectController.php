@@ -171,7 +171,10 @@ class FilecollectController extends Controller
     public function update(Filecollect $filecollect, Request $request){
         $this->authorize('view', $filecollect);
         $incomingFields = $request->all();
-
+        if($incomingFields['no_of_files']!= $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files']){
+            return back()->with('failure', 'Ο αριθμός των αρχείων δεν ταιριάζει με τον αριθμό των αρχείων pdf, docx και xlsx');
+        }
+        $filecollect->fileMime = json_encode(array('pdf'=>$incomingFields['no_of_pdf_files'], 'docx'=>$incomingFields['no_of_docx_files'], 'xlsx'=>$incomingFields['no_of_xlsx_files']));
         $filecollect->name = $incomingFields['name'];
         $filecollect->no_of_files = $incomingFields['no_of_files'];
         $edited=false;
@@ -232,47 +235,47 @@ class FilecollectController extends Controller
             }
             else{
                 //validate the input file
-                $rule = [
-                    'the_file.*' => "file|max:3000|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                ];
-                $validator = Validator::make($request->all(), $rule);
-                if($validator->fails()){ 
-                    return back()->with('failure', $validator->errors()->first());
-                }
-
+                $pdf = json_decode($filecollect->fileMime, true)['pdf'];
+                $docx = json_decode($filecollect->fileMime, true)['docx'];
+                $xlsx = json_decode($filecollect->fileMime, true)['xlsx'];
                 
-                $files_array_for_db =[];
-                if($request->hasFile('the_file')) {
-                    $files = $request->file('the_file');
-                    $existing_files_number =0;
-                    if(!empty($record_to_update->file))
-                        $existing_files_number = count(json_decode($record_to_update->file, true));
-                    $fileCount = count($files);
-                    if ($fileCount + $existing_files_number > $filecollect->no_of_files) {
-                        return back()->with('failure', 'Μπορείτε να ανεβάσετε το πολύ ' . $filecollect->no_of_files . ' αρχεία.');
-                    }
-                    $fileArray = !empty($record_to_update->file) ? json_decode($record_to_update->file, true) : [];
-                    if (count($fileArray) == $filecollect->no_of_files) 
-                        return back()->with('failure', 'Έχετε φτάσει το όριο του μέγιστου αριθμού αρχείων που μπορείτε να ανεβάσετε.');
-                    $index = !empty($fileArray) ? (end($fileArray)['index'] + 1) : 1;
-                    foreach ($files as $file) {
-                        $originalFilename = $file->getClientOriginalName();
-                        $fileArray = !empty($record_to_update->file) ? json_decode($record_to_update->file, true) : [];
-                        if (in_array($originalFilename, array_column($fileArray, 'original_filename'))) {
-                            return back()->with('failure', 'Το αρχείο ' . $originalFilename . ' υπάρχει ήδη');
+                $types_and_mimes = [['type'=>'pdf', 'mime'=>'application/pdf'], ['type'=>'docx', 'mime'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document'] , ['type'=>'xlsx', 'mime'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']];
+                foreach($types_and_mimes as $type_and_mime){
+                    $t = $type_and_mime['type'];
+                    $m = $type_and_mime['mime'];
+                    if($$t){
+                        for ($i = 1; $i<=$$t; $i++) {
+                            $rule["the_file_".$t.$i] = "file|required|max:3000|mimetypes:".$m;
                         }
-                        
-                        $extension = $file->getClientOriginalExtension();
-                        $filename = $identifier . "_filecollect" . $filecollect->id . "(". $index . ")" . "." . $extension;
+                        $validator = Validator::make($request->all(), $rule);
+                        if($validator->fails()){ 
+                            return back()->with('failure', $validator->errors()->first());
+                        }
+                    }
+                }
+                $types = ['pdf', 'docx', 'xlsx'];
+                $files_array_for_db =[];
+                $index = 1;
+                foreach($types as $type){
+                    $orginalFilenamesArray = []; //an array to check if the file already exists
+                    for($i = 1; $i <= $$type; $i++ ){
+                        $file = $request->file("the_file_$type".$i);
+                        $originalFilename = $file->getClientOriginalName();
 
+                        // check if the file already exists
+                        if(in_array($originalFilename, $orginalFilenamesArray))
+                            return back()->with('failure', 'Το αρχείο '.$originalFilename.' υπάρχει ήδη');
+
+                        $orginalFilenamesArray[] = $originalFilename; //add the filename to the array for later check
+
+                        $extension = $file->getClientOriginalExtension();
+                        $filename = $identifier . "_filecollect" . $filecollect->id . "(". $i . ")" . "." . $extension;
                         try {
                             $path = $file->storeAs("file_collects/$filecollect->id", $filename);
-                            
                         } catch (\Exception $e) {
                             Log::channel('files')->error($identifier . ' '. $originalFilename. ' failure to upload file for filecollect ' . $filecollect->id . ' ' . $e->getMessage());
                             continue;
                         }
-
                         $files_array_for_db[] = [
                             'index' => $index++,
                             'filename' => $filename,
@@ -281,23 +284,10 @@ class FilecollectController extends Controller
                         Log::channel('files')->info($identifier . ' '. $originalFilename. ' success to upload file for filecollect ' . $filecollect->id);
                     }
                 }
-
                 //prepare the record to update and save it
-                
-                if (!empty($record_to_update->file)) {
-                    $existingFiles = json_decode($record_to_update->file, true);
-                    $lastIndex = end($existingFiles)['index'];
-                    foreach ($files_array_for_db as $file) {
-                        $file['index'] = ++$lastIndex;
-                        $existingFiles[] = $file;
-                    }
-                    $record_to_update->file = json_encode($existingFiles, JSON_UNESCAPED_UNICODE);
-                } else {
-                    $record_to_update->file = json_encode($files_array_for_db, JSON_UNESCAPED_UNICODE);
-                }
+                $record_to_update->file = json_encode($files_array_for_db, JSON_UNESCAPED_UNICODE);
                 $record_to_update->uploaded_at = Carbon::now();
                 $record_to_update->checked = false;
-                $record_to_update->stake_comment = null;
                 try{
                     $record_to_update->save();
                 }
@@ -342,7 +332,6 @@ class FilecollectController extends Controller
         } 
         else 
             return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
-        
     }
     
     public function check_uncheck(Request $request, FilecollectStakeholder $stakeholder){
@@ -391,7 +380,7 @@ class FilecollectController extends Controller
         }
     }
 
-    public function delete_stakeholder_file(Request $request, FilecollectStakeholder $stakeholder, $filename){
+    public function delete_stakeholder_file(FilecollectStakeholder $stakeholder){
         if($stakeholder->filecollect->accepts){
             if(Auth::guard('school')->check()){
                 $identifier = Auth::guard('school')->user()->code;
@@ -404,51 +393,24 @@ class FilecollectController extends Controller
 
             // Find the filename in the JSON string that matches the 'original_filename'
             $files = json_decode($stakeholder->file, true);
-            $fileData = array_filter($files, function($file) use ($filename) {
-            return $file['original_filename'] == $filename;
-            });
-            if (!empty($fileData)) {
-                $fileData = reset($fileData);
-                $filename = $fileData['filename'];
-            }
-            else {
-                return back()->with('failure', 'Το αρχείο δεν υπάρχει.');
-            }
-            // dd($filename);
-            $fileHandler = New FilesController;
-            try{
-                $fileHandler->delete_file($directory, $filename, 'local');
-            }
-            catch(\Exception $e){
-                Log::channel('files')->error($identifier." failed to delete file from filecollect $stakeholder->filecollect_id ".$e->getMessage());
-                return back()->with('failure', 'Το αρχείο δε διαγράφηκε, προσπαθήστε αργότερα ή επικοινωνήστε με τον διαχειριστή του συστήματος');
-            }
-
-            // Decode the JSON string to an array
-            $files = json_decode($stakeholder->file, true);
-
-            // Find the filename and remove the corresponding record
-            foreach ($files as $index => $file) {
-                if ($file['filename'] === $filename) {
-                    unset($files[$index]);
-                    break;
+            foreach($files as $file){
+                // dd($file);
+                $fileHandler = New FilesController;
+                try{
+                    $fileHandler->delete_file($directory, $file['filename'], 'local');
+                }
+                catch(\Exception $e){
+                    Log::channel('files')->error($identifier." failed to delete file from filecollect $stakeholder->filecollect_id ".$e->getMessage());
+                    return back()->with('failure', 'Το αρχείο δε διαγράφηκε, προσπαθήστε αργότερα ή επικοινωνήστε με τον διαχειριστή του συστήματος');
                 }
             }
-
-           // Check if there are any files left
-            if (!empty($files)) {
-                $files = array_values($files);
-                $stakeholder->file = json_encode($files, JSON_UNESCAPED_UNICODE);
-            } else {
-                $stakeholder->file = null;
-                $stakeholder->checked = false;
-                $stakeholder->uploaded_at = null;
-            }
-    
+            $stakeholder->file = null;
+            $stakeholder->checked = false;
+            $stakeholder->uploaded_at = null;
             $stakeholder->save();
 
             Log::channel('files')->info($identifier." successfully deleted file from filecollect $stakeholder->filecollect_id");
-            return back()->with('success', 'Το αρχείο διαγράφηκε');
+            return back()->with('success', 'Τα αρχεία διαγράφηκαν');
         }
         else abort(403);
     }

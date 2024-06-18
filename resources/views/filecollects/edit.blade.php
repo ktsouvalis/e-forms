@@ -196,6 +196,18 @@
                     <input name="no_of_files" type="number" class="form-control" placeholder="Όχι περισσότερα από 5" aria-label="maxfiles" aria-describedby="basic-addon2" required value="{{$filecollect->no_of_files}}"><br>
                 </div>
                 <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon2">Αριθμός pdf Αρχείων</span>
+                    <input name="no_of_pdf_files" type="number" class="form-control" required value="{{json_decode($filecollect->fileMime, true)['pdf']}}"><br>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon2">Αριθμός xlsx Αρχείων</span>
+                    <input name="no_of_xlsx_files" type="number" class="form-control" required value="{{json_decode($filecollect->fileMime, true)['xlsx']}}"><br>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text w-25" id="basic-addon2">Αριθμός docx Αρχείων</span>
+                    <input name="no_of_docx_files" type="number" class="form-control" required value="{{json_decode($filecollect->fileMime, true)['docx']}}"><br>
+                </div>
+                <div class="input-group">
                     <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                     <a href="{{url("/filecollects/$filecollect->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                 </div>

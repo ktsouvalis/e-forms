@@ -382,7 +382,7 @@ Route::group(['prefix' => 'filecollects'], function () {
 
     Route::get('/download_stake_file/{old_data}/{filename}', [FilecollectController::class,'download_stake_file']);
 
-    Route::post('/delete_stake_file/{stakeholder}/{filename}', [FilecollectController::class,'delete_stakeholder_file']);
+    Route::post('/delete_stake_file/{stakeholder}', [FilecollectController::class,'delete_stakeholder_file']);
 
     Route::post('/update_admin_file/{filecollect}/{type}', [FilecollectController::class, 'update_admin_file'])->middleware('can:view,filecollect');
 

@@ -20,7 +20,10 @@ class SecondmentController extends Controller
     //
     public function index()
     {
-        return view('microapps.secondments.index');
+        if(Auth::guard('user')){
+            return view('microapps.secondments.index');
+        }
+        
     }
     //Επεξεργασία, προσωρινή αποθήκευση, προεπισκόπηση και οριστική υποβολή αίτησης
     public function update(Secondment $secondment, Request $request){

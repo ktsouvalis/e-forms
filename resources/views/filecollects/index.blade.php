@@ -131,10 +131,6 @@
                     </div>
                 @endcan
                 <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Μέγιστος Αριθμός Αρχείων</span> 
-                    <input name="no_of_files" type="number" class="form-control" placeholder="Όχι περισσότερα από 5" aria-label="maxfiles" aria-describedby="basic-addon2" required value="@isset($dberror){{$old_data['max_files']}}@endisset"><br>  
-                </div>
-                <div class="input-group">
                     <span class="w-25"></span>
                     <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
                     <a href="{{url("/filecollects")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>

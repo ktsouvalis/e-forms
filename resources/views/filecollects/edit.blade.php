@@ -135,52 +135,17 @@
     @push('title')
         <title>{{$filecollect->name}}</title>
     @endpush
+    @if($filecollect->no_of_files<>0)
     @include('filecollects.filecollect_admin_before')
-        
+    @endif   
         <div class="container">
-            <div class="hstack gap-3">
-                <form action="{{url("/filecollects/update_admin_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                    @csrf
-                    <div class="input-group">
-                        <span class="input-group-text w-75"><strong>Ενημέρωση εγκυκλίου συλλογής</strong></span>
-                    </div>
-                    <div class="input-group w-75">
-                        <input name="base_file" type="file" class="form-control"><br>
-                    </div>
-                    <div class="input-group">
-                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                    </div>
-                </form>
-                @if($filecollect->base_file)
-                <form action="{{url("/filecollects/download_admin_file/$filecollect->id/base")}}" method="get">
-                    @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
-                </form>
-                @endif
+            @if(!$filecollect->no_of_files)
+            <div class="hstack gap-2">
+                <i class="bi bi-info-circle-fill text-wrap"></i>
+                <div><small>Συμπληρώστε τους αριθμούς για να συνεχίσετε με τα υπόλοιπα στοιχεία της συλλογής. </small></div>
             </div>
-                <hr>
-                <div class="hstack gap-3">
-                <form action="{{url("/filecollects/update_admin_file/$filecollect->id/template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
-                    @csrf
-                    <div class="input-group">
-                        <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου συλλογής</strong></span>
-                    </div>
-                    <div class="input-group w-75">
-                        <input name="template_file" type="file" class="form-control"><br>
-                    </div>
-                    <div class="input-group">
-                        <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Προσθήκη</button>
-                    </div>
-                </form>
-                @if($filecollect->template_file)
-                <form action="{{url("/filecollects/download_admin_file/$filecollect->id/template")}}" method="get">
-                    @csrf
-                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
-                </form>
-                @endif
-                </div>
-                <hr>
-                <form action="{{url("/filecollects/$filecollect->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
+            @endif
+            <form action="{{url("/filecollects/$filecollect->id")}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
                 @method('put')
                 <div class="input-group">
@@ -192,30 +157,23 @@
                     <input name="name" type="text" class="form-control" placeholder="Name" required value="{{$filecollect->name}}">
                 </div>
                 <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Μέγιστος Αριθμός Αρχείων</span>
-                    <input name="no_of_files" type="number" class="form-control" placeholder="Όχι περισσότερα από 5" aria-label="maxfiles" aria-describedby="basic-addon2" required value="{{$filecollect->no_of_files}}"><br>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Αριθμός pdf Αρχείων</span>
+                    <span class="input-group-text text-wrap w-25" id="basic-addon2">Πόσα αρχεία pdf θα ζητηθούν; </span>
                     @php
-                        $fileMime = json_decode($filecollect->fileMime, true);
-                        $pdfCount = $fileMime && isset($fileMime['pdf']) ? $fileMime['pdf'] : 0;
+                        $pdfCount = json_decode($filecollect->fileMime, true)['pdf'];
                     @endphp
                     <input name="no_of_pdf_files" type="number" class="form-control" required value="{{$pdfCount}}"><br>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Αριθμός xlsx Αρχείων</span>
+                    <span class="input-group-text text-wrap w-25" id="basic-addon2">πόσα excel (.xlsx);</span>
                     @php
-                        $fileMime = json_decode($filecollect->fileMime, true);
-                        $xlsxCount = $fileMime && isset($fileMime['xlsx']) ? $fileMime['xlsx'] : 0;
+                        $xlsxCount = json_decode($filecollect->fileMime, true)['xlsx'];
                     @endphp
                     <input name="no_of_xlsx_files" type="number" class="form-control" required value="{{$xlsxCount}}"><br>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-text w-25" id="basic-addon2">Αριθμός docx Αρχείων</span>
+                    <span class="input-group-text text-wrap w-25" id="basic-addon2">και πόσα word (.docx);</span>
                     @php
-                        $fileMime = json_decode($filecollect->fileMime, true);
-                        $docxCount = $fileMime && isset($fileMime['docx']) ? $fileMime['docx'] : 0;
+                        $docxCount = json_decode($filecollect->fileMime, true)['docx'];
                     @endphp
                     <input name="no_of_docx_files" type="number" class="form-control" required value="{{$docxCount}}"><br>
                 </div>
@@ -223,26 +181,83 @@
                     <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
                     <a href="{{url("/filecollects/$filecollect->id/edit")}}" class="btn btn-outline-secondary bi bi-arrow-counterclockwise m-2"> Αναίρεση αλλαγών</a>
                 </div>
-                </form>
-        <hr>
-        @if(Auth::user()->isAdmin())
-                <form action="{{url("/filecollects/num_of_lines/$filecollect->id")}}" method="post" class="container-fluid">
+            </form>
+            
+           
+            <hr>
+            @if($filecollect->no_of_files<>0)
+            <div class="hstack gap-3">
+                <form action="{{url("/filecollects/update_admin_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        <span class="input-group-text w-50"><strong>Εξαγωγή συγκεντρωτικού αρχείου*</strong></span>
+                        <span class="input-group-text w-75"><strong>Ενημέρωση εγκυκλίου συλλογής</strong></span>
                     </div>
-                    <div class="input-group w-50">
-                        <span class="input-group-text" id="basic-addon2">Αριθμός γραμμών για εξαγωγή</span>
-                        <input name="lines" type="number" value="@if($filecollect->lines_to_extract){{$filecollect->lines_to_extract}}@endif" class="form-control" required>
+                    <div class="input-group w-75">
+                        <input name="base_file" type="file" class="form-control"><br>
                     </div>
-                    
                     <div class="input-group">
-                        <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                        <button type="submit" class="btn btn-primary m-2 bi bi-upload" > Ανέβασμα</button>
                     </div>
-                    <div class="text-muted small">*Για τα αρχεία xlsx της συλλογής για τα οποία δίνεται πρότυπο</div>
                 </form>
+                @if($filecollect->base_file)
+                <form action="{{url("/filecollects/download_admin_file/$filecollect->id/base")}}" method="get">
+                    @csrf
+                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->base_file}} </button>
+                </form>
+                <form action="{{url("/filecollects/delete_admin_file/$filecollect->id/base")}}" method="post">
+                    @csrf
+                    <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής αρχείου')"> </button>
+                </form>
+                @endif
+            </div>
+            <hr>
+            <div class="hstack gap-3">
+            <form action="{{url("/filecollects/update_admin_file/$filecollect->id/template")}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                @csrf
+                <div class="input-group">
+                    <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου συλλογής</strong></span>
+                </div>
+                <div class="input-group w-75">
+                    <input name="template_file" type="file" class="form-control"><br>
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-primary m-2 bi bi-upload" > Ανέβασμα</button>
+                </div>
+            </form>
+            @if($filecollect->template_file)
+            <form action="{{url("/filecollects/download_admin_file/$filecollect->id/template")}}" method="get">
+                @csrf
+                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> {{$filecollect->template_file}} </button>
+            </form>
+            <form action="{{url("/filecollects/delete_admin_file/$filecollect->id/template")}}" method="post">
+                @csrf
+                <button type="submit" class="btn btn-danger bi bi-x-circle" onclick="return confirm('Επιβεβαίωση διαγραφής αρχείου')"> </button>
+            </form>
+            @endif
+            </div>
+            <hr>
+        
+        @if(Auth::user()->isAdmin() and $xlsxCount==1)
+       
+            <form action="{{url("/filecollects/num_of_lines/$filecollect->id")}}" method="post" >
+                @csrf
+                <div class="input-group">
+                    <span class="input-group-text w-50"><strong>Εξαγωγή συγκεντρωτικού αρχείου</strong></span>
+                </div>
+                <div class="input-group w-50">
+                    <span class="input-group-text" id="basic-addon2">Αριθμός γραμμών για εξαγωγή</span>
+                    <input name="lines" type="number" value="@if($filecollect->lines_to_extract){{$filecollect->lines_to_extract}}@endif" class="form-control" required>
+                </div>
                 
-                <hr>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση</button>
+                </div>
+                <div class="hstack gap-2">
+                    <i class="bi bi-info-circle-fill text-wrap"></i>
+                    <div><small>Για την περίπτωση που δίνεται <u>1 αρχείο xlsx</u> ως πρότυπο</small></div>
+                </div>
+            </form>
+            <hr>
         @endif
         <form action="{{url("/filecollects/update_comment/$filecollect->id")}}" method="post" enctype="multipart/form-data" class="container-fluid justify-content-center">
             @csrf
@@ -447,5 +462,6 @@
             </div>
             @endif 
             <hr>
+        @endif
         </div> 
 </x-layout>

@@ -116,6 +116,24 @@ class FilecollectController extends Controller
             ]);
     }
 
+    public function delete_admin_file(Filecollect $filecollect, $type){
+        $typefile = $type."_file";
+        $filename = $filecollect->$typefile;
+        $directory = "file_collects/$filecollect->id";
+        $fileHandler = new FilesController();
+        $delete = $fileHandler->delete_file($directory, $filename, 'local');
+        if($delete->getStatusCode() == 200){
+            $filecollect->$typefile = null;
+            $filecollect->save();
+            Log::channel('files')->info(Auth::user()->username." filecollect $filecollect->id delete $type success");
+            return back()->with('success', 'Το αρχείο διαγράφηκε');
+        }
+        else{
+            Log::channel('files')->error(Auth::user()->username." filecollect $filecollect->id delete $type: ".$e->getMessage());
+            return back()->with('failure', 'Κάποιο πρόβλημα προέκυψε (files). Ενημερώστε τον διαχειριστή του συστήματος.');
+        }
+    }
+
     public function update_comment(Request $request, Filecollect $filecollect){
         $validator = Validator::make($request->all(), [
             'comment' => 'max:5000',
@@ -138,10 +156,6 @@ class FilecollectController extends Controller
         else{
             $department_id = $request->user()->department->id;
         }
-        if($request->all()['no_of_files'] > 5)
-            $no_of_files = 5;
-        else
-            $no_of_files = $request->all()['no_of_files'];
 
         $table = array();
         $table['name'] = $request->all()['filecollect_name'];
@@ -149,7 +163,8 @@ class FilecollectController extends Controller
         $table['fileMime'] = 'nothing';
         $table['visible'] = 0;
         $table['accepts'] = 0;
-        $table['no_of_files'] = $no_of_files;
+        $table['fileMime'] = json_encode(array('pdf'=>0, 'docx'=>0, 'xlsx'=>0));
+        $table['no_of_files'] = 0;
         return $table;
     }
 
@@ -171,14 +186,11 @@ class FilecollectController extends Controller
     public function update(Filecollect $filecollect, Request $request){
         $this->authorize('view', $filecollect);
         $incomingFields = $request->all();
-        if($incomingFields['no_of_files'] > 5 or $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files']>5)
+        if($incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files']>5)
             return back()->with('failure', 'Ο αριθμός των αρχείων προς υποβολή δεν πρέπει να ξεπερνάει το 5');
-        if($incomingFields['no_of_files']!= $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files']){
-            return back()->with('failure', 'Ο αριθμός των αρχείων δεν ταιριάζει με τον αριθμό των αρχείων pdf, docx και xlsx');
-        }
         $filecollect->fileMime = json_encode(array('pdf'=>$incomingFields['no_of_pdf_files'], 'docx'=>$incomingFields['no_of_docx_files'], 'xlsx'=>$incomingFields['no_of_xlsx_files']));
         $filecollect->name = $incomingFields['name'];
-        $filecollect->no_of_files = $incomingFields['no_of_files'];
+        $filecollect->no_of_files = $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files'];
         $edited=false;
             
         // check if changes happened to filecollect table

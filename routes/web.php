@@ -386,6 +386,8 @@ Route::group(['prefix' => 'filecollects'], function () {
 
     Route::post('/update_admin_file/{filecollect}/{type}', [FilecollectController::class, 'update_admin_file'])->middleware('can:view,filecollect');
 
+    Route::post('/delete_admin_file/{filecollect}/{type}', [FilecollectController::class, 'delete_admin_file'])->middleware('can:view,filecollect');
+
     Route::post('/update_comment/{filecollect}', [FilecollectController::class, 'update_comment'])->middleware('can:view,filecollect');
 
     Route::post('/change_status/{filecollect}', [FilecollectController::class, 'change_status'])->middleware('can:view,filecollect');

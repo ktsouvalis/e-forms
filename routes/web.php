@@ -238,7 +238,7 @@ Route::group(['prefix' => 'notifications'], function(){
 
 //SECONDMENTS ROUTES
 
-Route::resource('secondments', SecondmentController::class);
+Route::resource('secondments', SecondmentController::class)->middleware('canViewMicroapp');
 
 Route::group(['prefix' => 'secondments'], function () {
     Route::view('/{secondment}', 'microapps.secondments.toPDF')->name('secondments.view_preferences');

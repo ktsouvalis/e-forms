@@ -172,6 +172,8 @@
             @php
                 $total_st_number = ($school->primary ==1)? $old_data->total_students_nr : $old_data->nr_of_students1;
                 $nextYearLeitourgikotita = App\Http\Controllers\microapps\EnrollmentController::nextYearsLeitourgikotita($school->primary, $school->leitourgikotita, $total_st_number);
+                if($school->code=='9060295' || $school->code=='9060336')
+                    $nextYearLeitourgikotita = 4;
                 $max_class_numbers = ($nextYearLeitourgikotita >= 6) ? 6 : $nextYearLeitourgikotita;
                 $enrollments_classes = App\Models\microapps\EnrollmentsClasses::where('enrollment_id', $old_data->id)->first();
                 if($enrollments_classes){

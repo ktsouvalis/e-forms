@@ -23,6 +23,7 @@ class SecondmentController extends Controller
         $this->middleware('auth')->only(['index']);
         $this->middleware('isTeacher')->except('index');
     }
+
     public function index(){
        return view('microapps.secondments.index');
     }

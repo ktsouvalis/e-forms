@@ -18,12 +18,13 @@ use App\Http\Controllers\FilesController;
 class SecondmentController extends Controller
 {
     //
-    public function index()
+    public function __construct()
     {
-        if(Auth::guard()->check()){
-            return view('microapps.secondments.index');
-        }
-        
+        $this->middleware('auth')->only(['index']);
+        $this->middleware('isTeacher')->except('index');
+    }
+    public function index(){
+       return view('microapps.secondments.index');
     }
     //Επεξεργασία, προσωρινή αποθήκευση, προεπισκόπηση και οριστική υποβολή αίτησης
     public function update(Secondment $secondment, Request $request){

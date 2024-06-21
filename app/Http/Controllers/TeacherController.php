@@ -266,7 +266,7 @@ class TeacherController extends Controller
             
             //myschool stores the afm like eg "=999999999"
             $afm = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-            $check['afm'] = strlen($afm) > 7 ? substr($afm, 2, -1) : $afm; // remove from start =" and remove from end "
+            $check['afm'] = substr($afm, 2, -1); // remove from start =" and remove from end "
 
             //check obvious fields
             $check['gender']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();

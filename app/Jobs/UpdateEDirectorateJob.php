@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use GuzzleHttp\Client;
+use App\Models\Superadmin;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

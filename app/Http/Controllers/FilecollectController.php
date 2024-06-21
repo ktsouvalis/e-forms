@@ -10,9 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\FilecollectStakeholder;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Mail\FilecollectPersonalMessage;
 use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
@@ -556,9 +558,10 @@ class FilecollectController extends Controller
         $stakeholder->message_from_admin = $request->input('message');
         $stakeholder->message_from_admin_at = Carbon::now();
         $stakeholder->save();
-
-        return back()->with('success', 'Το μήνυμα εστάλη');
-        // return back()->with('success', $stakeholder->stakeholder->name);
+        Mail::to($stakeholder->stakeholder->mail)->send(new FilecollectPersonalMessage($stakeholder));
+        Log::channel('mails')->info(Auth::user()->username. ": Filecollect ".$stakeholder->filecollect->id." FilecollectPersonalMessage try to ".$stakeholder->stakeholder->mail);
+        
+        return back()->with('success', 'Το μήνυμα εστάλη στην προσωπική καρτέλα του ενδιαφερόμενου. Ο χρήστης ενημερώθηκε και με email.');
     }
 
     public function download_admin_file(Filecollect $filecollect, $type){

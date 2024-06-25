@@ -399,7 +399,7 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'LivingMunicipality', 'contents' => $secondment->living_municipality];
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
-        //print_r($data);
+           dd(json_encode($data));
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [
@@ -419,7 +419,6 @@ class SecondmentController extends Controller
     }
     
     public function sendAttachmentsToProtocol($data){
-        dd(json_encode($data));
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/attachments', [
             'headers' => [

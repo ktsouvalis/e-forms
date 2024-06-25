@@ -417,8 +417,9 @@ class SecondmentController extends Controller
             return $body;
         }
     }
-
+    
     public function sendAttachmentsToProtocol($data){
+        dd(json_encode($data));
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/attachments', [
             'headers' => [

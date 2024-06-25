@@ -50,6 +50,7 @@ class SecondmentController extends Controller
                 try{
                     $protocol_message = $this->sendSecondmentToProtocol($secondment , $crOrPreferences = 1);
                     if($protocol_message == false){
+
                         return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η αποστολή στο πρωτόκολλο. Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
                     }
                     $protocol_message = explode(" - ", $protocol_message);
@@ -57,7 +58,7 @@ class SecondmentController extends Controller
                     $secondment->protocol_date = $protocol_message[1];
                     $secondment->save();
                 } catch(\Exception $e) {
-                    //dd($e->getMessage());
+                    dd($e->getMessage());
                     return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο του ΠΥΣΠΕ. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
                 }
                 //Οριστικοποίησε την αίτηση - criteria_submitted = 1

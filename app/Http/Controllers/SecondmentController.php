@@ -57,7 +57,7 @@ class SecondmentController extends Controller
                     $secondment->protocol_date = $protocol_message[1];
                     $secondment->save();
                 } catch(\Exception $e) {
-                    dd($e->getMessage());
+                    dd($e->getMessage(), $protocol_message);
                     return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο του ΠΥΣΠΕ. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
                 }
                 //Οριστικοποίησε την αίτηση - criteria_submitted = 1
@@ -399,7 +399,7 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'LivingMunicipality', 'contents' => $secondment->living_municipality];
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
-        
+        echo $data;
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [

@@ -411,7 +411,7 @@ class SecondmentController extends Controller
         $status = $response->getStatusCode();
         $body = $response->getBody();
         if($status != 200){
-            dd($body);
+            //dd($body);
             return false;
         } else {
             return $body;

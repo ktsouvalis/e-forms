@@ -399,7 +399,7 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'LivingMunicipality', 'contents' => $secondment->living_municipality];
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
-           dd(json_encode($data));
+           //dd(json_encode($data));
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [

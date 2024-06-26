@@ -20,8 +20,8 @@ class SecondmentController extends Controller
     //
     public function __construct()
     {
-        $this->middleware('auth')->only(['index']);
-        $this->middleware('isTeacher')->except('index');
+        $this->middleware('auth')->only(['index', 'allow_extra_files']);
+        // $this->middleware('isTeacher')->except('index');
     }
 
     public function index(){

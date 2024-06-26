@@ -21,7 +21,7 @@ class SecondmentController extends Controller
     public function __construct()
     {
         $this->middleware('auth')->only(['index', 'allow_extra_files']);
-        // $this->middleware('isTeacher')->except('index');
+        $this->middleware('isTeacher')->only(['create','edit','modify','revoke', 'update', 'store', 'upload_files', 'delete_file', 'download_file']);
     }
 
     public function index(){
@@ -30,6 +30,9 @@ class SecondmentController extends Controller
     //Επεξεργασία, προσωρινή αποθήκευση, προεπισκόπηση και οριστική υποβολή αίτησης
     public function update(Secondment $secondment, Request $request){
         // dd($request->input('action'));
+        if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
+            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
         if($request->input()['criteriaOrPreferences'] == 1){        //Αποθήκευση μοριοδοτούμενων κριτηρίων
             if($request->input('action') == "submit"){ //Ζητάει οριστική υποβολή κριτηρίων
                 // Αποθήκευσε την αίτηση
@@ -142,8 +145,11 @@ class SecondmentController extends Controller
         return view('microapps.secondments.create');
     }
     //Επεξεργασία αίτησης
-    public function edit(Secondment $secondment, Request $request)
-    {   if($request->input()){
+    public function edit(Secondment $secondment, Request $request){
+        if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
+            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
+        if($request->input()){
             $criteriaOrPreferences = $request->input()['criteriaOrPreferences'];
         } else {
             $criteriaOrPreferences = 1;
@@ -191,12 +197,18 @@ class SecondmentController extends Controller
     }
 
     public function modify(Secondment $secondment){
+        if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
+            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
         $secondment->submitted = 0;
         $secondment->save();
         return back()->with('success', 'Η δήλωση σχολείων ενεργοποιήθηκε για τροποποίηση. Μπορείτε να την επεξεργαστείτε και να την υποβάλλετε ξανά.');
     }
     //Διαγραφή αρχείου
     public function delete_file(Secondment $secondment, $serverFileName){
+        if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
+            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
         $fileHandler = new FilesController();
         $files = json_decode($secondment->files_json, true);
         try{
@@ -216,6 +228,9 @@ class SecondmentController extends Controller
     }
     //Ανέβασμα αρχείων
     public function upload_files(Request $request, Secondment $secondment){
+        if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
+            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
         $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
             'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
@@ -511,6 +526,9 @@ class SecondmentController extends Controller
     }
 
     public function revoke(Secondment $secondment){
+        if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
+            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
         $protocolElements = explode("/", $secondment->protocol_date);
         $protocolYear = $protocolElements[2];
         try{

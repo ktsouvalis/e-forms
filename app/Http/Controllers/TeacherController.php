@@ -385,8 +385,10 @@ class TeacherController extends Controller
                         'active'=>1
                     ]
                 );
+                echo "<script>console.log('".$teacher['afm']."')</script>";
                 if($teacherModel->wasRecentlyCreated or $teacherModel->wasChanged()){
                     $wasChanged = true;
+                    echo "<script>console.log('  true')</script>";
                 }
             }
             catch(Throwable $e){

@@ -50,6 +50,7 @@ class SecondmentController extends Controller
                 try{
                     $protocol_message = $this->sendSecondmentToProtocol($secondment , $crOrPreferences = 1);
                     if($protocol_message == false){
+
                         return back()->with('failure', 'Η αίτηση αποθηκεύτηκε αλλά απέτυχε η αποστολή στο πρωτόκολλο. Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
                     }
                     $protocol_message = explode(" - ", $protocol_message);
@@ -399,7 +400,9 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'LivingMunicipality', 'contents' => $secondment->living_municipality];
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
-        
+        //print_r($data);
+        //print_r(json_encode($data));
+        //dd("test");
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [
@@ -411,13 +414,13 @@ class SecondmentController extends Controller
         $status = $response->getStatusCode();
         $body = $response->getBody();
         if($status != 200){
-            dd($body);
+            //dd($body);
             return false;
         } else {
             return $body;
         }
     }
-
+    
     public function sendAttachmentsToProtocol($data){
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/attachments', [

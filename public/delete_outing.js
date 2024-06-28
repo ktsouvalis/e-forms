@@ -1,6 +1,10 @@
 $(document).ready(function () {
     $('body').on('click', '.outing-delbox', function () {
-
+        // Confirmation dialog
+        const isConfirmed = confirm('Επιβεβαίωση διαγραφής εκδρομής;');
+        if (!isConfirmed) {
+            return;
+        }
         const outingId = $(this).data('outing-id');
         // Get the CSRF token from the meta tag
         const csrfToken = $('meta[name="csrf-token"]').attr('content');

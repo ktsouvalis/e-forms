@@ -15,6 +15,30 @@
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
+        <script>
+           $(document).ready(function() {
+                $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    var baseUrl = "{{ route('outings.send_delete_request', ['outing' => 'OUTING_ID_PLACEHOLDER']) }}";
+                    var outingId = $(this).data('outing-id');
+                    
+                    $('#outingId').val(outingId);
+
+                    var actionUrl = baseUrl.replace('OUTING_ID_PLACEHOLDER', outingId);
+                    $('#deleteRequestForm').attr('action', actionUrl); 
+
+                    setTimeout(function() {
+                        $('#deleteRequestModal').modal('show');
+                    }, 50);
+
+                    $('#deleteRequestModal').on('shown.bs.modal', function() {
+                        $('#delete_request').focus();
+                    });
+                });
+            });
+        </script>
     @endpush
     @push('title')
         <title>Εκδρομές</title>
@@ -87,6 +111,28 @@
                 </nav>
             </div> 
             <div class="py-3">
+                <div class="modal fade" id="deleteRequestModal" tabindex="-1" role="dialog" >
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-light">
+                            <h5 class="modal-title" id="messageModalLabel">Αιτιολογία Αιτήματος Διαγραφής</h5>
+                        </div>
+                        <form id="deleteRequestForm" method="post">
+                            @csrf
+                            <div class="modal-body bg-light">
+                                <input type="hidden" id="outingId" name="outing_id">
+                                <div class="form-group">
+                                    <textarea class="form-control" id="delete_request" name="delete_request" required></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
+                                <button type="submit" class="btn btn-outline-primary bi bi-send"> Αποστολή</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
                 <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
                 <thead>
@@ -142,7 +188,11 @@
                             
                             @else
                             <td> - </td>
-                            <td> - </td>
+                            <td>
+                                <a href="#" class="no-spinner" data-toggle="modal" data-target="#deleteRequestModal" data-outing-id="{{$outing->id}}">
+                                    Υποβολή Αιτήματος Διαγραφής
+                                </a>
+                            </td>
                             @endif
                         </tr> 
                     @endforeach   

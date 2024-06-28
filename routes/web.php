@@ -313,6 +313,8 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
     Route::post('/check/{outing}', [OutingsController::class,'check_outing'])->name('outings.check'); //checking access inside the method
 
     Route::post('/count_sections/{outing}', [OutingsController::class,'count_sections'])->name('outings.count_sections')->middleware('auth');
+
+    Route::post('/send_delete_request/{outing}', [OutingsController::class, 'send_delete_request'])->name('outings.send_delete_request');//checking access inside the method
 });
 
 // ALL_DAY_SCHOOL ROUTES

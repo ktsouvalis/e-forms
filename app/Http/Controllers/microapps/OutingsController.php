@@ -5,12 +5,14 @@ namespace App\Http\Controllers\microapps;
 use Throwable;
 use App\Models\School;
 use App\Models\Microapp;
+use App\Models\MicroappUser;
 use Illuminate\Http\Request;
 use App\Models\microapps\Outing;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\OutingSection;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +23,7 @@ class OutingsController extends Controller
 
     public function __construct(){
         $this->middleware('auth')->only(['index']);
-        $this->middleware('isSchool')->only(['create', 'store']);
+        $this->middleware('isSchool')->only(['create', 'store', 'send_delete_request']);
         $this->middleware('canUpdateOuting')->only(['edit', 'update']);
         $this->microapp = Microapp::where('url', '/outings')->first();
     }
@@ -264,5 +266,16 @@ class OutingsController extends Controller
             
         }
         return response()->json(['sections' => json_encode($counting)]);
+    }
+
+    public function send_delete_request(Request $request, Outing $outing){
+        if($outing->school_id != Auth::guard('school')->user()->id)
+            return back()->with('failure', 'Δεν έχετε δικαίωμα να ζητήσετε τη διαγραφή της εκδρομής');
+        $microapp = Microapp::where('url', '/outings')->first();
+        $string = '';
+        foreach(MicroappUser::where('microapp_id', $this->microapp->id)->get() as $user){
+            $user->user->notify(new UserNotification('Ο χρήστης '.Auth::guard('school')->user()->name.' ζήτησε τη διαγραφή της εκδρομής '.$outing->id.' με αιτιολογία: '.$request->input('delete_request'), 'Διαγραφή εκδρομής '.$outing->id));
+        }
+        return back()->with('success', "Το αίτημα διαγραφής της εκδρομής στάλθηκε στο Τμήμα Εκπαιδευτικών Θεμάτων της Διεύθυνσης Π.Ε.");
     }
 }

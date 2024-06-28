@@ -40,7 +40,7 @@
                     <th id="search">Σχολείο</th>
                     <th id="search">Ημερομηνία (έτος/μήνας/μέρα)</th>
                     <th id="">Αρχείο</th>
-                    <th id="search">Τύπος</th>
+                    <th id="search">ID/Τύπος</th>
                     <th id="search">Έλεγχος</th>
                     <th id="">Τμήματα (πλήθος εκδρομών)</th>
                     <th id="search">Δράση</th>
@@ -67,7 +67,7 @@
                             {{$outing->school->telephone}}
                             </div>
                         </td>
-                        <td>{{$outing->type->description}}</td>
+                        <td>{{$outing->id}}/{{$outing->type->description}}</td>
                         @php
                             $text = $outing->checked ? 'Ελέγχθηκε' : 'Προς έλεγχο';
                         @endphp
@@ -80,10 +80,10 @@
                             <div id="calc_td_{{$outing->id}}"> </div>
                             <button id= "hide_button-{{$outing->id}}" class="bi bi-arrow-bar-up btn btn-primary outing-hidebox hide-button" data-outing-id="{{ $outing->id }}" > </button>
                         </td>
-                        <td>{{$outing->destination}}</td>
+                        <td style="overflow-wrap: break-word; word-break: break-all;">{{$outing->destination}}</td>
                         <td>{{$outing->updated_at}}</td>
                         <td >
-                            <button class="bi bi-x-circle btn btn-danger outing-delbox" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')" data-outing-id="{{ $outing->id }}">
+                            <button class="bi bi-x-circle btn btn-danger outing-delbox" data-outing-id="{{ $outing->id }}">
                         </td>
                     </tr> 
                 @endforeach   

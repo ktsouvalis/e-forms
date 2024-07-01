@@ -16,6 +16,9 @@
     @push('title')
     <title>Επεξεργασία χαρακτηριστικών {{$microapp->name}}</title>
     @endpush
+    @php
+        $my_date =Illuminate\Support\Carbon::parse($microapp->closes_at);
+    @endphp
     @include('microapps.microapps_admin_before')
     <div class="container">
         @if(Auth::user()->isAdmin())
@@ -32,6 +35,11 @@
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon2">Name</span>
                         <input name="name" type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon2" required value="{{$microapp->name}}"><br>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text w-25" id="basic-addon3">Κλείνει στις</span>
+                        <input name="closes_at" type="date" class="form-control" aria-describedby="basic-addon3"><br>
+                        <label class="form-control text-muted">{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}}</label>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon3">Url</span>

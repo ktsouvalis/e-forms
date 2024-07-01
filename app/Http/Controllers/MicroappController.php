@@ -145,8 +145,10 @@ class MicroappController extends Controller
      */
     public function update(Microapp $microapp, Request $request){
         $incomingFields = $request->all();
-
+        // dd($incomingFields);
         $microapp->name = $incomingFields['name'];
+        if($incomingFields['closes_at']!=null)
+            $microapp->closes_at = $incomingFields['closes_at'];
         $microapp->url = $incomingFields['url'];
         $microapp->color = $incomingFields['color'];
         $microapp->icon = $incomingFields['icon'];

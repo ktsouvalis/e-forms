@@ -147,7 +147,7 @@ class FilecollectController extends Controller
         $sanitizedComment = strip_tags($comment, '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
         $filecollect->comment = $sanitizedComment;
         $filecollect->save();
-        Log::channel('user_memorable_actions')->info(Auth::user()." updated filecollect $filecollect->id comment");
+        Log::channel('user_memorable_actions')->info(Auth::user()->username." updated filecollect $filecollect->id comment");
         return back()->with('success', 'Το σχόλιο αποθηκεύτηκε');    
     }
 

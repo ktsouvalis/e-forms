@@ -38,8 +38,8 @@
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon3">Κλείνει στις</span>
-                        <input name="closes_at" type="date" class="form-control" aria-describedby="basic-addon3"><br>
-                        <label class="form-control text-muted">{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}}</label>
+                        <input name="closes_at" type="date" class="form-control datepicker" aria-describedby="basic-addon3"  value="{{$my_date->format('Y-m-d')}}"><br>
+                        <label class="form-control text-muted">{{$my_date->format('F j, Y')}}</label>
                     </div>
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon3">Url</span>

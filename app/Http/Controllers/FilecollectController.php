@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use DOMDocument;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Filecollect;
@@ -145,6 +146,20 @@ class FilecollectController extends Controller
         }
         $comment= $request->input('comment');
         $sanitizedComment = strip_tags($comment, '<p><a><b><i><u><ul><ol><li>'); //allow only these tags
+        
+        // Load the HTML string into a DOMDocument object
+        $dom = new DOMDocument();
+        @$dom->loadHTML(mb_convert_encoding($sanitizedComment, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        
+        // Find all <a> elements and add the 'no-spinner' class
+        foreach ($dom->getElementsByTagName('a') as $link) {
+            $existingClasses = $link->getAttribute('class');
+            $link->setAttribute('class', trim($existingClasses . ' no-spinner'));
+        }
+    
+        // Save the modified HTML back to a string
+        $sanitizedComment = $dom->saveHTML();
+
         $filecollect->comment = $sanitizedComment;
         $filecollect->save();
         Log::channel('user_memorable_actions')->info(Auth::user()->username." updated filecollect $filecollect->id comment");

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\microapps;
 
 use Exception;
 use Throwable;
+use DOMDocument;
 use App\Models\User;
 use App\Models\Month;
 use App\Models\School;
@@ -189,6 +190,19 @@ class TicketsController extends Controller
     }
 
     private function add_post($ticket_id, $user_id, $type, $string){
+        // Load the HTML string into a DOMDocument object
+        $dom = new DOMDocument();
+        @$dom->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        
+        // Find all <a> elements and add the 'no-spinner' class
+        foreach ($dom->getElementsByTagName('a') as $link) {
+            $existingClasses = $link->getAttribute('class');
+            $link->setAttribute('class', trim($existingClasses . ' no-spinner'));
+        }
+    
+        // Save the modified HTML back to a string
+        $string = $dom->saveHTML();
+        
         try{
             TicketPost::create([
                 'ticket_id' => $ticket_id,

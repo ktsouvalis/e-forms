@@ -48,6 +48,7 @@ class FilesController extends Controller
             return Storage::disk($driver)->download($directory."/".$original_filename, $filename);
         }
         catch(\Exception $e){
+            dd($e->getMessage());
             return response()->json(['error'=>$e->getMessage()], 500);
         }
     }

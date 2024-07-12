@@ -35,8 +35,36 @@ class WhocanController extends Controller
      * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
     public function import_whocans(Request $request, $my_app, $my_id){
-        // reading input and seperate identifiers
-        $identifiers = explode(',', $request->input('afmscodes'));
+        // check how are seperated the identifiers
+        if(strpos($request->input('afmscodes'), "\r\n") !== false)
+        {
+            $identifiers = explode("\r\n", $request->input('afmscodes'));
+        }
+        else if(strpos($request->input('afmscodes'), "\r") !== false)
+        {
+            $identifiers = explode("\r", $request->input('afmscodes'));
+        }
+        else if(strpos($request->input('afmscodes'), "\n") !== false)
+        {
+            $identifiers = explode("\n", $request->input('afmscodes'));
+        }
+        else if(strpos($request->input('afmscodes'), ",") !== false)
+        {
+            $identifiers = explode(',', $request->input('afmscodes'));
+        }
+        else if(strpos($request->input('afmscodes'), ";") !== false)
+        {
+            $identifiers = explode(';', $request->input('afmscodes'));
+        }
+        else if(strpos($request->input('afmscodes'), " ") !== false)
+        {
+            $identifiers = explode(' ', $request->input('afmscodes'));
+        }
+        else
+        {
+            $identifiers = explode(',', $request->input('afmscodes'));
+        }
+        //$identifiers = explode(',', $request->input('afmscodes'));
         $found=0;
         $not_found=[];
         // Regular expression for a 6-digit number
@@ -45,7 +73,6 @@ class WhocanController extends Controller
         $regex9 = '/(?<!\d)\d{9}(?!\d)/';
         // Regular expression for a 7-digit number
         $regex7 = '/(?<!\d)\d{7}(?!\d)/';
-
         //iterating through identifiers
         foreach($identifiers as $identifier){
             $fieldOfInterest = '';

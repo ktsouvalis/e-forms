@@ -297,7 +297,7 @@
             </div>
             <div class="input-group">
                 <span class="input-group-text w-25" id="basic-addon2">Name</span>
-                <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,)" required></textarea>
+                <textarea name="afmscodes"  class="form-control" cols="122" rows="5" style="resize: none;" placeholder="ΑΦΜ εκπαιδευτικών ή/και κωδικοί σχολείων χωρισμένα με κόμμα (,) κενό ( ) ή αλλαγή γραμμής." required></textarea>
             </div>
             <div class="input-group py-1 px-1">
                 <button type="submit" class="btn btn-primary bi bi-database-add"> Εισαγωγή Σχολείων/Εκπαιδευτικών</button>

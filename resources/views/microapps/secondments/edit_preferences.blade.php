@@ -226,7 +226,7 @@
                             
                                     <form action="{{route('secondments.modify', ['secondment'=>$secondment])}}" method="post">
                                     @csrf
-                                        <button class="btn btn-info bi bi-arrow-counterclockwise" title="modify">Τροποποίηση</button>
+                                        <button class="btn btn-info bi bi-arrow-counterclockwise" title="modify" @if($microapp->accepts == 0) disabled @endif >Τροποποίηση</button>
                                     </form>
                                     {{-- <a href="{{route('secondments.revoke', ['secondment'=>$secondment])}}" class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke">Ανάκληση</a> --}}
                                     Πατώντας τροποποίηση, η αίτηση θα ενεργοποιηθεί εκ νέου για Δήλωση Σχολείων.

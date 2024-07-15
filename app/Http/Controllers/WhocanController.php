@@ -35,7 +35,7 @@ class WhocanController extends Controller
      * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
     public function import_whocans(Request $request, $my_app, $my_id){
-        // check how are seperated the identifiers
+        // check how the identifiers are seperated
         if(strpos($request->input('afmscodes'), "\r\n") !== false)
         {
             $identifiers = explode("\r\n", $request->input('afmscodes'));

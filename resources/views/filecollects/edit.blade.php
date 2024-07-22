@@ -2,7 +2,8 @@
     @push('links')
         <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
         <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
-        <link href="{{asset('summernote-0.8.18-dist/summernote-lite.min.css')}}" rel="stylesheet">
+        <link href="{{asset('summernote-0.8.18-dist/summernote-lite.min.css')}}" rel="stylesheet"/>
+        <link href="{{asset('customCss/style.css')}}" rel="stylesheet"/>
     @endpush
     @push('scripts')
         <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
@@ -130,6 +131,18 @@
                 }
             });
         </script>
+        <script>//Change the file input text to the selected file name
+            document.getElementById('file1').addEventListener('change', function() {
+                var fileName = document.getElementById('file1').files[0].name;
+                document.getElementById('file-chosen1').textContent = fileName;
+                document.getElementById('file-chosen-label1').textContent = 'Επιλεγμένο αρχείο: ';
+            });
+            document.getElementById('file2').addEventListener('change', function() {
+                var fileName = document.getElementById('file2').files[0].name;
+                document.getElementById('file-chosen2').textContent = fileName;
+                document.getElementById('file-chosen-label2').textContent = 'Επιλεγμένο αρχείο: ';
+            });
+        </script>
         <script src="{{asset('charcount.js')}}"></script>
     @endpush
     @push('title')
@@ -189,11 +202,16 @@
             <div class="hstack gap-3">
                 <form action="{{url("/filecollects/update_admin_file/$filecollect->id/base")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
-                    <div class="input-group">
+                    <div class="input-group py-2">
                         <span class="input-group-text w-75"><strong>Ενημέρωση εγκυκλίου συλλογής</strong></span>
                     </div>
                     <div class="input-group w-75">
-                        <input name="base_file" type="file" class="form-control"><br>
+                        <div class="custom-file-upload">
+                            <input type="file" id="file1" class="file-input" name="base_file" required/>
+                            <label for="file1" class="file-label" id="file-chosen-label1">Επιλέξτε αρχείο: </label>
+                            <span id="file-chosen1">Δεν έχει επιλεγεί</span>
+                        </div>
+                        {{-- <input name="base_file" type="file" class="form-control" required><br> --}}
                     </div>
                     <div class="input-group">
                         <button type="submit" class="btn btn-primary m-2 bi bi-upload" > Ανέβασμα</button>
@@ -218,7 +236,12 @@
                     <span class="input-group-text w-75"><strong>Ενημέρωση πρότυπου αρχείου συλλογής</strong></span>
                 </div>
                 <div class="input-group w-75">
-                    <input name="template_file" type="file" class="form-control"><br>
+                    <div class="custom-file-upload">
+                        <input type="file" id="file1" class="file-input" name="template_file" required/>
+                        <label for="file1" class="file-label" id="file-chosen-label1">Επιλέξτε αρχείο: </label>
+                        <span id="file-chosen1">Δεν έχει επιλεγεί</span>
+                    </div>
+                    {{-- <input name="template_file" type="file" class="form-control"><br> --}}
                 </div>
                 <div class="input-group">
                     <button type="submit" class="btn btn-primary m-2 bi bi-upload" > Ανέβασμα</button>

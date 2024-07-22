@@ -1,0 +1,20 @@
+/* The CSS */
+.file-input {
+    display: none; /* Hide the default input */
+}
+
+.file-label {
+    background-color: #46515d;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.file-label:hover {
+    background-color: #aec3d9;
+}
+
+#file-chosen {
+    margin-left: 10px;
+}

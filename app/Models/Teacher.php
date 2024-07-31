@@ -54,6 +54,10 @@ class Teacher extends Authenticatable
         return $this->morphMany(FileshareStakeholder::class, 'stakeholder');
     }
 
+    public function leaves(){
+        return $this->hasMany(TeacherLeaves::class, 'afm', 'afm');
+    }
+
     public function addedbys()
     {
         return $this->morphMany(FileshareStakeholder::class, 'addedby');

@@ -70,6 +70,28 @@
                 </div>
             </form>
         </nav>
+
+        <hr>
+        <nav class="navbar navbar-light bg-light">
+            <form action="{{url('/upload_leaves_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                @csrf
+                
+                <div class="vstack gap-3">
+                    <div class="input-group">
+                        <strong>Εισαγωγή αδειών εκπαιδευτικών (Στατιστικό 4.21 από mySchool)</strong>
+                    </div>
+                    <div class="hstack gap-1">
+                        {{-- <input type="radio" id="leaves" name="leaves" value="teachers_leaves"> --}}
+                        <label class="px-1" for="leaves">Άδειες </label><br> 
+                        <div>(4.21)</div>
+                    </div> 
+                    <input type="file" name="leaves_file" required>     
+                    <div>
+                        <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
+                    </div>
+                </div>
+            </form>
+        </nav>
         @else
         
         <div style="p-3 mb-2 bg-info text-dark">

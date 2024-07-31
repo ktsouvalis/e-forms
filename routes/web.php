@@ -40,6 +40,7 @@ use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
+use App\Http\Controllers\microapps\LeavesController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 use App\Http\Controllers\microapps\TwoFilesController;
@@ -166,6 +167,8 @@ Route::post('/upload_didaskalia_apousia_template', [TeacherController::class, 'i
 
 Route::post('/upload_work_experience_template', [TeacherController::class, 'import_work_experience']);
 
+Route::post('/upload_leaves_template', [TeacherController::class, 'import_leaves']);
+
 Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:upload, ".Teacher::class);
 
 Route::post('/insert_teachers_organiki', [TeacherController::class, 'insertTeachers']);
@@ -261,7 +264,6 @@ Route::group(['prefix' => 'secondments'], function () {
 //Route::view('/secondments', 'microapps.secondments.create');
 
 //DESKS ROUTES
-
 Route::resource('desks', DesksController::class)->middleware('canViewMicroapp');
 
 //ENROLLMENTS ROUTES
@@ -277,6 +279,13 @@ Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], fun
 
 // FRUITS ROUTES
 Route::resource('fruits', FruitsController::class)->middleware('canViewMicroapp');
+
+// LEAVES ROUTES
+Route::resource('leaves', LeavesController::class);//->middleware('canViewMicroapp');
+Route::group(['prefix' => 'leaves', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post('/upload_files', [LeavesController::class, 'upload_files'])->name('leaves.upload_files');
+    Route::post('/send_to_protocol', [LeavesController::class, 'send_to_protocol'])->name('leaves.send_to_protocol');
+});
 
 // SCHOOL AREA ROUTES
 Route::resource('school_area', SchoolAreaController::class)->middleware('canViewMicroapp');

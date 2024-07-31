@@ -15,6 +15,7 @@ use App\Models\microapps\SchoolArea;
 use App\Models\microapps\AllDaySchool;
 use App\Models\microapps\InternalRule;
 use App\Models\microapps\Defibrillator;
+use App\Models\microapps\TeacherLeaves;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -132,6 +133,10 @@ class School extends Authenticatable
 
     public function internal_rule(){
         return $this->hasOne(InternalRule::class);
+    }
+
+    public function leaves(){
+        return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')->orderBy('creation_date', 'desc');
     }
 
     public function addedbys()

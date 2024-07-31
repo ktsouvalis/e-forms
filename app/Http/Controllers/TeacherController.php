@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Throwable;
 use App\Models\Form;
 use App\Models\School;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SchoolsTeachersUpdated;
+use App\Models\microapps\TeacherLeaves;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -492,5 +494,101 @@ class TeacherController extends Controller
         else
             return redirect(url('/teachers'))->with('warning', "Επιτυχής ενημέρωση εκπαιδευτικών με σφάλματα που καταγράφηκαν στο log throwable_db");
         
+    }
+
+    public function import_leaves(Request $request){
+        
+        $file = $request->file('leaves_file');
+        
+        //validate the input file type
+        $rule = [
+            'leaves_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+        
+        $validator = Validator::make($request->all(), $rule);
+        if($validator->fails()){
+           return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
+        }
+        //truncate table
+        DB::statement('TRUNCATE TABLE teacher_leaves');
+        //store the files
+        $filename = "teachers_file_leaves".Auth::id().".xlsx";
+        $path = $request->file('leaves_file')->storeAs('files', $filename);
+        $error = 0;
+        //load the file
+        $spreadsheet = IOFactory::load("../storage/app/$path");
+        $teachers_array=array();
+        $row=2;
+        $error=0;
+        $rowSumValue="1";
+        while ($rowSumValue != "" && $row<10000){
+            $teacherAfm = substr($spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue(), 2, -1);
+            if(!Teacher::where('afm', $teacherAfm)->count()){
+                $row++;
+                $rowSumValue="";
+                for($col=1;$col<=35;$col++){
+                    $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                }
+                Log::channel('throwable_db')->error("update leaves afm error: ".$teacherAfm);
+                //Auth::user()->notify(new UserNotification("Δε βρέθηκε το ΑΦΜ $teacherAfm κατά την ενημέρωση αδειών", "Ενημέρωση αδειών: Σφάλμα ΑΦΜ $teacherAfm"));
+                //$error=true;
+                continue;
+            }
+            $teacherLeave = new TeacherLeaves();
+            $teacherLeave->am = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
+            $teacherLeave->afm = $teacherAfm;
+            $teacherLeave->sex = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
+            $teacherLeave->surname = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
+            $teacherLeave->name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
+            $teacherLeave->fathers_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
+            $teacherLeave->specialty_code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
+            $teacherLeave->specialty = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
+            $teacherLeave->directorate = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue();
+            $teacherLeave->employment_relation = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
+            $teacherLeave->leave_state = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
+            $teacherLeave->leave_type = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue();
+            $teacherLeave->leave_start_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(17, $row));
+            $teacherLeave->leave_days = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
+            $teacherLeave->leave_protocol_number = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue();
+            $teacherLeave->leave_protocol_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row));
+            $teacherLeave->leave_description = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
+            $teacherLeave->creator_entity_code = substr($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue(), 2, -1);
+            $teacherLeave->creator_entity_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
+            $teacherLeave->creation_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(24, $row));
+            $teacherLeave->submission_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(25, $row));
+            $teacherLeave->approved_days = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(26, $row)->getValue();
+            $teacherLeave->approved_months = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(27, $row)->getValue();
+            $teacherLeave->approved_years = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(28, $row)->getValue();
+            $teacherLeave->approved_protocol_number = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(29, $row)->getValue();
+            $teacherLeave->approved_protocol_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(30, $row));
+            $teacherLeave->approved_description = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(31, $row)->getValue();
+            $teacherLeave->revoke_description = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(32, $row)->getValue();
+            $teacherLeave->approving_authority_code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(33, $row)->getValue();
+            $teacherLeave->approving_authority_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue();
+            $teacherLeave->last_change_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(35, $row));
+            $teacherLeave->save();
+            $row++;
+            $rowSumValue="";
+            for($col=1;$col<=35;$col++){
+                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+            }
+        }
+        if(!$error)
+            return redirect(url('/teachers'))->with('success', "Επιτυχής ενημέρωση αδειών εκπαιδευτικών");
+        else
+            return redirect(url('/teachers'))->with('warning', "Ενημέρωση αδειών εκπαιδευτικών με σφάλματα που καταγράφηκαν στο log throwable_db");
+        
+    }
+
+    public static function convertExcelDate($dateCell){
+        if (Date::isDateTime($dateCell)) {
+            $dateValue = Date::excelToDateTimeObject($dateCell->getValue());
+            $formattedDate = $dateValue->format('Y-m-d');
+            
+        }
+        else{
+            $formattedDate = null;
+        }
+        return $formattedDate;
     }
 }

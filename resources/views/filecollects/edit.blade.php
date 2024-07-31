@@ -244,7 +244,7 @@
                     {{-- <input name="template_file" type="file" class="form-control"><br> --}}
                 </div>
                 <div class="input-group">
-                    <button type="submit" class="btn btn-primary m-2 bi bi-upload" > Ανέβασμα</button>
+                    <button type="submit" class="btn btn-primary m-2 bi bi-upload" >Ανέβασμα</button>
                 </div>
             </form>
             @if($filecollect->template_file)

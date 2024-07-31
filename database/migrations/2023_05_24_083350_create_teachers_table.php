@@ -42,7 +42,7 @@ return new class extends Migration
             $table->string('organiki_type'); // όνομα  Model (School ή Directory)
             $table->unsignedBigInteger('ypiretisi_id')->nullable(); // υπηρέτηση: id απο τον πίνακα schools ή από τον πίνακα no_schools
             $table->string('ypiretisi_type')->nullable(); // όνομα  Model (School ή NoSchool)
-           
+
         });
     }
 

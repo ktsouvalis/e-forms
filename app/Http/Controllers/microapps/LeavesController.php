@@ -25,6 +25,7 @@ class LeavesController extends Controller
     }
 
     public function upload_files(Request $request){
+        
         return redirect(url('leaves/create'))->with('success','Τα αρχεία ανέβηκαν (fake).');//response()->json(['message' => 'Τα αρχεία ανέβηκαν επιτυχώς (fake)!']);
     }
 

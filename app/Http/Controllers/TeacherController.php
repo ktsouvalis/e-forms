@@ -534,39 +534,52 @@ class TeacherController extends Controller
                 //$error=true;
                 continue;
             }
-            $teacherLeave = new TeacherLeaves();
-            $teacherLeave->am = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
-            $teacherLeave->afm = $teacherAfm;
-            $teacherLeave->sex = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
-            $teacherLeave->surname = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue();
-            $teacherLeave->name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue();
-            $teacherLeave->fathers_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
-            $teacherLeave->specialty_code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-            $teacherLeave->specialty = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
-            $teacherLeave->directorate = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue();
-            $teacherLeave->employment_relation = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
-            $teacherLeave->leave_state = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
-            $teacherLeave->leave_type = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue();
-            $teacherLeave->leave_start_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(17, $row));
-            $teacherLeave->leave_days = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue();
-            $teacherLeave->leave_protocol_number = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue();
-            $teacherLeave->leave_protocol_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row));
-            $teacherLeave->leave_description = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
-            $teacherLeave->creator_entity_code = substr($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue(), 2, -1);
-            $teacherLeave->creator_entity_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue();
-            $teacherLeave->creation_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(24, $row));
-            $teacherLeave->submission_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(25, $row));
-            $teacherLeave->approved_days = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(26, $row)->getValue();
-            $teacherLeave->approved_months = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(27, $row)->getValue();
-            $teacherLeave->approved_years = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(28, $row)->getValue();
-            $teacherLeave->approved_protocol_number = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(29, $row)->getValue();
-            $teacherLeave->approved_protocol_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(30, $row));
-            $teacherLeave->approved_description = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(31, $row)->getValue();
-            $teacherLeave->revoke_description = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(32, $row)->getValue();
-            $teacherLeave->approving_authority_code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(33, $row)->getValue();
-            $teacherLeave->approving_authority_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue();
-            $teacherLeave->last_change_date = TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(35, $row));
-            $teacherLeave->save();
+            try{
+                $teacherLeaveTuple = TeacherLeaves::updateOrcreate(
+                    [
+                        'afm'=> $teacherAfm,
+                        'leave_type' => $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue(),
+                        'leave_start_date' => TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(17, $row)),
+                        'leave_days' => $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue(),
+                    ],
+                    [
+                        'am' => $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue(),
+                        'sex'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue(),
+                        'surname'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(4, $row)->getValue(),
+                        'name'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(5, $row)->getValue(),
+                        'fathers_name'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue(),
+                        'specialty_code'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue(),
+                        'specialty'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue(),
+                        'directorate'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(),
+                        'employment_relation'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue(),
+                        'leave_state'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue(),
+                        'leave_protocol_number'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(19, $row)->getValue(),
+                        'leave_protocol_date'=> TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)),
+                        'leave_description'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue(),
+                        'creator_entity_code'=> substr($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue(), 2, -1),
+                        'creator_entity_name'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(23, $row)->getValue(),
+                        'creation_date'=> TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(24, $row)),
+                        'submission_date'=> TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(25, $row)),
+                        'approved_days'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(26, $row)->getValue(),
+                        'approved_months'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(27, $row)->getValue(),
+                        'approved_years'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(28, $row)->getValue(),
+                        'approved_protocol_number'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(29, $row)->getValue(),
+                        'approved_protocol_date'=> TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(30, $row)),
+                        'approved_description'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(31, $row)->getValue(),
+                        'revoke_description'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(32, $row)->getValue(),
+                        'approving_authority_code'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(33, $row)->getValue(),
+                        'approving_authority_name'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue(),
+                        'last_change_date'=> TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(35, $row)),
+    
+                    ]
+                );
+            } catch(Throwable $e){
+                Log::channel('throwable_db')->error($teacherAfm.' '.$e->getMessage());
+                $error=true;
+                continue; 
+            }
+            
+
             $row++;
             $rowSumValue="";
             for($col=1;$col<=35;$col++){

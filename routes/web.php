@@ -283,8 +283,10 @@ Route::resource('fruits', FruitsController::class)->middleware('canViewMicroapp'
 // LEAVES ROUTES
 Route::resource('leaves', LeavesController::class);//->middleware('canViewMicroapp');
 Route::group(['prefix' => 'leaves', 'middleware' => 'canViewMicroapp'], function () {
-    Route::post('/upload_files', [LeavesController::class, 'upload_files'])->name('leaves.upload_files');
-    Route::post('/send_to_protocol', [LeavesController::class, 'send_to_protocol'])->name('leaves.send_to_protocol');
+    Route::post('/upload_files/{teacher_leave}', [LeavesController::class, 'upload_files'])->name('leaves.upload_files');
+    Route::post('/submit/{leave}', [LeavesController::class, 'submit'])->name('leaves.submit');
+    Route::get('/download_file/{serverFileName}/{databaseFileName}', [LeavesController::class, 'download_file'])->name('leaves.download_file');
+    Route::get('/delete_file/{serverFileName}/{teacher_leave}', [LeavesController::class, 'delete_file'])->name('leaves.delete_file'); 
 });
 
 // SCHOOL AREA ROUTES

@@ -45,6 +45,12 @@ return new class extends Migration
             $table->string('approving_authority_code')->nullable();
             $table->string('approving_authority_name')->nullable();
             $table->date('last_change_date')->nullable();
+            $table->text('files_json')->nullable();
+            $table->text('comments')->nullable();
+            $table->string('protocol_number')->nullable();
+            $table->date('protocol_date')->nullable();
+            $table->boolean('submitted')->default(0);
+            $table->text('approved_files_json')->nullable();
             $table->timestamps();
         });
     }

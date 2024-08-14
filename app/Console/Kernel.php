@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
         //     ->dailyAt('16:00');
 
         $schedule->command('queue:work --stop-when-empty')
-            ->everyMinute(); 
+            ->everyMinute();
     }
 
     /**

@@ -20,6 +20,10 @@ class TeacherLeaves extends Model
         });
     }
 
+    public static function getRevoked() {
+        return self::withoutGlobalScope('leave_state')->where('leave_state', '5-Ανακλήθηκε')->get();
+    }
+
     public function teacher() {
         return $this->belongsTo(Teacher::class, 'afm', 'afm');
     }

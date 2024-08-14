@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\microapps;
 
 use GuzzleHttp\Client;
+use App\Models\Teacher;
 use App\Models\Microapp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -186,5 +187,22 @@ class LeavesController extends Controller
         } else {
             return $body;
         }
+    }
+
+    public function getTeacherLeaves(TeacherLeaves $teacher_leave){
+        $leaves = TeacherLeaves::where('afm', $teacher_leave->afm)->
+                                where('leave_state', '3-Εγκρίθηκε')->
+                                where('leave_type', $teacher_leave->leave_type)->get();
+        // check if teacher is director
+        $teacher = Teacher::where('afm', $teacher_leave->afm)->first();
+        $isDirector = $teacher->isDirector();
+        // return response()->json([
+        //     'isDirector' => $teacher->isDirector(),
+        //     'leaves' => $leaves,
+        // ]);
+        return response()->json([
+            'leaves' => $leaves,
+            'isDirector' => $isDirector,
+        ]);
     }
 }

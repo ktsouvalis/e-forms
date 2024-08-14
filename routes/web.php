@@ -43,6 +43,7 @@ use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\LeavesController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\SwimmingController;
 use App\Http\Controllers\microapps\TwoFilesController;
 use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\EnrollmentController;
@@ -286,8 +287,24 @@ Route::group(['prefix' => 'leaves', 'middleware' => 'canViewMicroapp'], function
     Route::post('/upload_files/{teacher_leave}', [LeavesController::class, 'upload_files'])->name('leaves.upload_files');
     Route::post('/submit/{leave}', [LeavesController::class, 'submit'])->name('leaves.submit');
     Route::get('/download_file/{serverFileName}/{databaseFileName}', [LeavesController::class, 'download_file'])->name('leaves.download_file');
-    Route::get('/delete_file/{serverFileName}/{teacher_leave}', [LeavesController::class, 'delete_file'])->name('leaves.delete_file'); 
+    Route::get('/delete_file/{serverFileName}/{teacher_leave}', [LeavesController::class, 'delete_file'])->name('leaves.delete_file');
+    Route::get('/getTeacherLeavesApi/{teacher_leave}', [LeavesController::class, 'getTeacherLeaves'])->name('leaves.getTeacherLeavesApi');
 });
+
+// SWIMMING ROUTES
+
+Route::resource('swimming', SwimmingController::class)->middleware('canViewMicroapp');
+
+Route::group(['prefix' => 'swimming'], function () {
+    Route::get("/download_file/{serverFileName}/{databaseFileName}", [SwimmingController::class, 'download_file'])->name('swimming.download_file');
+
+    Route::post("/upload_files/{swimming}", [SwimmingController::class, 'upload_files'])->name('swimming.upload_files');
+
+    Route::get("/delete_file/{swimming}/{serverFileName}", [SwimmingController::class, 'delete_file'])->name('swimming.delete_file');
+
+    Route::post("/revoke/{swimming}", [SwimmingController::class, 'revoke'])->name('swimming.revoke');
+});
+
 
 // SCHOOL AREA ROUTES
 Route::resource('school_area', SchoolAreaController::class)->middleware('canViewMicroapp');

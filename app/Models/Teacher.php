@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\School;
 use App\Models\WorkExperience;
+use App\Models\microapps\Swimming;
 use App\Models\microapps\Secondment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,8 +60,21 @@ class Teacher extends Authenticatable
         return $this->hasMany(TeacherLeaves::class, 'afm', 'afm');
     }
 
+    public function swimming(){
+        return $this->hasOne(Swimming::class, 'teacher_id');
+    }
+
     public function addedbys()
     {
         return $this->morphMany(FileshareStakeholder::class, 'addedby');
+    }
+
+    public function isDirector()
+    {
+        if(School::where('director_id', $this->id)->count() > 0){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

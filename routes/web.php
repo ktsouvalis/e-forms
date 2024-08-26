@@ -814,9 +814,6 @@ Route::post('/upload_sections_template', [SectionController::class, 'import_sect
 // Route::post('/delete_sections', [SectionController::class, 'delete_sections']);
 
 //misc routes
-Route::get('/dev_test', function(){
-    return 'Hello from container';
-})->middleware('boss');
 
 Route::get('/convert_old_filecollects_to_json', function(){
     $stakeholders = FilecollectStakeholder::all();

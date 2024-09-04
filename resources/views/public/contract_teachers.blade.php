@@ -25,12 +25,23 @@
       <thead>
           <tr>
               <th>Αγγλικά στο Νηπιαγωγείο ΟΠΣ 6001982</th>
-        
+              <th>Ολοήμερο ΔΗΜΟΤΙΚΟ ΟΠΣ 6001774</th>
+              <th>Ολοήμερο ΝΗΠΙΑΓΩΓΕΙΟ MIS 6001764</th>
+              <th>Παράλληλη Στήριξη - Βοηθητικό Προσωπικό</th>
+              <th>Παράλληλη Στήριξη - Εκπαιδευτικοί</th>
+              <th>ΣΜΕΑΕ - Εκπαιδευτικοί</th>
+              <th>ΣΜΕΑΕ - Βοηθητικό Προσωπικό</th>
           </tr>
       </thead>
       <tbody>
         <tr>
-          <td> <a href="{{ asset('contract_teachers_files/11392-ΜΕ-ΑΔΑ-ΡΨΠ546ΝΚΠΔ-2Τ3.pdf') }}" download>11392-ΜΕ-ΑΔΑ-ΡΨΠ546ΝΚΠΔ-2Τ3.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11392-ΜΕ-ΑΔΑ-ΡΨΠ546ΝΚΠΔ-2Τ3.pdf') }}" class="no-spinner" download>11392-ΜΕ-ΑΔΑ-ΡΨΠ546ΝΚΠΔ-2Τ3.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11390-ΜΕ-ΑΔΑ-ΨΟΖΜ46ΝΚΠΔ-6ΞΦ-ΕΝΙΑΙΟΣ.pdf') }}" class="no-spinner" download>11390-ΜΕ-ΑΔΑ-ΨΟΖΜ46ΝΚΠΔ-6ΞΦ-ΕΝΙΑΙΟΣ.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11391-ΜΕ-ΑΔΑ-ΨΒΚΞ46ΝΚΠΔ-6ΞΡ-ΟΛΟΗΜΕΡΟ-ΝΗΠΙΑΓΩΓΕΙΟ.pdf') }}" class="no-spinner" download>11391-ΜΕ-ΑΔΑ-ΨΒΚΞ46ΝΚΠΔ-6ΞΡ-ΟΛΟΗΜΕΡΟ-ΝΗΠΙΑΓΩΓΕΙΟ.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11394-ΜΕ-ΑΔΑ-ΨΧ2246ΝΚΠΔ-ΩΞΙ-ΠΑΡΑΛΛΗΛΗ-ΣΤΗΡΙΞΗ-ΒΟΗΘ.-ΠΡΟΣ.pdf') }}" class="no-spinner" download>11394-ΜΕ-ΑΔΑ-ΨΧ2246ΝΚΠΔ-ΩΞΙ-ΠΑΡΑΛΛΗΛΗ-ΣΤΗΡΙΞΗ-ΒΟΗΘ.-ΠΡΟΣ.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11396-ΜΕ-ΑΔΑ-ΨΤΑΚ46ΝΚΠΔ-ΓΙ5-ΠΑΡΑΛΛΗΛΗ-ΣΤΗΡΙΞΗ-ΕΚΠΑΙΔΕΥΤΙΚΟΙ.pdf') }}" class="no-spinner" download>11396-ΜΕ-ΑΔΑ-ΨΤΑΚ46ΝΚΠΔ-ΓΙ5-ΠΑΡΑΛΛΗΛΗ-ΣΤΗΡΙΞΗ-ΕΚΠΑΙΔΕΥΤΙΚΟΙ.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11402-ΜΕ-ΑΔΑ-93ΔΚ46ΝΚΠΔ-ΘΨΦ-ΣΜΕΑΕ-ΕΚΠΑΙΔΕΥΤΙΚΟΙ.pdf') }}" class="no-spinner" download>11402-ΜΕ-ΑΔΑ-93ΔΚ46ΝΚΠΔ-ΘΨΦ-ΣΜΕΑΕ-ΕΚΠΑΙΔΕΥΤΙΚΟΙ.pdf</a> </td>
+          <td> <a href="{{ asset('contract_teachers_files/11401-ΜΕ-ΑΔΑ-99Υ546ΝΚΠΔ-ΨΗ3-ΣΜΕΑΕ-ΒΟΗΘΗΤΙΚΟ-ΠΡΟΣΩΠΙΚΟ-1.pdf') }}" class="no-spinner" download>11401-ΜΕ-ΑΔΑ-99Υ546ΝΚΠΔ-ΨΗ3-ΣΜΕΑΕ-ΒΟΗΘΗΤΙΚΟ-ΠΡΟΣΩΠΙΚΟ-1.pdf</a> </td>
         </tr>
       </tbody>
     </table>

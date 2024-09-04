@@ -15,12 +15,13 @@
 @endpush
 
   @push('title')
-      <title>Έργο αναπληρωτών</title>
+      <title>Προσλήψεις αναπληρωτών</title>
   @endpush
 
   <div class="container">
-  <div class="h3 p-3">Εφαρμογή εύρεσης έργου που ανήκει κάθε αναπληρωτής της Δ/νσης Π.Ε. Αχαΐας</div>
+  <div class="h3 p-3">Προσλήψεις και έργο αναπληρωτών Εκπαιδευτικών</div>
   <div class="table-responsive">
+    <div class="h5 p-2"> Α' Φάση</div>
     <table  class="align-middle display table table-sm table-striped table-hover">
       <thead>
           <tr>
@@ -46,6 +47,8 @@
       </tbody>
     </table>
   </div>
+
+  <div class="h3 p-3">Ταχεία εύρεση έργου που ανήκει κάθε αναπληρωτής</div>
   <div class="table-responsive">
         <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
         <thead>

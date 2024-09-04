@@ -105,6 +105,7 @@ Route::post('/find_entity', function(Request $request){
 //PUBLIC ROUTES
 
 Route::view('/school_areas', 'public/school_areas')->name('school_areas_public');
+Route::view('/contract_teachers', 'public/contract_teachers')->name('contract_teachers_public');
 
 //// USER ROUTES
 

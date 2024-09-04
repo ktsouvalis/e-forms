@@ -21,7 +21,7 @@
   <div class="container">
   <div class="h3 p-3">Προσλήψεις και έργο αναπληρωτών Εκπαιδευτικών</div>
   <div class="table-responsive">
-    <div class="h5 p-2"> Α' Φάση</div>
+    <div class="h5 p-2"> Αποφάσεις Τοποθέτησης Α' Φάση</div>
     <table  class="align-middle display table table-sm table-striped table-hover">
       <thead>
           <tr>

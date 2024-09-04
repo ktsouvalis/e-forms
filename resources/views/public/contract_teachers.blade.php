@@ -1,7 +1,6 @@
 <x-layout_teacher>
     
-
-  @push('links')
+@push('links')
   <link href="{{ asset('DataTables-1.13.4/css/dataTables.bootstrap5.css') }}" rel="stylesheet"/>
   <link href="{{ asset('Responsive-2.4.1/css/responsive.bootstrap5.css') }}" rel="stylesheet"/>
 @endpush
@@ -18,8 +17,24 @@
   @push('title')
       <title>Έργο αναπληρωτών</title>
   @endpush
+
   <div class="container">
-    <div class="h3 p-3">Εφαρμογή εύρεσης έργου που ανήκει κάθε αναπληρωτής της Δ/νσης Π.Ε. Αχαΐας</div>
+  <div class="h3 p-3">Εφαρμογή εύρεσης έργου που ανήκει κάθε αναπληρωτής της Δ/νσης Π.Ε. Αχαΐας</div>
+  <div class="table-responsive">
+    <table  class="align-middle display table table-sm table-striped table-hover">
+      <thead>
+          <tr>
+              <th>Αγγλικά στο Νηπιαγωγείο ΟΠΣ 6001982</th>
+        
+          </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td> <a href="{{ asset('contract_teachers_files/11392-ΜΕ-ΑΔΑ-ΡΨΠ546ΝΚΠΔ-2Τ3.pdf') }}" download>11392-ΜΕ-ΑΔΑ-ΡΨΠ546ΝΚΠΔ-2Τ3.pdf</a> </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div class="table-responsive">
         <table  id="dataTable" class="align-middle display table table-sm table-striped table-hover">
         <thead>

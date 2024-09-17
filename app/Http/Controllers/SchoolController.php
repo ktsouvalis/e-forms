@@ -89,6 +89,9 @@ class SchoolController extends Controller
             if(!str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue(), "Ιδιωτικά Σχολεία"))
                 $check['public']= 1;
 
+            if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(71, $row)->getValue()=="")
+                $check['schregion_id']=11;
+
             $check['md5']="";
 
             //prepare schools array to pass it in session
@@ -145,6 +148,7 @@ class SchoolController extends Controller
                         'public' => $school['public'],
                         'has_integration_section' => $school['has_integration_section'],
                         'address' => $school['address'],
+                        'schregion_id' => $school['schregion_id'],
                     ]
                 );
                 if ($schoolModel->wasRecentlyCreated or $schoolModel->wasChanged()) {

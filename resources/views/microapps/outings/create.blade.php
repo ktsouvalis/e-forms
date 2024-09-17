@@ -80,22 +80,30 @@
                         <div class="input-group">
                             <span class="input-group-text w-25 text-wrap">Τμήματα που συμμετέχουν</span>
                             @php
-                                $sections = $school->sections;  
+                                $sections = $school->sections;
                             @endphp
                             <div class="v-stack gap-2">
-                            @foreach($sections as $section)
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" role="switch" type="checkbox" name="section{{$section->id}}" value="{{$section->id}}" id="section{{$section->id}}">
-                                    <label for="section{{$section->id}}"> {{$section->name}} </label>
-                                </div>     
-                            @endforeach
+                            @if($sections->count()==0)
+                                <div class='alert alert-warning text-center my-2'>
+                                    <strong> <i class="bi bi-exclamation-triangle"> </i> Τη στιγμή που ενημερώθηκαν τα τμήματα στην εφαρμογή από το myschool, δεν είχαν καταχωρηθεί τμήματα για το Σχολείο σας
+                                    Παρακαλούμε ενημερώστε τα τμήματα του Σχολείου στο myschool και ειδοποιήστε το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr
+                                    </strong>
+                                </div>
+                            @else
+                                @foreach($sections as $section)
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" role="switch" type="checkbox" name="section{{$section->id}}" value="{{$section->id}}" id="section{{$section->id}}">
+                                        <label for="section{{$section->id}}"> {{$section->name}} </label>
+                                    </div>     
+                                @endforeach
+                            @endif
                             </div>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon4">Απόσπασμα Πρακτικού</span>
                             <input name="record_file" type="file" class="form-control" required><br>
                         </div>
-                        @if(!$accepts)
+                        @if(!$accepts || $sections->count()==0)
                             <div class='alert alert-warning text-center my-2'>
                                <strong> <i class="bi bi-bricks"> </i> Η εφαρμογή δε δέχεται υποβολές</strong>
                             </div>

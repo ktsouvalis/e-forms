@@ -16,11 +16,40 @@
     <div class="container">
     <div class="container px-5">  
             <nav class="navbar navbar-light bg-light">
+                    <div>
+                        <h4>Εσωτερικός Κανονισμός Σχολικής Μονάδας</h4>
+                        <div>
+                            <button class="btn btn-primary m-3" type="button" data-bs-toggle="collapse" data-bs-target="#instructionsList" aria-expanded="false" aria-controls="instructionsList">
+                                <h6>Για αναλυτική περιγραφή της διαδικασίας υποβολής και έγκρισης Εσωτερικού Κανονισμού πατήστε εδώ</h6>
+                            </button>
+                            <div class="collapse" id="instructionsList">    
+                                <ul class="list-group m-3">
+                                    <li class="list-group-item">1) Υποβολή αρχείου Εσωτερικού Κανονισμού από το Σχολείο. 
+                                        <br>Αποστέλλεται αυτόματα email ειδοποίησης στον αρμόδιο Σύμβουλο Εκπαίδευσης.</li>
+                                    <li class="list-group-item">2) Ο Σύμβουλος ή/και ο Διευθυντής Εκπ/σης υποβάλλουν αρχείο με παρατηρήσεις-επισημάνσεις
+                                        <br> Αποστέλλεται αυτόματα email ειδοποίησης στο Σχολείο.
+                                        <br> Το Σχολείο υποβάλλει νέο, διορθωμένο αρχείο με τις απαραίτητες διορθώσεις.
+                                        <br><em>Σε περίπτωση που ο Εσωτερικός Κανονισμός εγκριθεί κατευθείαν τόσο από το Σύμβουλο όσο και από το Διευθυντή Εκπ/σης, το βήμα αυτό παραλείπεται</em>
+                                    </li>
+                                    <li class="list-group-item">3) Έγκριση από Σύμβουλο Εκπαίδευσης και Διευθυντή Εκπαίδευσης
+                                        <br>Όταν ο κανονισμός εγκριθεί και από το Σύμβουλο Εκπαίδευσης και από το Διευθυντή Εκπαίδευσης, απενεργοποιείται πλέον η δυνατότητα υποβολής νέου αρχείου από το Σχολείο.
+                                        Ο Εσωτερικός Κανονισμός βρίσκεται σε φάση υπογραφής από τον Σύμβουλο και τον Διευθυντή Εκπαίδευσης.
+                                    </li>
+                                    <li class="list-group-item">4) Ανάρτηση υπογεγραμμένων Εσωτερικών Κανονισμών από Σύμβουλο Εκπαίδευσης και Δ/ντή Εκπ/σης
+                                    </li>
+                                    <li class="list-group-item">5) Εμφάνιση τελικού, υπογεγραμμένου Εσωτερικού Κανονισμού στη Σχολική Μονάδα
+                                        <br>Ο τελικός, υπογεγραμμένος Εσωτερικός Κανονισμός καθώς και όλο το ιστορικό εμφανίζονται στην καρτέλα αυτή.
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 {{-- <form action="{{url("/internal_rules")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
                     <form action="{{route('internal_rules.store')}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        <span class="input-group-text w-75"><strong>Καταχώρηση Αρχείου Εσωτερικού Κανονισμού </strong></span>
+                        <span class="input-group-text w-75"><strong>Υποβολή Αρχείου Εσωτερικού Κανονισμού </strong></span>
                     </div>
                    
                     <div class="input-group">

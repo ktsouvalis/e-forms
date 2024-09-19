@@ -8,6 +8,7 @@ use App\Models\Microapp;
 use Illuminate\Http\Request;
 use App\Mail\InternalRuleMail;
 use App\Mail\InternalRuleCommented;
+use App\Mail\InternalRuleSubmitted;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -49,17 +50,17 @@ class InternalRulesController extends Controller
     }
 
     public function store(Request $request){
-        $school = Auth::guard('school')->user();
+        $school = Auth::guard('school')->user();//find school
         if($this->microapp->accepts){
             $rule = [
                 'int_rules_file' => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ];
-            $validator = Validator::make($request->all(), $rule);
+            $validator = Validator::make($request->all(), $rule); //validate file
             if($validator->fails()){ 
                 return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
 
-            $mimeType = $request->file('int_rules_file')->getClientMimeType();
+            $mimeType = $request->file('int_rules_file')->getClientMimeType(); //find extension of the file
             if($mimeType=="application/pdf"){
                 $extension = ".pdf";
             }
@@ -109,7 +110,7 @@ class InternalRulesController extends Controller
             }
 
             try{
-                InternalRule::updateOrCreate(
+                $internal_rule = InternalRule::updateOrCreate(
                 [
                     'school_id'=>$school->id
                 ],
@@ -128,7 +129,20 @@ class InternalRulesController extends Controller
                 }
                 return back()->with('failure', 'Δεν έγινε η καταχώρηση, προσπαθήστε ξανά');    
             }
-            return back()->with('success', 'Επιτυχής καταχώρηση αρχείου');   
+            try{//send mail to consultant
+                Mail::to($internal_rule->school->schregion->consultant->mail)->send(new InternalRuleSubmitted($internal_rule->school->name, $filename));
+            }
+            catch(\Exception $e){
+                dd($e->getMessage());
+                try{
+                    Log::channel('mails')->error(Auth::user()->username." upload director comments file mail error ".$e->getMessage());
+                }
+                catch(\Exception $e){
+
+                }
+                return back()->with('failure', 'Το αρχείο ανέβηκε επιτυχώς, αλλά δεν έγινε η αποστολή του mail ειδοποίησης');     
+            }
+            return back()->with('success', "Επιτυχής καταχώρηση αρχείου και αποστολή email στο Σύμβουλο Εκπαίδευσης ({$internal_rule->school->schregion->consultant->name} {$internal_rule->school->schregion->consultant->surname})");
         }
         else{
             return back()->with('failure', 'Η δυνατότητα υποβολής έκλεισε από τον διαχειριστή.');

@@ -98,9 +98,7 @@ Route::post('/find_entity', function(Request $request){
         return redirect(url('/'))->with('warning', "Θα πρέπει να καταχωρίσετε ΑΜ/ΑΦΜ για Εκπαιδευτικό, Κωδικό Υ.ΠΑΙ.Θ.Α. για Σχολείο.");
         break;
     }
-}
-
-);
+});
 
 //PUBLIC ROUTES
 

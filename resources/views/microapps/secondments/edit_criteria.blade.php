@@ -2,9 +2,6 @@
     @php
         $teacher = Auth::guard('teacher')->user(); //check which teacher is logged in
         $microapp = App\Models\Microapp::where('url', '/secondments')->first();
-        if($teacher->am == 725364){
-            $microapp->accepts = 1;
-        }
         // $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         $municipalities = App\Models\Municipality::all();                                 
     @endphp

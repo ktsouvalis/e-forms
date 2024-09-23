@@ -49,6 +49,7 @@ use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
+use App\Http\Controllers\microapps\TimetablesController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
 
@@ -304,6 +305,23 @@ Route::group(['prefix' => 'swimming'], function () {
     Route::post("/revoke/{swimming}", [SwimmingController::class, 'revoke'])->name('swimming.revoke');
 });
 
+// TIMETABLES ROUTES
+Route::resource('timetables', TimetablesController::class);//->middleware('canViewMicroapp');
+Route::group(['prefix' => 'timetables', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post('/upload_files/{timetable?}', [TimetablesController::class, 'upload_files'])->name('timetables.upload_files');
+    Route::post('/submit/{timetable}', [TimetablesController::class, 'submit'])->name('timetables.submit');
+    Route::get('/download_file/{serverFileName}/{databaseFileName}', [TimetablesController::class, 'download_file'])->name('timetables.download_file');
+    Route::get('/delete_file/{serverFileName}/{TimetableFile}', [TimetablesController::class, 'delete_file'])->name('timetables.delete_file');
+    Route::get('/getTeacherTimetablesApi/{timetable}', [TimetablesController::class, 'getTeacherTimetables'])->name('timetables.getTeacherTimetablesApi');
+});
+
+// Route::group(['prefix' => 'timetable', 'middleware' => 'canViewMicroapp'], function () {
+    // Route::get('/download_template/{type}', [AllDaySchoolController::class, 'download_template'])->name('all_day_school.download_template');
+
+    // Route::post('/update_template/{type}', [AllDaySchoolController::class, 'update_all_day_template'])->name('all_day_school.update_template')->middleware('boss');
+
+    // Route::get('/download_file/{timetable}', [Timetable::class, 'download_file'])->name('timetable.download_file'); //access rights are checked inside the method
+// });
 
 // SCHOOL AREA ROUTES
 Route::resource('school_area', SchoolAreaController::class)->middleware('canViewMicroapp');

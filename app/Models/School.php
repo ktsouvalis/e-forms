@@ -12,6 +12,7 @@ use App\Models\microapps\TwoFile;
 use App\Models\microapps\Immigrant;
 use App\Models\microapps\Enrollment;
 use App\Models\microapps\SchoolArea;
+use App\Models\microapps\Timetables;
 use App\Models\microapps\AllDaySchool;
 use App\Models\microapps\InternalRule;
 use App\Models\microapps\Defibrillator;
@@ -137,6 +138,10 @@ class School extends Authenticatable
 
     public function leaves(){
         return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')->orderBy('creation_date', 'desc');
+    }
+
+    public function timetables(){
+        return $this->hasMany(Timetables::class);
     }
 
     public function revokedLeaves() {

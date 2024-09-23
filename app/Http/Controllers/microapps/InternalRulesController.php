@@ -133,7 +133,7 @@ class InternalRulesController extends Controller
                 Mail::to($internal_rule->school->schregion->consultant->mail)->send(new InternalRuleSubmitted($internal_rule->school->name, $filename));
             }
             catch(\Exception $e){
-                dd($e->getMessage());
+                // dd($e->getMessage());
                 try{
                     Log::channel('mails')->error(Auth::user()->username." upload director comments file mail error ".$e->getMessage());
                 }

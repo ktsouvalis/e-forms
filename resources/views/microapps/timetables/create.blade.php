@@ -90,22 +90,34 @@
                             @if($timetableFiles)
                             @foreach($timetableFiles as $timetableFile)
                                 @php 
-                                    $count = 1;
                                     $fileId = $timetableFile->id;
                                     $fileNames = json_decode($timetableFile->filenames_json, true);
+                                    $filesCount = count($fileNames);
+                                    $thisCount = 0;
                                 @endphp
                                 @foreach($fileNames as $serverFileName => $databaseFileName)
-                                
+                                @php $thisCount++; @endphp
                                 <div class="d-flex justify-content-between">
                                     <form action="{{route('timetables.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get">
-                                        <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1" value="{{$databaseFileName}}" >
+                                        <input type="submit"  @if($timetableFile->status == 3 && $thisCount == $filesCount) class="btn btn-success btn-block rounded-2 py-2 m-1" @else class="btn btn-info btn-block rounded-2 py-2 m-1" @endif  @if($thisCount != $filesCount)  style="padding: 0.25rem; margin: 0.25rem; font-size: 0.5rem;" @endif value="{{$databaseFileName}}" >
                                     </form>
+                                    @if($timetableFile->status == 0 || ($timetableFile->status == 2 && $thisCount == $filesCount))
                                     <form action="{{route('timetables.delete_file', [ 'serverFileName' => $serverFileName, 'timetableFileId' => $fileId ])}}" method="get">
-                                        <input type="submit" class="btn btn-danger btn-block rounded-3" value="Διαγραφή" 
+                                        <input type="submit" class="btn btn-danger btn-block rounded-3" value="x" 
                                     >
                                     </form>
+                                    @endif
+                                    @if(($timetableFile->status == 1 || $timetableFile->status == 2) && $thisCount == $filesCount)
+                                    <form action="{{route('timetables.upload_file', ['timetableFileId' => $fileId])}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="text-center">
+                                        <input  type="file" id="file" name="file"  required >
+                                        <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
+                                        >
+                                        </div>
+                                    </form>
+                                    @endif
                                 </div>
-                                @php $count++; @endphp
                                 @endforeach
                             @endforeach
                             @else

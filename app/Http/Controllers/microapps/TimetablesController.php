@@ -104,6 +104,41 @@ class TimetablesController extends Controller
         return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς');
     }
 
+    public function upload_file(Request $request, $timetableFileId){
+        $file = $request->file('file');
+        $timetableFile = TimetablesFiles::find($timetableFileId);
+        $timetableId = $timetableFile->timetable_id;
+        $schoolCode = Auth::guard('school')->user()->code;
+        $directory = "timetables";
+        $existingFilesCount = count(json_decode($timetableFile->filenames_json, true));
+        $fileCount = $existingFilesCount + 1;
+        if($timetableFile->status == 2){
+            $fileCount = $existingFilesCount;
+        }
+        $serverFileName = $schoolCode."_".$timetableId."_".$timetableFileId."_".$fileCount.".".$file->getClientOriginalExtension();
+        $totalFiles = json_decode($timetableFile->filenames_json, true);
+        if($timetableFile->status == 2){
+            array_pop($totalFiles);
+        }
+        $totalFiles[$serverFileName] = $file->getClientOriginalName();
+        $fileHandler = new FilesController();
+        $file = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);
+        if($file->getStatusCode() == 500){
+            Log::channel('files')->error($schoolCode." File $serverFileName failed to upload");
+            return back()->with('failure', 'Αποτυχία υποβολής αρχείου. Δοκιμάστε ξανά');
+        }
+        $timetableFile->filenames_json = json_encode($totalFiles);
+        $timetableFile->status = 2;
+        try{
+            $timetableFile->update();
+        } catch(\Exception $e) {
+            Log::channel('files')->error($schoolCode." File $serverFileName failed to update database field filenames_json");
+            return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
+        }
+    
+        Log::channel('files')->info($schoolCode." File $serverFileName successfully uploaded");
+        return back()->with('success', 'Το αρχείο ανέβηκε επιτυχώς');
+    }
     //Διαγραφή αρχείου
     public function delete_file($timetableFileId, $serverFileName){
         $timetableFile = TimetablesFiles::find($timetableFileId);
@@ -117,6 +152,9 @@ class TimetablesController extends Controller
             } else {
                 unset($files[$serverFileName]);
                 $timetableFile->filenames_json = json_encode($files);
+                if($timetableFile->status == 2){
+                    $timetableFile->status = 1;
+                }
                 $timetableFile->update();
             }
             

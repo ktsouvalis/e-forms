@@ -19,7 +19,7 @@ class TimetablesController extends Controller
 
     public function __construct(){
         $this->middleware('auth')->only(['index']);
-        $this->middleware('isSchool')->only(['create']);
+        $this->middleware('isSchool')->only(['create','upload_files', 'delete_file', 'download_file']);
         $this->microapp = Microapp::where('url', '/timetables')->first();
     }
 
@@ -50,26 +50,21 @@ class TimetablesController extends Controller
             $timetable = new Timetables();
             $timetable->school_id = Auth::guard('school')->user()->id;
             $timetable->status = 0;
-            $timetable->save();
+            try{
+                $timetable->save();
+            } catch(\Exception $e) {
+                Log::channel('files')->error($schoolCode." Timetable failed to update database field files_json");
+                return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
+            }
         }
         //Βρες πόσα αρχεία έχει ήδη ανεβάσει
         $timetableId = $timetable->id;
-        $timetableFiles = TimetablesFiles::where('timetable_id', $timetableId)->first();
-        if($timetableFiles && count($timetableFiles)>0){ // Αν έχει ανεβάσει ήδη, βρες τον αριθμό του τελευταίου αρχείου από το όνομά του
-            $fileNames = json_decode($timetableFiles->filenames_json, true);
-            end($fileNames);
-            $lastServerFileName = key($fileNames);
-            $underScorePosition = strpos($lastServerFileName, '_');// βρες τον αριθμό που περιλαμβάνεται στο όνομα του τελευταίου αρχείου μετά το _
-            $filesCount = substr($lastServerFileName, $underScorePosition + 1, strpos($lastServerFileName, '.') - $underScorePosition -1);
-        } else { //Αν δεν έχει ανεβάσει ακόμη αρχεία, βάλε τον αριθμό 0
-            $filesCount = 0;
-        }
-        $lastFileNumber = $filesCount; // κράτα τον αριθμό του τελευταίου αρχείου για την περίπτωση που θα ανεβάσει επιπλέον αρχεία
+        $timetableFiles = TimetablesFiles::where('timetable_id', $timetableId)->get();
         $directory = "timetables";
         $schoolCode = Auth::guard('school')->user()->code;
         $errr = 0;
         foreach($files as $file){ // Για κάθε αρχείο που ανεβάζεις
-            $filesCount = 1;       
+            $filesCount = 1;//Αρχικοποίησε τον μετρητή των αρχείων - τα αρχεία που ανεβαίνουν από αυτή τη Φόρμα έχουν πάντα αριθμό 1   
             $timetableFiles = new TimetablesFiles();
             $timetableFiles->timetable_id = $timetableId;
             try{
@@ -77,8 +72,8 @@ class TimetablesController extends Controller
             } catch(\Exception $e) {
                 $errr = 1;
                 // dd($e->getMessage());
-                Log::channel('files')->error($schoolCode." TimetableFiles Files failed to update database field files_json");
-                
+                Log::channel('files')->error($schoolCode." TimetableFiles Files failed to update database field files_json"); 
+                return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
             }
             $fileId = $timetableFiles->id;
             $serverFileName = $schoolCode."_".$timetableId."_".$fileId."_".$filesCount.".".$file->getClientOriginalExtension();
@@ -88,6 +83,7 @@ class TimetablesController extends Controller
             } catch(\Exception $e) {
                 $errr = 1;
                 Log::channel('files')->error($schoolCode." TimetableFiles Files failed to update database field files_json");
+                return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
             }
             // $fileNames[$serverFileName] = $file->getClientOriginalName();//πρόσθεσε στον πίνακα το όνομα του αρχείου που θα ανεβάσεις
             
@@ -109,27 +105,38 @@ class TimetablesController extends Controller
     }
 
     //Διαγραφή αρχείου
-    public function delete_file(TimetablesFiles $timetableFile, $serverFileName){
-        dd($timetableFile, $serverFileName);
-        if(Auth::guard('school')->user()->id != $timetableFile->timetable->school_id){
-            return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
-        }
+    public function delete_file($timetableFileId, $serverFileName){
+        $timetableFile = TimetablesFiles::find($timetableFileId);
         $fileHandler = new FilesController();
-        $files = json_decode($secondment->files_json, true);
+        $files = json_decode($timetableFile->filenames_json, true);
+        
         try{
             $fileHandler->delete_file('timetables', $serverFileName, 'local');
-            $databaseFileName = $files[$serverFileName];
-            $key = array_search($databaseFileName, $files);
-            if ($key !== false) {
-                unset($files[$key]);
+            if(count($files) == 1){
+                $timetableFile->delete();
+            } else {
+                unset($files[$serverFileName]);
+                $timetableFile->filenames_json = json_encode($files);
+                $timetableFile->update();
             }
-            //dd($files);
-            $secondment->files_json = json_encode($files);
-            $secondment->update();
+            
         } catch(\Exception $e) {
             return back()->with('failure', 'Αποτυχία διαγραφής αρχείου.');
         }
-        return back()->with('success', 'Επιτυχής διαγραφή αρχείου: "'.$databaseFileName.'"');
+        return back()->with('success', 'Επιτυχής διαγραφή αρχείου: ');
+    }
+    //Κατέβασμα αρχείου
+    public function download_file($serverFileName, $databaseFileName = null){
+        $schoolCode = Auth::guard('school')->user()->code;
+        $directory = "timetables";
+        $fileHandler = new FilesController();
+        $download = $fileHandler->download_file($directory, $serverFileName, 'local', $databaseFileName);
+        if($download->getStatusCode() == 500){
+            Log::channel('files')->error($schoolCode." File $serverFileName as $databaseFileName failed to download");
+            return back()->with('failure', 'Δοκιμάστε ξανά');
+        }
+        Log::channel('files')->info($schoolCode." File $serverFileName as $databaseFileName successfully downloaded");
+        return $download;
     }
 
 

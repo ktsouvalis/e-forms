@@ -311,7 +311,7 @@ Route::group(['prefix' => 'timetables', 'middleware' => 'canViewMicroapp'], func
     Route::post('/upload_files/{timetable?}', [TimetablesController::class, 'upload_files'])->name('timetables.upload_files');
     Route::post('/submit/{timetable}', [TimetablesController::class, 'submit'])->name('timetables.submit');
     Route::get('/download_file/{serverFileName}/{databaseFileName}', [TimetablesController::class, 'download_file'])->name('timetables.download_file');
-    Route::get('/delete_file/{serverFileName}/{TimetableFile}', [TimetablesController::class, 'delete_file'])->name('timetables.delete_file');
+    Route::get('/delete_file/{timetableFileId}/{serverFileName}', [TimetablesController::class, 'delete_file'])->name('timetables.delete_file');
     Route::get('/getTeacherTimetablesApi/{timetable}', [TimetablesController::class, 'getTeacherTimetables'])->name('timetables.getTeacherTimetablesApi');
 });
 

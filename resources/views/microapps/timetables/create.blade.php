@@ -6,8 +6,8 @@
     $timetables = $school->timetables; //fetch school's timetables
     $timetable = $timetables->first(); //fetch first timetable
     $timetableFiles = $timetable?$timetable->files:''; //fetch timetable's files
-    // dd($timetableFiles);
-@endphp
+    //dd($timetableFiles);
+    @endphp
 @push('links')
     <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
     <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
@@ -95,12 +95,12 @@
                                     $fileNames = json_decode($timetableFile->filenames_json, true);
                                 @endphp
                                 @foreach($fileNames as $serverFileName => $databaseFileName)
-                               
+                                
                                 <div class="d-flex justify-content-between">
                                     <form action="{{route('timetables.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get">
                                         <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1" value="{{$databaseFileName}}" >
                                     </form>
-                                    <form action="{{route('timetables.delete_file', [ 'timetableFile' => $fileId, 'serverFileName' => $serverFileName ])}}" method="get">
+                                    <form action="{{route('timetables.delete_file', [ 'serverFileName' => $serverFileName, 'timetableFileId' => $fileId ])}}" method="get">
                                         <input type="submit" class="btn btn-danger btn-block rounded-3" value="Διαγραφή" 
                                     >
                                     </form>

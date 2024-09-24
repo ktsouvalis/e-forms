@@ -313,6 +313,8 @@ Route::group(['prefix' => 'timetables', 'middleware' => 'canViewMicroapp'], func
     Route::get('/download_file/{serverFileName}/{databaseFileName}', [TimetablesController::class, 'download_file'])->name('timetables.download_file');
     Route::get('/delete_file/{timetableFileId}/{serverFileName}', [TimetablesController::class, 'delete_file'])->name('timetables.delete_file');
     Route::post('/upload_file/{timetableFileId}', [TimetablesController::class, 'upload_file'])->name('timetables.upload_file');
+    Route::post('/change_status/{timetableFile}', [TimetablesController::class, 'change_status'])->name('timetables.change_status');
+    Route::post('/comment/{timetableFile}/{thisCount}', [TimetablesController::class, 'comment'])->name('timetables.comment');
 });
 
 // Route::group(['prefix' => 'timetable', 'middleware' => 'canViewMicroapp'], function () {

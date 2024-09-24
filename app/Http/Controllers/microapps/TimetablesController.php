@@ -99,7 +99,12 @@ class TimetablesController extends Controller
                 return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
             }
         }
-        
+        //Ανανέωσε τον πίνακα stakeholders ώστε να φαίνεται ότι έχει υποβληθεί απάντηση στη μικροεφαρμογή
+        if($this->microapp->stakeholders->count()){
+            $stakeholder = $this->microapp->stakeholders->where('stakeholder_id', Auth::guard('school')->user()->id)->where('stakeholder_type', 'App\Models\School')->first();
+            $stakeholder->hasAnswer = 1;
+            $stakeholder->save();
+        }
         Log::channel('files')->info($schoolCode." Timetable Files successfully uploaded");
         return back()->with('success', 'Τα αρχεία ανέβηκαν επιτυχώς');
     }
@@ -175,6 +180,35 @@ class TimetablesController extends Controller
         }
         Log::channel('files')->info($schoolCode." File $serverFileName as $databaseFileName successfully downloaded");
         return $download;
+    }
+
+    //Αλλαγή κατάστασης Αρχείου
+    public function change_status(Request $request, TimetablesFiles $timetableFile){
+
+        Log::channel('files')->info(Auth::guard('school')->user()->code." changed status of file ".$timetableFile->id);
+        $timetableFile->status = $request->status;
+        try{
+            $timetableFile->update();
+        } catch(\Exception $e) {
+            return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
+        }
+        return back()->with('success', 'Επιτυχής αλλαγή κατάστασης αρχείου');
+    }
+
+    //Σχολιασμός Αρχείου
+    public function comment(Request $request, TimetablesFiles $timetableFile, $thisCount){
+        // dd($request->all(), $timetableFile);
+        $data = [
+            'thisCount' => $thisCount,
+            'comments' => $request->comments
+        ];
+        $timetableFile->comments = json_encode($data);
+        try{
+            $timetableFile->update();
+        } catch(\Exception $e) {
+            return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
+        }
+        return back()->with('success', 'Επιτυχής σχολιασμός αρχείου');
     }
 
 

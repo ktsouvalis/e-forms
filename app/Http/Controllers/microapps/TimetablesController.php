@@ -18,8 +18,8 @@ class TimetablesController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index', 'download_file', 'change_status', 'comment']);
-        $this->middleware('isSchool')->only(['create','upload_files', 'upload_file', 'delete_file', 'download_file', 'change_status', 'comment'])->except(['index']);
+        $this->middleware('auth')->only(['index', 'change_status', 'comment']);
+        $this->middleware('isSchool')->only(['create','upload_files', 'upload_file', 'delete_file'])->except(['index']);
         $this->microapp = Microapp::where('url', '/timetables')->first();
     }
 
@@ -30,6 +30,10 @@ class TimetablesController extends Controller
 
     public function create(){
         return view('microapps.timetables.create', ['appname' => 'timetables']);
+    }
+
+    public function edit(Timetables $timetable){
+        return view('microapps.timetables.edit', ['appname' => 'timetables', 'timetable' => $timetable]);
     }
 
     public function upload_files(Request $request, Timetables $timetable){
@@ -170,7 +174,7 @@ class TimetablesController extends Controller
     }
     //Κατέβασμα αρχείου
     public function download_file($serverFileName, $databaseFileName = null){
-        
+        //missing middleware check if user/administrator is allowed to download file
         $directory = "timetables";
         $fileHandler = new FilesController();
         $download = $fileHandler->download_file($directory, $serverFileName, 'local', $databaseFileName);
@@ -189,6 +193,23 @@ class TimetablesController extends Controller
         } catch(\Exception $e) {
             return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
         }
+        //Αν έχουν εγκριθεί όλα τα αρχεία οριστικοποίησε το πρόγραμμα
+        $timetableFiles = TimetablesFiles::where('timetable_id', $timetableFile->timetable_id)->get();
+        $lockTimetable = 1;
+        foreach($timetableFiles as $file){
+            if($file->status != 3){
+                $lockTimetable = 0;
+            }
+        }
+        if($lockTimetable){
+            $timetable = Timetables::find($timetableFile->timetable_id);
+            $timetable->status = 1;
+            try{
+                $timetable->update();
+            } catch(\Exception $e) {
+                return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
+            }
+        }
         return back()->with('success', 'Επιτυχής αλλαγή κατάστασης αρχείου');
     }
 
@@ -203,6 +224,7 @@ class TimetablesController extends Controller
         try{
             $timetableFile->update();
         } catch(\Exception $e) {
+            dd($e->getMessage());
             return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
         }
         return back()->with('success', 'Επιτυχής σχολιασμός αρχείου');

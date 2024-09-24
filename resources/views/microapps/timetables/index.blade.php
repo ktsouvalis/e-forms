@@ -44,7 +44,12 @@
                     <tbody>
                         <tr>
                             <td>{{$timetable->school->code}}</td>
-                            <td>{{$timetable->school->name}}</td>
+                            <td>
+                                <form action="{{route('timetables.edit', ['timetable' => $timetable->id])}}" method="get">
+                                    <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1 no-spin" title="Προβολή Ωρολογίου Προγράμματος" value="Προβολή">
+                                </form>
+                                {{$timetable->school->name}}
+                            </td>
                             <td>
                                 @foreach($timetable->files as $timetableFile)
                                     @php 
@@ -54,7 +59,17 @@
                                         $fileId = $timetableFile->id;
                                     @endphp
                                     @foreach($filesArray as $serverFileName => $databaseFileName)
-                                        @php $thisCount++; @endphp
+
+                                        @php 
+                                            $thisCount++;
+                                            $comments = json_decode($timetableFile->comments); 
+                                        @endphp
+                                        @if(($comments && $comments->thisCount == $thisCount) && $thisCount != $filesCount)
+                                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                            <strong>Επισημάνσεις:</strong> {{$comments->comments}}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Κλείσιμο"></button>
+                                        </div>
+                                        @endif
                                         <form action="{{route('timetables.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get" class="container-fluid">
                                             <input type="submit" id="{{$fileId}}_{{$thisCount}}"
                                             @if($timetableFile->status == 3 && $thisCount == $filesCount) class="btn btn-success btn-block rounded-2 py-2 m-1 no-spin" @else class="btn btn-info btn-block rounded-2 py-2 m-1 no-spin" @endif  
@@ -67,12 +82,15 @@
                                                 <option value="2" @if($timetableFile->status == 2) selected @endif disabled>Υποβολή Διορθώσεων</option>
                                                 <option value="3" @if($timetableFile->status == 3) selected @endif>Έγκριση</option>
                                             </select>
-                                            
+                                            @php $comment = ''; @endphp
                                             @if($timetableFile->status == 1)
+                                                @if($comments && $comments->thisCount == $thisCount)
+                                                    @php $comment = $comments->comments @endphp
+                                                @endif
                                             <div class="hideAndAppearOnTheFly{{$timetableFile->id}}">
                                                 <form action="{{route('timetables.comment', ['timetableFile' => $timetableFile->id, 'thisCount' => $thisCount])}}" method="post" class="container-fluid" id="comment_form_{{$timetableFile->id}}">
                                                     @csrf
-                                                    <textarea name="comments" id="comments" class="comments" placeholder="Σχόλια">{{$timetableFile->comments}}</textarea>
+                                                    <textarea name="comments" id="comments" class="comments" placeholder="Σχόλια">{{$comment}}</textarea>
                                                     <button class="btn btn-primary btn-block btn-sm rounded-2 py-2 m-1 no-spin" id="commentButton" value="{{$timetableFile->id}}">Υποβολή Σχολίων</button>
                                                 
                                                 </form>

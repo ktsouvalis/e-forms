@@ -4,6 +4,9 @@
     $microapp = App\Models\Microapp::where('url', '/timetables')->first(); //fetch microapp
     $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     $timetables = $school->timetables; //fetch school's timetables
+    <!-- $timetable = $timetable->filter(function ($item) {//Φέρε το πρόγραμμα που είναι υπο επεξεργασία
+                    return $item->status == 0;
+                }); -->
     $timetable = $timetables->first(); //fetch first timetable
     $timetableFiles = $timetable?$timetable->files:''; //fetch timetable's files
     //dd($timetableFiles);
@@ -35,16 +38,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Κλείσιμο"></button>
     </div>
 @endif
+</div>
 <div class="container">
-    @if($microapp->accepts == 0)
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
     <h2 class="text-center">Υποβολή Ωρολογίων Προγραμμάτων</h2>
-	{{-- @include('microapps.secondments.inc_personal_data') --}}
-    {{-- Δηλώσεις - Α Τμήμα Αίτησης --}}
     <div class="row justify-content-center">
 		<div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0"> {{-- Card Start--}}
@@ -96,11 +92,15 @@
                                     $thisCount = 0;
                                 @endphp
                                 @foreach($fileNames as $serverFileName => $databaseFileName)
-                                @php $thisCount++; @endphp
+                                @php 
+                                    $thisCount++;
+                                    $comments = json_decode($timetableFile->comments);
+                                    //dd($comments);
+                                @endphp
                                 <div class="d-flex justify-content-between">
-                                    @if($timetableFile->comments && $thisCount == $filesCount)
+                                    @if(($comments && $comments->thisCount == $thisCount) && $thisCount == $filesCount)
                                     <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                        <strong>Επισημάνσεις:</strong> {{$timetableFile->comments}}
+                                        <strong>Επισημάνσεις:</strong> {{$comments->comments}}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Κλείσιμο"></button>
                                     </div>
                                     @endif

@@ -306,7 +306,7 @@ Route::group(['prefix' => 'swimming'], function () {
 });
 
 // TIMETABLES ROUTES
-Route::resource('timetables', TimetablesController::class);//->middleware('canViewMicroapp');
+Route::resource('timetables', TimetablesController::class)->middleware('canViewMicroapp');
 Route::group(['prefix' => 'timetables', 'middleware' => 'canViewMicroapp'], function () {
     Route::post('/upload_files/{timetable?}', [TimetablesController::class, 'upload_files'])->name('timetables.upload_files');
     Route::post('/submit/{timetable}', [TimetablesController::class, 'submit'])->name('timetables.submit');

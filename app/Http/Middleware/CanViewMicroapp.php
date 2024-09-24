@@ -25,7 +25,7 @@ class CanViewMicroapp
         $microapp = Microapp::where('url', "/".$resource)->firstOrFail(); 
         if(!$microapp->active)
             abort(403, "Μη εξουσιοδοτημένη ενέργεια (inactive)");
-
+        
         if(Auth::check()){
             $user = Auth::guard('web')->user();
             if($user->isAdmin()){

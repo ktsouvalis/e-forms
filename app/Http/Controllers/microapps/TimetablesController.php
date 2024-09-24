@@ -18,8 +18,8 @@ class TimetablesController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index']);
-        $this->middleware('isSchool')->only(['create','upload_files', 'delete_file', 'download_file']);
+        $this->middleware('auth')->only(['index', 'download_file', 'change_status', 'comment']);
+        $this->middleware('isSchool')->only(['create','upload_files', 'upload_file', 'delete_file', 'download_file', 'change_status', 'comment'])->except(['index']);
         $this->microapp = Microapp::where('url', '/timetables')->first();
     }
 
@@ -170,22 +170,19 @@ class TimetablesController extends Controller
     }
     //Κατέβασμα αρχείου
     public function download_file($serverFileName, $databaseFileName = null){
-        $schoolCode = Auth::guard('school')->user()->code;
+        
         $directory = "timetables";
         $fileHandler = new FilesController();
         $download = $fileHandler->download_file($directory, $serverFileName, 'local', $databaseFileName);
         if($download->getStatusCode() == 500){
-            Log::channel('files')->error($schoolCode." File $serverFileName as $databaseFileName failed to download");
             return back()->with('failure', 'Δοκιμάστε ξανά');
         }
-        Log::channel('files')->info($schoolCode." File $serverFileName as $databaseFileName successfully downloaded");
         return $download;
     }
 
     //Αλλαγή κατάστασης Αρχείου
     public function change_status(Request $request, TimetablesFiles $timetableFile){
 
-        Log::channel('files')->info(Auth::guard('school')->user()->code." changed status of file ".$timetableFile->id);
         $timetableFile->status = $request->status;
         try{
             $timetableFile->update();

@@ -4,12 +4,19 @@
     $microapp = App\Models\Microapp::where('url', '/timetables')->first(); //fetch microapp
     $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     $timetables = $school->timetables; //fetch school's timetables
-    <!-- $timetable = $timetable->filter(function ($item) {//Φέρε το πρόγραμμα που είναι υπο επεξεργασία
-                    return $item->status == 0;
-                }); -->
-    $timetable = $timetables->first(); //fetch first timetable
+    $timetable = null;
+    $oldTimetables = null;
+    if($timetables->count() > 0){
+        $timetable = $timetables->filter(function ($item) {//Φέρε το πρόγραμμα που είναι υπο επεξεργασία
+                        return $item->status == 0;
+                    })->first();
+        $oldTimetables = $timetables->filter(function ($item) {//Φέρε τα προηγούμενα οριστικοποιημένα προγράμματα
+                        return $item->status == 1;
+                    });    
+    }
+    
+    //$timetable = $timetables->first(); //fetch first timetable
     $timetableFiles = $timetable?$timetable->files:''; //fetch timetable's files
-    //dd($timetableFiles);
     @endphp
 @push('links')
     <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
@@ -41,29 +48,17 @@
 </div>
 <div class="container">
     <h2 class="text-center">Υποβολή Ωρολογίων Προγραμμάτων</h2>
-    <div class="row justify-content-center">
-		<div class="col-12 col-md-8 col-lg-8 pb-5">
-        <div class="card border-primary rounded-0"> {{-- Card Start--}}
+    	
+        <div class="card border-primary rounded-2"> {{-- Card Start--}}
             <div class="card-header p-0">
                 <div class="bg-info text-white text-center py-2">
-                    <h3><i class="fa-regular fa-square-check"></i> Έντυπα</h3>
-                    <p class="m-0">Παρακαλούμε υποβάλλετε τα έντυπα που αφορούν τα Εβδομαδιαία Ωρολόγια Προγράμματα για το Σχολείο σας</p>
+                    <h3><i class="fa-solid fa-laptop-file"></i> Έντυπα</h3>
+                    <p class="m-0">Παρακαλούμε υποβάλλετε τα έντυπα που αφορούν το τρέχον Εβδομαδιαίο Ωρολόγιο Προγράμμα για το Σχολείο σας</p>
                 </div>
             </div>
             <div class="card-body p-3">
             
-            </div>
-        </div>                                      {{-- Card End--}}
-        <div class="col-12 col-md-8 col-lg-8 ">
-        <div class="card border-primary rounded-0"> {{-- Card Start--}}
-                <div class="card-header p-0">
-                    <div class="bg-info text-white text-center py-2">
-                        <h3><i class="fa-regular fa-file-lines"></i> Υποβολή Ηλεκτρονικών Αρχείων</h3>
-                        <p class="m-0">Υποβάλλονται δικαιολογητικά σε μορφή .xlsx, .xls, .pdf < 10MB ανά υποβολή</p>
-                    </div>
-                </div>
-                
-                <div class="card-body p-3">
+                        <p class="m-0">Υποβάλλονται έντυπα σε μορφή .xlsx, .xls, .pdf < 10MB ανά υποβολή</p>
                     <div class="row justify-content-right">
                         <div class="text-center py-2">
                             <p class="m-0">Μπορείτε να επιλέξετε και να ανεβάσετε και περισσότερα από ένα αρχεία ταυτόχρονα.</p>
@@ -73,7 +68,7 @@
                             <div class="text-center">
                                 <input  type="file" id="files" name="files[]" multiple required >
                                 <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
-                                 >
+                                @if($microapp->accepts == 0) disabled @endif >
                             </div>
                         </form>
                       
@@ -83,30 +78,36 @@
                     <div class="row justify-content-right">
                         <div class="text-center py-2">
                             <p class="m-0">Αρχεία που έχουν υποβληθεί:</p>
-                            @if($timetableFiles)
-                            @foreach($timetableFiles as $timetableFile)
+                            @if($timetableFiles)                        <!-- Αν υπάρχουν καταχωρίσεις για αρχεία -->
+                            @foreach($timetableFiles as $timetableFile) <!--  Για κάθε καταχώριση αρχείου -->
                                 @php 
                                     $fileId = $timetableFile->id;
                                     $fileNames = json_decode($timetableFile->filenames_json, true);
-                                    $filesCount = count($fileNames);
-                                    $thisCount = 0;
+                                    $filesCount = count($fileNames);      //Πόσα αρχεία (διορθώσεις) έχουν υποβληθεί γι αυτό το αρχείο
+                                    $thisCount = 0;                         //Κράτα σε ένα δείκτη την τρέχουσα διόρθωση
                                 @endphp
                                 @foreach($fileNames as $serverFileName => $databaseFileName)
                                 @php 
                                     $thisCount++;
                                     $comments = json_decode($timetableFile->comments);
-                                    //dd($comments);
                                 @endphp
-                                <div class="d-flex justify-content-between">
-                                    @if(($comments && $comments->thisCount == $thisCount) && $thisCount == $filesCount)
+                                <div class="d-flex justify-content-start">
+                                    <form action="{{route('timetables.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get">
+                                        <input type="submit"  @if($timetableFile->status == 3 && $thisCount == $filesCount) class="btn btn-success btn-block rounded-2 py-2 m-1" @else class="btn btn-info btn-block rounded-2 py-2 m-1" @endif  @if($thisCount != $filesCount)  style="padding: 0.25rem; margin: 0.25rem; font-size: 0.5rem;" @endif value="{{$databaseFileName}}" >
+                                    </form>
+                                    @if($timetableFile->status == 3 && $thisCount == $filesCount) <!-- Αν το αρχείο έχει εγκριθεί και είναι το τελευταίο, εμφάνισε την έγκριση και σε μήνυμα-->
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>Έγκριση:</strong> Το αρχείο αυτό έχει ελεγχθεί και εγκριθεί. 
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Κλείσιμο"></button>
+                                    </div>
+                                    @endif
+                                    @if(($comments && $comments->thisCount == $thisCount) && $thisCount == $filesCount) <!-- Αν υπάρχουν παρατηρήσεις και αν υπάρχουν παρατηρήσεις γι αυτη τη διόρθωση δείξε τις παρατηρήσεις μόνο για το τελευταίο αρχείο που πρέπει να διορθωθεί-->
                                     <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                        <p><small>Παρακαλούμε να υποβάλλετε νέο, διορθωμένο αρχείο σύμφωνα με τις ακόλουθες επισημάνσεις:</small></p>
                                         <strong>Επισημάνσεις:</strong> {{$comments->comments}}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Κλείσιμο"></button>
                                     </div>
                                     @endif
-                                    <form action="{{route('timetables.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get">
-                                        <input type="submit"  @if($timetableFile->status == 3 && $thisCount == $filesCount) class="btn btn-success btn-block rounded-2 py-2 m-1" @else class="btn btn-info btn-block rounded-2 py-2 m-1" @endif  @if($thisCount != $filesCount)  style="padding: 0.25rem; margin: 0.25rem; font-size: 0.5rem;" @endif value="{{$databaseFileName}}" >
-                                    </form>
                                     @if($timetableFile->status == 0 || ($timetableFile->status == 2 && $thisCount == $filesCount))
                                     <form action="{{route('timetables.delete_file', [ 'serverFileName' => $serverFileName, 'timetableFileId' => $fileId ])}}" method="get">
                                         <input type="submit" class="btn btn-danger btn-block btn-sm rounded-3" value="x" 
@@ -135,7 +136,20 @@
                 </div>
             </div>
         </div>                                          {{-- Card End--}}
-        </div>
+
+        @if($oldTimetables && $oldTimetables->count() > 0)
+        <div class="card border-primary rounded-2 my-2"> {{-- Card Start--}}
+            <div class="card-header p-0">
+                <div class="bg-info text-white text-center py-2">
+                    <h3><i class="fa-regular fa-square-check"></i> Οριστικοποιημένα Ωρολόγια Προγράμματα</h3>
+                    <p class="m-0">Δείτε τα προηγούμενα οριστικοποιημένα Ωρολόγια Προγράμματα</p>
+                </div>
+            </div>
+            <div class="card-body p-3">
+            body here
+            </div>
+        </div>                                              {{-- Card End--}}
+        @endif
 
         
 	</div>

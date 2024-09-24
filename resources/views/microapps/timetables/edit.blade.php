@@ -21,7 +21,10 @@
     @endphp
         @push('title')
         <title>ΕΩΠΔ {{$schoolName}}</title>
-    @endpush    
+    @endpush 
+    <form action="">
+        <button class="btn btn-primary btn-block rounded-2 py-2 m-1 no-spin" title="Πίσω" onclick="window.history.back();">Επιστροφή</button>
+    </form>  
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
@@ -55,6 +58,7 @@
                                             @if($thisCount != $filesCount)  style="padding: 0.25rem; margin: 0.25rem; font-size: 0.5rem;" @endif title="Λήψη αρχείου" value="{{$databaseFileName}}">
                                         </form>
                                         @if($thisCount == $filesCount)
+                                        <label for="{{$timetableFile->id}}">Κατάσταση Αρχείου</label>
                                             <select name="{{$timetableFile->id}}" id="{{$thisCount}}" class="changeTimetableStatus">
                                                 <option value="0" >Αρχική Υποβολή</option>
                                                 <option value="1" @if($timetableFile->status == 1) selected @endif>Αναμονή Διορθώσεων</option>

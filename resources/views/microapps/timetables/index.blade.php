@@ -28,7 +28,7 @@
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     <div class="">
         <h2 class="text-center">Ωρολόγια Προγράμματα</h2>
-    @foreach($timetables as $timetable)
+    
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-8 pb-5">
                 <table  id="dataTable" class="display table table-sm table-striped table-hover">
@@ -42,7 +42,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                    @foreach($timetables as $timetable)
+                        <tr @if($timetable->status == 1) style="background-color: #d1ecf1;" @endif>
                             <td>{{$timetable->school->code}}</td>
                             <td>
                                 {{$timetable->school->name}}
@@ -83,16 +84,18 @@
                                     @endforeach
                                 @endforeach
                             </td>
-                            <td> {{-- Κατάσταση Αρχή--}}
-                                
-
+                            <td> 
+                                @if($timetable->status == 1)<strong class="text-success"> Οριστικοποιημένο @endif
+                                @if($timetable->status == 0)<strong class="text-info"> Υπο επεξεργασία @endif
+                                </strong>
                             </td>
                             <td></td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>                                      
         </div>
-    @endforeach
+   
     
 </x-layout>

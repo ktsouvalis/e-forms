@@ -145,9 +145,42 @@
                     <p class="m-0">Δείτε τα προηγούμενα οριστικοποιημένα Ωρολόγια Προγράμματα</p>
                 </div>
             </div>
+            @foreach($oldTimetables as $oldTimetable)
             <div class="card-body p-3">
-            body here
+            @foreach($oldTimetable->files as $timetableFile)
+                @php 
+                    $filesArray = json_decode($timetableFile->filenames_json, true);
+                    $filesCount = count($filesArray);
+                    $thisCount = 0;
+                    $fileId = $timetableFile->id;
+                @endphp
+                @foreach($filesArray as $serverFileName => $databaseFileName)
+
+                    @php 
+                        $thisCount++;
+                        $comments = json_decode($timetableFile->comments); 
+                    @endphp
+                    <div class="d-flex align-items-start mb-2">
+                    <form action="{{route('timetables.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get" class="container-fluid">
+                        <input type="submit" id="{{$fileId}}_{{$thisCount}}"
+                        @if($timetableFile->status == 3 && $thisCount == $filesCount) class="btn btn-success btn-block rounded-2 py-2 m-1 no-spin" @else class="btn btn-info btn-block rounded-2 py-2 m-1 no-spin" @endif  
+                        @if($thisCount != $filesCount)  style="padding: 0.25rem; margin: 0.25rem; font-size: 0.5rem;" @endif title="Λήψη αρχείου" value="{{$databaseFileName}}">
+                    </form>
+                    @if($thisCount == $filesCount)
+                        @if($timetableFile->status == 0) Αρχική Υποβολή @endif    
+                        @if($timetableFile->status == 1) Αναμονή Διορθώσεων @endif
+                        @if($timetableFile->status == 2) Υποβολή Διορθώσεων @endif
+                        @if($timetableFile->status == 3) Έγκριση @endif
+                        <hr>
+                    @endif
+                    </div>
+                    
+                    
+                @endforeach
+            @endforeach
             </div>
+            <hr>
+            @endforeach
         </div>                                              {{-- Card End--}}
         @endif
 

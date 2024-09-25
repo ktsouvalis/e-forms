@@ -15,7 +15,7 @@
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init_outings.js')}}"></script>
         <script>
-            var checkOutingUrl = '{{ route("outings.change_status", ["outing" =>"mpla"]) }}';
+            var checkOutingUrl = '{{ route("outings.check", ["outing" =>"mpla"]) }}';
             var deleteOutingUrl = '{{ route("outings.destroy", ["outing" =>"mpla"]) }}';
             var countSectionsUrl ='{{ route("outings.count_sections", ["outing" =>"mpla"]) }}'
         </script>

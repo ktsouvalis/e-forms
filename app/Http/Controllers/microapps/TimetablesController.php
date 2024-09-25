@@ -61,7 +61,7 @@ class TimetablesController extends Controller
                 return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
             }
         }
-        //Βρες πόσα αρχεία έχει ήδη ανεβάσει
+        //Βρες πόσα αρχεία έχει ήδη ανεβάσει γι αυτό το πρόγραμμα
         $timetableId = $timetable->id;
         $timetableFiles = TimetablesFiles::where('timetable_id', $timetableId)->get();
         $directory = "timetables";
@@ -186,7 +186,26 @@ class TimetablesController extends Controller
 
     //Αλλαγή κατάστασης Αρχείου
     public function change_status(Request $request, TimetablesFiles $timetableFile){
-
+        
+        // //εξέτασε το ενδεχόμενο να είναι κλειδωμένο το πρόγραμμα και να πρέπει να ανοίξει
+        // if($request->status == 2){ // αν πάει να το βάλει σε αναμονή διορθώσεων
+        //     $timetable = $timetableFile->timetable;
+        //     if($timetable->status == 1){ // και αν το πρόγραμμα είναι οριστικοποιημένο
+        //         $otherTimetable = Timetables::where('school_id', $timetable->school->id)                         // δες αν υπάρχει άλλο ανοικτό πρόγραμμα γι αυτό το σχολείο
+        //                                     ->where('status', 0)
+        //                                     ->first();
+        //         Log::channel('files')->info($otherTimetable." Timetable Files successfully uploaded");
+        //         if($otherTimetable->count() > 0){ // αν υπάρχει
+        //             return back()->with('failure', 'Δεν μπορείτε να αναιρέσετε την οριστική υποβολή ενός προγράμματος ενώ υπάρχει ένα άλλο ανοικτό');
+        //         }
+        //         $timetable->status = 0; //Αν περάσει, άνοιξε το πρόγραμμα
+        //         try{
+        //             $timetable->update();
+        //         } catch(\Exception $e) {
+        //             return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
+        //         }
+        //     }
+        // }
         $timetableFile->status = $request->status;
         try{
             $timetableFile->update();

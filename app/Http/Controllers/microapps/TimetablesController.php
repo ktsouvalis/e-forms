@@ -45,7 +45,7 @@ class TimetablesController extends Controller
             }
         }
         $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
-            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png,xlsx,xls|max:2048',
+            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png,xlsx,xls,doc,docx|max:2048',
         ]);
         $files = $request->file('files');
         $fileNames = [];

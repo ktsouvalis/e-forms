@@ -14,7 +14,6 @@
                         return $item->status == 1;
                     });    
     }
-    
     //$timetable = $timetables->first(); //fetch first timetable
     $timetableFiles = $timetable?$timetable->files:''; //fetch timetable's files
     $lockNewFileSubmission = false;
@@ -90,7 +89,7 @@
                 </div>
             </div>
             <div class="card-body p-3">
-                <p class="m-0">Υποβάλλονται έντυπα σε μορφή .xlsx, .xls, .pdf < 10MB ανά υποβολή</p>
+                <p class="m-0">Υποβάλλονται έντυπα σε μορφή .xlsx, .xls, .docx, .doc, .pdf, jpg, jpeg, png < 10MB ανά υποβολή</p>
                 <div class="row justify-content-right">
                     <div class="text-center py-2">
                         <p class="m-0">Μπορείτε να επιλέξετε και να ανεβάσετε και περισσότερα από ένα αρχεία ταυτόχρονα.</p>

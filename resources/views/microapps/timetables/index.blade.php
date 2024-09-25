@@ -19,7 +19,8 @@
         $microapp = App\Models\Microapp::where('url', '/timetables')->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         $timetables_schools = $microapp->stakeholders;
-        $timetables = App\Models\microapps\Timetables::orderBy('created_at', 'desc')->get();
+        $timetables = App\Models\microapps\Timetables::orderBy('status', 'asc')
+                                                ->orderBy('created_at', 'desc')->get();
         // dd($timetables_schools, $timetables);
     @endphp
     @push('title')

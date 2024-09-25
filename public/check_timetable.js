@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    $('[class^="3hideAndAppearOnTheFly"]').hide();
+    $('[class^="0hideAndAppearOnTheFly"]').hide();
+    $('[class^="1hideAndAppearOnTheFly"]').hide();
     $('body').on('change', '.changeTimetableStatus', function () {
         var selectedValue = $(this).val();
         var timetableFileId = $(this).attr('name');
@@ -24,9 +27,13 @@ $(document).ready(function () {
                 // Handle the response here, update the page as needed
                 // $('#successMessage').text(response.message).show();
                 var elementId = timetableFileId + '_' + fileCount;
-                if (selectedValue == 2) {
+                if (selectedValue == 2) {//Όταν αλλάξει η κατάσταση σε "Αναμονή Διορθώσεων" δείξε τη φόρμα για τα Σχόλια
                     $('#' + elementId).removeClass('btn-success').addClass('btn-info');
-                    $('.hideAndAppearOnTheFly' + timetableFileId).show();
+                    if ('.0hideAndAppearOnTheFly' + timetableFileId > 0) {
+                        $('.0hideAndAppearOnTheFly' + timetableFileId).show();
+                    } else {
+                        $('.3hideAndAppearOnTheFly' + timetableFileId).hide();
+                    }
                 }
                 else if (selectedValue == 3) {
                     $('#' + elementId).removeClass('btn-info').addClass('btn-success');

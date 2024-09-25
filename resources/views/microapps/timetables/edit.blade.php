@@ -22,8 +22,8 @@
         @push('title')
         <title>ΕΩΠΔ {{$schoolName}}</title>
     @endpush 
-    <form action="">
-        <button class="btn btn-primary btn-block rounded-2 py-2 m-1 no-spin" title="Πίσω" onclick="window.history.back();">Επιστροφή</button>
+    <form action="{{url('/timetables')}}">
+        <button class="btn btn-primary btn-block rounded-2 py-2 m-1 no-spin" title="Πίσω">Επιστροφή</button>
     </form>  
     <div class="container mt-4">
         <div class="card">
@@ -79,6 +79,13 @@
                                                 </form>
                                             </div>
                                             @endif
+                                            <div class="{{$timetableFile->status}}hideAndAppearOnTheFly{{$timetableFile->id}}">
+                                                <form action="/timetables/comment/${timetableFileId}/${fileCount}" method="post" class="container-fluid" id="comment_form_${timetableFileId}">
+                                                    <input type="hidden" name="_token" value="${csrfToken}">
+                                                    <textarea name="comments" id="comments" class="comments" placeholder="Σχόλια" style="width: 80%"></textarea>
+                                                    <button class="btn btn-primary btn-block btn-sm rounded-2 py-2 m-1 no-spin" id="commentButton" value="${timetableFileId}">Υποβολή Σχολίων</button>
+                                                </form>
+                                            </div>
                                             <hr>
                                         @endif
                                         

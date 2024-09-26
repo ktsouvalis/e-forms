@@ -66,25 +66,16 @@
                                                 <option value="3" @if($timetableFile->status == 3) selected @endif>Έγκριση</option>
                                                 <option value="0" disabled>Τα πεδία με * αφορούν ενέργειες του Σχολείου</option>
                                             </select>
-                                            @php $comment = ''; @endphp
-                                            @if($timetableFile->status == 1)
+                                            @php $comment = ''; $timetableFileId = $timetableFile->id; @endphp
                                                 @if($comments && $comments->thisCount == $thisCount)
                                                     @php $comment = $comments->comments @endphp
                                                 @endif
-                                            <div class="hideAndAppearOnTheFly{{$timetableFile->id}}">
+                                            <div class="hideAndAppearOnTheFly{{$timetableFile->id}} @if($timetableFile->status != 1) d-none @endif">
                                                 <form action="{{route('timetables.comment', ['timetableFile' => $timetableFile->id, 'thisCount' => $thisCount])}}" method="post" class="container-fluid" id="comment_form_{{$timetableFile->id}}">
                                                     @csrf
                                                     <textarea name="comments" id="comments" class="comments" placeholder="Σχόλια" style="width: 80%">{{$comment}}</textarea>
                                                     <button class="btn btn-primary btn-block btn-sm rounded-2 py-2 m-1 no-spin" id="commentButton" value="{{$timetableFile->id}}">Υποβολή Σχολίων</button>
                                                 
-                                                </form>
-                                            </div>
-                                            @endif
-                                            <div class="{{$timetableFile->status}}hideAndAppearOnTheFly{{$timetableFile->id}}">
-                                                <form action="/timetables/comment/${timetableFileId}/${fileCount}" method="post" class="container-fluid" id="comment_form_${timetableFileId}">
-                                                    <input type="hidden" name="_token" value="${csrfToken}">
-                                                    <textarea name="comments" id="comments" class="comments" placeholder="Σχόλια" style="width: 80%"></textarea>
-                                                    <button class="btn btn-primary btn-block btn-sm rounded-2 py-2 m-1 no-spin" id="commentButton" value="${timetableFileId}">Υποβολή Σχολίων</button>
                                                 </form>
                                             </div>
                                             <hr>

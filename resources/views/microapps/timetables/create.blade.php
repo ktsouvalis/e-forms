@@ -212,9 +212,7 @@
                         @if($timetableFile->status == 3) Έγκριση @endif
                         <hr>
                     @endif
-                    </div>
-                    
-                    
+                    </div>   
                 @endforeach
             @endforeach
             </div>

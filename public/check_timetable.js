@@ -22,23 +22,29 @@ $(document).ready(function () {
                 status: selectedValue,
             },
             success: function (response) {
-                // Handle the response here, update the page as needed
-                // $('#successMessage').text(response.message).show();
+                //update page  
                 var elementId = timetableFileId + '_' + fileCount;
-                console.log(selectedValue);
                 if (selectedValue == 1) {//Όταν αλλάξει η κατάσταση σε "Αναμονή Διορθώσεων" δείξε τη φόρμα για τα Σχόλια
-                    console.log("Μπήκε στην Αναμονή Διορθώσεων");
+                    if ($('#' + elementId).hasClass('btn-success')) {
+                        $('#' + elementId).removeClass('btn-success');
+                    }
                     $('#' + elementId).removeClass('btn-success').addClass('btn-info');
                     $('.hideAndAppearOnTheFly' + timetableFileId).removeClass('d-none');
-                    
                 }
                 else if (selectedValue == 3) {
-                    console.log("Μπήκε στην Επικυρωμένο");
+                    if ($('#' + elementId).hasClass('btn-info')) {
+                        $('#' + elementId).removeClass('btn-info');
+                    }
                     $('#' + elementId).removeClass('btn-info').addClass('btn-success');
-                    $('.hideAndAppearOnTheFly' + timetableFileId).addClass('d-none');
-                    
+                    $('.hideAndAppearOnTheFly' + timetableFileId).addClass('d-none'); 
                 }
-                else{
+                else{ //if value = 0
+                    if ($('#' + elementId).hasClass('btn-sucess')) {
+                        $('#' + elementId).removeClass('btn-success');
+                    }
+                    $('.hideAndAppearOnTheFly' + timetableFileId).addClass('d-none'); 
+                    $('#' + elementId).addClass('btn-info');
+                    
                     
                 }
             },

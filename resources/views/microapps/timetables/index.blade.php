@@ -27,7 +27,7 @@
         <title>{{$microapp->name}}</title>
     @endpush    
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-    <div class="">
+    <div class="container-fluid">
         <h2 class="text-center">Ωρολόγια Προγράμματα</h2>
         <div>
             <button class="btn btn-primary m-3" type="button" data-bs-toggle="collapse" data-bs-target="#instructionsList" aria-expanded="false" aria-controls="instructionsList">
@@ -59,21 +59,21 @@
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-8 pb-5">
+            <div class="pb-5">
+               
                 <table  id="dataTable" class="display table table-sm table-striped table-hover">
                     <thead>
                         <tr>
-                            <th id="search">Κωδικός</th>
                             <th id="search">Σχολείο</th>
                             <th id="search">Αρχεία</th>
                             <th id="search">Κατάσταση</th>
                             <th id="search"></th>
+                            <th id="search">Κωδικός</th>
                         </tr>
                     </thead>
                     <tbody>
                     @foreach($timetables as $timetable)
                         <tr @if($timetable->status == 1) style="background-color: #d1ecf1;" @endif>
-                            <td>{{$timetable->school->code}}</td>
                             <td>
                                 {{$timetable->school->name}}
                                 <form action="{{route('timetables.edit', ['timetable' => $timetable->id])}}" method="get">
@@ -119,6 +119,7 @@
                                 </strong>
                             </td>
                             <td></td>
+                            <td>{{$timetable->school->code}}</td>
                         </tr>
                         @endforeach
                     </tbody>

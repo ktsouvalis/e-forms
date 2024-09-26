@@ -60,7 +60,7 @@
                                         @if($thisCount == $filesCount)
                                         <label for="{{$timetableFile->id}}">Κατάσταση Αρχείου </label>
                                             <select name="{{$timetableFile->id}}" id="{{$thisCount}}" class="changeTimetableStatus">
-                                                <option value="0" @if($timetableFile->status == 0) selected @endif disabled >Αρχική Υποβολή*</option>
+                                                <option value="0" @if($timetableFile->status == 0) selected @endif >Αρχική Υποβολή*</option>
                                                 <option value="1" @if($timetableFile->status == 1) selected @endif>Αναμονή Διορθώσεων</option>
                                                 <option value="2" @if($timetableFile->status == 2) selected @endif disabled>Υποβολή Διορθώσεων*</option>
                                                 <option value="3" @if($timetableFile->status == 3) selected @endif>Έγκριση</option>

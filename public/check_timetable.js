@@ -28,10 +28,12 @@ $(document).ready(function () {
                 if (selectedValue == 1) {//Όταν αλλάξει η κατάσταση σε "Αναμονή Διορθώσεων" δείξε τη φόρμα για τα Σχόλια
                     $('#' + elementId).removeClass('btn-success').addClass('btn-info');
                     $('.hideAndAppearOnTheFly' + timetableFileId).removeClass('d-none');
+                    console.log("Μπήκε στην Αναμονή Διορθώσεων");
                 }
                 else if (selectedValue == 3) {
                     $('#' + elementId).removeClass('btn-info').addClass('btn-success');
                     $('.hideAndAppearOnTheFly' + timetableFileId).addClass('d-none');
+                    console.log("Μπήκε στην Επικυρωμένο");
                 }
                 else{
                     

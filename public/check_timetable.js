@@ -25,15 +25,18 @@ $(document).ready(function () {
                 // Handle the response here, update the page as needed
                 // $('#successMessage').text(response.message).show();
                 var elementId = timetableFileId + '_' + fileCount;
+                console.log(selectedValue);
                 if (selectedValue == 1) {//Όταν αλλάξει η κατάσταση σε "Αναμονή Διορθώσεων" δείξε τη φόρμα για τα Σχόλια
+                    console.log("Μπήκε στην Αναμονή Διορθώσεων");
                     $('#' + elementId).removeClass('btn-success').addClass('btn-info');
                     $('.hideAndAppearOnTheFly' + timetableFileId).removeClass('d-none');
-                    console.log("Μπήκε στην Αναμονή Διορθώσεων");
+                    
                 }
                 else if (selectedValue == 3) {
+                    console.log("Μπήκε στην Επικυρωμένο");
                     $('#' + elementId).removeClass('btn-info').addClass('btn-success');
                     $('.hideAndAppearOnTheFly' + timetableFileId).addClass('d-none');
-                    console.log("Μπήκε στην Επικυρωμένο");
+                    
                 }
                 else{
                     

@@ -2,6 +2,7 @@
     @push('links')
         <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
         <link href="{{asset('Responsive-2.4.1/css/responsive.bootstrap5.css')}}" rel="stylesheet"/>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     @endpush
     @push('scripts')
         <script src="{{asset('DataTables-1.13.4/js/jquery.dataTables.js')}}"></script>
@@ -10,11 +11,58 @@
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
         <script src="{{asset('check_timetable.js')}}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
         <script>
             var checkTimetableStatusUrl = '{{ route("timetables.change_status", ["timetableFile" =>"mpla"]) }}';
             
         </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                // Function to filter table rows based on selected checkboxes
+                function filterTable() {
+                    var selectedSchoolKind = [];
+                    $('.filter-checkbox:checked').each(function() {
+                        selectedSchoolKind.push($(this).val());
+                    });
+    
+                    $('.selected-filters').text(selectedSchoolKind.join(', '));
+    
+                    $('tbody tr').each(function() {
+                        var rowSchoolKind = $(this).data('school-kind');
+                        if (selectedSchoolKind.length === 0 || selectedSchoolKind.includes(rowSchoolKind)) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                }
+    
+                // Attach change event to checkboxes
+                $('.filter-checkbox').on('change', function() {
+                    filterTable();
+                });
+    
+                // Initial filter
+                filterTable();
+            });
+        </script>
     @endpush
+    <style>
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        .filter-group-title {
+            font-weight: bold;
+        }
+        .checkbox-group label {
+            display: block;
+        }
+        .selected-filters {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
     @php
         $microapp = App\Models\Microapp::where('url', '/timetables')->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
@@ -60,14 +108,23 @@
         </div>
         <div class="row justify-content-center">
             <div class="pb-5">
-               
+                <div class="filter-group-title">
+                    <h3>Είδος Σχολείου</h3>
+                </div>
+                <div class="selected-filters"></div>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" class="filter-checkbox" value="Δημοτικά"> Δημοτικά <small>(157)</small></label>
+                        <label><input type="checkbox" class="filter-checkbox" value="Νηπιαγωγεία"> Νηπιαγωγεία <small>(153)</small></label>
+                    </div>
+                </div>
+            
                 <table  id="dataTable" class="display table table-sm table-striped table-hover">
                     <thead>
                         <tr>
                             <th id="search">Σχολείο</th>
                             <th id="search">Αρχεία</th>
                             <th id="search">Κατάσταση</th>
-                            <th id="search"></th>
+                            <th id="search">Είδος Σχολείου</th>
                             <th id="search">Κωδικός</th>
                         </tr>
                     </thead>
@@ -118,7 +175,7 @@
                                 @if($timetable->status == 0)<strong class="text-info"> Υπο επεξεργασία @endif
                                 </strong>
                             </td>
-                            <td></td>
+                            <td data-school-kind="@if($timetable->school->primary == 1) primary @else secondary @endif">@if($timetable->school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
                             <td>{{$timetable->school->code}}</td>
                         </tr>
                         @endforeach

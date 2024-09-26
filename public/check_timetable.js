@@ -1,6 +1,8 @@
 $(document).ready(function () {
     
-    $('body').on('change', '.changeTimetableStatus', function () {
+    // Cookies.set('name', 'checkedId');
+    // console.log(Cookies.get('name')); // 'value'
+    $('body').on('change', '.changeTimetableStatus', function () { //Όταν αλλάξει η κατάσταση του προγράμματος ανανέωσε την κατάσταση στη βάση
         var selectedValue = $(this).val();
         var timetableFileId = $(this).attr('name');
         var fileCount = $(this).attr('id');

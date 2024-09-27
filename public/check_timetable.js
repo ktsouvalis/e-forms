@@ -83,13 +83,14 @@ $(document).ready(function () {
         $('.selected-filters').text(displaySchoolKind.join(', ')); // Display selected filters on the page
        
         //FILTER THE TABLE ROWS BASED ON THE SELECTED CHECKBOXES
-        $('tbody tr').each(function() { //για κάθε γραμμή του πίνακα
-            var rowSchoolKind = $(this).data('school-kind');
+        table.rows().every(function() {
+            var row = $(this.node());
+            var rowSchoolKind = row.data('school-kind');
             rowSchoolKind = rowSchoolKind.trim();
-            if (selectedSchoolKind.length === 0 || selectedSchoolKind.includes(rowSchoolKind)) { //αν δεν έχει επιλεγεί φίλτρο ή το φίλτρο είναι στον πίνακ
-                $(this).show();
+            if (selectedSchoolKind.length === 0 || selectedSchoolKind.includes(rowSchoolKind)) { // If no filter is selected or the filter is in the array
+                row.show();
             } else {
-                $(this).hide();
+                row.hide();
             }
         });
     }

@@ -14,38 +14,6 @@
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
         <script>
             var checkTimetableStatusUrl = '{{ route("timetables.change_status", ["timetableFile" =>"mpla"]) }}';
-            
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                // Function to filter table rows based on selected checkboxes
-                function filterTable() {
-                    var selectedSchoolKind = [];
-                    $('.filter-checkbox:checked').each(function() {
-                        selectedSchoolKind.push($(this).val());
-                    });
-    
-                    $('.selected-filters').text(selectedSchoolKind.join(', '));
-    
-                    $('tbody tr').each(function() {
-                        var rowSchoolKind = $(this).data('school-kind');
-                        if (selectedSchoolKind.length === 0 || selectedSchoolKind.includes(rowSchoolKind)) {
-                            $(this).show();
-                        } else {
-                            $(this).hide();
-                        }
-                    });
-                }
-    
-                // Attach change event to checkboxes
-                $('.filter-checkbox').on('change', function() {
-                    filterTable();
-                });
-    
-                // Initial filter
-                filterTable();
-            });
         </script>
     @endpush
     <style>
@@ -113,8 +81,8 @@
                 </div>
                 <div class="selected-filters"></div>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" class="filter-checkbox" value="Δημοτικά"> Δημοτικά <small>(157)</small></label>
-                        <label><input type="checkbox" class="filter-checkbox" value="Νηπιαγωγεία"> Νηπιαγωγεία <small>(153)</small></label>
+                        <label><input type="checkbox" class="filter-checkbox" value="primary"> Δημοτικά <small>(157)</small></label>
+                        <label><input type="checkbox" class="filter-checkbox" value="secondary"> Νηπιαγωγεία <small>(153)</small></label>
                     </div>
                 </div>
             
@@ -130,7 +98,8 @@
                     </thead>
                     <tbody>
                     @foreach($timetables as $timetable)
-                        <tr @if($timetable->status == 1) style="background-color: #d1ecf1;" @endif>
+                        <tr @if($timetable->status == 1) style="background-color: #d1ecf1;" @endif 
+                            data-school-kind="@if($timetable->school->primary == 1) primary @else secondary @endif">
                             <td>
                                 {{$timetable->school->name}}
                                 <form action="{{route('timetables.edit', ['timetable' => $timetable->id])}}" method="get">
@@ -165,8 +134,6 @@
                                             <hr>
                                         @endif
                                         </div>
-                                        
-                                        
                                     @endforeach
                                 @endforeach
                             </td>
@@ -175,7 +142,7 @@
                                 @if($timetable->status == 0)<strong class="text-info"> Υπο επεξεργασία @endif
                                 </strong>
                             </td>
-                            <td data-school-kind="@if($timetable->school->primary == 1) primary @else secondary @endif">@if($timetable->school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
+                            <td>@if($timetable->school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
                             <td>{{$timetable->school->code}}</td>
                         </tr>
                         @endforeach

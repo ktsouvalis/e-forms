@@ -1,7 +1,5 @@
 $(document).ready(function () {
     
-    // Cookies.set('name', 'checkedId');
-    // console.log(Cookies.get('name')); // 'value'
     $('body').on('change', '.changeTimetableStatus', function () { //Όταν αλλάξει η κατάσταση του προγράμματος ανανέωσε την κατάσταση στη βάση
         var selectedValue = $(this).val();
         var timetableFileId = $(this).attr('name');
@@ -46,8 +44,6 @@ $(document).ready(function () {
                     }
                     $('.hideAndAppearOnTheFly' + timetableFileId).addClass('d-none'); 
                     $('#' + elementId).addClass('btn-info');
-                    
-                    
                 }
             },
             error: function (error) {
@@ -56,5 +52,56 @@ $(document).ready(function () {
             }
         });
     });
+
+    //ADD FILTERS ON TOP OF THE DATATABLE
+    var table = $('#dataTable').DataTable(); //get datatable
+    // Function to filter table rows based on selected checkboxes
+    function filterTable() {
+        var selectedSchoolKind = [];
+        var displaySchoolKind = [];
+        // Retrieve and log the stored preferences
+        var storedPreferences = Cookies.get('timetablesPreference');
+        console.log('Stored preferences out of if: ', storedPreferences);
+        if (storedPreferences) {
+            console.log('Stored preferences inside if: ', JSON.parse(storedPreferences)); // Log the parsed array
+            selectedSchoolKind = storedPreferences; //βάλε τα φίλτρα σε ένα πίνακα
+            $('.filter-checkbox').each(function() {
+                if(selectedSchoolKind.includes($(this).val())) {
+                    $(this).prop('checked', true);
+                }
+            });
+        } else { // Αν μπαίνει από refresh του checkbox μηδενίζονται τα cookies. Πάρε τα επιλεγμένα
+            $('.filter-checkbox:checked').each(function() {
+                selectedSchoolKind.push($(this).val()); //βάλε τα φίλτρα σε ένα πίνακα
+                displaySchoolKind.push($(this).val() == 'primary'?'Δημοτικά':'Νηπιαγωγεία'); //βάλε τα φίλτρα σε ένα πίνακα
+            });
+             //SET COOKIES FOR THE SELECTED FILTERS AND RETRIEVE THEM
+            Cookies.set('timetablesPreference', JSON.stringify(selectedSchoolKind), { expires: 14, sameSite: 'Lax' });
+        }
+        
+        //DISPLAY THE SELECTED FILTERS ON THE PAGE
+        $('.selected-filters').text(displaySchoolKind.join(', ')); // Display selected filters on the page
+       
+        //FILTER THE TABLE ROWS BASED ON THE SELECTED CHECKBOXES
+        $('tbody tr').each(function() { //για κάθε γραμμή του πίνακα
+            var rowSchoolKind = $(this).data('school-kind');
+            rowSchoolKind = rowSchoolKind.trim();
+            if (selectedSchoolKind.length === 0 || selectedSchoolKind.includes(rowSchoolKind)) { //αν δεν έχει επιλεγεί φίλτρο ή το φίλτρο είναι στον πίνακ
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    // Attach change event to checkboxes
+    $('.filter-checkbox').on('change', function() {
+        // REMOVE THE COOKIE
+        Cookies.remove('timetablesPreference');
+        filterTable();
+    });
+
+    // Initial filter
+    filterTable();
 });
 

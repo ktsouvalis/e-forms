@@ -41,37 +41,37 @@
                     </div>
                     @if($school->primary)
                         <div class="input-group">
-                            <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως 14:50 ή 15:00</span>
+                            <span class="input-group-text w-25 text-wrap">Αριθμός <strong>τμημάτων</strong> έως 14:50 ή 15:00</span>
                             <input name="nr_class_3" id="nr_class_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_3}}@endif"><br> 
                             @if($old_data)
                                 <label class="form-control text-muted">{{$old_data->nr_of_pupils_3 + $old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές σε {{$old_data->nr_of_class_3}} τμήματα</label>
                             @endif
                         </div>
                          <div class="input-group">
-                            <span class="input-group-text w-25 text-wrap"> Στις 14:50 ή στις 15:00 αποχωρούν:</span>
+                            <span class="input-group-text w-25 text-wrap"> Στις 14:50 ή στις 15:00 <strong> μαθητές </strong> που αποχωρούν:</span>
                             <input name="nr_pupils_3" id="nr_pupils_3" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_pupils_3}}@endif"><br>
                         </div>
                     @endif
                     <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων έως 15:50 ή 16:00</span>
+                        <span class="input-group-text w-25 text-wrap">Αριθμός <strong>τμημάτων</strong> έως 15:50 ή 16:00</span>
                         <input name="nr_class_4" id="nr_class_4" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_4}}@endif"><br>
                         @if($old_data)
                             <label class="form-control text-muted">{{$old_data->nr_of_pupils_4 + $old_data->nr_of_pupils_5}} μαθητές σε {{$old_data->nr_of_class_4}} τμήματα</label>
                         @endif
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Στις 15:50 ή στις 16:00 αποχωρούν:</span>
+                        <span class="input-group-text w-25 text-wrap">Στις 15:50 ή στις 16:00 <strong>μαθητές</strong> που αποχωρούν:</span>
                         <input name="nr_pupils_4" id="nr_pupils_4" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_pupils_4}}@endif"><br>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Αριθμός τμημάτων Διευρυμένου Ολοήμερου</span>
+                        <span class="input-group-text w-25 text-wrap">Αριθμός <strong>τμημάτων</strong> Διευρυμένου Ολοήμερου</span>
                         <input name="nr_class_5" id="nr_class_5" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_class_5}}@endif"><br>
                         @if($old_data)
                             <label class="form-control text-muted">{{$old_data->nr_of_pupils_5}} μαθητές σε {{$old_data->nr_of_class_5}} τμήματα</label>
                         @endif
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25 text-wrap">Στις 17:30 αποχωρούν:</span>
+                        <span class="input-group-text w-25 text-wrap">Στις 17:30 <strong>μαθητές</strong>που αποχωρούν:</span>
                         <input name="nr_pupils_5" id="nr_pupils_5" type="number" class="form-control" required value="@if($old_data){{$old_data->nr_of_pupils_5}}@endif"><br>
                     </div>
                     <div class="input-group">

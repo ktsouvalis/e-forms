@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('timetable_id')->constrained()->cascadeOnDelete();
             $table->text('filenames_json')->nullable();
             $table->text('timestamps_json')->nullable();
-            $table->string('comments', 500)->nullable();
+            $table->string('comments', 2000)->nullable();
             $table->integer('status')->default(0); // 0: Αρχική Υποβολή, 1: Αναμονή Υποβολής Διορθώσεων, 2: Υποβλήθηκαν Διορθώσεις, 3: Εγκρίθηκε
             $table->timestamps();
         });

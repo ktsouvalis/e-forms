@@ -4,11 +4,13 @@ namespace App\Http\Controllers\microapps;
 
 use App\Models\Microapp;
 use Illuminate\Http\Request;
+use App\Mail\TimetableApproved;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\microapps\Timetables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\FilesController;
 use App\Models\microapps\TimetablesFiles;
 
@@ -228,6 +230,16 @@ class TimetablesController extends Controller
             } catch(\Exception $e) {
                 return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
             }
+        }
+        //Send mail to school
+        try{
+            $email = $timetable->school->mail;
+            Mail::to($timetable->school->mail)->send(new TimetableApproved());
+            Log::channel('mails')->info("Entered here");
+        }
+        catch(\Exception $e){
+            Log::channel('mails')->error($e->getMessage());
+            return back()->with('failure', 'Το πρόγραμμα οριστικοποιήθηκε, αλλά δεν έγινε η αποστολή του mail ειδοποίησης');     
         }
         return back()->with('success', 'Επιτυχής αλλαγή κατάστασης αρχείου');
     }

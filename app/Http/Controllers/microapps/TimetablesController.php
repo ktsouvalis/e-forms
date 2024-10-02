@@ -234,7 +234,7 @@ class TimetablesController extends Controller
         //Send mail to school
         try{
             $email = $timetable->school->mail;
-            Mail::to($timetable->school->mail)->send(new TimetableApproved());
+            Mail::to($email)->send(new TimetableApproved());
             Log::channel('mails')->info("Entered here");
         }
         catch(\Exception $e){

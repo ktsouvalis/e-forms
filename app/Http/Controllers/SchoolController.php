@@ -52,9 +52,11 @@ class SchoolController extends Controller
         while ($rowSumValue != "" && $row<10000){
             $check=array();
             $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
-            $check['code']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
-            if(str_contains($check['code'], "=")){
-                $check['code'] = substr($check['code'], 2, -1);
+            $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
+            if(str_contains($code, "=")){
+                $check['code'] = substr($code, 2, -1);
+            } else {
+                $check['code'] = $code;
             }
             $municipality_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
 
@@ -226,8 +228,10 @@ class SchoolController extends Controller
             $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue();
             $check['school_name']='';
             $check['director_surname']='';
-            $check['code'] = substr($code, 2, -1); // remove from start =" and remove from end "
-            $check['afm'] = substr($afm, 2, -1); // remove from start =" and remove from end "
+            if(str_contains($code, "="))
+                $check['code'] = substr($code, 2, -1); // remove from start =" and remove from end "
+            if(str_contains($afm, "="))
+                $check['afm'] = substr($afm, 2, -1); // remove from start =" and remove from end "
             if(!School::where('code', $check['code'])->count()){
                 $check['code'] = 'Άγνωστος κωδικός σχολείου';
                 $error = 1;

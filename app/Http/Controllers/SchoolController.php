@@ -153,7 +153,7 @@ class SchoolController extends Controller
                         'public' => $school['public'],
                         'has_integration_section' => $school['has_integration_section'],
                         'address' => $school['address'],
-                        'schregion_id' => $school['schregion_id'],
+                        // 'schregion_id' => $school['schregion_id'],
                     ]
                 );
                 if ($schoolModel->wasRecentlyCreated or $schoolModel->wasChanged()) {

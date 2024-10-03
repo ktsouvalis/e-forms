@@ -53,6 +53,9 @@ class SchoolController extends Controller
             $check=array();
             $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
             $check['code']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
+            if(str_contains($check['code'], "=")){
+                $check['code'] = substr($check['code'], 2, -1);
+            }
             $municipality_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
 
             //cross check municipality with database

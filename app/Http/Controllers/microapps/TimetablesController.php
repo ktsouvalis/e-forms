@@ -230,8 +230,16 @@ class TimetablesController extends Controller
             } catch(\Exception $e) {
                 return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων. Δοκιμάστε ξανά');
             }
+            //Send mail to school
+        try{
+            $email = $timetable->school->mail;
+            Mail::to($email)->send(new TimetableApproved());
+            Log::channel('mails')->info("Entered here");
         }
-        //Send mail to school
+        catch(\Exception $e){
+            Log::channel('mails')->error($e->getMessage());
+            return back()->with('failure', 'Το πρόγραμμα οριστικοποιήθηκε, αλλά δεν έγινε η αποστολή του mail ειδοποίησης');     
+        }//Send mail to school
         try{
             $email = $timetable->school->mail;
             Mail::to($email)->send(new TimetableApproved());
@@ -241,6 +249,8 @@ class TimetablesController extends Controller
             Log::channel('mails')->error($e->getMessage());
             return back()->with('failure', 'Το πρόγραμμα οριστικοποιήθηκε, αλλά δεν έγινε η αποστολή του mail ειδοποίησης');     
         }
+        }
+        
         return back()->with('success', 'Επιτυχής αλλαγή κατάστασης αρχείου');
     }
 

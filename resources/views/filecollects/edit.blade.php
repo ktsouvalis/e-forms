@@ -237,9 +237,9 @@
                 </div>
                 <div class="input-group w-75">
                     <div class="custom-file-upload">
-                        <input type="file" id="file1" class="file-input" name="template_file" required/>
-                        <label for="file1" class="file-label" id="file-chosen-label1">Επιλέξτε αρχείο: </label>
-                        <span id="file-chosen1">Δεν έχει επιλεγεί</span>
+                        <input type="file" id="file2" class="file-input" name="template_file" required/>
+                        <label for="file2" class="file-label" id="file-chosen-label2">Επιλέξτε αρχείο: </label>
+                        <span id="file-chosen2">Δεν έχει επιλεγεί</span>
                     </div>
                     {{-- <input name="template_file" type="file" class="form-control"><br> --}}
                 </div>

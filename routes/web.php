@@ -411,6 +411,8 @@ Route::group(['prefix' => 'internal_rules', 'middleware' => 'canViewMicroapp'], 
     Route::get("/download_file/{internal_rule}/{file_type}", [InternalRulesController::class, 'download_file'])->name('internal_rules.download_file'); //access rights are checked inside the method
 
     Route::post('/check/{internal_rule}', [InternalRulesController::class,'check'])->name('internal_rules.check'); //access rights are checked inside the method
+
+    Route::get('/delete_file/{internal_rule}/{file_type}', [InternalRulesController::class,'delete_file'])->name('internal_rules.delete_file'); //access rights are checked inside the method
 });
 
 // WORK PLAN ROUTES

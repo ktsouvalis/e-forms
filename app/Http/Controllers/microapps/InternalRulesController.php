@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 
 class InternalRulesController extends Controller
@@ -464,6 +465,62 @@ class InternalRulesController extends Controller
             catch(\Exception $e){
                 return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
             }
+        }
+        else{
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
+    public function delete_file(InternalRule $internal_rule, $file_type){
+        if((Auth::guard('consultant')->check() and Auth::guard('consultant')->user()->schregion->id == $internal_rule->school->schregion->id) 
+            or (Auth::guard('school')->check() and Auth::guard('school')->user()->id == $internal_rule->school->id) 
+            or (Auth::check() and (Auth::user()->isAdmin() or Auth::user()->microapps->where('microapp_id', $this->microapp->id)->count()))){
+            //check case that internal rule has been locked
+            if($internal_rule->consultant_signed_file AND $internal_rule->director_signed_file){
+                return back()->with('failure', 'Το αρχείο δεν είναι δυνατόν να διαγραφεί καθώς έχει ολοκληρωθεί, εν τω μεταξύ, η διαδικασία υπογραφών.');
+            }
+            //find the extension
+            $filename = $internal_rule->$file_type;
+            $lastDotPos = strrpos($filename, '.');
+            $extension = substr($filename, $lastDotPos);
+            switch($file_type){
+                case 'school_file':
+                    $file = "int_rules_".$internal_rule->school->code."_1".$extension;
+                    break;
+                case 'school_file2':
+                    $file = "int_rules_".$internal_rule->school->code."_2".$extension;
+                    break;
+                case 'school_file3':
+                    $file = "int_rules_".$internal_rule->school->code."_3".$extension;
+                    break;
+                case 'consultant_comments_file':
+                    $file = "int_rules_".$internal_rule->school->code."_cc".$extension;
+                    break;
+                case 'director_comments_file':
+                    $file = "int_rules_".$internal_rule->school->code."_dc".$extension;
+                    break;
+                case 'consultant_signed_file':
+                    $file = "int_rules_".$internal_rule->school->code."_cs".$extension;
+                    break;
+                case 'director_signed_file':
+                    $file = "int_rules_".$internal_rule->school->code."_ds".$extension;
+                    break;
+            }
+            //delete the file if it exists and update the db
+            if(file_exists(storage_path('app/internal_rules/'.$file))){
+                $fileHandler = new FilesController();
+                try{
+                    $fileHandler->delete_file('internal_rules', $file, 'local');
+                    $internal_rule->$file_type = null;
+                    $internal_rule->save();
+                } catch(\Exception $e) {
+                    return back()->with('failure', 'Αποτυχία διαγραφής αρχείου.');
+                }
+            }
+            else{
+                return back()->with('failure', 'Το αρχείο δεν υπάρχει');
+            }
+            return back()->with('success', 'Επιτυχής διαγραφή αρχείου');
         }
         else{
             abort(403, 'Unauthorized action.');

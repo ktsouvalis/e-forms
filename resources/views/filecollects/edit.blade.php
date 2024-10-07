@@ -364,6 +364,7 @@
                         <th>Αποστολή υπενθύμισης</th>
                         <th id="search">Αναγνωριστικό</th>
                         <th id="search">name</th>
+                        <th>Τηλέφωνο</th>
                         <th id="search">mail</th>
                         <th id="search">Έχει υποβάλλει</th>
                         <th>Σχόλιο</th>
@@ -397,6 +398,7 @@
                             {{$one_stakeholder->stakeholder->surname}} {{$one_stakeholder->stakeholder->name}}
                         </a>
                     </td>
+                    <td>{{$one_stakeholder->stakeholder->telephone}}</td>
                     <td>{{$one_stakeholder->stakeholder->mail}}</td>
                     
                     @if($one_stakeholder->file)

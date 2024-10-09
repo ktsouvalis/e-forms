@@ -131,9 +131,10 @@ class SchoolAreaController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set the column names
-        $sheet->setCellValue('A1', 'Σχολείο');
-        $sheet->setCellValue('B1', 'Οδοί');
-        $sheet->setCellValue('C1', 'Σχόλια');
+        $sheet->setCellValue('A1', 'Δήμος');
+        $sheet->setCellValue('B1', 'Σχολείο');
+        $sheet->setCellValue('C1', 'Οδοί');
+        $sheet->setCellValue('D1', 'Σχόλια');
 
         // Start from the second row, since the first row is the column names
         $row = 2;
@@ -141,21 +142,22 @@ class SchoolAreaController extends Controller
         
         foreach (SchoolArea::all() as $schoolArea) {
             if($schoolArea->data){
-                if ($previousSchoolId !== $schoolArea->school_id) {
-                    $start_merge = ++$row; // Skip a row for the new school
-                    $previousSchoolId = $schoolArea->school_id;
-                }
-                $sheet->setCellValue('A' . $row, $schoolArea->school->name);
-
+                // if ($previousSchoolId !== $schoolArea->school_id) {
+                //     $start_merge = ++$row; // Skip a row for the new school (goes with the cell merging code)
+                //     $previousSchoolId = $schoolArea->school_id;
+                // }
                 $data = json_decode($schoolArea->data, true);
                 foreach ($data as $item) {
-                    $sheet->setCellValue('B' . $row, $item['street']);
-                    $sheet->setCellValue('C' . $row, $item['comment']);
+                    $sheet->setCellValue('A' . $row, $schoolArea->school->municipality->name);
+                    $sheet->setCellValue('B' . $row, $schoolArea->school->name);
+                    $sheet->setCellValue('C' . $row, $item['street']);
+                    $sheet->setCellValue('D' . $row, $item['comment']);
                     $row++;
                 }
-                $stop_merge = $row;
+                // $stop_merge = $row;
             }
-            $sheet->mergeCells('A' . $start_merge . ':A' . $stop_merge-1);
+            // $row++; // empty row between schools if needed (without the cell merging code)
+            // $sheet->mergeCells('B' . $start_merge . ':B' . $stop_merge-1);
         } 
         $writer = new Xlsx($spreadsheet);
         $fileName = 'school_areas.xlsx';

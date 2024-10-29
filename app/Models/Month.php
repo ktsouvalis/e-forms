@@ -21,6 +21,10 @@ class Month extends Model
         return self::where('active', 1)->firstOrFail();
     }
 
+    public static function getCustomMonth($month){
+        return self::where('number', $month)->firstOrFail();
+    }
+
     public function all_day_schools(){
         return $this->hasMany(AllDaySchool::class);
     }

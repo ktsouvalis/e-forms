@@ -56,6 +56,11 @@ class SxesiErgasiasSeeder extends Seeder
 
         SxesiErgasias::create([
             'monimos'=>0,
+            'name'=>'Αναπληρωτής ΔΥΕΠ μέσω ΕΣΠΑ'
+        ]);
+
+        SxesiErgasias::create([
+            'monimos'=>0,
             'name'=>'Αναπληρωτής ΠΔΕ Μειωμένου Ωραρίου'
         ]);
 

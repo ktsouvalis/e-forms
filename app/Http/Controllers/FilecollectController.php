@@ -521,6 +521,8 @@ class FilecollectController extends Controller
                     $reader->setReadDataOnly(true);
                     $spreadsheetInput = $reader->load($filePath);
                     $worksheet = $spreadsheetInput->getActiveSheet();
+                    
+                    
 
                     $linesToExtract = $filecollect->lines_to_extract;
                     // Copy the specified number of lines to the new spreadsheet
@@ -546,8 +548,10 @@ class FilecollectController extends Controller
                 }
                 catch(\Exception $e){
                     Log::channel('files')->error(Auth::user()->username." failed to extract file $filePath: ".$e->getMessage());
+                    continue;
                 }
                 finally{
+                    
                     unset($reader);
                     $spreadsheetInput->disconnectWorksheets();
                     unset($spreadsheetInput);

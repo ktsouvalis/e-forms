@@ -41,7 +41,7 @@ class ImmigrantsController extends Controller
             $comments= $request->all()['comments'];
             
             $month = Month::getActiveMonth();
-            $month = Month::getCustomMonth(10);
+            // $month = Month::getCustomMonth(10);
             if($request->file('table_file')){
                 $rule = [
                     'table_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

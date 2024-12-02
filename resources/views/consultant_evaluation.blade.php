@@ -1,7 +1,8 @@
 <x-layout_consultant>
-    @push('links')
+@push('links')
     <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
     <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
+    <link href="tabs.css" rel="stylesheet"/>
 @endpush
 
 @push('scripts')
@@ -27,6 +28,9 @@
 $user = Auth::guard('consultant')->user();
 
 $consultantAfm = $user->afm;
+
+$evaluationData = App\Http\Controllers\ConsultantController::getEvaluationData($consultantAfm);
+// dd(json_decode($evaluationData, true));
 
 $teachersAfms = DB::table('evaluation_b')
     ->select('teacher_afm')

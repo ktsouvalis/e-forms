@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use App\Models\Consultant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,5 +24,22 @@ class ConsultantController extends Controller
     public function logout(){
         auth()->guard('consultant')->logout();
         return redirect(url('/index_consultant'))->with('success', 'Αποσυνδεθήκατε');
+    }
+
+    public static function getEvaluationData($afm){
+        $client = new Client();
+        $response = $client->request('GET', env('E_DIRECTORATE').'/evaluation/consultantdata?afm='.$afm, [
+            'headers' => [
+                'X-API-Key' => env('API_KEY'),
+            ],
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        $body = $response->getBody()->getContents();
+        if($status != 200){
+            return false;
+        } else {
+            return $body;
+        }
     }
 }

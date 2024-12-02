@@ -5,7 +5,7 @@
 @php
     $school = Auth::guard('school')->user(); //check which school is logged in
     $active_month = App\Models\Month::getActiveMonth();
-    $active_month = App\Models\Month::getCustomMonth(10);
+    // $active_month = App\Models\Month::getCustomMonth(10);
     $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
     $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     $old_data = $school->immigrants->where('month_id', $active_month->id)->first(); 

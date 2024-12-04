@@ -172,9 +172,14 @@ class SchoolController extends Controller
             event(new SchoolsTeachersUpdated());
         }   
         if(!$error){
-            Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools');
-            return redirect(url('/schools'))
-                ->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+            if ($wasChanged) {
+                Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools');
+                return redirect(url('/schools'))->with('success', 'Η εισαγωγή ολοκληρώθηκε');
+            }else{
+                Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools with no change.');
+                return redirect(url('/schools'))->with('success', 'Δεν υπήρχε καμία μεταβολή στα στοιχεία των Σχολείων.');
+            }
+            
         }
         else{
             Log::channel('user_memorable_actions')->warning(Auth::user()->username.' insertSchools with errors');

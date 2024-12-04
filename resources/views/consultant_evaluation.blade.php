@@ -2,15 +2,33 @@
 @push('links')
     <link href="DataTables-1.13.4/css/dataTables.bootstrap5.css" rel="stylesheet"/>
     <link href="Responsive-2.4.1/css/responsive.bootstrap5.css" rel="stylesheet"/>
-    <link href="tabs.css" rel="stylesheet"/>
+    <link href="customCss/tabs.css" rel="stylesheet"/>
 @endpush
-
+<style>
+    .table-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Three equal-width columns */
+      gap: 20px; /* Space between tables */
+    }
+    table {
+      border-collapse: collapse;
+      width: 150px;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
 @push('scripts')
     <script src="DataTables-1.13.4/js/jquery.dataTables.js"></script>
     <script src="DataTables-1.13.4/js/dataTables.bootstrap5.js"></script>
     <script src="Responsive-2.4.1/js/dataTables.responsive.js"></script>
     <script src="Responsive-2.4.1/js/responsive.bootstrap5.js"></script>
     <script src="datatable_init.js"></script>
+    <script src="tabs.js"></script>
 @endpush
 @push('title')
     <title>Αξιολόγηση</title>
@@ -30,121 +48,121 @@ $user = Auth::guard('consultant')->user();
 $consultantAfm = $user->afm;
 
 $evaluationData = App\Http\Controllers\ConsultantController::getEvaluationData($consultantAfm);
-// dd(json_decode($evaluationData, true));
+$evaluationDataArray = json_decode($evaluationData, true);
+//dd($evaluationDataArray);
 
-$teachersAfms = DB::table('evaluation_b')
-    ->select('teacher_afm')
-    ->where(function ($query) use ($consultantAfm){
-        $query->Where('evaluator_1_afm', $consultantAfm)
-            ->orWhere('evaluator_2_afm', $consultantAfm);
-    })
-    ->pluck('teacher_afm');
+// $teachersAfms = DB::table('evaluation_b')
+//     ->select('teacher_afm')
+//     ->where(function ($query) use ($consultantAfm){
+//         $query->Where('evaluator_1_afm', $consultantAfm)
+//             ->orWhere('evaluator_2_afm', $consultantAfm);
+//     })
+//     ->pluck('teacher_afm');
 @endphp
 
-
-<div class="table-responsive py-2" style="align-self:flex-start">
-    <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
-    <thead>
-        <tr>
-            <th colspan="4">Αξιολογούμενος</th>
-           <th>Ημ/νία Διορισμού</th>
-            {{-- <th id="search">Σχολείο</th>                
-            <th id="search">mail Σχολείου</th> --}}
-            <th colspan="3">Αξιολογητής 1</th>
-            <th colspan="3">Αξιολογητής 2</th>
-            
-            <th id="">ΑΜ</th>
-            <th id="">Κλάδος</th>
-        </tr>
-        <tr>
-            <th id="search">Επώνυμο</th>
-            <th id="search">Όνομα</th>
-            <th id="search">ΑΦΜ</th>
-            <th id="search">Σχολείο</th>                
-            <th></th>
-            <th id="search">Αξ. 1 - Επώνυμο</th>
-            <th id="search">Αξ. 1 -Όνομα</th>
-          
-            <th id="search">Αξ. 1 - ΑΦΜ</th>
-            {{-- <th id="search">Σχολείο</th>
-            <th id="search">mail Σχολείου</th> --}}
-            
-            <th id="search">Αξ. 2 - Επώνυμο</th>
-            <th id="search">Αξ. 2 - Όνομα</th>
-            <th id="search">Αξ. 2 - ΑΦΜ</th>
-            <th id="">ΑΜ</th>
-            <th id="">Κλάδος</th>
-        </tr>
-    </thead>
-    <tbody>
-     @foreach($teachersAfms as $afm)
-         @php
-         $teacher = App\Models\Teacher::where('afm', $afm)->first();
-         @endphp
-         @if($teacher) 
-         <tr>
-             <td> {{$teacher->surname}}</td>
-             <td>{{$teacher->name}}</td>
-             
-             <td> {{$teacher->afm}}</td>
-         @if($teacher->ypiretisi_id!=null)
-             <td>{{$teacher->ypiretisi->name}}</td>  
-         @else
-             <td>-</td>
-         @endif
-         @if($teacher->appointment_date != null)
-            <td>{{ date('d/m/Y', strtotime($teacher->appointment_date)) }}</td>  
-         @else
-            <td>-</td>
-        @endif
-             {{-- <td>{{ $teacher->ypiretisi->name }}</td>
-             <td>{{ $teacher->ypiretisi->mail }}</td> --}}
-             @php
-                $evaluator_1_afm = DB::table('evaluation_b')->select('evaluator_1_afm')->where('teacher_afm', $teacher->afm)->first();
-                $evaluator_1 = App\Models\Teacher::where('afm', $evaluator_1_afm->evaluator_1_afm)->first();
-             @endphp
-             @if($evaluator_1)
-                <td> {{$evaluator_1->surname}} </td>  
-                <td> {{$evaluator_1->name}} </td>
-                 
-                 <td> {{$evaluator_1->afm}} </td1>
-             @else
-                 <td> - </td>
-                 <td> - </td>
-                 <td> - </td>
-                
-             @endif
-                 @php
-                  $evaluator_2_afm = DB::table('evaluation_b')->select('evaluator_2_afm')->where('teacher_afm', $teacher->afm)->first();
-                  //dd($evaluator_2_afm->evaluator_2_afm);
-                    if($evaluator_2_afm){
-                        $evaluator_2 = App\Models\Teacher::where('afm', $evaluator_2_afm->evaluator_2_afm)->first();
-                    }
-                    else {
-                        $evaluator_2 = null;
-                    }
-                    
-                 @endphp
-                 @if($evaluator_2)
-                     <td> {{$evaluator_2->surname}} </td>
-                     <td> {{$evaluator_2->name}} </td>
-                     
-                     <td> {{$evaluator_2->afm}} </td> 
-                 @else
-                     <td> - </td>
-                     <td> - </td>
-                     <td> - </td>
-                     
-                 @endif
-                 <td> {{$teacher->am}} </td>
-                 <td> {{$teacher->klados}} </td>
-             </tr>
-             @endif
- @endforeach
-    </tbody>
-    </table>
-</div> <!-- table responsive closure -->
+<!-- Tabs -->
+<div class="tabs">
+    <div class="tab active" data-tab="tab1">Υπό Αξιολόγηση</div>
+    <div class="tab" data-tab="tab2">Ολοκληρωμένοι</div>
+    <div class="tab" data-tab="tab3">Απόντες</div>
 </div>
+
+<!-- Tab Content -->
+<div id="tab1" class="tab-content active">
+    <div class="table-responsive py-2" style="align-self:flex-start">
+        <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th colspan="3">Πεδίο Α1 - Αξιολογούμενος</th>
+               
+                <th colspan="2">Πεδίο Α2</th>
+                <th colspan="3">Πεδίο Β</th>
+            </tr>
+            <tr>
+                <th id="search">Ονοματεπώνυμο</th>
+                <th id="search">Αξιολογητής</th>  
+                <th id="search">Κατάσταση Α1</th>              
+        
+                <th id="search">Αξιολογητής</th>
+                <th id="search">Κατάσταση Α2</th>
+              
+                <th id="search">Αξιολογητής 1</th>
+                <th id="search">Αξιολογητής 2</th>
+                <th id="search">Κατάσταση B</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+        @foreach($evaluationDataArray['current'] as $current)
+            <tr><td>{{$current['lastName']}} {{$current['firstName']}}</td>
+                <td>{{$current['a1Evaluator']}}</td>
+                <td> {{$current['a1Status']}} {{$current['a1Date']}} </td>
+                <td>{{$current['a2Evaluator']}}</td>
+                <td>{{$current['a2Status']}} {{$current['a1Date']}} </td>
+                <td>{{$current['bEvaluator']}}</td>
+                <td>{{$current['bEvaluator2']}}</td>
+                <td>{{$current['bStatus']}} {{$current['bDate']}} </td>
+            </tr>
+        @endforeach
+        </tbody>
+        </table>
+    </div>{{-- End of Table Responsive div  --}}
+    
+</div>{{-- End of tab 1 content div  --}}
+
+<div id="tab2" class="tab-content">
+    <div class="table-responsive py-2" style="align-self:flex-start">
+        <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
+        <thead>
+            <tr>
+                <th colspan="3">Πεδίο Α1 - Αξιολογούμενος</th>
+               
+                <th colspan="2">Πεδίο Α2</th>
+                <th colspan="3">Πεδίο Β</th>
+            </tr>
+            <tr>
+                <th id="search">Ονοματεπώνυμο</th>
+                <th id="search">Αξιολογητής</th>  
+                <th id="search">Κατάσταση Α1</th>              
+        
+                <th id="search">Αξιολογητής</th>
+                <th id="search">Κατάσταση Α2</th>
+              
+                <th id="search">Αξιολογητής 1</th>
+                <th id="search">Αξιολογητής 2</th>
+                <th id="search">Κατάσταση B</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+            @foreach($evaluationDataArray['completed'] as $current)
+                <tr><td>{{$current['lastName']}} {{$current['firstName']}}</td>
+                    <td>{{$current['a1Evaluator']}}</td>
+                    <td> {{$current['a1Status']}} {{$current['a1Date']}} </td>
+                    <td>{{$current['a2Evaluator']}}</td>
+                    <td>{{$current['a2Status']}} {{$current['a1Date']}} </td>
+                    <td>{{$current['bEvaluator']}}</td>
+                    <td>{{$current['bEvaluator2']}}</td>
+                    <td>{{$current['bStatus']}} {{$current['bDate']}} </td>
+                </tr>
+            @endforeach
+        </tbody>
+        </table>
+    </div>
+</div>
+<div id="tab3" class="tab-content">
+    @if(count($evaluationDataArray['absent'])==0)
+        Δεν υπάρχουν απόντες αξιολογούμενοι αυτή τη στιγμή.
+    @endif
+    <table>
+    @foreach($evaluationDataArray['absent'] as $current)
+        <tr><td>{{$current['lastName']}} {{$current['firstName']}} </td><td>{{$current['bStatus']}} {{$current['bDate']}} </td><td> {{$current['bEvaluator']}}</td></tr>
+    @endforeach
+    </table>
+</div>
+
+
+
 </x-layout_consultant>
         
            

@@ -1,0 +1,29 @@
+/* Simple styling for tabs */
+.tabs {
+    display: flex;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.tab {
+    padding: 10px 20px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+}
+
+.tab.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    border: 1px solid #ccc;
+    padding: 20px;
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}

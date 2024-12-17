@@ -147,7 +147,7 @@
                                 >
                                 </form>
                                 @endif
-                                @if(($timetableFile->status == 1 || $timetableFile->status == 2) && $thisCount == $filesCount)
+                                @if(($timetableFile->status == 0 || $timetableFile->status == 1 || $timetableFile->status == 2) && $thisCount == $filesCount)
                                 <form action="{{route('timetables.upload_file', ['timetableFileId' => $fileId])}}" method="post" class="container-fluid" enctype="multipart/form-data">
                                     @csrf
                                     <div class="text-center">

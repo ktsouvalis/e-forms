@@ -597,7 +597,7 @@ class TeacherController extends Controller
         if (Date::isDateTime($dateCell)) {
             $dateValue = Date::excelToDateTimeObject($dateCell->getValue());
             $formattedDate = $dateValue->format('Y-m-d');
-            
+
         }
         else{
             $formattedDate = null;

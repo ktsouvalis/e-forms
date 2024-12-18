@@ -40,8 +40,8 @@ class ImmigrantsController extends Controller
         if($this->microapp->accepts){
             $comments= $request->all()['comments'];
             
-            $month = Month::getActiveMonth();
-            // $month = Month::getCustomMonth(10); change also custom month in blade
+            //$month = Month::getActiveMonth();
+            $month = Month::getCustomMonth(12); //change also custom month in blade
             if($request->file('table_file')){
                 $rule = [
                     'table_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

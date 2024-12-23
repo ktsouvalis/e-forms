@@ -524,6 +524,7 @@ Route::match(array('GET','post'), "/share_link/{type}/{my_id}", function($type, 
     }
     catch(\Exception $e){
         try{
+            dd($e->getMessage());
             Log::channel('mails')->error("Σύνδεσμος δεν στάλθηκε προσωπικά στο ".$$type->mail.": ".$e->getMessage());
         }
         catch(\Exception $e){

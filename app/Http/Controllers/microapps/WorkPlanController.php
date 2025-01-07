@@ -14,8 +14,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Style;
 
 class WorkPlanController extends Controller
 {
-    //
-
     private $microapp;
 
     public function __construct(){
@@ -69,11 +67,16 @@ class WorkPlanController extends Controller
         $last_day_of_month = new Carbon('last day of '.$selected_day->format('M')." ".$selected_day->format('Y'));
         $start_week = $first_day_of_month->format('W');
         $end_week = $last_day_of_month->format('W');
-        
+        $end__week_and_year = $last_day_of_month->format('W-o');
+        //$end_week cannot be 01 so if it is 01 means that the last day of the month is in the previous year
+        if($end_week == 01){
+            $end_week = 52;
+        }
+        // Create a new Spreadsheet object
         $spreadsheet = new Spreadsheet();
-        // Setting font to Arial Black
+        // Setting font to Calibri
         $spreadsheet->getDefaultStyle()->getFont()->setName('Calibri');
-        // Setting font size to 14
+        // Setting font size to 12
         $spreadsheet->getDefaultStyle()->getFont()->setSize(12);
         //Setting description, creator and title
         $spreadsheet ->getProperties()->setTitle("Πρόγραμμα Συμβούλου Εκπαίδευσης");

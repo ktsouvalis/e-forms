@@ -34,6 +34,7 @@
     @foreach($day_array as $today)
     <hr>
     @php
+     
         $year = $today->year;
         $week = $today->isoFormat('W');
         $yearWeek=$year.$week;

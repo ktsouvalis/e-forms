@@ -187,6 +187,8 @@ Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant
 
 Route::view('/consultant_evaluation','consultant_evaluation')->middleware('isConsultant');
 
+Route::view('/consultant_supervisor','index_consultant_supervisor')->middleware('isConsultant');
+
 Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');

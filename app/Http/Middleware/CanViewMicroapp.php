@@ -22,7 +22,7 @@ class CanViewMicroapp
     {
         $routeName = $request->route()->getName();
         $resource = explode('.', $routeName)[0];
-        $microapp = Microapp::where('url', "/".$resource)->firstOrFail(); 
+        $microapp = Microapp::where('url', "/".$resource)->firstOrFail();
         if(!$microapp->active)
             abort(403, "Μη εξουσιοδοτημένη ενέργεια (inactive)");
         

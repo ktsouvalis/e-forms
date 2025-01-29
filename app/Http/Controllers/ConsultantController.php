@@ -11,7 +11,6 @@ class ConsultantController extends Controller
 {
     //
     public function login($md5){ 
-       
         $consultant = Consultant::where('md5', $md5)->firstOrFail();
         //logs the teacher in using the 'teacher' guard
         Auth::guard('consultant')->login($consultant);

@@ -17,13 +17,26 @@ class WorkPlanController extends Controller
     private $microapp;
 
     public function __construct(){
-        $this->middleware('auth')->only(['index']);
+        // $this->middleware('auth')->only(['index']);
         $this->middleware('isConsultant')->only(['create']);
         $this->microapp = Microapp::where('url', '/work_planning')->first();
     }
 
     public function index(){
-        return view('microapps.work_planning.index', ['appname' => 'work_planning']);
+        if(Auth::guard('consultant')->check()){
+            
+            $consultant = Auth::guard('consultant')->user();
+            if($consultant->isSupervisor())
+                return view('microapps.work_planning.index', ['appname' => 'work_planning']);
+            else
+                abort(403, 'Unauthorized action.');
+        }
+        if(Auth::check()){
+            
+            return view('microapps.work_planning.index', ['appname' => 'work_planning']);
+        }
+        
+        abort(403, 'Unauthorized action.');
     }
 
     public function create(){

@@ -15,6 +15,15 @@ class Consultant extends Authenticatable
         'id'
     ];
 
+    protected $casts = [
+        'is_supervisor' => 'boolean',
+    ];
+
+    public function isSupervisor(): bool
+    {
+        return $this->is_supervisor;
+    }
+
     public function schregion()
     {
         return $this->hasOne(Schregion::class);

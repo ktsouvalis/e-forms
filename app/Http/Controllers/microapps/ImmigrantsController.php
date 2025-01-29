@@ -41,7 +41,7 @@ class ImmigrantsController extends Controller
             $comments= $request->all()['comments'];
             
             //$month = Month::getActiveMonth();
-            $month = Month::getCustomMonth(12); //change also custom month in blade
+            $month = Month::getCustomMonth(1); //change also custom month in create.blade
             if($request->file('table_file')){
                 $rule = [
                     'table_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

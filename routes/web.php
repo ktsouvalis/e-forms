@@ -183,7 +183,10 @@ Route::get('/teacher/{md5}', [TeacherController::class, 'login']);
 Route::get('/tlogout', [TeacherController::class, 'logout']);
 
 //////// CONSULTANT ROUTES
-Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
+// Routes for laravel CRUD / Manage consultants create, edit etc
+Route::resource('consultants', ConsultantController::class)->middleware('can:viewAny, '.Consultant::class);;
+
+//Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
 Route::view('/consultant_evaluation','consultant_evaluation')->middleware('isConsultant');
 

@@ -317,7 +317,9 @@ class TeacherController extends Controller
                 }
                 else{
                     $error=1;
-                    $check['organiki'] = "Error: Άγνωστος κωδικός οργανικής";
+                    $check['organiki'] = Directory::where('name', 'ΠΕΡΙΦΕΡΕΙΑΚΗ Δ/ΝΣΗ Π/ΘΜΙΑΣ ΚΑΙ Δ/ΘΜΙΑΣ ΕΚΠ/ΣΗΣ ΔΥΤΙΚΗΣ ΕΛΛΑΔΑΣ')->first()->id;
+                    $check['organiki_name'] = Directory::where('name', $newString)->first()->name;
+                    $check['organiki_type'] = "App\Models\Directory";
                     Auth::user()->notify(new UserNotification("Error: Άγνωστος κωδικός οργανικής στη γραμμή $row κατά την ενημέρωση Απόσπασης για το ΑΦΜ ".$check['afm'], "Ενημέρωση απόσπασης: Σφάλμα ΑΦΜ ".$check['afm']));
                 }
             }

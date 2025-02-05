@@ -316,7 +316,7 @@ class TeacherController extends Controller
                     $check['organiki_type'] = "App\Models\Directory";
                 }
                 else{
-                    $error=1;
+                    $error=0;
                     $check['organiki'] = Directory::where('name', 'ΠΕΡΙΦΕΡΕΙΑΚΗ Δ/ΝΣΗ Π/ΘΜΙΑΣ ΚΑΙ Δ/ΘΜΙΑΣ ΕΚΠ/ΣΗΣ ΔΥΤΙΚΗΣ ΕΛΛΑΔΑΣ')->first()->id;
                     $check['organiki_name'] = Directory::where('name', 'ΠΕΡΙΦΕΡΕΙΑΚΗ Δ/ΝΣΗ Π/ΘΜΙΑΣ ΚΑΙ Δ/ΘΜΙΑΣ ΕΚΠ/ΣΗΣ ΔΥΤΙΚΗΣ ΕΛΛΑΔΑΣ')->first()->name;
                     $check['organiki_type'] = "App\Models\Directory";

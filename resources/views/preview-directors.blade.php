@@ -17,7 +17,7 @@
         $directors_array = session('directors_array');
     @endphp
     <div class="container">
-        <div class="p-3 mb-2 bg-success text-white">Διευθυντές που θα εισαχθούν</div>
+        <div class="p-3 mb-2 bg-success text-white">Διευθυντές που θα εισαχθούν - Επιπλέον θα ανανεωθούν οι υποδιευθυντές (Αν κάποιος Εκπ/κός είναι υποδιευθυντής)</div>
         <div class="table-responsive">
             <table  id="" class="table table-sm table-success table-striped table-bordered table-hover">
                 <thead>

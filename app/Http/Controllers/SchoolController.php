@@ -208,29 +208,40 @@ class SchoolController extends Controller
 
     public function importDirectors(Request $request){
         $rule = [
-            'import_directors' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            'directors_file' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'subdirectors_file' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){ 
-            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
+            return back()->with('failure', 'Παρακαλώ υποβάλετε δύο αρχεία .xlsx');
         }
-
+        
         //store the file
-        $filename = "directors_file".Auth::id().".xlsx";
-        $path = $request->file('import_directors')->storeAs('files', $filename);
+        $filename_directors = "directors_file".Auth::id().".xlsx";
+        $path_directors = $request->file('directors_file')->storeAs('files', $filename_directors);
+        $filename_subdirectors = "subdirectors_file".Auth::id().".xlsx";
+        $path_subdirectors = $request->file('subdirectors_file')->storeAs('files', $filename_subdirectors);
 
         //load the file with phpspreadsheet
-        $mime = Storage::mimeType($path);
-        $spreadsheet = IOFactory::load("../storage/app/$path");
-        $directors_array=array();
+        $mime = Storage::mimeType($path_directors);
+        $spreadsheet_directors = IOFactory::load("../storage/app/$path_directors");
+
+        $mime_subdirectors = Storage::mimeType($path_subdirectors);
+        $spreadsheet_subdirectors = IOFactory::load("../storage/app/$path_subdirectors");
+
+        $directors_array = array();
+        $subdirectors_array = array();
+
         $row=2;
         $error=0;
         $rowSumValue="1";   
-
+        // Read director's File
         while ($rowSumValue != "" && $row<10000){
             $check=array();
-            $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
-            $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue();
+            $code = $spreadsheet_directors->getActiveSheet()->getCellByColumnAndRow(8, $row)->getValue();
+            $afm = $spreadsheet_directors->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue();
+            $check['deputy_director'] = $spreadsheet_directors->getActiveSheet()->getCellByColumnAndRow(33, $row)->getValue();
+            $check['public_school'] = $spreadsheet_directors->getActiveSheet()->getCellByColumnAndRow(6, $row)->getValue();
             $check['school_name']='';
             $check['director_surname']='';
             if(str_contains($code, "="))
@@ -265,15 +276,48 @@ class SchoolController extends Controller
             $row++;
             $rowSumValue="";
             for($col=1;$col<=33;$col++){
-                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+                $rowSumValue .= $spreadsheet_directors->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
             }
         }
+        $directors_array = $this->removeDuplicateDeputyDirectors($directors_array);
+        
+        $row=2;
+        $error=0;
+        $rowSumValue="1";   
+        // Read subdirector's File
+        while ($rowSumValue != "" && $row<10000){
+            $check=array();
+            $afm = $spreadsheet_subdirectors->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
 
+            if(str_contains($afm, "="))
+                $check['afm'] = substr($afm, 2, -1); // remove from start =" and remove from end "
+            else
+                $check['afm'] = $afm;
+
+            if(!Teacher::where('afm', $check['afm'])->count()){
+                unset($check);
+            }
+            else{
+                $teacher = Teacher::where('afm', $check['afm'])->first();
+                $check['teacher_id'] = $teacher->id;
+                $check['director_surname'] = $teacher->surname;
+                //prepare directors array to pass it in session
+                array_push($subdirectors_array, $check);
+            }
+            //change line and check if it's empty
+            $row++;
+            $rowSumValue="";
+            for($col=1;$col<=33;$col++){
+                $rowSumValue .= $spreadsheet_subdirectors->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
+            }
+        }
+        
         session(['directors_array' => $directors_array]);
+        session(['subdirectors_array' => $subdirectors_array]);
 
         if($error){
             return redirect(url('/import_directors'))
-                ->with('asks_to','error');
+                ->with('asks_to','save');
         }else{
             return redirect(url('/import_directors'))
                 ->with('asks_to','save');
@@ -285,6 +329,28 @@ class SchoolController extends Controller
         $done_at_least_once=false;
         $directors_array = session('directors_array');
         session()->forget('directors_array');
+        $subdirectors_array = session('subdirectors_array');
+        session()->forget('subdirectors_array');
+        DB::table('teachers')->update(['is_director' => 0]);
+        DB::table('teachers')->update(['is_subdirector' => 0]);
+        
+        // Update teachers's table with subdirectors if needed
+        foreach($subdirectors_array as $one_subdirector){
+            try{
+                $subdirector = Teacher::find($one_subdirector['teacher_id']);
+                $subdirector->is_subdirector = 1;
+                if($subdirector->isDirty()){
+                    $subdirector->save();
+                    $done_at_least_once=true;
+                }
+                
+            }
+            catch(Throwable $e){
+                //Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id'].' '.$e->getMessage());
+                $error=true;
+                continue;    
+            }
+        }
         // dd($directors_array);
         foreach($directors_array as $one_director){
             //  update schools records based on 'code' field
@@ -294,6 +360,11 @@ class SchoolController extends Controller
                 $school->director_id = $school_director->id;
                 if($school->isDirty()){
                     $school->save();
+                    $done_at_least_once=true;
+                }
+                $school_director->is_director = 1;
+                if($school_director->isDirty()){
+                    $school_director->save();
                     $done_at_least_once=true;
                 }
             }
@@ -310,12 +381,51 @@ class SchoolController extends Controller
         }
         if(!$error){
             Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertDirectors');
-            return redirect(url('/directors'))
+            return redirect(url('/teachers'))
                 ->with('success', 'Η εισαγωγή ολοκληρώθηκε');    
         }
         else{
             Log::channel('user_memorable_actions')->warning(Auth::user()->username.' insertDirectors with errors');
-            return redirect(url('/directors'))->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db'); 
+            return redirect(url('/teachers'))->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db'); 
         }
+    }
+
+    private function removeDuplicateDeputyDirectors($directors_array) {
+        // Map to track which school codes have already seen an entry to keep
+        $schoolsToKeep = [];
+        $rowsToDelete = [];
+    
+        // First pass: Identify rows to keep or delete
+        foreach ($directors_array as $key => $row) {
+            $schoolCode = $row['code'];
+            $isDeputy = $row['deputy_director'] === 'ΝΑΙ';
+            $isPrivate = $row['public_school'] === 'Ιδιωτικά Σχολεία';
+            // Keep rows of private schools to delete
+            if ($isPrivate) {
+                $rowsToDelete[] = $key; // Mark for deletion
+            }
+            // If this school code has already been marked for keeping, skip it
+            if (isset($schoolsToKeep[$schoolCode])) {
+                if ($isDeputy) {
+                    $rowsToDelete[] = $key; // Mark for deletion
+                }
+            } else {
+                // Keep the first occurrence and ignore deputy entries
+                if (!$isDeputy) {
+                    $schoolsToKeep[$schoolCode] = true;
+                } else {
+                    $rowsToDelete[] = $key; // Mark initial deputy entry for deletion
+                }
+            }
+        }
+    
+        // Second pass: Remove rows marked for deletion
+        foreach ($rowsToDelete as $index) {
+            unset($directors_array[$index]);
+        }
+    
+        // Reindex the array after deletion
+        $directors_array = array_values($directors_array);
+        return $directors_array;
     }
 }

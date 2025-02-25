@@ -47,6 +47,10 @@
   </div>
     @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
       <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#CCCCFF; text-align:center;">
+          <div class="text-dark fa-solid fa-star"></div> 
+            <a href="{{url("/evaluation/create")}}" style=" text-decoration:none;" class="text-dark"> Αξιολόγηση</a>
+        </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
           <div class="text-dark fa-solid fa-file-signature"></div> 
             <a href="{{route("internal_rules.create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
@@ -62,10 +66,6 @@
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:skyblue; text-align:center;">
           <div class="text-dark fa-solid fa-signature"></div> 
             <a href="{{url("/consultant_teachers")}}" style=" text-decoration:none;" class="text-dark"> Εκπαιδευτικοί</a>
-        </div>
-        <div class="badge text-wrap py-2" style="width: 10rem; background-color:Khaki; text-align:center;">
-          <div class="text-dark fa-solid fa-star"></div> 
-            <a href="{{url("/consultant_evaluation")}}" style=" text-decoration:none;" class="text-dark"> Αξιολόγηση-Β</a>
         </div>
       </nav>
       @else

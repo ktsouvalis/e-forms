@@ -71,6 +71,15 @@
                         </div>
                         <hr>
                         <div class="col-md-4 py-2" style="max-width:15rem">
+                            <div class="card py-5" style="background-color:#CCCCFF; text-align:center;">
+                                {{-- <a  class="text-dark" style="text-decoration:none;" href="{{url("/internal_rules/create")}}"> --}}
+                                <a  class="text-dark" style="text-decoration:none;" href="{{route("evaluation.create")}}">
+                                <div class="h5 card-title bi bi-person-lines-fill"></div>
+                                <div>Αξιολόγηση</div>
+                                </a> 
+                            </div>
+                        </div> 
+                        <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:#f1948a; text-align:center;">
                                 {{-- <a  class="text-dark" style="text-decoration:none;" href="{{url("/internal_rules/create")}}"> --}}
                                 <a  class="text-dark" style="text-decoration:none;" href="{{route("internal_rules.create")}}">

@@ -155,7 +155,7 @@
     @endif
   @endauth
   @include('components/messages')
-  <div class="container-xl px-2"> {{-- Custom container --}} 
+  <div class="container-fluid px-5"> {{-- Custom container --}} 
   {{$slot}}
   </div> {{-- End of Custom container --}} 
   <!-- footer begins -->

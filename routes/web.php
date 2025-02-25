@@ -34,7 +34,6 @@ use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\ConsultantController;
-use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\NotificationController;
@@ -50,6 +49,7 @@ use App\Http\Controllers\microapps\EnrollmentController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\TimetablesController;
+use App\Http\Controllers\microapps\EvaluationController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
 
@@ -63,6 +63,40 @@ use App\Http\Controllers\microapps\InternalRulesController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/debug-env', function () {
+    $debug = [];
+    
+    // Test 1: Direct file check
+    $debug['env_file_exists'] = file_exists(base_path('.env'));
+    $debug['env_file_readable'] = is_readable(base_path('.env'));
+    
+    // Test 2: Read raw env file content
+    $debug['env_content'] = file_exists(base_path('.env')) ? 
+        substr(file_get_contents(base_path('.env')), 0, 100) . '...' : 'File not found';
+    
+    // Test 3: Check some basic env variables
+    $debug['app_name'] = env('APP_NAME');
+    $debug['app_env'] = env('APP_ENV');
+    $debug['app_debug'] = env('APP_DEBUG');
+    
+    // Test 4: Check if .env is loaded in server variables
+    $debug['server_has_env'] = !empty($_SERVER['APP_ENV']);
+    
+    // Test 5: Check Laravel's config repository
+    $debug['config_app_name'] = config('app.name');
+    $debug['config_app_env'] = config('app.env');
+    
+    // Test 6: Check if dotenv is properly loaded
+    try {
+        $debug['dotenv_loaded'] = \Dotenv\Dotenv::createImmutable(base_path())->load();
+    } catch (\Exception $e) {
+        $debug['dotenv_error'] = $e->getMessage();
+    }
+    
+    // Display all debug information
+    dd($debug);
+});
 ///// INDEX ////////////////////////////////////
 
 Route::view('/', 'index')->name('index');
@@ -188,7 +222,7 @@ Route::resource('consultants', ConsultantController::class)->middleware('can:vie
 
 //Route::view('/consultants','consultants')->middleware('can:viewAny, '.Consultant::class);
 
-Route::view('/consultant_evaluation','consultant_evaluation')->middleware('isConsultant');
+//Route::view('/consultant_evaluation','consultant_evaluation')->middleware('isConsultant');
 
 Route::view('/consultant_supervisor','index_consultant_supervisor')->middleware('isConsultant');
 
@@ -203,11 +237,11 @@ Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 Route::get('/clogout', [ConsultantController::class, 'logout']);
 
 /// EVALUATION ROUTES
-Route::view('/evaluation', 'evaluation');
+Route::resource('/evaluation', EvaluationController::class);
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
-Route::post('/evaluation/upload_csv', [EvaluationController::class, 'upload_csv'])->name('evaluation.upload_csv');
+Route::post('/evaluation/upload_file', [EvaluationController::class, 'upload_file'])->name('evaluation.upload_file');
 
 //PRIVATE EDUCATION ROUTES
 Route::view('/private_education', 'private_education')->middleware('can:viewPrivateEducation,' . Operation::class);

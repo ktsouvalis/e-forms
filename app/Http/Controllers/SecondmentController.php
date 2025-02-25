@@ -193,7 +193,6 @@ class SecondmentController extends Controller
                 return back()->with('failure', 'Αποτυχία αποθήκευσης αίτησης.');
             }
         }
-        
     }
 
     public function modify(Secondment $secondment){

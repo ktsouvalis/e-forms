@@ -13,7 +13,10 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-
+    'directorate' => [
+        'url' => env('E_DIRECTORATE'),
+        'key' => env('API_KEY'),
+    ],
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

@@ -104,7 +104,15 @@
                                 <button type="submit" class="btn btn-primary">Υποβολή</button>
                             </form>
                         @else
-                            {{$data['A2AttachmentFileName']}}
+                            @php
+                            $filename = $data['A2AttachmentFileName'];
+                            @endphp
+                            @if($filename)
+                                <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
+                                    <button type="submit" class="btn btn-primary">{{ $data['A2AttachmentFileName'] }}</button>
+                                </form>
+                            @endif
+                    
                         @endif
                         </td>
 

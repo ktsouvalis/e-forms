@@ -239,6 +239,8 @@ Route::get('/clogout', [ConsultantController::class, 'logout']);
 /// EVALUATION ROUTES
 Route::resource('/evaluation', EvaluationController::class);
 
+Route::get('/evaluation/download_file/{filename}', [EvaluationController::class, 'download_file'])->name('evaluation.download_file'); 
+
 Route::view('/evaluation_differences', 'evaluation_differences');
 
 Route::post('/evaluation/upload_file', [EvaluationController::class, 'upload_file'])->name('evaluation.upload_file');

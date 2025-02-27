@@ -63,10 +63,10 @@
 
                     {{-- A2 Field --}}
                         <td class="column-a2 collapse show">
-                            {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : 'Surname' }}
+                            {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : '-' }}
                         </td>
                         @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
-                            <form action="{{ route('evaluation.upload_file') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ route('evaluation.upload_file', ['whoIs'=>'isDirector']) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="EmployeeAfm" value="{{ $data['AFM'] }}">
                                 <input type="hidden" name="Stage" value="Α2">
@@ -100,7 +100,7 @@
                         <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
                         <td class="column-a2 collapse show">
                         @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
-                                <input type="file" name="A2File">
+                                <input type="file" name="file">
                                 <button type="submit" class="btn btn-primary">Υποβολή</button>
                             </form>
                         @else

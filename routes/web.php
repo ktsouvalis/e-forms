@@ -243,7 +243,7 @@ Route::get('/evaluation/download_file/{filename}', [EvaluationController::class,
 
 Route::view('/evaluation_differences', 'evaluation_differences');
 
-Route::post('/evaluation/upload_file', [EvaluationController::class, 'upload_file'])->name('evaluation.upload_file');
+Route::post('/evaluation/upload_file/{whoIs}', [EvaluationController::class, 'upload_file'])->name('evaluation.upload_file');
 
 //PRIVATE EDUCATION ROUTES
 Route::view('/private_education', 'private_education')->middleware('can:viewPrivateEducation,' . Operation::class);

@@ -19,7 +19,6 @@
 </div>
 {{-- @php print json_encode($evaluation_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); @endphp --}}
 {{-- <div class="container mt-5"> --}}
-    {{-- A1 START --}}
     <h3 class="mb-4 text-secondary"></h3>
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover shadow-sm">
@@ -65,34 +64,66 @@
                         <td>{{ $teacher->ypiretisi->name }}</td>
                         {{-- A1 Field --}}
                         <td class="column-a1 collapse show">
-                            {{ $A1_evaluator ? $A1_evaluator->surname.' '.substr($A1_evaluator->name, 0, 2) . '.' : '' }}
+                            {{ $A1_evaluator ? $A1_evaluator->surname . ' ' . substr($A1_evaluator->name, 0, 2) . '.' : 'Surname' }}
                         </td>
-                        <td class="column-a1 collapse show">{{ $data['A1StatusName'] }}</td>
-                        <td class="column-a1 collapse show">{{ $data['A1Date'] }}</td>
+                        @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή")
+                            <form action="{{ route('evaluation.upload_file', ['whoIs'=>'isConsultant']) }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="EmployeeAfm" value="{{ $data['AFM'] }}">
+                                <input type="hidden" name="Stage" value="Α1">
+                                <input type="hidden" name="EvaluatorAfm" value="{{ $data['A1EvaluatorAFM'] }}">
+                                <input type="hidden" name="Status" value="{{ old('A1StatusName', '') }}">
+                                <td class="column-a1 collapse show">
+                                    <div class="form-group">
+                                        <label for="A1StatusName">Αξιολόγηση:</label>
+                                        <select id="A1StatusName" name="A1StatusName" required>
+                                            <option value="" disabled selected>-- Επιλέξτε --</option>
+                                            <option value="Εξαιρετικός" {{ $data['A1StatusName'] ==  "Εξαιρετικός"?"selected":""}}>Εξαιρετικός</option>
+                                            <option value="Πολύ καλός" {{ $data['A1StatusName'] ==  "Πολύ καλός"?"selected":""}}>Πολύ καλός</option>
+                                            <option value="Ικανοποιητικός" {{ $data['A1StatusName'] ==  "Ικανοποιητικός"?"selected":""}}>Ικανοποιητικός</option>
+                                            <option value="Επαρκής" {{ $data['A1StatusName'] ==  "Επαρκής"?"selected":""}}>Επαρκής</option>
+                                        </select>
+                                    </div>            
+                                </td>
+                        @else
+                            <td class="column-a1 collapse show">
+                                <div class="form-group">
+                                    <select id="A1StatusName" name="A1StatusName" required>
+                                        <option value="" disabled selected>-- Επιλέξτε --</option>
+                                        <option value="Εξαιρετικός" {{ $data['A1StatusName'] ==  "Εξαιρετικός"?"selected":""}} disabled>Εξαιρετικός</option>
+                                        <option value="Πολύ καλός" {{ $data['A1StatusName'] ==  "Πολύ καλός"?"selected":""}} disabled>Πολύ καλός</option>
+                                        <option value="Ικανοποιητικός" {{ $data['A1StatusName'] ==  "Ικανοποιητικός"?"selected":""}} disabled>Ικανοποιητικός</option>
+                                        <option value="Επαρκής" {{ $data['A1StatusName'] ==  "Επαρκής"?"selected":""}} disabled>Επαρκής</option>
+                                    </select>
+                                </div>            
+                            </td>
+                        @endif
+                        <td class="column-a1 collapse show">{{ $data['A1Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
                         <td class="column-a1 collapse show">
-                            @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή")
-                                    <input type="file" name="A1File">
-                                    <button type="submit" class="btn btn-primary">Υποβολή</button>
+                        @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή")
+                                <input type="file" name="file">
+                                <button type="submit" class="btn btn-primary">Υποβολή</button>
+                            </form>
+                        @else
+                            @php
+                            $filename = $data['A1AttachmentFileNames'];
+                            @endphp
+                            @if($filename)
+                                <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
+                                    <button type="submit" class="btn btn-primary">{{ $data['A1AttachmentFileNames'] }}</button>
                                 </form>
-                            @else
-                                @php
-                                $filename = $data['A1AttachmentFileNames'];
-                                @endphp
-                                @if($filename)
-                                    <form action="{{route('evaluation.download_file', ['filename'=>$filename, 'whoIs'=>'isCon' ]) }}" method="get">
-                                        <button type="submit" class="btn btn-primary">{{ $data['A1AttachmentFileNames'] }}</button>
-                                    </form>
-                                @endif
-                        
                             @endif
-                        </td>
                     
+                        @endif
+                        </td>
+                        {{-- end of A1--}}
+                        
                     {{-- A2 Field --}}
                     <td class="column-a2 collapse show">
-                        {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : 'Surname' }}
+                        {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : '-' }}
                     </td>
                     @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
-                        <form action="{{ route('evaluation.upload_file') }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ route('evaluation.upload_file', ['whoIs'=>'isConsultant']) }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="EmployeeAfm" value="{{ $data['AFM'] }}">
                             <input type="hidden" name="Stage" value="Α2">
@@ -126,7 +157,7 @@
                     <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
                     <td class="column-a2 collapse show">
                     @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
-                            <input type="file" name="A2File">
+                            <input type="file" name="file">
                             <button type="submit" class="btn btn-primary">Υποβολή</button>
                         </form>
                     @else

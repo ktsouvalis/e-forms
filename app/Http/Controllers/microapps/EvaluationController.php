@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class EvaluationController extends Controller
 {
-    public function upload_file(Request $request)
+    public function upload_file(Request $request, $whoIs)
     {
         $protocolResponse = $this->send_file_to_protocol($request, $whoIs);
 
@@ -28,7 +28,7 @@ class EvaluationController extends Controller
         if($whoIs == 'isTeacher') $api_path = '/Evaluation/Director';
         if($whoIs == 'isConsultant') $api_path = '/Evaluation/Consultant';
         if(!$api_path) dd('error');
-        //dd($request->file->path());
+        //dd($request->all());
         //$api_path = "/Evaluation/Director";
         $client = new Client([
             'debug' => fopen(\storage_path('logs/guzzle-debug.log'), 'w')
@@ -42,11 +42,11 @@ class EvaluationController extends Controller
             ['name' => 'Stage', 'contents' => $request->Stage],
             ['name' => 'EvaluatorAfm', 'contents' => $request->EvaluatorAfm],
             ['name' => 'Status', 'contents' => $request->A2StatusName],
-            ['name' => 'FileTitle', 'contents' => 'Δοκιμή'],
+            ['name' => 'FileTitle', 'contents' => ''],
             [
             'name'     => 'file',
-            'contents' => fopen($request->file('A2File')->path(), 'r'),
-            'filename' => $request->file('A2File')->getClientOriginalName()
+            'contents' => fopen($request->file('file')->path(), 'r'),
+            'filename' => $request->file('file')->getClientOriginalName()
             ]
         ];
         //print_r($data);

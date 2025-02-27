@@ -13,7 +13,62 @@ use Illuminate\Support\Facades\Storage;
 
 class EvaluationController extends Controller
 {
-    
+    public function upload_file(Request $request)
+    {
+        $protocolResponse = $this->send_file_to_protocol($request, $whoIs);
+
+        if($protocolResponse){
+            return back()->with('success', 'το έντυπο υποβλήθηκε με επιτυχία.');
+        } else {
+            return back()->with('failure', 'Αποτυχία αποστολής εντύπου.');
+        }
+    }
+
+    public function send_file_to_protocol(Request $request, $whoIs){
+        if($whoIs == 'isTeacher') $api_path = '/Evaluation/Director';
+        if($whoIs == 'isConsultant') $api_path = '/Evaluation/Consultant';
+        if(!$api_path) dd('error');
+        //dd($request->file->path());
+        //$api_path = "/Evaluation/Director";
+        $client = new Client([
+            'debug' => fopen(\storage_path('logs/guzzle-debug.log'), 'w')
+        ]);
+        $full_url = config('services.directorate.url').$api_path;
+        // Store the file temporarily
+        //$tempPath = storage_path('app/temp/' . uniqid() . '_' . $request->file->getClientOriginalName());
+        //$request->file->move(dirname($tempPath), basename($tempPath)); 
+        $data = [
+            ['name' => 'EmployeeAfm', 'contents' => $request->EmployeeAfm],
+            ['name' => 'Stage', 'contents' => $request->Stage],
+            ['name' => 'EvaluatorAfm', 'contents' => $request->EvaluatorAfm],
+            ['name' => 'Status', 'contents' => $request->A2StatusName],
+            ['name' => 'FileTitle', 'contents' => 'Δοκιμή'],
+            [
+            'name'     => 'file',
+            'contents' => fopen($request->file('A2File')->path(), 'r'),
+            'filename' => $request->file('A2File')->getClientOriginalName()
+            ]
+        ];
+        //print_r($data);
+        //dd($data);
+        $response = $client->request('POST', $full_url, [
+            'headers' => [
+                'X-API-Key' => env('API_KEY'),
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        //$contents = $response->getBody()->getContents();
+        if($status != 200){
+            //dd($body);
+            return false;
+        } else {
+            //print_r($contents);
+            return $response;
+        }
+    }
+
     public function create()
     {
         if(Auth::guard('teacher')->check()){
@@ -132,6 +187,14 @@ class EvaluationController extends Controller
                         // Now decode again to get the actual UTF-8 characters
                         $filename = urldecode($partiallyDecoded);
                         
+                    } else if (preg_match('/filenames\*=utf-8\'\'(.+)/', $headers['content-disposition'], $matches)) {
+                        $encodedFilename = $matches[1];
+                        
+                        // First URL decode once to handle the %25 sequence (which is a double-encoded %)
+                        $partiallyDecoded = urldecode($encodedFilename);
+                        
+                        // Now decode again to get the actual UTF-8 characters
+                        $filename = urldecode($partiallyDecoded);
                     } else {
                         // Fallback to the filename parameter
                         $filename = uniqid() . '.pdf';
@@ -180,9 +243,8 @@ class EvaluationController extends Controller
         $now = now();
 
         foreach ($files as $file) {
-            if ($now->diffInHours($file->getMTime()) >= 12) {
+            if ($now->diffInHours(\Carbon\Carbon::createFromTimestamp($file->getMTime())) >= 1) {
                 File::delete($file);
-                $this->info("Deleted: {$file}");
             }
         }
     }

@@ -18,7 +18,7 @@
 </div>
 {{-- @php print json_encode($evaluation_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE); @endphp --}}
 {{-- <div class="container mt-5"> --}}
-    {{-- A1 START --}}
+    {{-- A2 START --}}
     <h3 class="mb-4 text-secondary"></h3>
 
     <div class="table-responsive">
@@ -141,9 +141,7 @@
             
             </tbody>
         </table>
-    </div>
-     {{-- Table container closure --}}
-</div>
+    </div> {{-- Table closure --}}
 
 {{-- @if($notice)
 <div id="toast" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1070">

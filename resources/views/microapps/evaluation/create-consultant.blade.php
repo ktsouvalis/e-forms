@@ -1,7 +1,7 @@
 <x-layout_consultant>
     @php
     //dd($evaluation_data);
-@endphp
+    @endphp
 <h3 class="m-4"> Στοιχεία Αξιολόγησης </h3>
 <style>
     .collapse {
@@ -70,17 +70,77 @@
                         <td class="column-a1 collapse show">{{ $data['A1StatusName'] }}</td>
                         <td class="column-a1 collapse show">{{ $data['A1Date'] }}</td>
                         <td class="column-a1 collapse show">
-                            <form action=""><input type="file"></form>
+                            @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή")
+                                    <input type="file" name="A1File">
+                                    <button type="submit" class="btn btn-primary">Υποβολή</button>
+                                </form>
+                            @else
+                                @php
+                                $filename = $data['A1AttachmentFileNames'];
+                                @endphp
+                                @if($filename)
+                                    <form action="{{route('evaluation.download_file', ['filename'=>$filename, 'whoIs'=>'isCon' ]) }}" method="get">
+                                        <button type="submit" class="btn btn-primary">{{ $data['A1AttachmentFileNames'] }}</button>
+                                    </form>
+                                @endif
+                        
+                            @endif
                         </td>
+                    
                     {{-- A2 Field --}}
+                    <td class="column-a2 collapse show">
+                        {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : 'Surname' }}
+                    </td>
+                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
+                        <form action="{{ route('evaluation.upload_file') }}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="EmployeeAfm" value="{{ $data['AFM'] }}">
+                            <input type="hidden" name="Stage" value="Α2">
+                            <input type="hidden" name="EvaluatorAfm" value="{{ $data['A2EvaluatorAFM'] }}">
+                            <input type="hidden" name="Status" value="{{ old('A2StatusName', '') }}">
+                            <td class="column-a2 collapse show">
+                                <div class="form-group">
+                                    <label for="A2StatusName">Αξιολόγηση:</label>
+                                    <select id="A2StatusName" name="A2StatusName" required>
+                                        <option value="" disabled selected>-- Επιλέξτε --</option>
+                                        <option value="Εξαιρετικός" {{ $data['A2StatusName'] ==  "Εξαιρετικός"?"selected":""}}>Εξαιρετικός</option>
+                                        <option value="Πολύ καλός" {{ $data['A2StatusName'] ==  "Πολύ καλός"?"selected":""}}>Πολύ καλός</option>
+                                        <option value="Ικανοποιητικός" {{ $data['A2StatusName'] ==  "Ικανοποιητικός"?"selected":""}}>Ικανοποιητικός</option>
+                                        <option value="Επαρκής" {{ $data['A2StatusName'] ==  "Επαρκής"?"selected":""}}>Επαρκής</option>
+                                    </select>
+                                </div>            
+                            </td>
+                    @else
                         <td class="column-a2 collapse show">
-                            {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : 'Surname' }}
+                            <div class="form-group">
+                                <select id="A2StatusName" name="A2StatusName" required>
+                                    <option value="" disabled selected>-- Επιλέξτε --</option>
+                                    <option value="Εξαιρετικός" {{ $data['A2StatusName'] ==  "Εξαιρετικός"?"selected":""}} disabled>Εξαιρετικός</option>
+                                    <option value="Πολύ καλός" {{ $data['A2StatusName'] ==  "Πολύ καλός"?"selected":""}} disabled>Πολύ καλός</option>
+                                    <option value="Ικανοποιητικός" {{ $data['A2StatusName'] ==  "Ικανοποιητικός"?"selected":""}} disabled>Ικανοποιητικός</option>
+                                    <option value="Επαρκής" {{ $data['A2StatusName'] ==  "Επαρκής"?"selected":""}} disabled>Επαρκής</option>
+                                </select>
+                            </div>            
                         </td>
-                        <td class="column-a2 collapse show">{{ $A2_evaluator ? $data['A2StatusName'] : 'Status' }}</td>
-                        <td class="column-a2 collapse show">{{ $A2_evaluator ? $data['A2Date'] : 'Date' }}</td>
-                        <td class="column-a2 collapse show">
-                            <form action=""><input type="file"></form>
-                        </td>
+                    @endif
+                    <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
+                    <td class="column-a2 collapse show">
+                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
+                            <input type="file" name="A2File">
+                            <button type="submit" class="btn btn-primary">Υποβολή</button>
+                        </form>
+                    @else
+                        @php
+                        $filename = $data['A2AttachmentFileNames'];
+                        @endphp
+                        @if($filename)
+                            <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
+                                <button type="submit" class="btn btn-primary">{{ $data['A2AttachmentFileNames'] }}</button>
+                            </form>
+                        @endif
+                
+                    @endif
+                    </td>
 
                     {{-- B Field --}}
                         <td class="column-b collapse show">

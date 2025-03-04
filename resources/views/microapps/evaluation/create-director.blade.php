@@ -32,7 +32,7 @@
             </tr>
             <tr>
                 <th>Αξιολογούμενος</th><th>Κλάδος</th><th>Σχολείο</th> {{-- Personal data --}}
-                <th class="column-a2 collapse show">A2 Αξιολογητής</th><th class="column-a2 collapse show">Κατάσταση</th><th class="column-a2 collapse show">Ημερομηνία</th><th class="column-a2 collapse show">Αρχείο</th> {{-- A2 Field --}}
+                <th class="column-a2 collapse show">A2 Αξιολογητής</th><th class="column-a2 collapse show">Κατάσταση</th><th class="column-a2 collapse show">Αρχείο</th><th class="column-a2 collapse show">Ημερομηνία</th> {{-- A2 Field --}}
                 <th class="column-b collapse show">B Αξιολογητής 1</th><th class="column-b collapse show">B Αξιολογητής 2</th><th class="column-b collapse show">Κατάσταση</th><th class="column-b collapse show">Ημερομηνία</th><th class="column-b collapse show">Αρχείο</th> {{-- Β Field --}}
                 <th>ΑΦΜ</th>
                 <th>Τηλέφωνο</th>
@@ -51,6 +51,7 @@
 
                 @foreach($evaluation_data as $data)
                     @php
+                        
                         $teacher = getEvaluator($data['AFM']);
                         $A2_evaluator = getEvaluator($data['A2EvaluatorAFM']);
                         $B_evaluator = getEvaluator($data['BEvaluatorAFM']);
@@ -97,7 +98,6 @@
                                 </div>            
                             </td>
                         @endif
-                        <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
                         <td class="column-a2 collapse show">
                         @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
                                 <input type="file" name="file">
@@ -115,7 +115,8 @@
                     
                         @endif
                         </td>
-
+                        <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
+                        
                     {{-- B Field --}}
                         <td class="column-b collapse show">
                             {{ $B_evaluator ? $B_evaluator->surname . ' ' . substr($B_evaluator->name, 0, 2) . '.' : '-' }}

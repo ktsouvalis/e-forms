@@ -25,11 +25,17 @@ class EvaluationController extends Controller
     }
 
     public function send_file_to_protocol(Request $request, $whoIs){
-        if($whoIs == 'isTeacher') $api_path = '/Evaluation/Director';
-        if($whoIs == 'isConsultant') $api_path = '/Evaluation/Consultant';
-        if(!$api_path) dd('error');
-        //dd($request->all());
-        //$api_path = "/Evaluation/Director";
+        //dd($request->file('file')->path());
+        if($whoIs == 'isDirector'){
+            $api_path = '/Evaluation/Director';
+            $FieldStatusName = $request->A2StatusName;
+        } 
+        if($whoIs == 'isConsultant'){
+            $api_path = '/Evaluation/Consultant';
+            $FieldStatusName = $request->A1StatusName;
+        }
+        if(!$api_path) dd('error with API Path');
+        
         $client = new Client([
             'debug' => fopen(\storage_path('logs/guzzle-debug.log'), 'w')
         ]);
@@ -41,7 +47,7 @@ class EvaluationController extends Controller
             ['name' => 'EmployeeAfm', 'contents' => $request->EmployeeAfm],
             ['name' => 'Stage', 'contents' => $request->Stage],
             ['name' => 'EvaluatorAfm', 'contents' => $request->EvaluatorAfm],
-            ['name' => 'Status', 'contents' => $request->A2StatusName],
+            ['name' => 'Status', 'contents' => $FieldStatusName],
             ['name' => 'FileTitle', 'contents' => ''],
             [
             'name'     => 'file',
@@ -177,8 +183,8 @@ class EvaluationController extends Controller
                 } elseif (strpos($headers['content-type'], 'image/jpeg') !== false) {   // There is a jpeg image
                     
                 } elseif (strpos($headers['content-type'], 'application/pdf') !== false) { // There is a pdf file
-                    // Extract the filename part
-                    if (preg_match('/filename\*=utf-8\'\'(.+)/', $headers['content-disposition'], $matches)) {
+                    // Extract the filename part - if there is 'filename' in headers, use that
+                    if (preg_match('/filename=([^;]+)/', $headers['content-disposition'], $matches)) {
                         $encodedFilename = $matches[1];
                         
                         // First URL decode once to handle the %25 sequence (which is a double-encoded %)
@@ -186,8 +192,9 @@ class EvaluationController extends Controller
                         
                         // Now decode again to get the actual UTF-8 characters
                         $filename = urldecode($partiallyDecoded);
+                        //dd("new preg match", $filename);
                         
-                    } else if (preg_match('/filenames\*=utf-8\'\'(.+)/', $headers['content-disposition'], $matches)) {
+                    } else if (preg_match('/filename\*=utf-8\'\'(.+)/', $headers['content-disposition'], $matches)) {
                         $encodedFilename = $matches[1];
                         
                         // First URL decode once to handle the %25 sequence (which is a double-encoded %)
@@ -196,6 +203,7 @@ class EvaluationController extends Controller
                         // Now decode again to get the actual UTF-8 characters
                         $filename = urldecode($partiallyDecoded);
                     } else {
+                        dd($headers['content-disposition']);
                         // Fallback to the filename parameter
                         $filename = uniqid() . '.pdf';
                     }     

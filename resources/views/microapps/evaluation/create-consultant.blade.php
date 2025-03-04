@@ -32,7 +32,7 @@
             </tr>
             <tr>
                 <th>Αξιολογούμενος</th><th>Κλάδος</th><th>Σχολείο</th> {{-- Personal data --}}
-                <th class="column-a1 collapse show">A1 Αξιολογητής</th><th class="column-a1 collapse show">Κατάσταση</th><th class="column-a1 collapse show">Ημερομηνία</th><th class="column-a1 collapse show">Αρχείο</th> {{-- A1 Field --}}
+                <th class="column-a1 collapse show">A1 Αξιολογητής</th><th class="column-a1 collapse show">Κατάσταση</th><th class="column-a1 collapse show">Αρχείο</th><th class="column-a1 collapse show">Ημερομηνία</th> {{-- A1 Field --}}
                 <th class="column-a2 collapse show">A2 Αξιολογητής</th><th class="column-a2 collapse show">Κατάσταση</th><th class="column-a2 collapse show">Ημερομηνία</th><th class="column-a2 collapse show">Αρχείο</th> {{-- A2 Field --}}
                 <th class="column-b collapse show">B Αξιολογητής 1</th><th class="column-b collapse show">B Αξιολογητής 2</th><th class="column-b collapse show">Κατάσταση</th><th class="column-b collapse show">Ημερομηνία</th><th class="column-b collapse show">Αρχείο</th> {{-- Β Field --}}
                 <th>ΑΦΜ</th>
@@ -52,6 +52,7 @@
 
                 @foreach($evaluation_data as $data)
                     @php
+                        $consultant = auth('consultant')->user();
                         $teacher = getEvaluator($data['AFM']);
                         $A1_evaluator = getEvaluator($data['A1EvaluatorAFM']);
                         $A2_evaluator = getEvaluator($data['A2EvaluatorAFM']);
@@ -66,7 +67,7 @@
                         <td class="column-a1 collapse show">
                             {{ $A1_evaluator ? $A1_evaluator->surname . ' ' . substr($A1_evaluator->name, 0, 2) . '.' : 'Surname' }}
                         </td>
-                        @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή")
+                        @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή") {{-- If A1 evaluation is not submitted --}}
                             <form action="{{ route('evaluation.upload_file', ['whoIs'=>'isConsultant']) }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="EmployeeAfm" value="{{ $data['AFM'] }}">
@@ -85,7 +86,7 @@
                                         </select>
                                     </div>            
                                 </td>
-                        @else
+                        @else                                           {{-- If A1 evaluation is submitted --}}
                             <td class="column-a1 collapse show">
                                 <div class="form-group">
                                     <select id="A1StatusName" name="A1StatusName" required>
@@ -98,31 +99,35 @@
                                 </div>            
                             </td>
                         @endif
-                        <td class="column-a1 collapse show">{{ $data['A1Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
+                
                         <td class="column-a1 collapse show">
-                        @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή")
-                                <input type="file" name="file">
-                                <button type="submit" class="btn btn-primary">Υποβολή</button>
-                            </form>
-                        @else
-                            @php
-                            $filename = $data['A1AttachmentFileNames'];
-                            @endphp
-                            @if($filename)
-                                <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
-                                    <button type="submit" class="btn btn-primary">{{ $data['A1AttachmentFileNames'] }}</button>
+                        
+                            
+                            @if(($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή") and ($consultant->afm == $data['A1EvaluatorAFM']))
+                                    <input type="file" name="file">
+                                    <button type="submit" class="btn btn-primary">Υποβολή</button>
                                 </form>
+                            @else
+                                @php
+                                $filename = $data['A1AttachmentFileNames'];
+                                @endphp
+                                @if($filename)
+                                    <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
+                                        <button type="submit" class="btn btn-primary">{{ $data['A1AttachmentFileNames'] }}</button>
+                                    </form>
+                                @endif
+                        
                             @endif
-                    
-                        @endif
                         </td>
+                        <td class="column-a1 collapse show">{{ $data['A1Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
+                        
                         {{-- end of A1--}}
                         
                     {{-- A2 Field --}}
                     <td class="column-a2 collapse show">
-                        {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : '-' }}
+                        {{ $A2_evaluator ? $A2_evaluator->surname . ' ' . substr($A2_evaluator->name, 0, 2) . '.' : 'Surname' }}
                     </td>
-                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
+                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή") {{-- If A2 evaluation is not submitted --}}
                         <form action="{{ route('evaluation.upload_file', ['whoIs'=>'isConsultant']) }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="EmployeeAfm" value="{{ $data['AFM'] }}">
@@ -141,8 +146,8 @@
                                     </select>
                                 </div>            
                             </td>
-                    @else
-                        <td class="column-a2 collapse show">
+                    @else                                           {{-- If A2 evaluation is submitted --}}
+                        <td class="column-a1 collapse show">
                             <div class="form-group">
                                 <select id="A2StatusName" name="A2StatusName" required>
                                     <option value="" disabled selected>-- Επιλέξτε --</option>
@@ -154,9 +159,9 @@
                             </div>            
                         </td>
                     @endif
-                    <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
-                    <td class="column-a2 collapse show">
-                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή")
+                    <td class="column-a1 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
+                    <td class="column-a1 collapse show">
+                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή" and ($consultant->afm == $data['A2EvaluatorAFM']))
                             <input type="file" name="file">
                             <button type="submit" class="btn btn-primary">Υποβολή</button>
                         </form>
@@ -172,7 +177,7 @@
                 
                     @endif
                     </td>
-
+                    {{-- end of A2--}}
                     {{-- B Field --}}
                         <td class="column-b collapse show">
                             {{ $B_evaluator ? $B_evaluator->surname . ' ' . substr($B_evaluator->name, 0, 2) . '.' : '-' }}

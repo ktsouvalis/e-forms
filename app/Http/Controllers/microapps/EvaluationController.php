@@ -3,20 +3,26 @@
 namespace App\Http\Controllers\microapps;
 
 use GuzzleHttp\Client;
+use App\Models\Teacher;
+use App\Models\Consultant;
 use Illuminate\Http\Request;
+use App\Mail\EvaluationSubmitted;
 use Illuminate\Support\Facades\Env;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class EvaluationController extends Controller
 {
     public function upload_file(Request $request, $whoIs)
     {
-        $protocolResponse = $this->send_file_to_protocol($request, $whoIs);
-
+        //$protocolResponse = $this->send_file_to_protocol($request, $whoIs);
+        
+        $sendMailToSupervisor = $this->send_mail_to_supervisor($request, $whoIs);
+        $protocolResponse = "";
         if($protocolResponse){
             return back()->with('success', 'το έντυπο υποβλήθηκε με επιτυχία.');
         } else {
@@ -24,7 +30,37 @@ class EvaluationController extends Controller
         }
     }
 
-    public function send_file_to_protocol(Request $request, $whoIs){
+    private function send_mail_to_supervisor(Request $request, $whoIs)
+    {
+        $supervisor = Consultant::where('is_supervisor', 1)->first();
+        $evaluatee = Teacher::where('afm', $request->EmployeeAfm)->first();
+        if($whoIs == 'isDirector'){
+            //Find the Director's data
+            $evaluator = Teacher::where('afm', $request->EvaluatorAfm)->first();
+        }
+        if($whoIs == 'isConsultant'){
+            $evaluator = Consultant::where('afm', $request->EvaluatorAfm)->first();
+        }
+        try{
+            
+            Mail::to('it@dipe.ach.sch.gr')->send(new EvaluationSubmitted($evaluator->surname.' '.$evaluator->name, $evaluatee->surname.' '.$evaluatee->name, $request->file('file')->getClientOriginalName(), $request->file('file')->path()));
+            //Mail::to($supervisor->mail)->send
+        }
+        catch(\Exception $e){
+            try{
+                dd($e->getMessage());
+                Log::channel('mails')->error("Upload evaluation file MAIL error ".$e->getMessage());
+            }
+            catch(\Exception $e){
+
+            }
+            return 'failure';     
+        }
+        return 'success';
+    }
+
+    public function send_file_to_protocol(Request $request, $whoIs)
+    {
         //dd($request->file('file')->path());
         if($whoIs == 'isDirector'){
             $api_path = '/Evaluation/Director';

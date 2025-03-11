@@ -17,14 +17,64 @@ use Illuminate\Support\Facades\Storage;
 
 class EvaluationController extends Controller
 {
+    public function index()
+    {
+        if(Auth::guard('teacher')->check()){
+            $afm = Auth::guard('teacher')->user()->afm;
+            $API_response = $this->getEvaluatorData($afm, 'isTeacher');
+            $evaluation_data = $this->handleMultipartData($API_response);
+            return view('microapps.evaluation.index')->with(compact('evaluation_data'));
+        }
+        else if(Auth::guard('consultant')->check()){
+            $afm = Auth::guard('consultant')->user()->afm;
+            
+            $API_response = $this->getSupervisorData();
+            //dd($API_response);
+            $evaluation_data = $this->handleMultipartData($API_response);
+            //dd($evaluation_data);
+            return view('microapps.evaluation.index-supervisor')->with(compact('evaluation_data'));
+        }    
+        abort(403, 'Unauthorized action.');
+    }
+
+    private function getSupervisorData($approved = "false")
+    {
+        $api_path = '/evaluation/supervisorCurrent';
+        $client = new Client([
+            'debug' => fopen(\storage_path('logs/guzzle-debug.log'), 'w')
+        ]);
+        $full_url = config('services.directorate.url').$api_path;
+        $response = $client->request('GET', config('services.directorate.url').$api_path, [
+            'headers' => [
+                'X-API-Key' => config('services.directorate.key'),
+            ],
+            'query' => [
+                'includeApproved' => $approved
+            ]
+        ]);
+        // Get the response body
+        $contents = $response->getBody()->getContents();
+        // Get status code
+        $status = $response->getStatusCode();
+        if($status != 200){
+            //dd($body);
+            return false;
+        } else { 
+            return $response;
+        }
+    }
     public function upload_file(Request $request, $whoIs)
     {
-        //$protocolResponse = $this->send_file_to_protocol($request, $whoIs);
+        $protocolResponse = $this->send_file_to_protocol($request, $whoIs);
         
         $sendMailToSupervisor = $this->send_mail_to_supervisor($request, $whoIs);
-        $protocolResponse = "";
+    
         if($protocolResponse){
-            return back()->with('success', 'το έντυπο υποβλήθηκε με επιτυχία.');
+            if($sendMailToSupervisor == 'success'){
+                return back()->with('success', 'Το έντυπο υποβλήθηκε με επιτυχία και εστάλη mail στον Επόπτη Ποιότητας Εκπαίδευσης.');
+            } else {
+                return back()->with('success', 'Το έντυπο υποβλήθηκε με επιτυχία αλλά απέτυχε η αποστολή mail στον Επόπτη Ποιότητας Εκπαίδευσης.');
+            }
         } else {
             return back()->with('failure', 'Αποτυχία αποστολής εντύπου.');
         }
@@ -42,9 +92,9 @@ class EvaluationController extends Controller
             $evaluator = Consultant::where('afm', $request->EvaluatorAfm)->first();
         }
         try{
-            
-            Mail::to('it@dipe.ach.sch.gr')->send(new EvaluationSubmitted($evaluator->surname.' '.$evaluator->name, $evaluatee->surname.' '.$evaluatee->name, $request->file('file')->getClientOriginalName(), $request->file('file')->path()));
             //Mail::to($supervisor->mail)->send
+            Mail::to('it@dipe.ach.sch.gr')->send(new EvaluationSubmitted($evaluator->surname.' '.$evaluator->name, $evaluatee->surname.' '.$evaluatee->name, $request->file('file')->getClientOriginalName(), $request->file('file')->path()));
+            
         }
         catch(\Exception $e){
             try{

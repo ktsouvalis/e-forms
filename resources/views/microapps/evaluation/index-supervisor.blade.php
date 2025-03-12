@@ -33,7 +33,7 @@
             <tr>
                 <th>Αξιολογούμενος</th><th>Κλάδος</th><th>Σχολείο</th> {{-- Personal data --}}
                 <th class="column-a1 collapse show">A1 Αξιολογητής</th><th class="column-a1 collapse show">Κατάσταση</th><th class="column-a1 collapse show">Αρχείο</th><th class="column-a1 collapse show">Έγκριση</th><th class="column-a1 collapse show">Ημερομηνία</th> {{-- A1 Field --}}
-                <th class="column-a2 collapse show">A2 Αξιολογητής</th><th class="column-a2 collapse show">Κατάσταση</th><th class="column-a2 collapse show">Ημερομηνία</th><th class="column-a2 collapse show">Αρχείο</th><th class="column-a2 collapse show">Έγκριση</th> {{-- A2 Field --}}
+                <th class="column-a2 collapse show">A2 Αξιολογητής</th><th class="column-a2 collapse show">Κατάσταση</th><th class="column-a2 collapse show">Αρχείο</th><th class="column-a2 collapse show">Έγκριση</th><th class="column-a2 collapse show">Ημερομηνία</th> {{-- A2 Field --}}
                 <th class="column-b collapse show">B Αξιολογητής 1</th><th class="column-b collapse show">B Αξιολογητής 2</th><th class="column-b collapse show">Κατάσταση</th><th class="column-b collapse show">Ημερομηνία</th><th class="column-b collapse show">Αρχείο</th> {{-- Β Field --}}
                 <th>ΑΦΜ</th>
                 <th>Τηλέφωνο</th>
@@ -107,7 +107,7 @@
                                 @endif
                             @endif
                         </td>
-                        <td>
+                        <td class="column-a1 collapse show">
                             @if($filename)
                                 <input type="checkbox" name="approve" id="approveCheckbox" value="Α1" data-afm="{{ $data['AFM'] }}" {{ $data['A1SupervisorApproval'] == 1 ? 'checked' : '' }}>
                             @endif
@@ -140,7 +140,7 @@
                                 </div>            
                             </td>
                     @else                                           {{-- If A2 evaluation is submitted --}}
-                        <td class="column-a1 collapse show">
+                        <td class="column-a2 collapse show">
                             <div class="form-group">
                                 <select id="A2StatusName" name="A2StatusName" required>
                                     <option value="" disabled selected>-- Επιλέξτε --</option>
@@ -152,25 +152,33 @@
                             </div>            
                         </td>
                     @endif
-                    <td class="column-a1 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
-                    <td class="column-a1 collapse show">
-                    @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή" and ($consultant->afm == $data['A2EvaluatorAFM']))
-                            <input type="file" name="file">
-                            <button type="submit" class="btn btn-primary">Υποβολή</button>
-                        </form>
-                    @else
-                        @php
-                        $filename = $data['A2AttachmentFileNames'];
-                        @endphp
-                        @if($filename)
-                            <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
-                                <button type="submit" class="btn btn-primary">{{ $data['A2AttachmentFileNames'] }}</button>
+                    {{-- A2 File --}}
+                    <td class="column-a2 collapse show">
+                        @if($data['A2StatusName'] == "" || $data['A2StatusName'] == "Απεργία/Αποχή" and ($consultant->afm == $data['A2EvaluatorAFM']))
+                                <input type="file" name="file">
+                                <button type="submit" class="btn btn-primary">Υποβολή</button>
                             </form>
+                        @else
+                            @php
+                            $filename = $data['A2AttachmentFileNames'];
+                            @endphp
+                            @if($filename)
+                                <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
+                                    <button type="submit" class="btn btn-primary">{{ $data['A2AttachmentFileNames'] }}</button>
+                                </form>
+                            @endif
+                    
                         @endif
-                
-                    @endif
                     </td>
+                    <td class="column-a2 collapse show">
+                        @if($filename)
+                            <input type="checkbox" name="approve" id="approveCheckbox" value="Α2" data-afm="{{ $data['AFM'] }}" {{ $data['A2SupervisorApproval'] == 1 ? 'checked' : '' }}>
+                        @endif
+                    </td>
+                    <td class="column-a2 collapse show">{{ $data['A2Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
+                    
                     {{-- end of A2--}}
+
                     {{-- B Field --}}
                         <td class="column-b collapse show">
                             {{ $B_evaluator ? $B_evaluator->surname . ' ' . substr($B_evaluator->name, 0, 2) . '.' : '-' }}
@@ -181,7 +189,7 @@
                         <td class="column-b collapse show">{{ $B_evaluator ? $data['BStatusName'] : '-' }}</td>
                         <td class="column-b collapse show">{{ $B_evaluator ? $data['BDate'] : '-' }}</td>
                         <td class="column-b collapse show">
-                            <form action=""><input type="file"></form>
+                            
                         </td>
                         <td>{{ $data['AFM'] }}</td>
                         <td>{{ $teacher->telephone }}</td>

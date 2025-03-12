@@ -161,6 +161,45 @@ class EvaluationController extends Controller
         }
     }
 
+    public function send_approval_to_protocol(Request $request)
+    {   
+        $api_path = '/Evaluation/approval';
+        if(!$api_path) dd('error with API Path');
+        
+        $client = new Client([
+            'debug' => fopen(\storage_path('logs/guzzle-debug.log'), 'w')
+        ]);
+        $full_url = config('services.directorate.url').$api_path;
+        // Store the file temporarily
+        //$tempPath = storage_path('app/temp/' . uniqid() . '_' . $request->file->getClientOriginalName());
+        //$request->file->move(dirname($tempPath), basename($tempPath)); 
+        $data = [
+            ['name' => 'EmployeeAfm', 'contents' => "102195610"],
+            ['name' => 'Stage', 'contents' => "A1"],
+            ['name' => 'isSupervisor', 'contents' => "true"],
+        ];
+        //print_r($data);
+        //dd($data);
+        $response = $client->request('POST', $full_url, [
+            'headers' => [
+                'X-API-Key' => env('API_KEY'),
+            ],
+            'multipart' => $data,
+        ]);
+        // Get the response body
+        $status = $response->getStatusCode();
+        //$contents = $response->getBody()->getContents();
+        if($status != 200){
+            dd($body);
+
+            return false;
+        } else {
+            dd($response);
+            //print_r($contents);
+            return $response;
+        }
+    }
+
     public function create()
     {
         if(Auth::guard('teacher')->check()){

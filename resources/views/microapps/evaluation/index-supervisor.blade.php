@@ -109,7 +109,7 @@
                         </td>
                         <td>
                             @if($filename)
-                                <input type="checkbox" name="approve" id="approveCheckbox" value="A1" {{ $data['A1SupervisorApproval'] == 1 ? 'checked' : '' }}>
+                                <input type="checkbox" name="approve" id="approveCheckbox" value="Α1" data-afm="{{ $data['AFM'] }}" {{ $data['A1SupervisorApproval'] == 1 ? 'checked' : '' }}>
                             @endif
                         </td>
                         <td class="column-a1 collapse show">{{ $data['A1Date'] ?? 'Η ημερομηνία ενημερώνεται αυτόματα από την πλατφόρμα.' }}</td>
@@ -253,28 +253,47 @@ setTimeout(() => {
 </script>
 {{-- Javascript running AJAX Request to API for Supervisors Checking of Documents --}}
 <script>
-    $(document).ready(function () {
-        $('#approveCheckbox').change(function () {
-            let isChecked = $(this).is(':checked') ? 1 : 0; // Get checkbox status
-            let token = "{{ csrf_token() }}"; // Laravel CSRF Token
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all checkboxes in the DOM
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
-            $.ajax({
-                url: "{{ config('services.directorate.url') }} /evaluation/approval", // Replace with your API route
-                type: "POST",
-                data: {
-                    employeeAfm: "{{$data['AFM']}}",
-                    Stage: "A1",
-                    isSupervisor: ,
-                },
-                success: function (response) {
-                    console.log(response.message);
-                    alert("Status updated successfully!");
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                    alert("An error occurred. Please try again.");
-                }
+        // Function to handle checkbox state change
+        function handleCheckboxChange(event) {
+            const checkbox = event.target;
+            const isChecked = checkbox.checked;
+            const stage = checkbox.value;
+            const afm = checkbox.getAttribute('data-afm');
+
+            // Log the checkbox state and value
+            //console.log(`Checkbox with value ${value} is ${isChecked ? 'checked' : 'unchecked'} and afm is ${afm}`);   
+            
+            
+            var form = new FormData();
+            form.append("EmployeeAfm", afm);
+            form.append("Stage", stage);
+            form.append("IsSupervisor", "true");
+
+            var settings = {
+            "url": "http://10.35.249.90/eProtocolAPI/api/Evaluation/approval",
+            "method": "POST",
+            "timeout": 0,
+            "headers": {
+                "X-API-Key": "{{ env('API_KEY') }}"
+            },
+            "processData": false,
+            "mimeType": "multipart/form-data",
+            "contentType": false,
+            "data": form
+            };
+
+            $.ajax(settings).done(function (response) {
+            console.log(response);
             });
+        
+            }
+        // Add event listener to each checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', handleCheckboxChange);
         });
     });
 </script>

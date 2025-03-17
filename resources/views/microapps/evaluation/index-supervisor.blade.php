@@ -295,10 +295,17 @@ setTimeout(() => {
             };
 
             $.ajax(settings).done(function (response) {
-            console.log(response);
-            });
+                console.log(response);
+                alert("Η έγκριση του εγγράφου ολοκληρώθηκε επιτυχώς. Δημιουργήθηκε έγγραφο έγκρισης και θα σταλεί στο Σχολείο");
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.responseText);
+                console.log(jqXHR.status);
+                alert("Η έγκριση του εγγράφου απέτυχε. Δοκιμάστε ξανά.");
         
-            }
+            });
+        }
+
         // Add event listener to each checkbox
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', handleCheckboxChange);

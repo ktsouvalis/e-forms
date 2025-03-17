@@ -63,10 +63,11 @@
                         <td>{{ $data['LastName'] }} {{ $data['FirstName'] }}</td>
                         <td>{{ $data['Branch'] }}</td>
                         <td>{{ $teacher->ypiretisi->name }}</td>
-                        {{-- A1 Field --}}
+                        {{-- A1 Field - Evaluator --}}
                         <td class="column-a1 collapse show">
                             {{ $A1_evaluator ? $A1_evaluator->surname . ' ' . substr($A1_evaluator->name, 0, 2) . '.' : 'Surname' }}
                         </td>
+                        {{-- A1 Field - Evaluation Status --}}
                         @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή") {{-- If A1 evaluation is not submitted --}}
                             <form action="{{ route('evaluation.upload_file', ['whoIs'=>'isConsultant']) }}" method="post" enctype="multipart/form-data">
                                 @csrf
@@ -99,14 +100,16 @@
                                 </div>            
                             </td>
                         @endif
-                
+                        {{-- A1 Field - File --}}
                         <td class="column-a1 collapse show">
-                        
-                            
-                            @if(($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή") and ($consultant->afm == $data['A1EvaluatorAFM']))
+                            @if($data['A1StatusName'] == "" || $data['A1StatusName'] == "Απεργία/Αποχή") {{-- If A1 evaluation is not submitted --}}
+                                @if($consultant->afm == $data['A1EvaluatorAFM'])                         {{-- If logged in user is the evaluator --}}
                                     <input type="file" name="file">
                                     <button type="submit" class="btn btn-primary">Υποβολή</button>
                                 </form>
+                                @else
+                                    <div>-</div>
+                                @endif
                             @else
                                 @php
                                 $filename = $data['A1AttachmentFileNames'];
@@ -115,6 +118,8 @@
                                     <form action="{{route('evaluation.download_file', ['filename'=>$filename ]) }}" method="get">
                                         <button type="submit" class="btn btn-primary">{{ $data['A1AttachmentFileNames'] }}</button>
                                     </form>
+                                @else
+                                    <div class='text-primary'>Έχει ολοκληρωθεί η αξιολόγηση.</div>
                                 @endif
                         
                             @endif

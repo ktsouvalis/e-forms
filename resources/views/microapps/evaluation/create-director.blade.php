@@ -128,9 +128,7 @@
                         <td class="column-b collapse show">{{ $B_evaluator ? $data['BDate'] : '-' }}</td>
                         <td class="column-b collapse show">
                             @if($data['A2StatusName'] == "" || $data['BStatusName'] == "Απεργία/Αποχή")
-                                <form action="">
-                                    <input type="file">
-                                </form>
+                                
                             @endif
                         </td>
                         <td>{{ $data['AFM'] }}</td>

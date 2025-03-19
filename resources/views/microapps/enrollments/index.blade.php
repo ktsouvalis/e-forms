@@ -12,9 +12,7 @@
         <script src="{{ asset('Responsive-2.4.1/js/responsive.bootstrap5.js') }}"></script>
         <script src="{{ asset('datatable_init.js') }}"></script>
     @endpush
-    @push('title')
-        <title>Εγγραφές 2024-25</title>
-    @endpush
+    
     @php
         if(!file_exists(config_path('enrollments.php'))){
             File::put(config_path('enrollments.php'), '<?php return []; ?>');
@@ -30,6 +28,9 @@
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         // dd($nextYearPlanningActive, $nextYearPlanningAccepts, $schoolYear, $accepts)
     @endphp
+    @push('title')
+        <title>Εγγραφές {{$schoolYear}}/title>
+    @endpush
     
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
     <div class="hstack gap-3">

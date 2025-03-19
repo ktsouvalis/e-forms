@@ -33,6 +33,11 @@ class OutingsController extends Controller
         dd('action');
     }
 
+    public function actions(){
+        // return view('microapps.outings.action', ['appname' => 'outings']);
+        dd('actions');
+    }
+
     public function index(){
         // ini_set('memory_limit', '256M');
         return view('microapps.outings.index', ['appname' => 'outings']);

@@ -6,6 +6,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\microapps\Desks;
 use App\Models\microapps\Fruit;
+use App\Models\microapps\Action;
 use App\Models\microapps\Outing;
 use App\Models\microapps\Ticket;
 use App\Models\microapps\TwoFile;
@@ -130,6 +131,10 @@ class School extends Authenticatable
 
     public function outings(){
         return $this->hasMany(Outing::class)->orderBy('outing_date', 'desc');
+    }
+
+    public function actions(){
+        return $this->hasMany(Action::class);
     }
 
     public function internal_rule(){

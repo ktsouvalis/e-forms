@@ -40,16 +40,18 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\LeavesController;
+use App\Http\Controllers\microapps\ActionsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
 use App\Http\Controllers\microapps\SwimmingController;
 use App\Http\Controllers\microapps\TwoFilesController;
 use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\EnrollmentController;
+use App\Http\Controllers\microapps\EvaluationController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\TimetablesController;
-use App\Http\Controllers\microapps\EvaluationController;
+use App\Http\Controllers\microapps\ActionTypesController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
 
@@ -405,7 +407,11 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
     Route::post('/send_delete_request/{outing}', [OutingsController::class, 'send_delete_request'])->name('outings.send_delete_request');//checking access inside the method
 });
 
-Route::post('/action', [OutingsController::class, 'action'])->name('outings.action')->middleware('canViewMicroapp');
+// ACTIONS ROUTES
+
+Route::resource('actions', ActionsController::class);//->middleware('canViewMicroapp');
+
+Route::resource('actiontypes', ActionTypesController::class);
 
 // ALL_DAY_SCHOOL ROUTES
 Route::resource('all_day_school', AllDaySchoolController::class)->middleware('canViewMicroapp');

@@ -40,20 +40,7 @@
             });
         </script>
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const checkbox = document.getElementById('openActionCheckbox');
-        
-                checkbox.addEventListener('change', function () {
-                    if (this.checked) {
-                        // Retrieve values from existing fields in the DOM
-                        //let field1Value = document.getElementById('existingField1')?.value || ''; 
-                        //let field2Value = document.getElementById('existingField2')?.value || ''; 
-                        // Open a new window with the form
-                        const newWindow = window.open('', '_blank', 'width=600,height=400');
-        
-                        // Create the form in the new window
-                        newWindow.document.write(`
-                            <html>
+            const html = `<html>
                             <head>
                                 <title>Δράσεις</title>
                                 <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -61,7 +48,7 @@
                             <body>
                                 <div class="container mt-5">
                                     <h3>Δράσεις Σχολείου</h3>
-                                    <form action="{{ route('outings.action') }}" method="post">
+                                    <form action="{{ route('actions.index') }}" method="post">
                                         @csrf
                                         <div class="mb-3">
                                             <label for="field1" class="form-label">Field 1</label>
@@ -75,11 +62,26 @@
                                     </form>
                                 </div>
                             </body>
-                            </html>
-                        `);
+                            </html>`;
+            document.addEventListener("DOMContentLoaded", function () {
+                const checkbox = document.getElementById('openActionCheckbox');
         
-                        // Close the document to finish loading the new window
-                        newWindow.document.close();
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        // Retrieve values from existing fields in the DOM
+                        //let field1Value = document.getElementById('existingField1')?.value || ''; 
+                        //let field2Value = document.getElementById('existingField2')?.value || ''; 
+                        // Make an AJAX call to the controller
+                        fetch('{{ route('actions.index') }}')
+                            .then(response => response.text())
+                            .then(html => {
+                                // Open a new window with the form
+                                const newWindow = window.open('', '_blank', 'width=600,height=400');
+                                newWindow.document.write(html);
+                                newWindow.document.close();
+                            })
+                            .catch(error => console.error('Error:', error));
+        
                     }
                 });
             });

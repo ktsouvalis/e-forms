@@ -39,6 +39,51 @@
                 });
             });
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const checkbox = document.getElementById('openActionCheckbox');
+        
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        // Retrieve values from existing fields in the DOM
+                        //let field1Value = document.getElementById('existingField1')?.value || ''; 
+                        //let field2Value = document.getElementById('existingField2')?.value || ''; 
+                        // Open a new window with the form
+                        const newWindow = window.open('', '_blank', 'width=600,height=400');
+        
+                        // Create the form in the new window
+                        newWindow.document.write(`
+                            <html>
+                            <head>
+                                <title>Δράσεις</title>
+                                <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+                            </head>
+                            <body>
+                                <div class="container mt-5">
+                                    <h3>Δράσεις Σχολείου</h3>
+                                    <form action="{{ route('outings.action') }}" method="post">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="field1" class="form-label">Field 1</label>
+                                            <input type="text" class="form-control" id="field1" name="field1" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="field2" class="form-label">Field 2</label>
+                                            <input type="text" class="form-control" id="field2" name="field2" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Υποβολή</button>
+                                    </form>
+                                </div>
+                            </body>
+                            </html>
+                        `);
+        
+                        // Close the document to finish loading the new window
+                        newWindow.document.close();
+                    }
+                });
+            });
+        </script>
     @endpush
     @push('title')
         <title>Εκδρομές</title>
@@ -66,6 +111,10 @@
                             </select>
                         </div>
                         <div class="input-group">
+                            <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
+                            <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
+                        </div>
+                        <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Ημερομηνία</span>
                             <input name="outing_date" type="date" class="form-control"  aria-label="outing_date" aria-describedby="basic-addon1" required ><br>
                         </div>
@@ -86,7 +135,7 @@
                             @if($sections->count()==0)
                                 <div class='alert alert-warning text-center my-2'>
                                     <strong> <i class="bi bi-exclamation-triangle"> </i> Τη στιγμή που ενημερώθηκαν τα τμήματα στην εφαρμογή από το myschool, δεν είχαν καταχωρηθεί τμήματα για το Σχολείο σας
-                                    Παρακαλούμε ενημερώστε τα τμήματα του Σχολείου στο myschool και ειδοποιήστε το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr
+                                        Παρακαλούμε ενημερώστε τα τμήματα του Σχολείου στο myschool και ειδοποιήστε το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr
                                     </strong>
                                 </div>
                             @else
@@ -117,7 +166,7 @@
                         @endif
                     </form>
                 </nav>
-            </div> 
+            </div>
             <div class="py-3">
                 <div class="modal fade" id="deleteRequestModal" tabindex="-1" role="dialog" >
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -193,7 +242,6 @@
                                     <button class="bi bi-x-circle btn btn-danger" type="submit" style="color:white" onclick="return confirm('Επιβεβαίωση διαγραφής εκδρομής;')"> </button>
                                 </form>
                             </td>
-                            
                             @else
                             <td> - </td>
                             <td>

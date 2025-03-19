@@ -117,7 +117,7 @@
                     <tr>
                         <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                             @csrf
-                        <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  2024-25</td>
+                        <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  {{config('enrollments.schoolYear')}}</td>
                         </form>
                         <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                             @csrf
@@ -339,11 +339,11 @@
                         <td> 
                             @if($school->primary == 1)
                                 @if($school->has_extended_all_day == 1)
-                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_ext_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2024_25.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_ext_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2025_26.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @else
-                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2024_25.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2025_26.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @endif
@@ -363,7 +363,7 @@
                     <form action="{{route("enrollments.save", ['select'=>'all_day'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                     <tr>
-                        <td>Αριθμός εγγεγραμμένων  @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο 2024-25</td>
+                        <td>Αριθμός εγγεγραμμένων  @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο {{config('enrollments.schoolYear')}}</td>
                         <td>
                             <input name="nr_of_students1_all_day1" id="nr_of_students1_all_day1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1_all_day1}}@endif">
                         </td>
@@ -418,7 +418,7 @@
                         </td>
                         <td> 
                             Αρχέιο Α1 & Α2 του ΥΠΑΙΘΑ
-                            <form action="{{route('enrollments.download_file',['file'=>"5_next_year_planning_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_Προγραμματισμός_2024_25.xlsx"])}}" method="get"class="container-fluid">
+                            <form action="{{route('enrollments.download_file',['file'=>"5_next_year_planning_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_Προγραμματισμός_2025_26.xlsx"])}}" method="get"class="container-fluid">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title=""> Πίνακας </button>
                             </form>
                             Σημείωση: <small><em>Κατά τη συμπλήρωση του αρχείου, το πεδίο <strong> Σύνολο Μαθητών Ολοήμερου</strong> συμπληρώνεται από το άθροισμα των μαθητών που αποχωρούν, στις επόμενες στήλες.</em></small>

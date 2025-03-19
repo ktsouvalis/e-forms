@@ -28,6 +28,11 @@ class OutingsController extends Controller
         $this->microapp = Microapp::where('url', '/outings')->first();
     }
 
+    public function action(){
+        // return view('microapps.outings.action', ['appname' => 'outings']);
+        dd('action');
+    }
+
     public function index(){
         // ini_set('memory_limit', '256M');
         return view('microapps.outings.index', ['appname' => 'outings']);

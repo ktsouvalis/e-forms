@@ -405,6 +405,8 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
     Route::post('/send_delete_request/{outing}', [OutingsController::class, 'send_delete_request'])->name('outings.send_delete_request');//checking access inside the method
 });
 
+Route::post('/action', [OutingsController::class, 'action'])->name('outings.action')->middleware('canViewMicroapp');
+
 // ALL_DAY_SCHOOL ROUTES
 Route::resource('all_day_school', AllDaySchoolController::class)->middleware('canViewMicroapp');
 

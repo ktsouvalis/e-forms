@@ -5,12 +5,22 @@ namespace App\Http\Controllers\microapps;
 use Illuminate\Http\Request;
 use App\Models\microapps\Action;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ActionsController extends Controller
 {
     public function index()
     {
         return view('microapps.actions.index');
+    }
+
+    public function show()
+    {
+        return view('microapps.actions.index_school');
+    }
+    public function index_school()
+    {
+        return view('microapps.actions.index_school');
     }
     
     public function create()
@@ -22,20 +32,26 @@ class ActionsController extends Controller
         {
             $request->validate([
                 'category' => 'required',
-                'description' => 'required'
+                'title' => 'required'
             ]);
     
-            $actionType = new Action();
-            $actionType->category = $request->category;
-            $actionType->description = $request->description;
-            $actionType->save();
+            $action = new Action();
+            $action->school_id = Auth::guard('school')->user()->id;
+            $action->actiontype_id = $request->category;
+            $action->implementing_authority = $request->implementing_authority;
+            $action->title = $request->title;
+            $action->number_of_teachers = $request->number_of_teachers;
+            $action->teachers = $request->teachers;
+            $action->records = $request->records;
+            $action->comments = $request->comments;
+            $action->save();
     
-            return redirect()->route('actions.index');
+            return redirect()->route('actions.index_school');
         }
     
         public function edit($id)
         {
-            $actionType = ActionType::find($id);
+            $action = Action::find($id);
             return view('microapps.actions.edit', compact('action'));
         }
     
@@ -43,15 +59,21 @@ class ActionsController extends Controller
         {
             $request->validate([
                 'category' => 'required',
-                'description' => 'required'
+                'title' => 'required'
             ]);
     
-            $actionType = Action::find($id);
-            $actionType->category = $request->category;
-            $actionType->description = $request->description;
-            $actionType->save();
+            $action = Action::find($id);
+            $action->school_id = Auth::guard('school')->user()->id;
+            $action->actiontype_id = $request->category;
+            $action->implementing_authority = $request->implementing_authority;
+            $action->title = $request->title;
+            $action->number_of_teachers = $request->number_of_teachers;
+            $action->teachers = $request->teachers;
+            $action->records = $request->records;
+            $action->comments = $request->comments;
+            $action->save();
     
-            return redirect()->route('action.index');
+            return redirect()->route('actions.index_school');
         }
     
         public function destroy($id)
@@ -59,7 +81,7 @@ class ActionsController extends Controller
             $actionType = Action::find($id);
             $actionType->delete();
     
-            return redirect()->route('actions.index');
+            return redirect()->route('actions.index_school');
         }
     
         

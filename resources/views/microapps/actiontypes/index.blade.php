@@ -15,7 +15,6 @@
         <script src="{{asset('datatable_init.js')}}"></script>
         <script src="{{asset('toggle_signed_internal_rules.js')}}"></script>
         <script src="{{asset('datatable_init_internal_rules_second.js')}}"></script>
-        
     @endpush
     @push('title')
         <title>Κατηγορίες Εκπαιδευτικών Δράσεων</title>

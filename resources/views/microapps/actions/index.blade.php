@@ -24,8 +24,7 @@
             $user = Auth::guard('school')->user(); //check which user is logged in
             $actions = App\Models\microapps\Action::get()->where('school_id', $user->id);
             $action_types = App\Models\microapps\Actiontype::get();
-
-            dd($user);
+        
         @endphp
         <div class="container pt-2">
             <div class="h4">Εκπαιδευτικές Δράσεις</div>
@@ -39,17 +38,17 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($action_types as $action_type)
+                @foreach($actions as $action)
                     <tr>
-                        <td>{{$action_type->category}}</td>
-                        <td>{{$action_type->description}}</td>
+                        <td>{{$action->category}}</td>
+                        <td>{{$action->description}}</td>
                         <td>
-                            <a href="{{route('actions.edit', $action_type->id)}}" class="btn btn-primary">Επεξεργασία</a>
-                            <form action="{{route('actions.destroy', $action_type->id)}}" method="POST" style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Διαγραφή</button>
-                            </form>
+                        <a href="{{route('actions.edit', $action->id)}}" class="btn btn-primary">Επεξεργασία</a>
+                        <form action="{{route('actions.destroy', $action_type->id)}}" method="POST" style="display: inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Διαγραφή</button>
+                        </form>
                     </tr>
                 @endforeach
             </tbody>

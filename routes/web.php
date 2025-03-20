@@ -411,6 +411,11 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
 
 Route::resource('actions', ActionsController::class);//->middleware('canViewMicroapp');
 
+Route::group(['prefix' => 'actions', 'middleware' => 'canViewMicroapp'], function () {
+    Route::get('/index_school', [ActionsController::class, 'index_school'])->name('actions.index_school'); 
+});
+
+
 Route::resource('actiontypes', ActionTypesController::class);
 
 // ALL_DAY_SCHOOL ROUTES

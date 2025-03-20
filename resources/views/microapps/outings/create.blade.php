@@ -72,11 +72,11 @@
                         //let field1Value = document.getElementById('existingField1')?.value || ''; 
                         //let field2Value = document.getElementById('existingField2')?.value || ''; 
                         // Make an AJAX call to the controller
-                        fetch('{{ route('actions.index') }}')
+                        fetch('{{ route('actions.index_school') }}')
                             .then(response => response.text())
                             .then(html => {
                                 // Open a new window with the form
-                                const newWindow = window.open('', '_blank', 'width=600,height=400');
+                                const newWindow = window.open('', '_blank', 'width=750,height=550');
                                 newWindow.document.write(html);
                                 newWindow.document.close();
                             })
@@ -85,6 +85,20 @@
                     }
                 });
             });
+
+            // Listen for messages from the action window
+            window.addEventListener('message', function(event) {
+                    if (event.data.type === 'ACTION_SELECTED') {
+                        alert('Action selected: ' + event.data.data.title);
+                        const actionData = event.data.data;
+                        const targetDiv = document.getElementById('action-title'); // Select the blank div
+                        if (targetDiv) {
+                            targetDiv.textContent = actionData.title; // Update its content
+                        }
+                        
+                    }
+                });
+           
         </script>
     @endpush
     @push('title')
@@ -115,6 +129,7 @@
                         <div class="input-group">
                             <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
                             <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
+                            <div id='action-title'></div>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Ημερομηνία</span>

@@ -1,9 +1,8 @@
 <x-layout>
     @php
-        $school = Auth::guard('school')->user(); //check which school is logged in
+        $school = Auth::guard('school')->user(); // Check which school is logged in
         $school_code = $school->code;
-        
-      
+        $action_types = App\Models\microapps\Actiontype::get();  // Get the action types
     @endphp
     
     @push('title')
@@ -14,16 +13,20 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">{{ __('Δημιουργία Εκπαιδευτικής Δράσης') }}</div>
-    
                     <div class="card-body">
                         <form method="POST" action="{{ route('actions.store') }}">
                             @csrf
-    
+                            {{-- Category --}}
                             <div class="form-group row">
                                 <label for="category" class="col-md-4 col-form-label text-md-right">{{ __('Κατηγορία') }}</label>
     
                                 <div class="col-md-6">
-                                    <input id="category" type="text" class="form-control @error('category') is-invalid @enderror" name="category" value="{{ old('category') }}" required autocomplete="category" autofocus>
+                                    <select id="category" class="form-control @error('category') is-invalid @enderror" name="category" required>
+                                        <option value="">{{ __('Επιλέξτε Κατηγορία') }}</option>
+                                        @foreach($action_types as $type)
+                                            <option value="{{ $type->id }}">{{ $type->description }}</option>
+                                        @endforeach
+                                    </select>
     
                                     @error('category')
                                         <span class="invalid-feedback" role="alert">
@@ -32,14 +35,80 @@
                                     @enderror
                                 </div>
                             </div>
-    
+                            {{-- Implementing Authority --}}
                             <div class="form-group row">
-                                <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Τίτλος Δράσης') }}</label>
-    
+                                <label for="implementing_authority" class="col-md-4 col-form-label text-md-right">{{ __('Φορέας Υλοποίησης') }}</label>
                                 <div class="col-md-6">
-                                    <textarea id="description" class="form-control @error('Τίτλος') is-invalid @enderror" name="description" required autocomplete="description">{{ old('title') }}</textarea>
-    
-                                    @error('description')
+                                    <textarea id="implementing_authority" class="form-control @error('implementing_authority') is-invalid @enderror" name="implementing_authority" required autocomplete="implementing_authority">{{ old('implementing_authority') }}</textarea>
+
+                                    @error('implementing_authority')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            {{-- Title --}}
+                            <div class="form-group row">
+                                <label for="title" class="col-md-4 col-form-label text-md-right">{{ __('Τίτλος Δράσης') }}</label>
+                                <div class="col-md-6">
+                                    <textarea id="title" class="form-control @error('title') is-invalid @enderror" name="title" required autocomplete="title">{{ old('title') }}</textarea>
+
+                                    @error('title')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- Number of Teachers & Teachers' Names--}}
+                            <div class="form-group row">
+                                <label for="teachers" class="col-md-2 col-form-label text-md-right">{{ __('Υπεύθυνοι Εκπαιδευτικοί') }}</label>
+                                
+                                <div class="col-md-4">
+                                    <textarea id="teachers" class="form-control @error('teachers') is-invalid @enderror" name="teachers" required autocomplete="teachers">{{ old('teachers') }}</textarea>
+
+                                    @error('teachers')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <label for="number_of_teachers" class="col-md-4 col-form-label text-md-right">{{ __('Αριθμός Εκπαιδευτικών') }}</label>
+                                
+                                <div class="col-md-2">
+                                    <input id="number_of_teachers" type="number" min="1" class="form-control @error('number_of_teachers') is-invalid @enderror" name="number_of_teachers" value="{{ old('number_of_teachers') }}" required>
+
+                                    @error('number_of_teachers')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- Records --}}
+                            <div class="form-group row">
+                                <label for="records" class="col-md-4 col-form-label text-md-right">{{ __('Αριθμός Πρωτ. Εγγράφου/Εγγράφων Έγκρισης') }}</label>
+                                <div class="col-md-6">
+                                    <textarea id="records" class="form-control @error('records') is-invalid @enderror" name="records" autocomplete="records">{{ old('records') }}</textarea>
+                                    
+                                    @error('records')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="comments" class="col-md-4 col-form-label text-md-right">{{ __('Σημειώσεις-Παρατηρήσεις') }}</label>
+                                <div class="col-md-6">
+                                    <textarea id="comments" class="form-control @error('comments') is-invalid @enderror" name="comments" autocomplete="comments">{{ old('comments') }}</textarea>
+                                    
+                                    @error('comments')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -61,3 +130,4 @@
         </div>
     </div>
 </x-layout>
+

@@ -2,7 +2,7 @@
     @php
         $school = Auth::guard('school')->user(); // Check which school is logged in
         $school_code = $school->code;
-        $action_types = App\Models\microapps\Actiontype::get();  // Get the action types
+        $action_types = App\Models\microapps\ActionType::get();  // Get the action types
     @endphp
     
     @push('title')

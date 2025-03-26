@@ -47,7 +47,7 @@
     @php
         $user = Auth::guard('school')->user();
         $actions = App\Models\microapps\Action::where('school_id', $user->id)->get();
-        $action_types = App\Models\microapps\Actiontype::get();
+        $action_types = App\Models\microapps\ActionType::get();
     @endphp
 
     <div class="container pt-2">

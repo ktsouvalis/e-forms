@@ -89,7 +89,7 @@
             // Listen for messages from the action window
             window.addEventListener('message', function(event) {
                     if (event.data.type === 'ACTION_SELECTED') {
-                        alert('Action selected: ' + event.data.data.title);
+                        //alert('Action selected: ' + event.data.data.title);
                         const actionData = event.data.data;
                         const targetDiv = document.getElementById('action-title'); // Select the blank div
                         if (targetDiv) {
@@ -98,7 +98,6 @@
                         
                     }
                 });
-           
         </script>
     @endpush
     @push('title')
@@ -129,7 +128,8 @@
                         <div class="input-group">
                             <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
                             <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
-                            <div id='action-title'></div>
+                            <input type="hidden" id="" name="" value="">
+                            <div id='action-title'></div> (Δεν έχει ενεργοποιηθεί ακόμη αυτή η λειτουργία)
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Ημερομηνία</span>

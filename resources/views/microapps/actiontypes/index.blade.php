@@ -21,7 +21,7 @@
     @endpush
     @php
         $user = Auth::guard('consultant')->user(); //check which user is logged in
-        $action_types = App\Models\microapps\Actiontype::get();  //get the action types
+        $action_types = App\Models\microapps\ActionType::get();  //get the action types
         //dd($action_types);
     @endphp
     <div class="container pt-2">

@@ -24,12 +24,13 @@
             $nextYearPlanningActive = config('enrollments.nextYearPlanningActive');
             $nextYearPlanningAccepts = config('enrollments.nextYearPlanningAccepts');
         }
+        $user = Auth::user();
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
         // dd($nextYearPlanningActive, $nextYearPlanningAccepts, $schoolYear, $accepts)
     @endphp
     @push('title')
-        <title>Εγγραφές {{$schoolYear}}/title>
+        <title>Εγγραφές {{$schoolYear}} </title>
     @endpush
     
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
@@ -62,7 +63,99 @@
         </div>
     </nav>
 
-        @if(Auth::user()->isAdmin())      
+        {{-- Data Section  --}}
+        @php
+            $enrollments = $microapp->stakeholders;
+        @endphp
+        <div class="table-responsive py-2" style="align-self:flex-start">
+            <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Κωδικός</th>
+                    <th id="search">Είδος</th>
+                    <th id="search">Σχολείο</th>
+                    <th id="search">Εγγραφέντες</th>
+                    <th id="">Αρχείο</th>
+                    <th id="">Ολοήμερο</th>
+                    <th id="">Αρχείο Ολ.</th>
+                    <th id="">Αίτημα επιπλ. τμ.</th>
+                    <th id="">Μαθητές στα όρια</th>
+                    <th>Τελευταία ενημέρωση</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                   // dd($enrollments);   
+                @endphp
+                
+                @foreach($enrollments as $one_stakeholder)
+                    @php
+                        $one_school = $one_stakeholder->stakeholder;
+                        // $one_school = App\Models\School::find(92);
+                        $one = $one_school->enrollments;
+                        $school_name_filename = str_replace(' ','_',(str_replace('/', '', $one_school->name)));
+                        // dd($school_name_filename);
+                    @endphp
+                        <tr>
+                            <td>{{$one_school->code}}</td>
+                            <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
+                            <td> {{$one_school->name}}</td>
+                        @if($one)
+                            
+                            <td> {{$one->nr_of_students1}}</td>
+                            <td>
+                                <form action="{{route('enrollments.download_file', ['file' =>"enrollments1_$one_school->code.xlsx", 'download_file_name' => "Εγγραφέντες_$school_name_filename.xlsx"] )}} " method="get">
+                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->enrolled_file1}} </button> 
+                                </form>  
+                            </td>
+                            <td>
+                                @if($one->nr_of_students1_all_day1)
+                                    {{$one->nr_of_students1_all_day1}}
+                                @endif
+                            </td>
+                            <td>
+                                @if($one->all_day_file1)
+                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments2_$one_school->code.xlsx", 'download_file_name' => "Ολοήμερο_$school_name_filename.xlsx"] )}}" method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->all_day_file1}} </button> 
+                                    </form>   
+                                @endif
+                            </td>
+                            <td>
+                                @if($one->extra_section_file1)
+                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments3_$one_school->code.pdf", 'download_file_name' => "Επιπλέον_Τμ_$school_name_filename.pdf"] )}} " method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->extra_section_file1}} </button> 
+                                    </form>
+                                @endif   
+                            </td>
+                            <td>
+                                @if($one->boundaries_st_file1)
+                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments4_$one_school->code.xlsx", 'download_file_name' => "Μαθητές_στα_όρια_$school_name_filename.xlsx"] )}} " method="get">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->boundaries_st_file1}} </button> 
+                                    </form>
+                                @endif
+                                </td>
+                            <td>{{$one->updated_at}}</td>
+                        @else
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        @endif
+                       
+                        </tr>
+            @endforeach
+            </tbody>
+            </table>
+        </div> <!-- table responsive closure -->
+        @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
+        
+
+        {{-- File Section --}}
+
+        @if( $user->isAdmin() || $user->microapps->where('microapp_id', $microapp->id)->where('can_edit', 1)->first() )      
         <nav class="container navbar navbar-light bg-light">
             <div class="row">
                 
@@ -301,93 +394,4 @@
         </nav>
         @endif
 
-        
-        @php
-            $enrollments = $microapp->stakeholders;
-        @endphp
-        <div class="table-responsive py-2" style="align-self:flex-start">
-            <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Κωδικός</th>
-                    <th id="search">Είδος</th>
-                    <th id="search">Σχολείο</th>
-                    <th id="search">Εγγραφέντες</th>
-                    <th id="">Αρχείο</th>
-                    <th id="">Ολοήμερο</th>
-                    <th id="">Αρχείο Ολ.</th>
-                    <th id="">Αίτημα επιπλ. τμ.</th>
-                    <th id="">Μαθητές στα όρια</th>
-                    <th>Τελευταία ενημέρωση</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                   // dd($enrollments);   
-                @endphp
-                
-                @foreach($enrollments as $one_stakeholder)
-                    @php
-                        $one_school = $one_stakeholder->stakeholder;
-                        // $one_school = App\Models\School::find(92);
-                        $one = $one_school->enrollments;
-                        $school_name_filename = str_replace(' ','_',(str_replace('/', '', $one_school->name)));
-                        // dd($school_name_filename);
-                    @endphp
-                        <tr>
-                            <td>{{$one_school->code}}</td>
-                            <td>@if($one_school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
-                            <td> {{$one_school->name}}</td>
-                        @if($one)
-                            
-                            <td> {{$one->nr_of_students1}}</td>
-                            <td>
-                                <form action="{{route('enrollments.download_file', ['file' =>"enrollments1_$one_school->code.xlsx", 'download_file_name' => "Εγγραφέντες_$school_name_filename.xlsx"] )}} " method="get">
-                                <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->enrolled_file1}} </button> 
-                                </form>  
-                            </td>
-                            <td>
-                                @if($one->nr_of_students1_all_day1)
-                                    {{$one->nr_of_students1_all_day1}}
-                                @endif
-                            </td>
-                            <td>
-                                @if($one->all_day_file1)
-                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments2_$one_school->code.xlsx", 'download_file_name' => "Ολοήμερο_$school_name_filename.xlsx"] )}}" method="get">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->all_day_file1}} </button> 
-                                    </form>   
-                                @endif
-                            </td>
-                            <td>
-                                @if($one->extra_section_file1)
-                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments3_$one_school->code.pdf", 'download_file_name' => "Επιπλέον_Τμ_$school_name_filename.pdf"] )}} " method="get">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->extra_section_file1}} </button> 
-                                    </form>
-                                @endif   
-                            </td>
-                            <td>
-                                @if($one->boundaries_st_file1)
-                                    <form action="{{route('enrollments.download_file', ['file' =>"enrollments4_$one_school->code.xlsx", 'download_file_name' => "Μαθητές_στα_όρια_$school_name_filename.xlsx"] )}} " method="get">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη">{{$one->boundaries_st_file1}} </button> 
-                                    </form>
-                                @endif
-                                </td>
-                            <td>{{$one->updated_at}}</td>
-                        @else
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                        @endif
-                       
-                        </tr>
-            @endforeach
-            </tbody>
-            </table>
-        </div> <!-- table responsive closure -->
-        @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
-        <p class="fw-bold">Σημ: Με την επιλογή αυτή αποστέλλεται mail σε όλα τα Σχολεία που δεν έχουν κάνει υποβολή πίνακα τον τρέχοντα / ενεργό Μήνα</p>
 </x-layout>

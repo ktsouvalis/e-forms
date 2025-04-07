@@ -19,11 +19,14 @@
                 const showConfirmButton = @json(request('checkboxId')) ? true : false;
                 //alert("showConfirmButton: " + showConfirmButton); // Debugging line
                 // Show or hide the button Προσθήκη της επιλεγμένης Δράσης based on the variable
-                   // Show or hide the button based on the variable
+                // When the user selects an action from the list, the button Add Action should be shown
+                // When the user selects the button Action Handling, the button Διαχείριση Δράσεων should be shown
                 const confirmButton = document.getElementById("confirmSelection");
+                const addActionBtn = document.getElementById("addActionBtn");
                 if (showConfirmButton) {
                     confirmButton.style.removeProperty("display"); // Remove the display property entirely
-                } else {
+                    addActionBtn.style.display = "none"; // Hide the "Δημιουργία Νέας Εκπ. Δράσης" button
+                } else { 
                     confirmButton.style.display = "none";
                 }
                 
@@ -109,11 +112,10 @@
 
     <div class="mt-3">
         <button id="confirmSelection" class="btn btn-info" style="display: none;">Προσθήκη της επιλεγμένης Δράσης</button>
-        <a href="{{route('actions.create')}}" class="btn btn-success">Δημιουργία Νέας Εκπ. Δράσης</a>
+        <a id="addActionBtn" href="{{route('actions.create')}}" class="btn btn-success">Δημιουργία Νέας Εκπ. Δράσης</a>
     </div>
 
     <script>
-
         // This function is called when the user clicks the "Προσθήκη της επιλεγμένης Δράσης" button
         // It sends the selected action data back to the main window
         function sendActionBack() {
@@ -149,7 +151,8 @@
             
             // Send the action data back to the main window
             window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
-            
+            // Close the window
+            window.close();
             // If checkbox selected is coming from an existing outing
             } else { 
                 // If checkbox of older outing is selected -> Store the ID of the selected outing
@@ -196,8 +199,6 @@
                     alert("Πρόβλημα με την ενημέρωση της δράσης.");
                 });
             }
-            // Close the window
-            window.close();
         }
     }
     </script>

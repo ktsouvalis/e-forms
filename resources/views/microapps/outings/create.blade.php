@@ -69,14 +69,15 @@
         });
             // Listen for messages from the action window
             window.addEventListener('message', function(event) {
-                //console.log(event.data.data.oldOuting);
+                console.log("entered listener");
+                console.log(event.data.data.oldOuting);
                 if (event.data.type === 'ACTION_SELECTED') {
                     // Get the action data from the event
                     const actionData = event.data.data;
-                    
+                    console.log(actionData);
                     // Check if the event is from a new outing creation
                     if (event.data.data.oldOuting == "False"){
-                        //console.log("entered false");
+                        console.log("entered false");
                         // Select the blank div of New Outing Creation
                         const targetDiv = document.getElementById('action-title'); 
                         console.log(targetDiv);
@@ -96,15 +97,17 @@
                         }
                         // If the event comes from an old outing
                     } else {
+                        console.log("entered true");
                         // Select the hidden input
-                        const targetInput = document.getElementById('outing-action-title-' + actionData.outingId); 
+                        const targetInput = document.getElementById('outing-action-title-' + actionData.outingId);
+                        console.log(targetInput); 
                         //console.log(targetInput);
                         if (targetInput) {
                             //console.log(actionData);
                             // Update the text of the div
                             targetInput.textContent = actionData.title;
                         }
-                    } 
+                    }
                 }
             });
         </script>

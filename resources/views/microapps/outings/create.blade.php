@@ -117,10 +117,22 @@
     @endpush
         <div class="py-3">
             <div class="container">
+                <div class="instruction-container p-4 border rounded shadow-sm bg-light">
+                    <h5 class="text-primary mb-3 fw-semibold">Διαχείριση Εγκεκριμένων Δράσεων</h5>
+                    
+                    <p class="mb-3 text-dark lh-base">
+                        Προσθέστε εγκεκριμένες Δράσεις που υλοποιούνται στη σχολική σας μονάδα και εντάσσονται στο πλαίσιο επίσημων προγραμμάτων από αναγνωρισμένους Φορείς 
+                        <span class="fst-italic">(Υπουργείο Παιδείας, ΙΕΠ, Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας, κ.ά.)</span> μέσα από την επιλογή <span class="btn text-success"> "Δημιουργία - Διαχείριση Δράσεων"</span>.
+                    </p>
+                    
+                    <p class="text-dark lh-base">
+                        Μετά την καταχώρηση των Δράσεων, μπορείτε να δηλώνετε και να κατηγοριοποιείτε κάθε ενδοσχολική δραστηριότητα ή εκπαιδευτική επίσκεψη που πραγματοποιείται στη σχολική σας μονάδα, συσχετίζοντάς την με την αντίστοιχη εγκεκριμένη Δράση.
+                    </p>
+                </div>
                 <div class="hstack gap-2">
-                    <h4>Διαχείριση Δράσεων Σχολείου: </h4>
+                    <h4 class="my-5">Διαχείριση Δράσεων Σχολείου: </h4>
                     @if($accepts)
-                        <a href="{{route('actions.index_school')}}" class="btn btn-success no-spinner" target="_blank" onclick="window.open(this.href, '_blank', 'width=600,height=500'); return false;">Διαχείριση Δράσεων</a>
+                        <a href="{{route('actions.index_school')}}" class="btn btn-success no-spinner" target="_blank" onclick="window.open(this.href, '_blank', 'width=600,height=500'); return false;">Δημιουργία - Διαχείριση Δράσεων</a>
                     @else
                         {{-- <a href="{{route('outings.index')}}" class="btn btn-success">Επιστροφή στην Καταχώρηση Εκδρομών (Δε δέχεται υποβολές)</a> --}}
                     @endif

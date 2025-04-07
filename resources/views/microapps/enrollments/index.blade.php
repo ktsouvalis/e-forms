@@ -152,7 +152,6 @@
         </div> <!-- table responsive closure -->
         @include('microapps.microapps_admin_after') {{-- email to those who haven't submitted an answer --}}
         
-
         {{-- File Section --}}
 
         @if( $user->isAdmin() || $user->microapps->where('microapp_id', $microapp->id)->where('can_edit', 1)->first() )      

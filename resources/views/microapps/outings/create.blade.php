@@ -16,7 +16,7 @@
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
         <script>
-           $(document).ready(function() {
+            $(document).ready(function() {
                 $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -40,70 +40,92 @@
             });
         </script>
         <script>
-            const html = `<html>
-                            <head>
-                                <title>Δράσεις</title>
-                                <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-                            </head>
-                            <body>
-                                <div class="container mt-5">
-                                    <h3>Δράσεις Σχολείου</h3>
-                                    <form action="{{ route('actions.index') }}" method="post">
-                                        @csrf
-                                        <div class="mb-3">
-                                            <label for="field1" class="form-label">Field 1</label>
-                                            <input type="text" class="form-control" id="field1" name="field1" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="field2" class="form-label">Field 2</label>
-                                            <input type="text" class="form-control" id="field2" name="field2" required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Υποβολή</button>
-                                    </form>
-                                </div>
-                            </body>
-                            </html>`;
             document.addEventListener("DOMContentLoaded", function () {
-                const checkbox = document.getElementById('openActionCheckbox');
-        
-                checkbox.addEventListener('change', function () {
-                    if (this.checked) {
-                        // Retrieve values from existing fields in the DOM
-                        //let field1Value = document.getElementById('existingField1')?.value || ''; 
-                        //let field2Value = document.getElementById('existingField2')?.value || ''; 
-                        // Make an AJAX call to the controller
-                        fetch('{{ route('actions.index_school') }}')
-                            .then(response => response.text())
-                            .then(html => {
-                                // Open a new window with the form
-                                const newWindow = window.open('', '_blank', 'width=750,height=550');
-                                newWindow.document.write(html);
-                                newWindow.document.close();
-                            })
-                            .catch(error => console.error('Error:', error));
-        
-                    }
-                });
-            });
+            function handleCheckboxChange(event) {
+                if (event.target.checked) {
+                    const checkboxId = event.target.id; // Get the checkbox ID
+                    //alert('Checkbox with ID ' + checkboxId + ' is checked!'); // Display the ID in an alert
+                    fetch('{{ route('actions.index_school') }}?checkboxId=' + checkboxId)
+                        .then(response => response.text())
+                        .then(html => {
+                            const newWindow = window.open('', '_blank', 'width=750,height=550');
+                            newWindow.document.write(html);
+                            newWindow.document.close();
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            }
 
+            // Single Checkbox Outside the Table
+            const singleCheckbox = document.getElementById('openActionCheckbox');
+            if (singleCheckbox) {
+                singleCheckbox.addEventListener('change', handleCheckboxChange);
+            }
+
+            // Multiple Checkboxes in the Table
+            document.querySelectorAll('.openActionCheckbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleCheckboxChange);
+            });
+        });
             // Listen for messages from the action window
             window.addEventListener('message', function(event) {
-                    if (event.data.type === 'ACTION_SELECTED') {
-                        //alert('Action selected: ' + event.data.data.title);
-                        const actionData = event.data.data;
-                        const targetDiv = document.getElementById('action-title'); // Select the blank div
+                console.log(event.data.data.oldOuting);
+                if (event.data.type === 'ACTION_SELECTED') {
+                    // Get the action data from the event
+                    const actionData = event.data.data;
+                    
+                    // Check if the event is from a new outing creation
+                    if (event.data.data.oldOuting == "False"){
+                        console.log("entered false");
+                        // Select the blank div of New Outing Creation
+                        const targetDiv = document.getElementById('action-title'); 
+                        console.log(targetDiv);
                         if (targetDiv) {
-                            targetDiv.textContent = actionData.title; // Update its content
+                            // Update blank div's content
+                            targetDiv.textContent = actionData.title; 
                         }
-                        
-                    }
-                });
+                        if(actionData.outingId == 'openActionCheckbox'){ 
+                            // Select the hidden input
+                            const targetInput = document.getElementById('action-title-input'); 
+                            //console.log(targetInput);
+                            if (targetInput) {
+                                //console.log(actionData);
+                                // Update the value of the hidden input
+                                targetInput.value = actionData.actionId;
+                            }
+                        }
+                        // If the event comes from an old outing
+                    } else {
+                        // Select the hidden input
+                        const targetInput = document.getElementById('outing-action-title-' + actionData.outingId); 
+                        //console.log(targetInput);
+                        if (targetInput) {
+                            //console.log(actionData);
+                            // Update the text of the div
+                            targetInput.textContent = actionData.title;
+                        }
+                    } 
+                }
+            });
         </script>
     @endpush
     @push('title')
         <title>Εκδρομές</title>
     @endpush
         <div class="py-3">
+            <div class="container">
+                <div class="hstack gap-2">
+                    <h4>Διαχείριση Δράσεων Σχολείου: </h4>
+                    @if($accepts)
+                        <a href="{{route('actions.index_school')}}" class="btn btn-success no-spinner" target="_blank" onclick="window.open(this.href, '_blank', 'width=600,height=500'); return false;">Διαχείριση Δράσεων</a>
+                    @else
+                        {{-- <a href="{{route('outings.index')}}" class="btn btn-success">Επιστροφή στην Καταχώρηση Εκδρομών (Δε δέχεται υποβολές)</a> --}}
+                    @endif
+                </div>
+                <div class="alert alert-info text-center my-2">
+                    <strong> <i class="bi bi-info-circle"> </i> Σημείωση: Μπορείτε να εντάξετε σε Δράσεις τόσο τις νέες όσο και τις παλαιότερες εκδρομές ή ενδοσχολικές δραστηριότητες. </strong>
+                </div>
+            </div>
             <nav class="navbar navbar-light bg-light">
                     {{-- <form action="{{url("/outings")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
                     <form action="{{route('outings.store')}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -128,7 +150,7 @@
                         <div class="input-group">
                             <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
                             <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
-                            <input type="hidden" id="" name="" value="">
+                            <input type="hidden" id="action-title-input" name="action_id" value="">
                             <div id='action-title'></div> (Δεν έχει ενεργοποιηθεί ακόμη αυτή η λειτουργία)
                         </div>
                         <div class="input-group">
@@ -136,7 +158,7 @@
                             <input name="outing_date" type="date" class="form-control"  aria-label="outing_date" aria-describedby="basic-addon1" required ><br>
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text w-25 text-wrap">Δράση: </span>
+                            <span class="input-group-text w-25 text-wrap">Δραστηριότητα-Προορισμός: </span>
                             <input name="destination" id="destination" type="text" class="form-control" placeholder="π.χ. Πάρκο Κυκλοφοριακής Αγωγής" aria-label="Δράση" aria-describedby="basic-addon2" required><br>
                         </div>
                         <div class="input-group">
@@ -213,12 +235,13 @@
                     <tr>
                         <th id="search">Τύπος</th>
                         <th id="">Ημερομηνία <p class="text-muted">(Ε/Μ/Η)</p></th>
-                        <th id="">Δράση</th>
+                        <th id="">Προορισμός - Δραστηριότητα</th>
                         <th id="">Πρακτικό</th>
                         <th id="">Αρχείο</th>
                         <th id="">Τμήματα</th>
                         <th>Επεξεργασία μελλοντικής εκδρομής</th>
                         <th>Διαγραφή μελλοντικής εκδρομής</th>
+                        <th id="search">Εκπ/κή Δράση</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -227,6 +250,10 @@
                         @php
                             $my_date = Illuminate\Support\Carbon::parse($outing->outing_date); 
                             $today = Illuminate\Support\Carbon::now();
+                            if($outing->action_id != 0)
+                                $action = $outing->action;
+                            else
+                                $action = null;
                         @endphp
                         <tr>
                             <td>{{$outing->type->description}}</td> 
@@ -267,6 +294,10 @@
                                 </a>
                             </td>
                             @endif
+                            <td>
+                                <input class="form-check-input openActionCheckbox" role="switch" type="checkbox" id="{{ $outing->id }}">
+                                <div id="outing-action-title-{{ $outing->id }}">{{ optional($action)->title }}</div>
+                            </td>
                         </tr> 
                     @endforeach   
                 </tbody>  

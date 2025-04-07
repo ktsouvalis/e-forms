@@ -52,6 +52,7 @@ class OutingsController extends Controller
     }
 
     public function store(Request $request){
+        //dd($request->all());
         $school = Auth::guard('school')->user();
         $rule = [
             'record_file' => 'mimetypes:application/pdf'
@@ -69,9 +70,12 @@ class OutingsController extends Controller
         $outing_file = $file->getClientOriginalName();
         // $outing_date = Carbon::parse($request->all()['outing_date']);
         $outing_date = $request->all()['outing_date'];
+        $action_id = $request->all()['action_id'] ? $request->all()['action_id'] : 0;
+        
         try{
             $new_outing = Outing::create([
                 'school_id'=>$school->id,
+                'action_id'=>$action_id,
                 'outingtype_id'=>$outing_type,
                 'outing_date'=>$outing_date,
                 'destination'=>$outing_destination,
@@ -257,6 +261,25 @@ class OutingsController extends Controller
         $outing->save();
 
         return redirect()->route('outings.create')->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
+    }
+
+    public function update_outing_action(Request $request){
+        
+        $request->validate([
+            'outing_id' => 'required|exists:outings,id',
+            'action_id' => 'required|exists:actions,id',
+        ]);
+        try{
+            $outing = Outing::findOrFail($request->outing_id);
+            $outing->action_id = $request->action_id;
+            $outing->save();
+        } catch(Throwable $e){
+            
+            return response()->json(['fail' => false, 'message' => 'Failed: '.$e->getMessage()]);
+        }
+        
+    
+        return response()->json(['success' => true, 'message' => 'Outing updated successfully!']);
     }
 
     public function count_sections(Outing $outing){

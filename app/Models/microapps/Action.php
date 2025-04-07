@@ -21,4 +21,8 @@ class Action extends Model
     public function type(){
         return $this->belongsTo(ActionType::class, 'actiontype_id');
     }
+
+    public function outings(){
+        return $this->hasMany(Outing::class);
+    }
 }

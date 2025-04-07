@@ -43,9 +43,10 @@
                     <th id="search">ID/Τύπος</th>
                     <th id="search">Έλεγχος</th>
                     <th id="">Τμήματα (πλήθος εκδρομών)</th>
-                    <th id="search">Δράση</th>
+                    <th id="search">Προορισμός/Δραστηριότητα</th>
                     <th id="search">Ημερομηνία Υποβολής</th>
                     <th>Διαγραφή εκδρομής</th>
+                    <th id="search">Εκπ/κή Δράση</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,6 +85,13 @@
                         <td>{{$outing->updated_at}}</td>
                         <td >
                             <button class="bi bi-x-circle btn btn-danger outing-delbox" data-outing-id="{{ $outing->id }}">
+                        </td>
+                        <td>
+                            @if($outing->action_id)
+                                {{$outing->action->title}}
+                            @else
+                                -
+                            @endif
                         </td>
                     </tr> 
                 @endforeach   

@@ -405,6 +405,9 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
     Route::post('/count_sections/{outing}', [OutingsController::class,'count_sections'])->name('outings.count_sections')->middleware('auth');
 
     Route::post('/send_delete_request/{outing}', [OutingsController::class, 'send_delete_request'])->name('outings.send_delete_request');//checking access inside the method
+
+    Route::post('/update_outing_action', [OutingsController::class, 'update_outing_action'])->name('outings.update_outing_action');
+    
 });
 
 // ACTIONS ROUTES
@@ -412,6 +415,7 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
 Route::resource('actions', ActionsController::class);//->middleware('canViewMicroapp');
 
 Route::group(['prefix' => 'actions', 'middleware' => 'canViewMicroapp'], function () {
+    // Calls Show method of ActionsController
     Route::get('/index_school', [ActionsController::class, 'index_school'])->name('actions.index_school'); 
 });
 

@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('outings', function($table){
             $table->integer('action_id')->default(0);
-            $table->boolean('is_subdirector')->default(0);
         });
     }
 

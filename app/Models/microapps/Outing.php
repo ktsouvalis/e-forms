@@ -3,6 +3,7 @@
 namespace App\Models\microapps;
 
 use App\Models\School;
+use App\Models\microapps\Action;
 use App\Models\microapps\OutingType;
 use App\Models\microapps\OutingSection;
 use Illuminate\Database\Eloquent\Model;
@@ -25,5 +26,9 @@ class Outing extends Model
 
     public function type(){
         return $this->belongsTo(OutingType::class, 'outingtype_id');
+    }
+
+    public function action(){
+        return $this->belongsTo(Action::class, 'action_id');
     }
 }

@@ -15,6 +15,18 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                
+                const showConfirmButton = @json(request('checkboxId')) ? true : false;
+                //alert("showConfirmButton: " + showConfirmButton); // Debugging line
+                // Show or hide the button Προσθήκη της επιλεγμένης Δράσης based on the variable
+                   // Show or hide the button based on the variable
+                const confirmButton = document.getElementById("confirmSelection");
+                if (showConfirmButton) {
+                    confirmButton.style.removeProperty("display"); // Remove the display property entirely
+                } else {
+                    confirmButton.style.display = "none";
+                }
+                
                 const checkboxes = document.querySelectorAll(".action-checkbox");
 
                 checkboxes.forEach(checkbox => {
@@ -48,6 +60,7 @@
         $user = Auth::guard('school')->user();
         $actions = App\Models\microapps\Action::where('school_id', $user->id)->get();
         $action_types = App\Models\microapps\ActionType::get();
+        //dd($request->checkboxId);
     @endphp
 
     <div class="container pt-2">
@@ -67,9 +80,9 @@
         </thead>
         <tbody>
             @if($actions->isEmpty())
-                <tr>
+                {{-- <tr>
                     <td colspan="6">Δεν υπάρχουν εκπαιδευτικές δράσεις</td>
-                </tr>
+                </tr> --}}
             @else
                 @foreach($actions as $action)
                     <tr>
@@ -95,33 +108,96 @@
     </table>
 
     <div class="mt-3">
-        <button id="confirmSelection" class="btn btn-info">Προσθήκη της επιλεγμένης Δράσης</button>
+        <button id="confirmSelection" class="btn btn-info" style="display: none;">Προσθήκη της επιλεγμένης Δράσης</button>
         <a href="{{route('actions.create')}}" class="btn btn-success">Δημιουργία Νέας Εκπ. Δράσης</a>
     </div>
 
     <script>
-        
+
+        // This function is called when the user clicks the "Προσθήκη της επιλεγμένης Δράσης" button
+        // It sends the selected action data back to the main window
         function sendActionBack() {
-                
-        const checkedCheckbox = document.querySelector('.action-checkbox:checked');
         
-        if (checkedCheckbox) {
-            // Get the action ID from the checkbox value
-            const actionId = checkedCheckbox.value;
+        // Get the checked action checkbox     
+        const checkedActionCheckbox = document.querySelector('.action-checkbox:checked');
+
+        // Get the ID of the outing checkbox that was clicked
+        const checkboxId = @json(request('checkboxId'));
+        //alert(checkboxId);
+
+        // Only if an action checkbox is checked
+        if (checkedActionCheckbox) {
+
+            // If checkbox selected is coming from a new outing creation
+            if(checkboxId == 'openActionCheckbox'){ 
+                const outingId = checkboxId;
+                // Get the action ID from the checkbox value
+                const actionId = checkedActionCheckbox.value;
             
-            // Find the corresponding title cell in the same row
-            const titleCell = checkedCheckbox.closest('tr').querySelector('.action-title');
-            
-            const actionData = {
-                id: actionId,
-                title: titleCell.textContent.trim(),
-                // You could add more fields here by selecting other cells in the same row
+                // Find the corresponding title cell in the same row
+                const titleCell = checkedActionCheckbox.closest('tr').querySelector('.action-title');
+                console.log("Outing ID:", outingId);
+                console.log("Action ID:", actionId);
+
+                // Prepare the action data to send back
+                const actionData = {
+                    outingId: outingId,
+                    actionId: actionId,
+                    oldOuting: 'False',
+                    title: titleCell.textContent.trim(),
             };
             
             // Send the action data back to the main window
             window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
-            // Close the window after sending the data
-            window.close();
+            
+            // If checkbox selected is coming from an existing outing
+            } else { 
+                // If checkbox of older outing is selected -> Store the ID of the selected outing
+                const outingId = checkboxId;
+                // Get the action ID from the checkbox value
+                const actionId = checkedActionCheckbox.value;
+                // Find the corresponding title cell in the same row
+                const titleCell = checkedActionCheckbox.closest('tr').querySelector('.action-title');
+                console.log("Outing ID:", outingId);
+                console.log("Action ID:", actionId);
+                
+                // AJAX request to update the outing with the selected action_id
+                fetch("{{ route('outings.update_outing_action') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        outing_id: outingId,
+                        action_id: actionId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        //alert("Η δράση ενημερώθηκε επιτυχώς!");
+                        // Send the title back to the main window
+                        // Send the action data back to the main window
+                        const actionData = {
+                            outingId: outingId,
+                            actionId: actionId,
+                            oldOuting: 'True',
+                            title: titleCell.textContent.trim(),
+                        };
+                        window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
+                        window.close(); // Close the window after successful update
+                    } else {
+                        alert("Σφάλμα κατά την ενημέρωση της δράσης.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Πρόβλημα με την ενημέρωση της δράσης.");
+                });
+            }
+            // Close the window
+            //window.close();
         }
     }
     </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\microapps;
 
 use Illuminate\Http\Request;
 use App\Models\microapps\Action;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,13 +15,14 @@ class ActionsController extends Controller
         return view('microapps.actions.index');
     }
 
-    public function show()
+    public function show(Request $request)
     {
-        return view('microapps.actions.index_school');
+        return view('microapps.actions.index_school', compact('request'));
     }
     public function index_school()
     {
-        return view('microapps.actions.index_school');
+        dd('index_school');
+        //return view('microapps.actions.index_school');
     }
     
     public function create()
@@ -80,7 +82,10 @@ class ActionsController extends Controller
         {
             $actionType = Action::find($id);
             $actionType->delete();
-    
+            
+            // Update the outings table to set action_id to 0 where action_id matches $id
+            DB::table('outings')->where('action_id', $id)->update(['action_id' => 0]);
+
             return redirect()->route('actions.index_school');
         }
     

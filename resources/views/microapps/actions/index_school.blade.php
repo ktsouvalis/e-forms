@@ -197,7 +197,7 @@
                 });
             }
             // Close the window
-            //window.close();
+            window.close();
         }
     }
     </script>

@@ -69,14 +69,14 @@
         });
             // Listen for messages from the action window
             window.addEventListener('message', function(event) {
-                console.log(event.data.data.oldOuting);
+                //console.log(event.data.data.oldOuting);
                 if (event.data.type === 'ACTION_SELECTED') {
                     // Get the action data from the event
                     const actionData = event.data.data;
                     
                     // Check if the event is from a new outing creation
                     if (event.data.data.oldOuting == "False"){
-                        console.log("entered false");
+                        //console.log("entered false");
                         // Select the blank div of New Outing Creation
                         const targetDiv = document.getElementById('action-title'); 
                         console.log(targetDiv);

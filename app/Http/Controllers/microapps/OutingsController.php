@@ -52,8 +52,8 @@ class OutingsController extends Controller
     }
 
     public function store(Request $request){
-        //dd($request->all());
         $school = Auth::guard('school')->user();
+    
         $rule = [
             'record_file' => 'mimetypes:application/pdf'
         ];
@@ -61,78 +61,63 @@ class OutingsController extends Controller
         if($validator->fails()){ 
             return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: pdf)');
         }
+    
         $directory = 'outings';
         $file = $request->file('record_file');
-
-        $outing_type = $request->all()['type'];
-        $outing_destination = $request->all()['destination'];
-        $outing_record = $request->all()['record'];
-        $outing_file = $file->getClientOriginalName();
-        // $outing_date = Carbon::parse($request->all()['outing_date']);
-        $outing_date = $request->all()['outing_date'];
-        $action_id = $request->all()['action_id'] ? $request->all()['action_id'] : 0;
-        
-        try{
-            $new_outing = Outing::create([
-                'school_id'=>$school->id,
-                'action_id'=>$action_id,
-                'outingtype_id'=>$outing_type,
-                'outing_date'=>$outing_date,
-                'destination'=>$outing_destination,
-                'record'=>$outing_record,
-                'file'=>$outing_file,
-                'checked'=>0   
-            ]);
-        }
-        catch(Throwable $e){
-            try{
-                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create outing error '.$e->getMessage());
-            }
-            catch(Throwable $e){
     
+        $outing_type = $request->input('type');
+        $outing_destination = $request->input('destination');
+        $outing_record = $request->input('record');
+        $outing_file = $file->getClientOriginalName();
+        $outing_date = $request->input('outing_date');
+        $action_ids = $request->input('action_ids', []); // This should be an array from the form
+    
+        try {
+            $new_outing = Outing::create([
+                'school_id' => $school->id,
+                'outingtype_id' => $outing_type,
+                'outing_date' => $outing_date,
+                'destination' => $outing_destination,
+                'record' => $outing_record,
+                'file' => $outing_file,
+                'checked' => 0
+            ]);
+    
+            // Attach actions via pivot table
+            if (!empty($action_ids)) {
+                $new_outing->actions()->attach($action_ids);
             }
+        } catch (Throwable $e) {
+            Log::channel('throwable_db')->error($school->name . ' create outing error ' . $e->getMessage());
             return back()->with('failure', 'Δεν έγινε η καταχώρηση της εκδρομής, προσπαθήστε ξανά');
         }
-
-        try{
-            foreach($request->all() as $key=>$value){
-                if(substr($key,0,7)=='section'){
+    
+        // Sections
+        try {
+            foreach ($request->all() as $key => $value) {
+                if (substr($key, 0, 7) == 'section') {
                     OutingSection::create([
                         'outing_id' => $new_outing->id,
                         'section_id' => $value
-                    ]); 
+                    ]);
                 }
             }
+        } catch (Throwable $e) {
+            Log::channel('throwable_db')->error($school->name . ' match Section-Outing error ' . $e->getMessage());
+            return back()->with('warning', 'Δεν έγινε η καταχώρηση των τμημάτων και του πρακτικού στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να τα εισάγετε ξανά');
         }
-        catch(Throwable $e){
-            try{
-                Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' match Section-Outing error '.$e->getMessage());
-            }
-            catch(Throwable $e){
     
-            }
-            return back()->with('warning', 'Δεν έγινε η καταχώρηση των τμημάτων και του πρακτικού στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να τα εισάγετε ξανά');    
-        }
-
-        try{
-            $path = $file->storeAs($directory, $school->code.'_'.$new_outing->id.'_'.$file->getClientOriginalName(), 'local');
-        }
-        catch (\Illuminate\Http\UploadedFile\FileSizeException $e) {
-            // Handle file size exceeded exception
-            throw new \Exception("File size exceeded: " . $e->getMessage());
-        } 
-        catch(Throwable $e){
-            try{
-                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file upload error ".$e->getMessage());
-            }
-            catch(Throwable $e){
-    
-            }
+        // Upload file
+        try {
+            $file->storeAs($directory, $school->code . '_' . $new_outing->id . '_' . $file->getClientOriginalName(), 'local');
+        } catch (Throwable $e) {
+            Log::channel('stakeholders_microapps')->error($school->name . " outing file upload error " . $e->getMessage());
             return back()->with('warning', 'Δεν ανέβηκε το αρχείο στην εκδρομή, μπορείτε να την επεξεργαστείτε και να προσπαθήσετε να το ανεβάσετε ξανά');
         }
-        return back()->with('success','Η εκδρομή καταχωρίστηκε επιτυχώς');
+    
+        return back()->with('success', 'Η εκδρομή καταχωρίστηκε επιτυχώς');
     }
-
+    
     public function download_file(Request $request, Outing $outing){
         $outings_microapp_id = $this->microapp->id;
         if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){
@@ -191,77 +176,66 @@ class OutingsController extends Controller
         if($validator->fails()){ 
             return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: pdf)');
         }
-
-        // update the fields
-        $outing->school_id = $outing->school->id;
-        $outing->outingtype_id = $request->all()['type'];
-        $outing->destination = $request->all()['destination'];
-        $outing->record = $request->all()['record'];
+    
+        $outing->outingtype_id = $request->input('type');
+        $outing->destination = $request->input('destination');
+        $outing->record = $request->input('record');
         $outing->checked = 0;
-
-        if($request->file('record_file')){
-            //delete the old file
-            $old_file = 'outings/'.$outing->school->code.'_'.$outing->id.'_'.$outing->file;
-            try{
+    
+        if ($request->file('record_file')) {
+            $old_file = 'outings/' . $outing->school->code . '_' . $outing->id . '_' . $outing->file;
+    
+            try {
                 Storage::disk('local')->delete($old_file);
+            } catch (Throwable $e) {
+                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name . " outing file delete error " . $e->getMessage());
             }
-            catch(Throwable $e){
-                try{
-                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." outing file delete error ".$e->getMessage());
-                }
-                catch(Throwable $e){
-        
-                }
-            }
-            //prepare the new file
+    
             $file = $request->file('record_file');
             $directory = 'outings';
-            
-            //save the new file
-            try{
-                $path = $file->storeAs($directory, $outing->school->code.'_'.$outing->id.'_'.$file->getClientOriginalName(), 'local');
-            }
-            catch(Throwable $e){
+    
+            try {
+                $file->storeAs($directory, $outing->school->code . '_' . $outing->id . '_' . $file->getClientOriginalName(), 'local');
+                $outing->file = $file->getClientOriginalName();
+            } catch (Throwable $e) {
                 session(['warning' => 'Το νέο αρχείο της εκδρομής δεν αποθηκεύτηκε']);
             }
-
-            //update the db file field
-            $outing->file = $file->getClientOriginalName();
         }
-        
-        if($request->all()['outing_date'])
-            $outing->outing_date = $request->all()['outing_date'];
-
-        //empty the old OutingSection models
-        foreach ($outing->sections as $out_sect){
+    
+        if ($request->filled('outing_date')) {
+            $outing->outing_date = $request->input('outing_date');
+        }
+    
+        // Sync actions
+        $action_ids = $request->input('action_ids', []);
+        $outing->actions()->sync($action_ids);
+    
+        // Clear old sections
+        foreach ($outing->sections as $out_sect) {
             $out_sect->delete();
         }
-
-        //create new OutingSection models
-        foreach($request->all() as $key=>$value){
-            try{
-                if(substr($key,0,7)=='section'){
+    
+        // Add new sections
+        foreach ($request->all() as $key => $value) {
+            try {
+                if (substr($key, 0, 7) == 'section') {
                     OutingSection::create([
                         'outing_id' => $outing->id,
                         'section_id' => $value
-                    ]); 
+                    ]);
                 }
-            }
-            catch(Throwable $e){
+            } catch (Throwable $e) {
                 $name = Section::find($value)->name;
-                try{
-                    Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name." add section $value to outing error ".$e->getMessage());
-                }
-                catch(Throwable $e){
-        
-                }  
+                Log::channel('stakeholders_microapps')->error(Auth::guard('school')->user()->name . " add section $value to outing error " . $e->getMessage());
                 session(['error' => "Το τμήμα $name δεν αποθηκεύτηκε στην εκδρομή"]);
             }
         }
+    
         $outing->save();
-
+    
         return redirect()->route('outings.create')->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
     }
+    
 
     public function update_outing_action(Request $request){
         

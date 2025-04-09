@@ -28,7 +28,7 @@ class Outing extends Model
         return $this->belongsTo(OutingType::class, 'outingtype_id');
     }
 
-    public function action(){
-        return $this->belongsTo(Action::class, 'action_id');
+    public function actions(){
+        return $this->belongsToMany(Action::class, 'action_outing');
     }
 }

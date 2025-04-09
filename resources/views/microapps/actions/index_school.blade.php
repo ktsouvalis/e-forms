@@ -20,7 +20,7 @@
                 //alert("showConfirmButton: " + showConfirmButton); // Debugging line
                 // Show or hide the button Προσθήκη της επιλεγμένης Δράσης based on the variable
                 // When the user selects an action from the list, the button Add Action should be shown
-                // When the user selects the button Action Handling, the button Διαχείριση Δράσεων should be shown
+                // When the user selects the button Action Handling, the button Διαχείριση Δράσης should be shown
                 const confirmButton = document.getElementById("confirmSelection");
                 const addActionBtn = document.getElementById("addActionBtn");
                 if (showConfirmButton) {

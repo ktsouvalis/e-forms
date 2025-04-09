@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('outings', function($table){
-            $table->integer('action_id')->default(0);
+        Schema::create('action_outing', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('action_id')->constrained()->onDelete('cascade');
+            $table->foreignId('outing_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -21,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('action_outing');
     }
 };

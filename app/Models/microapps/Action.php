@@ -23,6 +23,6 @@ class Action extends Model
     }
 
     public function outings(){
-        return $this->hasMany(Outing::class);
+        return $this->belongsToMany(Outing::class, 'action_outing');
     }
 }

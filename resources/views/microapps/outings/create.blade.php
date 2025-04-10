@@ -15,7 +15,7 @@
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
-        <script>
+        <script>// Script to handle the modal for delete request
             $(document).ready(function() {
                 $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
                     event.preventDefault();
@@ -41,75 +41,70 @@
         </script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-            function handleCheckboxChange(event) {
-                if (event.target.checked) {
-                    const checkboxId = event.target.id; // Get the checkbox ID
-                    //alert('Checkbox with ID ' + checkboxId + ' is checked!'); // Display the ID in an alert
-                    fetch('{{ route('actions.index_school') }}?checkboxId=' + checkboxId)
-                        .then(response => response.text())
-                        .then(html => {
-                            const newWindow = window.open('', '_blank', 'width=750,height=550');
-                            newWindow.document.write(html);
-                            newWindow.document.close();
-                        })
-                        .catch(error => console.error('Error:', error));
-                }
-            }
-
-            // Single Checkbox Outside the Table
-            const singleCheckbox = document.getElementById('openActionCheckbox');
-            if (singleCheckbox) {
-                singleCheckbox.addEventListener('change', handleCheckboxChange);
-            }
-
-            // Multiple Checkboxes in the Table
-            document.querySelectorAll('.openActionCheckbox').forEach(checkbox => {
-                checkbox.addEventListener('change', handleCheckboxChange);
-            });
-        });
-            // Listen for messages from the action window
-            window.addEventListener('message', function(event) {
-                console.log("entered listener");
-                console.log(event.data.data.oldOuting);
-                if (event.data.type === 'ACTION_SELECTED') {
-                    // Get the action data from the event
-                    const actionData = event.data.data;
-                    console.log(actionData);
-                    // Check if the event is from a new outing creation
-                    if (event.data.data.oldOuting == "False"){
-                        console.log("entered false");
-                        // Select the blank div of New Outing Creation
-                        const targetDiv = document.getElementById('action-title'); 
-                        console.log(targetDiv);
-                        if (targetDiv) {
-                            // Update blank div's content
-                            targetDiv.textContent = actionData.title; 
-                        }
-                        if(actionData.outingId == 'openActionCheckbox'){ 
-                            // Select the hidden input
-                            const targetInput = document.getElementById('action-title-input'); 
-                            //console.log(targetInput);
-                            if (targetInput) {
-                                //console.log(actionData);
-                                // Update the value of the hidden input
-                                targetInput.value = actionData.actionId;
-                            }
-                        }
-                        // If the event comes from an old outing
-                    } else {
-                        console.log("entered true");
-                        // Select the hidden input
-                        const targetInput = document.getElementById('outing-action-title-' + actionData.outingId);
-                        console.log(targetInput); 
-                        //console.log(targetInput);
-                        if (targetInput) {
-                            //console.log(actionData);
-                            // Update the text of the div
-                            targetInput.textContent = actionData.title;
-                        }
+                function handleCheckboxChange(event) {
+                    if (event.target.checked) {
+                        const checkboxId = event.target.id; // Get the checkbox ID
+                        //alert('Checkbox with ID ' + checkboxId + ' is checked!'); // Display the ID in an alert
+                        fetch('{{ route('actions.index_school') }}?checkboxId=' + checkboxId)
+                            .then(response => response.text())
+                            .then(html => {
+                                const newWindow = window.open('', '_blank', 'width=750,height=550');
+                                newWindow.document.write(html);
+                                newWindow.document.close();
+                            })
+                            .catch(error => console.error('Error:', error));
                     }
                 }
+
+                // Single Checkbox Outside the Table
+                const singleCheckbox = document.getElementById('openActionCheckbox');
+                if (singleCheckbox) {
+                    singleCheckbox.addEventListener('change', handleCheckboxChange);
+                }
+
+                // Multiple Checkboxes in the Table
+                document.querySelectorAll('.openActionCheckbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', handleCheckboxChange);
+                });
             });
+                // Listen for messages from the action window
+                window.addEventListener('message', function(event) {
+        if (event.data.type === 'ACTION_SELECTED') {
+            const actionData = event.data.data;
+            console.log("Received action data:", actionData);
+
+            // For new outing creation
+            if (actionData.oldOuting === "False") {
+                const targetDiv = document.getElementById('action-title'); 
+                const targetInput = document.getElementById('action-title-input');
+                
+                if (targetDiv && actionData.actions.length > 0) {
+                    // Join all selected action titles with comma
+                    targetDiv.textContent = actionData.actions.map(a => a.title).join(', ');
+                }
+                if (targetInput && actionData.actions.length > 0) {
+                    // Store action IDs as comma-separated string
+                    targetInput.value = actionData.actions.map(a => a.actionId).join(',');
+                }
+            } 
+            // For existing outing
+            else {
+                actionData.actions.forEach(action => {
+                    const targetElement = document.getElementById('outing-action-title-' + actionData.outingId);
+                    if (targetElement) {
+                        // Update with all action titles
+                        targetElement.textContent = actionData.actions.map(a => a.title).join(', ');
+                        
+                        // If you have a hidden input for actions, update it too
+                        const actionInput = document.getElementById('outing-action-input-' + actionData.outingId);
+                        if (actionInput) {
+                            actionInput.value = actionData.actions.map(a => a.actionId).join(',');
+                        }
+                    }
+                });
+            }
+        }
+    });
         </script>
     @endpush
     @push('title')
@@ -311,7 +306,11 @@
                             @endif
                             <td>
                                 <input class="form-check-input openActionCheckbox" role="switch" type="checkbox" id="{{ $outing->id }}">
-                                <div id="outing-action-title-{{ $outing->id }}">{{ optional($action)->title }}</div>
+                                <div id="outing-action-title-{{ $outing->id }}">
+                                    @foreach($outing->actions as $action)
+                                        {{ $action->title }}@if(!$loop->last), @endif
+                                    @endforeach
+                                </div>
                             </td>
                         </tr> 
                     @endforeach   

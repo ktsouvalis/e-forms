@@ -52,6 +52,8 @@ class OutingsController extends Controller
     }
 
     public function store(Request $request){
+
+        //dd($request->all());
         $school = Auth::guard('school')->user();
     
         $rule = [
@@ -70,7 +72,8 @@ class OutingsController extends Controller
         $outing_record = $request->input('record');
         $outing_file = $file->getClientOriginalName();
         $outing_date = $request->input('outing_date');
-        $action_ids = $request->input('action_ids', []); // This should be an array from the form
+
+        $action_ids = explode(',', $request->input('action_id')); // Convert comma seperated to array
     
         try {
             $new_outing = Outing::create([
@@ -82,12 +85,13 @@ class OutingsController extends Controller
                 'file' => $outing_file,
                 'checked' => 0
             ]);
-    
+            
             // Attach actions via pivot table
             if (!empty($action_ids)) {
                 $new_outing->actions()->attach($action_ids);
             }
         } catch (Throwable $e) {
+            dd($e->getMessage());
             Log::channel('throwable_db')->error($school->name . ' create outing error ' . $e->getMessage());
             return back()->with('failure', 'Δεν έγινε η καταχώρηση της εκδρομής, προσπαθήστε ξανά');
         }
@@ -207,7 +211,8 @@ class OutingsController extends Controller
         }
     
         // Sync actions
-        $action_ids = $request->input('action_ids', []);
+        //$action_ids = $request->input('action_ids', []);
+        $action_ids = explode(',', $request->input('action_id')); // Convert comma seperated to array
         $outing->actions()->sync($action_ids);
     
         // Clear old sections
@@ -238,17 +243,24 @@ class OutingsController extends Controller
     
 
     public function update_outing_action(Request $request){
-        
-        $request->validate([
-            'outing_id' => 'required|exists:outings,id',
-            'action_id' => 'required|exists:actions,id',
-        ]);
+        Log::info('Update outing action: '.json_encode($request->all()));
+        Log::info('Update outing action: '.json_encode($request->outing_id));
+       
+        try {
+            $request->validate([
+                'outing_id' => 'required|exists:outings,id',
+                'action_ids' => 'required|exists:actions,id',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Errors:', $e->errors());
+            throw $e; // Re-throw the exception if needed
+        }
         try{
+            
             $outing = Outing::findOrFail($request->outing_id);
-            $outing->action_id = $request->action_id;
+            $outing->actions()->sync($request->action_ids);
             $outing->save();
         } catch(Throwable $e){
-            
             return response()->json(['fail' => false, 'message' => 'Failed: '.$e->getMessage()]);
         }
         

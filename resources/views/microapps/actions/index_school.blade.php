@@ -12,7 +12,83 @@
         <script src="{{asset('datatable_init.js')}}"></script>
         <script src="{{asset('toggle_signed_internal_rules.js')}}"></script>
         <script src="{{asset('datatable_init_internal_rules_second.js')}}"></script>
+        
+    <script>
+        
+        function sendActionBack() {
+            const selectedCheckboxes = document.querySelectorAll(".action-checkbox:checked");
+            const checkboxId = @json(request('checkboxId'));
 
+            if (selectedCheckboxes.length === 0) {
+                alert("Δεν έχετε επιλέξει κάποια δράση!");
+                return;
+            }
+            
+            // Gather selected actions
+            const selectedActions = Array.from(selectedCheckboxes).map(cb => {
+                return {
+                    actionId: cb.value,
+                    title: cb.closest('tr').querySelector('.action-title').textContent.trim()
+                };
+            });
+
+            // For new outing creation
+            if(checkboxId == 'openActionCheckbox') {
+                const actionData = {
+                    outingId: "new",
+                    actions: selectedActions,
+                    oldOuting: 'False',
+                }; 
+                
+                console.log("Action Data:", actionData);
+                window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
+                window.close();
+            } 
+            // For existing outing
+            else { 
+                const outingId = checkboxId;
+
+                // Gather selected actions
+                const selectedActions = Array.from(selectedCheckboxes).map(cb => {
+                    return {
+                        actionId: cb.value,
+                        title: cb.closest('tr').querySelector('.action-title').textContent.trim()
+                    };
+                });
+                //console.log("Selected Actions:", selectedActions.map(action => action.actionId));
+                // AJAX request to update the outing with the selected action_ids
+                fetch("{{ route('outings.update_outing_action') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        outing_id: outingId,
+                        action_ids: selectedActions.map(action => action.actionId) // Send array of action IDs
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const actionData = {
+                            outingId: outingId,
+                            actions: selectedActions,
+                            oldOuting: 'True',
+                        };
+                        window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
+                        window.close();
+                    } else {
+                        alert("Σφάλμα κατά την ενημέρωση της δράσης.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Πρόβλημα με την ενημέρωση της δράσης.");
+                });
+            }
+        }
+        </script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 
@@ -30,17 +106,17 @@
                     confirmButton.style.display = "none";
                 }
                 
-                const checkboxes = document.querySelectorAll(".action-checkbox");
+                // const checkboxes = document.querySelectorAll(".action-checkbox");
 
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener("change", function () {
-                        checkboxes.forEach(cb => {
-                            if (cb !== this) {
-                                cb.checked = false;
-                            }
-                        });
-                    });
-                });
+                // checkboxes.forEach(checkbox => {
+                //     checkbox.addEventListener("change", function () {
+                //         checkboxes.forEach(cb => {
+                //             if (cb !== this) {
+                //                 cb.checked = false;
+                //             }
+                //         });
+                //     });
+                // });
 
                 document.getElementById("confirmSelection").addEventListener("click", function () {
                     const selectedAction = document.querySelector(".action-checkbox:checked");
@@ -115,91 +191,4 @@
         <a id="addActionBtn" href="{{route('actions.create')}}" class="btn btn-success">Δημιουργία Νέας Εκπ. Δράσης</a>
     </div>
 
-    <script>
-        // This function is called when the user clicks the "Προσθήκη της επιλεγμένης Δράσης" button
-        // It sends the selected action data back to the main window
-        function sendActionBack() {
-        
-        // Get the checked action checkbox     
-        const checkedActionCheckbox = document.querySelector('.action-checkbox:checked');
-
-        // Get the ID of the outing checkbox that was clicked
-        const checkboxId = @json(request('checkboxId'));
-        //alert(checkboxId);
-
-        // Only if an action checkbox is checked
-        if (checkedActionCheckbox) {
-
-            // If checkbox selected is coming from a new outing creation
-            if(checkboxId == 'openActionCheckbox'){ 
-                const outingId = checkboxId;
-                // Get the action ID from the checkbox value
-                const actionId = checkedActionCheckbox.value;
-            
-                // Find the corresponding title cell in the same row
-                const titleCell = checkedActionCheckbox.closest('tr').querySelector('.action-title');
-                console.log("Outing ID:", outingId);
-                console.log("Action ID:", actionId);
-
-                // Prepare the action data to send back
-                const actionData = {
-                    outingId: outingId,
-                    actionId: actionId,
-                    oldOuting: 'False',
-                    title: titleCell.textContent.trim(),
-            };
-            
-            // Send the action data back to the main window
-            window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
-            // Close the window
-            window.close();
-            // If checkbox selected is coming from an existing outing
-            } else { 
-                // If checkbox of older outing is selected -> Store the ID of the selected outing
-                const outingId = checkboxId;
-                // Get the action ID from the checkbox value
-                const actionId = checkedActionCheckbox.value;
-                // Find the corresponding title cell in the same row
-                const titleCell = checkedActionCheckbox.closest('tr').querySelector('.action-title');
-                console.log("Outing ID:", outingId);
-                console.log("Action ID:", actionId);
-                
-                // AJAX request to update the outing with the selected action_id
-                fetch("{{ route('outings.update_outing_action') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        outing_id: outingId,
-                        action_id: actionId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        //alert("Η δράση ενημερώθηκε επιτυχώς!");
-                        // Send the title back to the main window
-                        // Send the action data back to the main window
-                        const actionData = {
-                            outingId: outingId,
-                            actionId: actionId,
-                            oldOuting: 'True',
-                            title: titleCell.textContent.trim(),
-                        };
-                        window.opener.postMessage({ type: 'ACTION_SELECTED', data: actionData }, '*');
-                        window.close(); // Close the window after successful update
-                    } else {
-                        alert("Σφάλμα κατά την ενημέρωση της δράσης.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Πρόβλημα με την ενημέρωση της δράσης.");
-                });
-            }
-        }
-    }
-    </script>
 </x-layout>

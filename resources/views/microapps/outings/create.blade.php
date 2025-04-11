@@ -161,7 +161,7 @@
                             <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
                             <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
                             <input type="hidden" id="action-title-input" name="action_id" value="">
-                            <div id='action-title'></div> (Δεν έχει ενεργοποιηθεί ακόμη αυτή η λειτουργία)
+                            <div id='action-title'></div> (Δοκιμαστική Λειτουργία)
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Ημερομηνία</span>

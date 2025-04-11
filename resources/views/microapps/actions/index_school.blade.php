@@ -155,13 +155,16 @@
                 <th>Αρχεία</th>
                 <th>Ενέργειες</th>
                 <th>Κατηγορία</th>
+                <th>Παραδοτέο</th>
+                <th>Παρατηρήσεις</th>
+                <th>Φορέας</th>
             </tr>
         </thead>
         <tbody>
             @if($actions->isEmpty())
-                {{-- <tr>
-                    <td colspan="6">Δεν υπάρχουν εκπαιδευτικές δράσεις</td>
-                </tr> --}}
+                <tr>
+                    <td colspan="9">Δεν υπάρχουν εκπαιδευτικές δράσεις</td>
+                </tr>
             @else
                 @foreach($actions as $action)
                     <tr>
@@ -171,6 +174,7 @@
                         <td class="action-title" data-id="{{ $action->id }}">{{ $action->title }}</td>
                         <td>{{$action->teachers}}</td>
                         <td>{{$action->records}}</td>
+                        
                         <td>
                             <a href="{{route('actions.edit', $action->id)}}" class="btn btn-primary">Επεξεργασία</a>
                             <form action="{{route('actions.destroy', $action->id)}}" method="POST" style="display: inline-block;">
@@ -180,6 +184,9 @@
                             </form>
                         </td>
                         <td>{{$action->type->description}}</td>
+                        <td>{{$action->deliverable}}</td>
+                        <td>{{$action->comments}}</td>
+                        <td>{{$action->implementing_authority}}</td>
                     </tr>
                 @endforeach
             @endif
@@ -187,7 +194,7 @@
     </table>
 
     <div class="mt-3">
-        <button id="confirmSelection" class="btn btn-info" style="display: none;">Προσθήκη της επιλεγμένης Δράσης</button>
+        <button id="confirmSelection" class="btn btn-info" style="display: none;">Προσθήκη επιλεγμένης/επιλεγμένων</button>
         <a id="addActionBtn" href="{{route('actions.create')}}" class="btn btn-success">Δημιουργία Νέας Εκπ. Δράσης</a>
     </div>
 

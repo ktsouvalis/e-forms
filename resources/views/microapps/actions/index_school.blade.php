@@ -155,16 +155,16 @@
                 <th>Αρχεία</th>
                 <th>Ενέργειες</th>
                 <th>Κατηγορία</th>
-                <th>Παραδοτέο</th>
+                {{-- <th>Παραδοτέο</th> --}}
                 <th>Παρατηρήσεις</th>
                 <th>Φορέας</th>
             </tr>
         </thead>
         <tbody>
             @if($actions->isEmpty())
-                <tr>
-                    <td colspan="9">Δεν υπάρχουν εκπαιδευτικές δράσεις</td>
-                </tr>
+                {{-- <tr>
+                    <td colspan="8">Δεν υπάρχουν εκπαιδευτικές δράσεις</td>
+                </tr> --}}
             @else
                 @foreach($actions as $action)
                     <tr>
@@ -184,7 +184,7 @@
                             </form>
                         </td>
                         <td>{{$action->type->description}}</td>
-                        <td>{{$action->deliverable}}</td>
+                        {{-- <td>{{$action->deliverable}}</td> --}}
                         <td>{{$action->comments}}</td>
                         <td>{{$action->implementing_authority}}</td>
                     </tr>

@@ -74,7 +74,7 @@ class OutingsController extends Controller
         $outing_date = $request->input('outing_date');
 
         $action_ids = explode(',', $request->input('action_id')); // Convert comma seperated to array
-    
+        
         try {
             $new_outing = Outing::create([
                 'school_id' => $school->id,
@@ -87,7 +87,7 @@ class OutingsController extends Controller
             ]);
             
             // Attach actions via pivot table
-            if (!empty($action_ids)) {
+            if (!empty($action_ids) && !$action_ids[0]=="") {
                 $new_outing->actions()->attach($action_ids);
             }
         } catch (Throwable $e) {
@@ -98,8 +98,15 @@ class OutingsController extends Controller
     
         // Sections
         try {
+    
             foreach ($request->all() as $key => $value) {
                 if (substr($key, 0, 7) == 'section') {
+                    print_r($key);
+                    print_r(" value ");
+                    print_r($value);
+                    print_r("<br>");
+                    print_r($new_outing->id);
+                    print_r("<br>");
                     OutingSection::create([
                         'outing_id' => $new_outing->id,
                         'section_id' => $value
@@ -213,8 +220,9 @@ class OutingsController extends Controller
         // Sync actions
         //$action_ids = $request->input('action_ids', []);
         $action_ids = explode(',', $request->input('action_id')); // Convert comma seperated to array
-        $outing->actions()->sync($action_ids);
-    
+        if (!empty($action_ids) && !$action_ids[0]=="") {
+            $outing->actions()->sync($action_ids);
+        }
         // Clear old sections
         foreach ($outing->sections as $out_sect) {
             $out_sect->delete();
@@ -240,7 +248,6 @@ class OutingsController extends Controller
     
         return redirect()->route('outings.create')->with('success', 'Τα στοιχεία της εκδρομής ενημερώθηκαν');
     }
-    
 
     public function update_outing_action(Request $request){
         Log::info('Update outing action: '.json_encode($request->all()));

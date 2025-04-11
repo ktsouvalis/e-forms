@@ -106,7 +106,7 @@
                             <div class="form-group row">
                                 <label for="comments" class="col-md-4 col-form-label text-md-right">{{ __('Σημειώσεις-Παρατηρήσεις') }}</label>
                                 <div class="col-md-6">
-                                    <textarea id="comments" class="form-control @error('comments') is-invalid @enderror" name="comments" autocomplete="comments">{{ old('comments') }} placeholder="Μπορείτε εδώ να προσθέσετε, αν υπάρχει, υπερσύνδεσμο από την Ιστοσελίδα του Σχολείου που αφορά τη Δράση" </textarea>
+                                    <textarea id="comments" class="form-control @error('comments') is-invalid @enderror" name="comments" autocomplete="comments" placeholder="π.χ. προσθήκη υπερσυνδέσμου από την Ιστοσελίδα του Σχολείου που αφορά τη Δράση">{{ old('comments') }}</textarea>
                                     
                                     @error('comments')
                                         <span class="invalid-feedback" role="alert">

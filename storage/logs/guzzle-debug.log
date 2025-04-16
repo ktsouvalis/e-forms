@@ -1,0 +1,17 @@
+*   Trying 10.35.249.90:80...
+* Connected to 10.35.249.90 (10.35.249.90) port 80 (#0)
+> GET /eprotocolapi/api/evaluation/supervisorCurrent?includeApproved=false HTTP/1.1
+Host: 10.35.249.90
+User-Agent: GuzzleHttp/7
+X-API-Key: mysecretapikey
+
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Content-Length: 24294105
+< Content-Type: multipart/mixed; boundary=boundary
+< Server: Microsoft-IIS/10.0
+< Content-Disposition: attachment; filename=response_with_file_and_json.multipart; filename*=UTF-8''response_with_file_and_json.multipart
+< X-Powered-By: ASP.NET
+< Date: Wed, 16 Apr 2025 08:44:04 GMT
+< 
+* Connection #0 to host 10.35.249.90 left intact

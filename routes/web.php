@@ -204,7 +204,7 @@ Route::post('/upload_didaskalia_apousia_template', [TeacherController::class, 'i
 
 Route::post('/upload_work_experience_template', [TeacherController::class, 'import_work_experience']);
 
-Route::post('/upload_leaves_template', [TeacherController::class, 'import_leaves']);
+
 
 Route::view('/preview_teachers_organiki', 'preview-teachers-organiki')->middleware("can:upload, ".Teacher::class);
 
@@ -326,6 +326,7 @@ Route::resource('fruits', FruitsController::class)->middleware('canViewMicroapp'
 
 // LEAVES ROUTES
 Route::resource('leaves', LeavesController::class);//->middleware('canViewMicroapp');
+Route::post('/upload_leaves_template', [LeavesController::class, 'import_leaves']);
 Route::group(['prefix' => 'leaves', 'middleware' => 'canViewMicroapp'], function () {
     Route::post('/upload_files/{teacher_leave}', [LeavesController::class, 'upload_files'])->name('leaves.upload_files');
     Route::post('/submit/{leave}', [LeavesController::class, 'submit'])->name('leaves.submit');
@@ -335,7 +336,6 @@ Route::group(['prefix' => 'leaves', 'middleware' => 'canViewMicroapp'], function
 });
 
 // SWIMMING ROUTES
-
 Route::resource('swimming', SwimmingController::class)->middleware('canViewMicroapp');
 
 Route::group(['prefix' => 'swimming'], function () {

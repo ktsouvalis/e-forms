@@ -523,7 +523,8 @@ class TeacherController extends Controller
         $row=2;
         $error=0;
         $rowSumValue="1";
-        while ($rowSumValue != "" && $row<10000){
+        
+        while ($rowSumValue != "" && $row<500){
             $teacherAfm = substr($spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue(), 2, -1);
             if(!Teacher::where('afm', $teacherAfm)->count()){
                 $row++;
@@ -581,7 +582,6 @@ class TeacherController extends Controller
                 continue; 
             }
             
-
             $row++;
             $rowSumValue="";
             for($col=1;$col<=35;$col++){

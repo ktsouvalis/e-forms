@@ -118,7 +118,7 @@ class OutingsController extends Controller
     
         return back()->with('success', 'Η εκδρομή καταχωρίστηκε επιτυχώς');
     }
-    
+
     public function download_file(Request $request, Outing $outing){
         $outings_microapp_id = $this->microapp->id;
         if((Auth::check() && (Auth::user()->microapps->where('microapp_id', $outings_microapp_id)->count() or Auth::user()->isAdmin())) || (Auth::guard('school')->check() && Auth::guard('school')->user()->id == $outing->school->id)){

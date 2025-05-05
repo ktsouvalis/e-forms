@@ -6,11 +6,15 @@ use GuzzleHttp\Client;
 use App\Models\Teacher;
 use App\Models\Microapp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\TeacherLeaves;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
+use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class LeavesController extends Controller
 {
@@ -30,6 +34,210 @@ class LeavesController extends Controller
         return view('microapps.leaves.create', ['appname' => 'leaves']);
     }
 
+    public function import_leaves(Request $request)
+    {
+        $file = $request->file('leaves_file');
+        
+        // Validate the input file type
+        $rule = [
+            'leaves_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+        
+        $validator = Validator::make($request->all(), $rule);
+        if ($validator->fails()) {
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
+        }
+        
+        // Increase execution time for this request
+        ini_set('max_execution_time', 300); // 5 minutes
+        
+        // Store the file
+        $filename = "teachers_file_leaves" . Auth::id() . ".xlsx";
+        $path = $request->file('leaves_file')->storeAs('files', $filename);
+        
+        // Truncate table before processing
+        DB::statement('TRUNCATE TABLE teacher_leaves');
+        
+        // Load the file with ChunkReadFilter to reduce memory usage
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setReadDataOnly(true);
+        
+        // Configure to read only columns we need
+        $spreadsheet = $reader->load("../storage/app/$path");
+        $worksheet = $spreadsheet->getActiveSheet();
+        
+        // Process variables
+        $row = 2; // Start from row 2
+        $batchSize = 50; // Process 50 rows at a time
+        $totalProcessed = 0;
+        $errors = 0;
+        $processedBatch = [];
+        
+        // Get the highest row with data
+        $highestRow = min($worksheet->getHighestDataRow(), 10000); // Safety limit
+        
+        // Process rows in batches
+        while ($row <= $highestRow) {
+            $rowEmpty = true;
+            
+            // Check if row has data
+            $cellValue = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+            if ($cellValue) {
+                $rowEmpty = false;
+            } else {
+                // Check a few more columns to be sure it's truly empty
+                for ($col = 2; $col <= 5; $col++) {
+                    if ($worksheet->getCellByColumnAndRow($col, $row)->getValue()) {
+                        $rowEmpty = false;
+                        break;
+                    }
+                }
+            }
+            
+            if ($rowEmpty) {
+                $row++;
+                continue;
+            }
+            
+            // Extract teacher AFM
+            $rawAfm = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+            $teacherAfm = is_string($rawAfm) ? substr($rawAfm, 2, -1) : $rawAfm;
+            
+            // Verify teacher exists
+            if (!$teacherAfm || !Teacher::where('afm', $teacherAfm)->exists()) {
+                Log::channel('throwable_db')->error("update leaves afm error: " . $teacherAfm);
+                $errors++;
+                $row++;
+                continue;
+            }
+            
+            try {
+                // Helper function to safely get cell values
+                $getCellValue = function($col) use ($worksheet, $row) {
+                    $value = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                    return $value !== null ? $value : '';
+                };
+                
+                // Helper function to safely convert Excel dates
+                $getExcelDate = function($col) use ($worksheet, $row) {
+                    $cell = $worksheet->getCellByColumnAndRow($col, $row);
+                    if (!$cell->getValue()) {
+                        return null;
+                    }
+                    return LeavesController::convertExcelDate($cell);
+                };
+                
+                // Create data array with safe value extraction
+                $leaveData = [
+                    'afm' => $teacherAfm,
+                    'leave_type' => $getCellValue(16),
+                    'leave_start_date' => $getExcelDate(17),
+                    'leave_days' => $getCellValue(18),
+                    'am' => $getCellValue(1),
+                    'sex' => $getCellValue(3),
+                    'surname' => $getCellValue(4),
+                    'name' => $getCellValue(5),
+                    'fathers_name' => $getCellValue(6),
+                    'specialty_code' => $getCellValue(7),
+                    'specialty' => $getCellValue(8),
+                    'directorate' => $getCellValue(12),
+                    'employment_relation' => $getCellValue(14),
+                    'leave_state' => $getCellValue(15),
+                    'leave_protocol_number' => $getCellValue(19),
+                    'leave_protocol_date' => $getExcelDate(20),
+                    'leave_description' => $getCellValue(21),
+                    'creator_entity_code' => is_string($getCellValue(22)) ? substr($getCellValue(22), 2, -1) : $getCellValue(22),
+                    'creator_entity_name' => $getCellValue(23),
+                    'creation_date' => $getExcelDate(24),
+                    'submission_date' => $getExcelDate(25),
+                    'approved_days' => $getCellValue(26),
+                    'approved_months' => $getCellValue(27),
+                    'approved_years' => $getCellValue(28),
+                    'approved_protocol_number' => $getCellValue(29),
+                    'approved_protocol_date' => $getExcelDate(30),
+                    'approved_description' => $getCellValue(31),
+                    'revoke_description' => $getCellValue(32),
+                    'approving_authority_code' => $getCellValue(33),
+                    'approving_authority_name' => $getCellValue(34),
+                    'last_change_date' => $getExcelDate(35),
+                ];
+                
+                // Add to batch
+                $processedBatch[] = $leaveData;
+                $totalProcessed++;
+                
+                // Process batch if reached batch size
+                if (count($processedBatch) >= $batchSize) {
+                    $this->saveTeacherLeavesBatch($processedBatch);
+                    $processedBatch = []; // Reset batch
+                    
+                    // Free up memory
+                    gc_collect_cycles();
+                }
+                
+            } catch (Throwable $e) {
+                Log::channel('throwable_db')->error($teacherAfm . ' ' . $e->getMessage());
+                $errors++;
+            }
+            
+            $row++;
+        }
+        
+        // Process any remaining records
+        if (!empty($processedBatch)) {
+            $this->saveTeacherLeavesBatch($processedBatch);
+        }
+        
+        // Free memory
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+        gc_collect_cycles();
+        
+        if ($errors > 0) {
+            return redirect(url('/teachers'))->with('warning', "Ενημέρωση αδειών εκπαιδευτικών με $errors σφάλματα που καταγράφηκαν στο log throwable_db. Επεξεργάστηκαν επιτυχώς $totalProcessed εγγραφές.");
+        } else {
+            return redirect(url('/teachers'))->with('success', "Επιτυχής ενημέρωση $totalProcessed αδειών εκπαιδευτικών");
+        }
+    }
+
+    protected function saveTeacherLeavesBatch($batch)
+    {
+        DB::beginTransaction();
+        try {
+            foreach ($batch as $leaveData) {
+                $keys = [
+                    'afm' => $leaveData['afm'],
+                    'leave_type' => $leaveData['leave_type'],
+                    'leave_start_date' => $leaveData['leave_start_date'],
+                    'leave_days' => $leaveData['leave_days'],
+                ];
+                
+                // Remove key fields from the data array
+                $data = $leaveData;
+                unset($data['afm'], $data['leave_type'], $data['leave_start_date'], $data['leave_days']);
+                
+                TeacherLeaves::updateOrCreate($keys, $data);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Log::channel('throwable_db')->error('Batch save error: ' . $e->getMessage());
+            throw $e; // Re-throw to be caught by the caller
+        }
+    }
+
+    public static function convertExcelDate($dateCell){
+        if (Date::isDateTime($dateCell)) {
+            $dateValue = Date::excelToDateTimeObject($dateCell->getValue());
+            $formattedDate = $dateValue->format('Y-m-d');
+
+        }
+        else{
+            $formattedDate = null;
+        }
+        return $formattedDate;
+    }
+    
     public function upload_files(Request $request, TeacherLeaves $teacher_leave){
         if(Auth::guard('school')->user()->code != $teacher_leave->creator_entity_code){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της άδειας.');
@@ -170,7 +378,7 @@ class LeavesController extends Controller
         //     $data[] = ['name' => 'WorkExperienceDays', 'contents' => $secondment->teacher->work_experience->days];
         // }
         $client = new Client();
-        return "5184 - 2024/08/06";
+        //return "5184 - 2024/08/06";
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/leaves', [
             'headers' => [
                 'X-API-Key' => env('API_KEY'),

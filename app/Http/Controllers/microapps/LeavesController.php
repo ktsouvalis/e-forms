@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\microapps;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Models\Teacher;
 use App\Models\Microapp;
@@ -124,7 +125,11 @@ class LeavesController extends Controller
                     if (!$cell->getValue()) {
                         return null;
                     }
-                    return LeavesController::convertExcelDate($cell);
+                    $dateTime = Date::excelToDateTimeObject($cell->getValue());
+        
+                    // Format to Y-m-d for database storage
+                    return $dateTime->format('Y-m-d');
+                    //return LeavesController::convertExcelDate($cell);
                 };
                 
                 // Create data array with safe value extraction
@@ -161,7 +166,7 @@ class LeavesController extends Controller
                     'approving_authority_name' => $getCellValue(34),
                     'last_change_date' => $getExcelDate(35),
                 ];
-                
+                dd($leaveData);
                 // Add to batch
                 $processedBatch[] = $leaveData;
                 $totalProcessed++;
@@ -201,13 +206,14 @@ class LeavesController extends Controller
     }
 
     protected function saveTeacherLeavesBatch($batch)
-    {
+    { 
         DB::beginTransaction();
         try {
             foreach ($batch as $leaveData) {
                 $keys = [
                     'afm' => $leaveData['afm'],
                     'leave_type' => $leaveData['leave_type'],
+                    //'leave_start_date' => $this->convertExcelDate($leaveData['leave_start_date']),
                     'leave_start_date' => $leaveData['leave_start_date'],
                     'leave_days' => $leaveData['leave_days'],
                 ];
@@ -230,7 +236,6 @@ class LeavesController extends Controller
         if (Date::isDateTime($dateCell)) {
             $dateValue = Date::excelToDateTimeObject($dateCell->getValue());
             $formattedDate = $dateValue->format('Y-m-d');
-
         }
         else{
             $formattedDate = null;
@@ -292,16 +297,24 @@ class LeavesController extends Controller
         //Στείλε την αίτηση στο πρωτόκολλο
         try{
             $protocol_message = $this->sendLeaveToProtocol($leave);
+            //dd('after sendLeaveToProtocol');
             if($protocol_message == false){
                 return back()->with('failure', 'Aπέτυχε η αποστολή στο πρωτόκολλο. Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
+        } catch(\Exception $e) {
+            print_r($e->getMessage());
+            dd('stop');
+            return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο της Διεύθυνσης. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
+        }
+        try{
             $protocol_message = explode(" - ", $protocol_message);
             $leave->protocol_number = $protocol_message[0];
-            $leave->protocol_date = $protocol_message[1];
+            //$leave->protocol_date = $protocol_message[1];
+            $leave->protocol_date = Carbon::createFromFormat('d/m/Y', $protocol_message[1])->format('Y-m-d');
             $leave->save();
         } catch(\Exception $e) {
-            // dd($e->getMessage());
-            return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο της Διεύθυνσης. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
+            //dd($e->getMessage());
+            return back()->with('failure', 'Η άδεια πρωτοκολλήθηκε με επιτυχία στο Πρωτόκολλο  της Διεύθυνσης αλλά απέτυχε η αποθήκευση του αριθμού πρωτοκόλλου. Παρακαλούμε επικοινωνήστε άμεσα με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
         }
         //Οριστικοποίησε την αίτηση - criteria_submitted = 1
         try{
@@ -354,14 +367,34 @@ class LeavesController extends Controller
     }
 
     public function sendLeaveToProtocol(TeacherLeaves $leave){
+        
+        // Find leave type from lookup table
+        $leaveType = \App\Models\LeaveType::where('description', $leave->leave_type)->first();
+        $leaveProtocolDate = Carbon::createFromFormat('Y-m-d', $leave->leave_protocol_date)->format('d/m/Y');
+        $schoolProtocol = $leave->leave_protocol_number .'-'. $leaveProtocolDate;
+        //dd($leave->leave_type, $leaveType);
+        if(!$leaveType){
+            return back()->with('failure', 'Δε βρέθηκε ο τύπος της άδειας. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr');
+        }
+        //dd($leave);
         $data = [
             ['name' => 'Afm', 'contents' => $leave->afm ],
-            ['name' => 'LeaveType', 'contents' => ($leave->leave_type)],
-            ['name' => 'LeaveStartDate', 'contents' => ($leave->start_date)],
-            ['name' => 'LeaveDays', 'contents' => ($leave->days)],
-            ['name' => 'LeaveProtocolNumber', 'contents' => ($leave->leave_protocol_number)],
-            ['name' => 'LeaveComments', 'contents' => ($leave->comments)],
+            ['name' => 'SchoolCode', 'contents' => $leave->creator_entity_code ],
+            ['name' => 'LeaveType', 'contents' => $leaveType->eProtocolId ],
+            ['name' => 'StartDate', 'contents' => $leave->leave_start_date ],
+            ['name' => 'Days', 'contents' => $leave->leave_days ],
+            ['name' => 'SchoolProtocol', 'contents' => $schoolProtocol ],
+            
+            // ['name' => 'LeaveState', 'contents' => $leave->leave_state],
+            // ['name' => 'LeaveEndDate', 'contents' => $leave->leave_end_date],
+            // ['name' => 'LeaveAm', 'contents' => $leave->am],
+            // ['name' => 'LeaveSex', 'contents' => $leave],
+            // ['name' => 'LeaveStartDate', 'contents' => ($leave->start_date)],
+            // ['name' => 'LeaveDays', 'contents' => ($leave->days)],
+            // ['name' => 'LeaveProtocolNumber', 'contents' => ($leave->leave_protocol_number)],
+            // ['name' => 'LeaveComments', 'contents' => ($leave->comments)],
         ];
+        //dd($data);
         if($leave->files_json){
             $fileNames = json_decode($leave->files_json, true);
             foreach($fileNames as $serverFileName => $databaseFileName){
@@ -371,28 +404,26 @@ class LeavesController extends Controller
                 ];
             }
         }
-                                
-        // if($secondment->teacher->work_experience){
-        //     $data[] = ['name' => 'WorkExperienceYears', 'contents' => $secondment->teacher->work_experience->years];
-        //     $data[] = ['name' => 'WorkExperienceMonths', 'contents' => $secondment->teacher->work_experience->months];
-        //     $data[] = ['name' => 'WorkExperienceDays', 'contents' => $secondment->teacher->work_experience->days];
-        // }
+                        
         $client = new Client();
+        
         //return "5184 - 2024/08/06";
-        $response = $client->request('POST', env('E_DIRECTORATE').'/application/leaves', [
+        $response = $client->request('POST', env('E_DIRECTORATE').'/leaves/new', [
             'headers' => [
                 'X-API-Key' => env('API_KEY'),
             ],
             'multipart' => $data,
         ]);
+        
         // Get the response body
         $status = $response->getStatusCode();
-        $body = $response->getBody();
-        
+        $body = $response->getBody()->getContents();
+        //dd($status, $body);
         if($status != 200){
             //dd($body);
             return false;
         } else {
+            //dd($body);
             return $body;
         }
     }

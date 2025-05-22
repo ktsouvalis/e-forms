@@ -523,7 +523,7 @@ class TeacherController extends Controller
         $row=2;
         $error=0;
         $rowSumValue="1";
-        
+        //dd('reached');
         while ($rowSumValue != "" && $row<500){
             $teacherAfm = substr($spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue(), 2, -1);
             if(!Teacher::where('afm', $teacherAfm)->count()){

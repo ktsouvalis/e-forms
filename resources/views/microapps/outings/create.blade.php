@@ -113,7 +113,7 @@
         <div class="py-3">
             <div class="container">
                 <div class="instruction-container p-4 border rounded shadow-sm bg-light">
-                    <h5 class="text-primary mb-3 fw-semibold">Διαχείριση Εγκεκριμένων Δράσεων (Δοκιμαστική Λειτουργία*)</h5>
+                    <h5 class="text-primary mb-3 fw-semibold">Διαχείριση Εγκεκριμένων Δράσεων</h5>
                     
                     <p class="mb-3 text-dark lh-base">
                         1) Προσθέστε εγκεκριμένες Δράσεις που υλοποιούνται στη σχολική σας μονάδα και εντάσσονται στο πλαίσιο επίσημων προγραμμάτων από αναγνωρισμένους Φορείς 
@@ -124,7 +124,7 @@
                         2) Μετά την καταχώρηση των Δράσεων, μπορείτε να δηλώνετε και να κατηγοριοποιείτε κάθε ενδοσχολική δραστηριότητα ή εκπαιδευτική επίσκεψη που πραγματοποιείται στη σχολική σας μονάδα, συσχετίζοντάς την με μία ή περισσότερες Εκπαιδευτικές Δράσεις.
                     </p>
                     <p class="text-dark lh-base">
-                        * Η λειτουργικότητα είναι σε Δοκιμαστική Λειτουργία. Τα στοιχεία που θα δηλώσετε θα καταχωρηθούν κανονικά και δε θα διαγραφούν στην κανονική λειτουργία. Ενδέχεται να προκύψουν σφάλματα κατά τη διαδικασία καταχώρησης για τα οποία παρακαλούμε να επικοινωνείτε με το Τμήμα Πληροφορικής στo it@dipe.ach.sch.gr ή στο 2610229262.
+                        
                     </p>
                 </div>
                 <div class="hstack gap-2">
@@ -164,7 +164,7 @@
                             <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
                             <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
                             <input type="hidden" id="action-title-input" name="action_id" value="">
-                            <div id='action-title'></div> (Δοκιμαστική Λειτουργία)
+                            <div id='action-title'></div> 
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Ημερομηνία</span>

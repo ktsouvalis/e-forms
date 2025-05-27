@@ -160,7 +160,7 @@ class LeavesController extends Controller
                     'approved_years' => $getCellValue(28),
                     'approved_protocol_number' => $getCellValue(29),
                     'approved_protocol_date' => $getExcelDate(30),
-                    'approved_description' => $getCellValue(31),
+                    'approved_description' => substr($getCellValue(31), 0, 255),
                     'revoke_description' => $getCellValue(32),
                     'approving_authority_code' => $getCellValue(33),
                     'approving_authority_name' => $getCellValue(34),

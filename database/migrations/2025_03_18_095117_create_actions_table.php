@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('school_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('actiontype_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('implementing_authority');
-            $table->string('title');
+            $table->string('title', 500);
             $table->integer('number_of_teachers')->default(0);
             $table->string('teachers')->nullable();
             $table->string('records')->nullable();

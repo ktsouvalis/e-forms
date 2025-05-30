@@ -115,7 +115,13 @@
                                     @enderror
                                 </div>
                             </div>
-    
+                            <div class="form-group row">
+                                <div class="alert alert-info w-100" role="alert">
+                                    <strong>Σημείωση:</strong> Η δυνατότητα προσθήκης αρχείων (όπως έγγραφα ή φωτογραφίες) για τις Εκπαιδευτικές Δράσεις δεν είναι ακόμη διαθέσιμη.<br>
+                                    Προς το παρόν, μπορείτε να προσθέσετε υπερσυνδέσμους σε σχετικά αρχεία που φιλοξενούνται στην Ιστοσελίδα του Σχολείου σας.<br>
+                                    Η λειτουργία αυτή θα ενεργοποιηθεί το Σεπτέμβριο.
+                                </div>
+                            </div>
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">
                                     <button type="submit" class="btn btn-primary">

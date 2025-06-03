@@ -98,22 +98,24 @@
                     <div class="col-md-2">
                         <form action="{{route('leaves.upload_files', ['teacher_leave' => $leave->id])}}" method="post" enctype="multipart/form-data">
                         @csrf
-                            <input type="file" name="files[]" class="form-control" multiple>
+                            <input type="file" name="files[]" class="form-control" multiple required>
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary" @if($leave->submitted==1) disabled @endif>
-                            <i class="bi bi-filetype-pdf"></i> Ανέβασμα
+                            <i class="bi bi-filetype-pdf"></i> Ανέβασμα αρχείου/ων
                         </button>
                         </form>
                     </div>
                     <div class="col-md-2">
                         @if($leave->submitted==0)
-                        <form action="{{route('leaves.submit', [ 'leave' => $leave->id ])}}" method="post">
-                            @csrf
-                            <button type="submit" class="btn btn-info">
-                                <i class="bi bi-send"></i> Υποβολή
-                            </button>
-                        </form>
+                            @if($leave->files_json != Null) 
+                                <form action="{{route('leaves.submit', [ 'leave' => $leave->id ])}}" method="post">
+                                    @csrf
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="bi bi-send"></i> Υποβολή
+                                    </button>
+                                </form>
+                            @endif
                         @else
                             @php
                                 $formattedDate = Carbon\Carbon::parse($leave->protocol_date)->format('d-m-Y');
@@ -123,7 +125,7 @@
                             </button>
                         @endif
                     </div>
-                @if($leave->files_json)
+                @if($leave->files_json) {{-- if Files exist --}}
                     @php 
                         $count = 1;
                         $fileNames = json_decode($leave->files_json, true);
@@ -135,9 +137,11 @@
                             <form action="{{route('leaves.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName])}}" method="get">
                                 <input type="submit" class="btn btn-info btn-block rounded-2 py-2 m-1" value="{{$databaseFileName}}" >
                             </form>
-                            <form action="{{route('leaves.delete_file', ['teacher_leave' => $leave->id, 'serverFileName' => $serverFileName ])}}" method="get">
-                                <input type="submit" class="btn btn-danger btn-block rounded-3" value="Χ" >
-                            </form>
+                            @if($leave->submitted==0)
+                                <form action="{{route('leaves.delete_file', ['teacher_leave' => $leave->id, 'serverFileName' => $serverFileName ])}}" method="get">
+                                    <input type="submit" class="btn btn-danger btn-block rounded-3" value="Χ" >
+                                </form>
+                            @endif
                             <div class="m-2"></div>
                         </div>
                     @php $count++; @endphp
@@ -145,16 +149,9 @@
                     </div>
                 @endif {{-- end of if Files exist--}}
                 @endif {{-- end of if absence--}}
-            @endif {{-- end of if teacher is permanent (doesn't have am)--}}
-            
-        
-            
+            @endif {{-- end of if teacher is permanent (doesn't have am)--}}   
     </div> {{-- ROW END --}}
-        <hr>
+    <hr>
     @endforeach
     </div> {{-- Container END--}}
-    
-
-        
-
 </x-layout_school>

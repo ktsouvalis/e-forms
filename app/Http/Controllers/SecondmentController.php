@@ -29,7 +29,7 @@ class SecondmentController extends Controller
     }
     //Επεξεργασία, προσωρινή αποθήκευση, προεπισκόπηση και οριστική υποβολή αίτησης
     public function update(Secondment $secondment, Request $request){
-        // dd($request->input('action'));
+        //dd($request->input());
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }

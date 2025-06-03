@@ -501,19 +501,17 @@ class TeacherController extends Controller
     public function import_leaves(Request $request){
         
         $file = $request->file('leaves_file');
-        
         //validate the input file type
         $rule = [
             'leaves_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        ];
-        
+        ]; 
         $validator = Validator::make($request->all(), $rule);
         if($validator->fails()){
            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
         }
-        //truncate table
-        DB::statement('TRUNCATE TABLE teacher_leaves');
-        //store the files
+        // truncate table
+        // DB::statement('TRUNCATE TABLE teacher_leaves');
+        // store the files
         $filename = "teachers_file_leaves".Auth::id().".xlsx";
         $path = $request->file('leaves_file')->storeAs('files', $filename);
         $error = 0;
@@ -573,7 +571,6 @@ class TeacherController extends Controller
                         'approving_authority_code'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(33, $row)->getValue(),
                         'approving_authority_name'=> $spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue(),
                         'last_change_date'=> TeacherController::convertExcelDate($spreadsheet->getActiveSheet()->getCellByColumnAndRow(35, $row)),
-    
                     ]
                 );
             } catch(Throwable $e){

@@ -354,8 +354,12 @@ class LeavesController extends Controller
             if ($key !== false) {
                 unset($files[$key]);
             }
-        
-            $leave->files_json = json_encode($files);
+            if(empty($files)){
+                $leave->files_json = null; // Αν δεν υπάρχουν άλλα αρχεία, βάλε το πεδίο σε null
+            }
+            else{
+                $leave->files_json = json_encode($files);
+            }
             $leave->update();
         } catch(\Exception $e) {
             //dd($e->getMessage());

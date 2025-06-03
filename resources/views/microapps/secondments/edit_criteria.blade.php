@@ -84,6 +84,27 @@
                 }                
             });
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var checkbox = document.getElementById('priority_secondment');
+                var selectWrapper = document.getElementById('priority_secondment_select_wrapper');
+                var selectInput = document.getElementById('priority_municipality');
+                function toggleSelect() {
+                    if (checkbox.checked) {
+                        selectWrapper.style.display = '';
+                    } else {
+                        if (selectInput) {
+                            selectInput.selectedIndex = 0; // Reset to first option when unchecked
+                        }
+                        selectWrapper.style.display = 'none';
+                        
+                    }
+                }
+                // Initial state
+                toggleSelect();
+                checkbox.addEventListener('change', toggleSelect);
+            });
+        </script>
     @endpush
     @push('title')
         <title>Αποσπάσεις</title>
@@ -167,6 +188,45 @@
                         </div>
                     </div>
                 </div>
+                <!-- κατά προτεραιότητα-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Κατά Προτεραιότητα Απόσπαση</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group mb-2">
+                            <div class="form-group">
+                                <div class="input-group mb-2">
+                                    <div class="form-check form-switch">
+                                        <input type="hidden" name="priority_secondment" value="0">
+                                        <input class="form-check-input" type="checkbox" name="priority_secondment" value="1" id="priority_secondment" 
+                                        @if($secondment->priority_municipality <> null) checked @endif
+                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                                        <label class="form-check-label" for="special_category">Επιθυμώ να υπαχθώ σε απόσπαση κατά προτεραιότητα</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group mb-2" id="priority_secondment_select_wrapper" style="display: none;">
+                            <div class="form-group w-100">
+                                <div class="input-group mb-2">
+                                    <div class="px-2 input-group-text">Δήμος για κατα προτεραιότητα απόσπαση:</div>
+                                        <select name="priority_municipality" id="priority_municipality" class="form-select"
+                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                            <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
+                                                @foreach($municipalities as $municipality)
+                                                    <option value="{{$municipality->id}}" @if($secondment->priority_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
+                                                @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!--Οικογενειακή κατάσταση-->
                 <div class="row">
                     <div class="col-md-12">
@@ -182,8 +242,9 @@
                                     <option value="0" @if($secondment->marital_status == 0) selected @endif >Δηλώστε μόνο σε περίπτωση που ζητάτε να μοριοδοτηθείτε</option>
                                     <option value="1" @if($secondment->marital_status == 1) selected @endif >Άγαμος</option>
                                     <option value="2" @if($secondment->marital_status == 2) selected @endif >Έγγαμος - Σύμφωνο συμβίωσης</option>
-                                    <option value="3" @if($secondment->marital_status == 3) selected @endif >Διαζευγμένος - Σε διάσταση</option>
+                                    <option value="3" @if($secondment->marital_status == 3) selected @endif >Διαζευγμένος - Σε διάσταση (με επιμέλεια τέκνων)</option>
                                     <option value="4" @if($secondment->marital_status == 4) selected @endif >Σε χηρεία</option>
+                                    <option value="5" @if($secondment->marital_status == 5) selected @endif >Διαζευγμένος - Σε διάσταση</option>
                                 </select>
                             </div>
                         </div>

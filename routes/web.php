@@ -54,6 +54,7 @@ use App\Http\Controllers\microapps\TimetablesController;
 use App\Http\Controllers\microapps\ActionTypesController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
+use App\Http\Controllers\microapps\BuidingProblemsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -305,7 +306,13 @@ Route::group(['prefix' => 'secondments'], function () {
     Route::post("/modify/{secondment}", [SecondmentController::class, 'modify'])->name('secondments.modify');
 });
 
-//Route::view('/secondments', 'microapps.secondments.create');
+// BUILDING PROBLEMS ROUTES
+
+Route::resource('building_problems', BuidingProblemsController::class)->middleware('canViewMicroapp');
+
+Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post('/upload_files/{upload_file_name}', [BuidingProblemsController::class, 'upload_files'])->name('building_problems.upload_files');
+});
 
 //DESKS ROUTES
 Route::resource('desks', DesksController::class)->middleware('canViewMicroapp');

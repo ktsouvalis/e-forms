@@ -177,6 +177,7 @@
                     <td>{{$teacher['telephone']}}</td>
 
                     @php
+                        //print $teacher['sxesi_ergasias'];
                         $sxesi = $teacher['sxesi_ergasias']!="Error: Κενό πεδίο" ? App\Models\SxesiErgasias::find($teacher['sxesi_ergasias'])->name : $teacher['sxesi_ergasias'] ;
                     @endphp
                     <td @if($sxesi=="Κενό πεδίο") style='color: red' @endif>{{$sxesi}}</td>

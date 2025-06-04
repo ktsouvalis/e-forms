@@ -208,7 +208,7 @@ class TeacherController extends Controller
             }
             $check['appointment_fek'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
             //cross check sxesi_ergasias with database
-            $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
+            $sxesi = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(49, $row)->getValue();
             if(SxesiErgasias::where('name',$sxesi)->count()){
                 $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
                 $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
@@ -224,7 +224,7 @@ class TeacherController extends Controller
             $sanitized_organiki = substr($organiki, 2, -1); // remove from start =" and remove from end "
 
             $check['org_eae']=1;
-            if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(54, $row)->getValue()=="ΟΧΙ"){
+            if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(55, $row)->getValue()=="ΟΧΙ"){
                 $check['org_eae']=0;
             }
 
@@ -288,10 +288,11 @@ class TeacherController extends Controller
             }
             $check['appointment_fek'] = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
             //cross check sxesi_ergasias with database
-            $sxesi = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(48, $row)->getValue();
+            $sxesi = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(49, $row)->getValue();
             if(SxesiErgasias::where('name',$sxesi)->count()){
                 $check['sxesi_ergasias'] = SxesiErgasias::where('name',$sxesi)->first()->id;
                 $check['sxesi_ergasias_name'] = SxesiErgasias::where('name',$sxesi)->first()->name;
+                
             }
             else{
                 $error = 1;
@@ -302,7 +303,7 @@ class TeacherController extends Controller
             $ignore_record = 0;
             
             $check['org_eae']=1;
-            if($spreadsheet2->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="ΟΧΙ"){
+            if($spreadsheet2->getActiveSheet()->getCellByColumnAndRow(51, $row)->getValue()=="ΟΧΙ"){
                 $check['org_eae']=0;
             }
 

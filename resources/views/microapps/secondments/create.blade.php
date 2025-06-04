@@ -48,7 +48,7 @@
                     <div class="input-group mb-2">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="statement_of_declaration">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">* Δηλώνω υπεύθυνα ότι δεν έχω οριστεί στέλεχος εκπαίδευσης (λ.χ. προϊστάμενος/μένη ολιγοθέσιας σχολικής μονάδας, διευθυντής/ντρια σχολ. μονάδας) και ότι δεν υπηρετώ σε θέση με θητεία που λήγει μετά τις 31-08-2024</label>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">* Δηλώνω υπεύθυνα ότι δεν έχω οριστεί στέλεχος εκπαίδευσης (λ.χ. προϊστάμενος/μένη ολιγοθέσιας σχολικής μονάδας, διευθυντής/ντρια σχολ. μονάδας) και ότι δεν υπηρετώ σε θέση με θητεία που λήγει μετά τις 31-08-2025</label>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="input-group mb-2">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="application_for_reposition">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2024</label>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2024-2025</label>
                         </div>
                     </div>
                 </div>

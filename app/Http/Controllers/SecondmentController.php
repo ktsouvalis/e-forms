@@ -402,6 +402,8 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'PreferencesComments', 'contents' => $secondment->preferences_comments];
         if($secondment->comments)
            $data[] = ['name' => 'Comments', 'contents' => $secondment->comments];
+        if($secondment->priority_municipality)
+           $data[] = ['name' => 'PriorityMunicipality', 'contents' => $secondment->priority_municipality];
         if($secondment->parents_municipality)
            $data[] = ['name' => 'ParentsMunicipality', 'contents' => $secondment->parents_municipality];
         if($secondment->siblings_municipality)

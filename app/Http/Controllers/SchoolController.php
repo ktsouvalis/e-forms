@@ -76,12 +76,12 @@ class SchoolController extends Controller
             $check['leitourgikotita']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue():0;
             $check['organikotita']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue():0;
             $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue():"-";
-            $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="True")?0:1;
-            $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(51, $row)->getValue()=="True")?0:1;
+            $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="NAI")?0:1;
+            $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(51, $row)->getValue()=="NAI")?0:1;
             $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)->getValue():"-";
             $check['address'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue():"-";
-            $check['has_integration_section'] = ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue()=="True")?1:0;
-
+            $check['has_integration_section'] = ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue()=="NAI")?1:0;
+            
             $check['special_needs']=0;
             if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Ειδικής Αγωγής"))
                 $check['special_needs']= 1;
@@ -109,6 +109,7 @@ class SchoolController extends Controller
                 $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
             }
         }
+        
         session(['schools_array' => $schools_array]);
 
         if($error){

@@ -64,7 +64,7 @@
                             <input type="text" class="form-control" id="years" name="years" placeholder="" value="{{$teacher->work_experience->years}} Έτη" disabled>
                             <input type="text" class="form-control" id="days" name="days" value="{{$teacher->work_experience->months}} Μήνες" disabled>
                             <input type="text" class="form-control" id="days" name="days" value="{{$teacher->work_experience->days}} Ημέρες" disabled>
-                            <label for="days" class="px-2" >έως 31-8-2024</label>
+                            <label for="days" class="px-2" >έως 31-8-2025</label>
                         @else
                             <input type="text" class="form-control" id="years" name="work_experience" placeholder="" value="Δεν έχει καταχωρηθεί προϋπηρεσία" disabled>
                         @endif
@@ -77,11 +77,11 @@
                                 <div class="input-group-text">Υπεύθυνες Δηλώσεις:</div>
                                 <div class="form-check form-switch">    
                                     <input type="checkbox" class="form-check-input" id="statement_of_declaration" name="statement_of_declaration" @if($secondment->statement_of_declaration==1) checked @endif disabled>
-                                    <label for="application_for_reposition" class="form-check-label" >Δεν έχω οριστεί στέλεχος εκπαίδευσης και ότι δεν υπηρετώ σε θέση με θητεία που λήγει μετά τις 31-08-2024.</label>
+                                    <label for="application_for_reposition" class="form-check-label" >Δεν έχω οριστεί στέλεχος εκπαίδευσης και ότι δεν υπηρετώ σε θέση με θητεία που λήγει μετά τις 31-08-2025.</label>
                                 </div>
                                 <div class="form-check form-switch"> 
                                     <input type="checkbox" class="form-check-input" id="application_for_reposition" name="application_for_reposition" @if($secondment->application_for_reposition==1) checked @endif disabled>
-                                    <label for="application_for_reposition" class="form-check-label" >Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2024</label>
+                                    <label for="application_for_reposition" class="form-check-label" >Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2025</label>
                                 </div>
                             </div>
                         </div>

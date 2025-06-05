@@ -310,8 +310,8 @@ Route::group(['prefix' => 'secondments'], function () {
 
 Route::resource('building_problems', BuidingProblemsController::class)->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'enrollments', 'middleware' => 'canViewMicroapp'], function () {
-    Route::post('/upload_files/{upload_file_name}', [BuidingProblemsController::class, 'upload_files'])->name('building_problems.upload_files');
+Route::group(['prefix' => 'building_problems', 'middleware' => 'canViewMicroapp'], function () {
+    Route::post('/upload_files', [BuidingProblemsController::class, 'upload_files'])->name('building_problems.upload_files');
 });
 
 //DESKS ROUTES

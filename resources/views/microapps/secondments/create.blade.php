@@ -56,11 +56,10 @@
                     <div class="input-group mb-2">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="application_for_reposition">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2024-2025</label>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2025</label>
                         </div>
                     </div>
-                </div>
-                
+                </div>  
                 <div class="text-center">
                     <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2" @if($microapp->accepts == 0) disabled @endif>
                 </div>

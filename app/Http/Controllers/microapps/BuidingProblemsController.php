@@ -32,6 +32,11 @@ class BuidingProblemsController extends Controller
     public function store(Request $request)
     {
         //
+        //dd($request->all());
+        // Validate the request data
+        if($request->comments == null && !$request->hasFile('files')) {
+            return redirect()->back()->withErrors(['comments' => 'Comments are required']);
+        }
     }
 
     /**

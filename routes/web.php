@@ -54,7 +54,7 @@ use App\Http\Controllers\microapps\TimetablesController;
 use App\Http\Controllers\microapps\ActionTypesController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
-use App\Http\Controllers\microapps\BuidingProblemsController;
+use App\Http\Controllers\microapps\BuildingProblemsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -195,6 +195,8 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 //////// TEACHER ROUTES
 
+Route::get('/import_teachers_from_file', [TeacherController::class, 'updateTeachersFromFile']);
+
 Route::view('/teachers','teachers')->middleware('can:viewAny, '.Teacher::class);
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:upload, ".Teacher::class);
@@ -308,10 +310,12 @@ Route::group(['prefix' => 'secondments'], function () {
 
 // BUILDING PROBLEMS ROUTES
 
-Route::resource('building_problems', BuidingProblemsController::class)->middleware('canViewMicroapp');
+Route::resource('building_problems', BuildingProblemsController::class)->middleware('canViewMicroapp');
 
 Route::group(['prefix' => 'building_problems', 'middleware' => 'canViewMicroapp'], function () {
-    Route::post('/upload_files', [BuidingProblemsController::class, 'upload_files'])->name('building_problems.upload_files');
+    Route::get('/download_file/{serverFileName}/{databaseFileName}', [BuildingProblemsController::class, 'download_file'])->name('building_problems.download_file');
+    Route::get('/delete_file/{buildingProblems}/{serverFileName}', [BuildingProblemsController::class, 'delete_file'])->name('building_problems.delete_file');
+
 });
 
 //DESKS ROUTES

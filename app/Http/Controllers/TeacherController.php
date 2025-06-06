@@ -604,4 +604,5 @@ class TeacherController extends Controller
         }
         return $formattedDate;
     }
+
 }

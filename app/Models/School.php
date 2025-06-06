@@ -20,6 +20,7 @@ use App\Models\microapps\Defibrillator;
 use App\Models\microapps\TeacherLeaves;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use App\Models\microapps\BuildingProblems;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -147,6 +148,11 @@ class School extends Authenticatable
 
     public function timetables(){
         return $this->hasMany(Timetables::class);
+    }
+
+    public function buildingProblems()
+    {
+        return $this->hasOne(BuildingProblems::class);
     }
 
     public function revokedLeaves() {

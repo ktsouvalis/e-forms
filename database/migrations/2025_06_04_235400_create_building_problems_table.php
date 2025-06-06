@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('comments')->nullable()->comment('Type of problem (e.g., plumbing, electrical, structural)');
             $table->integer('severity')->default(0)->comment('Severity of the problem (1: Low, 2: Medium, 3: High)');
             $table->text('files_json')->nullable()->comment('JSON containing file paths or URLs related to the problem');
+            $table->string('protocol_nr')->nullable();
+            $table->string('protocol_date')->nullable();
+            $table->integer('submitted')->nullable();
             $table->timestamps();
         });
     }

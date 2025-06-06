@@ -4,7 +4,8 @@
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts;
         $name = $microapp->name;
-        $building_problems = $school->building_problems;
+        $building_problems = $school->buildingProblems;
+        //dd($school, $building_problems);
     @endphp
 
     @push('title')
@@ -18,11 +19,16 @@
                     <h3><i class="bi bi-buildings"></i> Υποβολή Κτιριολογικών Προβλημάτων</h3>
                     <p class="mb-0">
                         Υποβάλλονται όλα τα σχετικά αρχεία προς τη Διεύθυνση Π.Ε. Αχαΐας, 
-                        τυχόν παρατηρήσεις και προαιρετικά μια συνολική αξιολόγηση της σοβαρότητας.
+                        τυχόν παρατηρήσεις και μια συνολική αξιολόγηση της σοβαρότητας της συνολικής κατάστασης.
                     </p>
                 </div>
 
                 <div class="card-body">
+                    @if($building_problems && $building_problems->protocol_nr)
+                        <div class="alert alert-info w-100" role="alert">
+                            Τα στοιχεία έχουν πρωτοκολληθεί στο Ηλεκτρονικό Πρωτόκολλο της Διεύθυνσης με αριθ. πρωτ. {{$building_problems->protocol_nr}} - {{$building_problems->protocol_date}}
+                        </div>
+                    @endif
                     <form action="{{ route('building_problems.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
@@ -42,9 +48,10 @@
                             @endphp
 
                             @foreach($choices as $index => $choice)
+                                {{-- Radio Button --}}
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="problem_type" id="problem_type_{{ $index }}" value="{{ $choice }}" {{ $selected == $choice ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="problem_type_{{ $index }}">{{ $choice }}</label>
+                                    <input class="form-check-input" type="radio" name="severity" id="severity_{{ $index }}" value="{{ $choice }}" {{ $selected == $choice ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="severity_{{ $index }}">{{ $choice }}</label>
                                 </div>
                             @endforeach
                         </div>
@@ -62,8 +69,8 @@
                     {{-- File Upload --}}
                     <div class="mb-4">
                         <label class="form-label fw-bold">Επιλογή Αρχείων:</label>
-                        <p class="text-muted mb-2">Μπορείτε να ανεβάσετε πολλά αρχεία (.pdf, .jpeg, .png), μέχρι 10MB το καθένα.</p>
-                        <input type="file" name="files[]" multiple class="form-control" accept=".pdf,.jpeg,.jpg,.png">
+                        <p class="text-muted mb-2">Μπορείτε να ανεβάσετε πολλά αρχεία (.pdf, .jpeg, .png), μέχρι 10MB ανά υποβολή.</p>
+                        <input type="file" name="files[]" multiple class="form-control" accept=".pdf,.jpeg,.jpg,.png,.docx,.xlsx">
                     </div>
 
                     {{-- Submit Button --}}
@@ -85,7 +92,7 @@
                                     <form action="{{ route('building_problems.download_file', ['serverFileName' => $serverFileName, 'databaseFileName' => $databaseFileName]) }}" method="get" class="me-2">
                                         <button type="submit" class="btn btn-info">{{ $databaseFileName }}</button>
                                     </form>
-                                    <form action="{{ route('building_problems.delete_file', ['building_problems' => $building_problems, 'serverFileName' => $serverFileName]) }}" method="get">
+                                    <form action="{{ route('building_problems.delete_file', ['buildingProblems' => $building_problems, 'serverFileName' => $serverFileName]) }}" method="get">
                                         <button type="submit" class="btn btn-danger" @if($microapp->accepts == 0) disabled @endif>Διαγραφή</button>
                                     </form>
                                 </div>

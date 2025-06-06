@@ -69,8 +69,8 @@
                     {{-- File Upload --}}
                     <div class="mb-4">
                         <label class="form-label fw-bold">Επιλογή Αρχείων:</label>
-                        <p class="text-muted mb-2">Μπορείτε να ανεβάσετε πολλά αρχεία (.pdf, .jpeg, .png), μέχρι 10MB ανά υποβολή.</p>
-                        <input type="file" name="files[]" multiple class="form-control" accept=".pdf,.jpeg,.jpg,.png,.docx,.xlsx">
+                        <p class="text-muted mb-2">Μπορείτε να ανεβάσετε πολλά αρχεία μαζί μέχρι 10MB ανά υποβολή. (.pdf, .jpeg, .png, .docx)</p>
+                        <input type="file" name="files[]" multiple class="form-control" accept=".pdf,.jpeg,.jpg,.png,.docx">
                     </div>
 
                     {{-- Submit Button --}}

@@ -164,7 +164,7 @@
                 <div class="col-md-2">
                     <span class="badge bg-danger">
                         <i class="bi bi-asterisk me-1"></i>
-                        Νέα εμφάνιση!!!
+                        Νέα εμφάνιση από 11 Ιουνίου 2025!!!
                     </span>
 
                 </div>

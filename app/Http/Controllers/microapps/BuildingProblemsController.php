@@ -98,6 +98,9 @@ class BuildingProblemsController extends Controller
         }
         // Save the record
         $buildingProblem->save();
+        if($buildingProblem->severity == 0 && $buildingProblem->files_json == null){
+            return back()->with('success', 'Δεν υπάρχουν προβλήματα κτιρίου προς πρωτοκόλληση. Η αποθήκευση των στοιχείων ολοκληρώθηκε με επιτυχία.');
+        }
         try{
             $protocol_response = $this->sendBuildingProblemsToProtocol($buildingProblem);
             $protocol_response = explode(" - ", $protocol_response);

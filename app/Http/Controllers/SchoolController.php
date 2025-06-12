@@ -138,7 +138,7 @@ class SchoolController extends Controller
                         'code' => $school['code']
                     ],
                     [
-                        'name' => $school['name'], 
+                        'name' => str_replace('/', '', $school['name']),
                         'code' => $school['code'],
                         'municipality_id' => $school['municipality'],
                         'primary' => $school['primary'],

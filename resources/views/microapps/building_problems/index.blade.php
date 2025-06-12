@@ -24,10 +24,9 @@
     @endpush
     
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
-    
         {{-- Data Section  --}}
         @php
-            $building_problems = App\Models\BuildingProblems::all();
+            $building_problems = App\Models\microapps\BuildingProblems::all();
         @endphp
         <div class="table-responsive py-2" style="align-self:flex-start">
             <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
@@ -44,50 +43,47 @@
                 </tr>
             </thead>
             <tbody>
-                
                 @foreach($building_problems as $building_problem)
                     @php
-                    dd($building_problems);
-                        $school = $building_problem->stakeholder;
+                    //dd($building_problems);
+                        $school = $building_problem->school;
                     @endphp
                         <tr>
                             <td>{{$school->code}}</td>
                             <td>@if($school->primary == 1) Δημοτικό @else Νηπιαγωγείο @endif</td>
                             <td> {{$school->name}}</td>
                             <td>
-                                @if($school->building_problem->severity == 0)
+                                @if($building_problem->severity == 0)
                                     <span class="badge bg-success">0</span>
-                                @elseif($school->building_problem->severity == 1)
-                                    <span class="badge bg-info">1</span>
-                                @elseif($school->building_problem->severity == 2)
-                                    <span class="badge bg-warning">2</span>
-                                @elseif($school->building_problem->severity == 3)
-                                    <span class="badge bg-warning text-dark">3</span>
-                                @elseif($school->building_problem->severity == 4)
-                                    <span class="badge bg-danger">4</span>
+                                @elseif($building_problem->severity == 1)
+                                    <span class="badge bg-success">1</span>
+                                @elseif($building_problem->severity == 2)
+                                    <span class="badge bg-info text-white">2</span>
+                                @elseif($building_problem->severity == 3)
+                                    <span class="badge bg-info text-dark">3</span>
+                                @elseif($building_problem->severity == 4)
+                                    <span class="badge bg-warning text-dark">4</span>
                                 @else
-                                    <span class="badge bg-dark text-white">5</span>
+                                    <span class="badge bg-danger text-white">5</span>
                                 @endif
                             </td>
-                            <td>{{$school->building_problem->comments}}</td>
+                            <td>{{$building_problem->comments}}</td>
                             <td>
-                                @if($school->building_problem->protocol_nr)
+                                @if($building_problem->protocol_nr)
                                     <span class="badge bg-success">{{$building_problem->protocol_nr}}</span>
                                     <br>
-                                    <span class="badge bg-secondary">{{$building_problem->protocol_date}}</span>
+                                    <span class="">{{$building_problem->protocol_date}}</span>
                                 @else
                                     <span class="badge bg-secondary">Δεν έχει πρωτοκολληθεί</span>
                                 @endif
                             </td>
                             <td>
                                 @php
-                                    $files = json_decode($building_problem->files_json, false);
-                                    print_r($files);
+                                    $files = (array)json_decode($building_problem->files_json, false);
                                 @endphp
-                                @if($building_problem->files_json)
-                                    
-                                    @foreach($building_problem->files_json as $server_file_name => $filename)
-                                        <a href="{{route('building_problems.download_file', ['file' => $file->filename])}}" class="btn btn-secondary btn-sm m-1" title="Λήψη αρχείου">
+                                @if($building_problem->files_json)  
+                                    @foreach($files as $server_file_name => $filename)
+                                        <a href="{{route('building_problems.download_file', ['serverFileName' => $server_file_name, 'databaseFileName' => $filename])}}" class="btn btn-secondary btn-sm m-1" title="Λήψη αρχείου">
                                             <i class="bi bi-file-earmark-text"></i> {{$filename}}
                                         </a>
                                     @endforeach
@@ -96,7 +92,6 @@
                                 @endif
                             </td>
                             <td>{{$building_problem->updated_at->format('d/m/Y H:i')}}</td>
-                        
                         </tr>
             @endforeach
             </tbody>

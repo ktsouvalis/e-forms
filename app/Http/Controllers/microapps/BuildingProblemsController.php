@@ -83,7 +83,7 @@ class BuildingProblemsController extends Controller
                 $uploaded = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);
                 
                 if($uploaded->getStatusCode() == 500){
-                    Log::channel('files')->error($teacherAfm." Files failed to upload");
+                    Log::channel('files')->error($school->name." Files failed to upload");
                     return back()->with('failure', 'Αποτυχία στην υποβολή των αρχείων. Δοκιμάστε ξανά');
                 }
             }
@@ -92,7 +92,7 @@ class BuildingProblemsController extends Controller
                 $buildingProblem->save();
             } catch(\Exception $e) {
                 //dd($e->getMessage());
-                Log::channel('files')->error($teacherAfm." Building Problem Files failed to update database field files_json");
+                Log::channel('files')->error($school->name." Building Problem Files failed to update database field files_json");
                 return back()->with('failure', 'Αποτυχία ενημέρωσης της βάσης δεδομένων με τα ονόματα των αρχείων. Δοκιμάστε ξανά');
             }
         }

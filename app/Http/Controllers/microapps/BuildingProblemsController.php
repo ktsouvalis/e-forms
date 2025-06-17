@@ -42,7 +42,7 @@ class BuildingProblemsController extends Controller
         $validated = $request->validate([
             'severity' => 'required|integer|min:0|max:5',
             'comments' => 'nullable|string',
-            'files.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+            'files.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5120', // Max 5MB per file
         ]);
         
         // Find or create a building problem record

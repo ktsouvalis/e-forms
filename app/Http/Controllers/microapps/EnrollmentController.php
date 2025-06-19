@@ -194,7 +194,7 @@ class EnrollmentController extends Controller
                 if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
                 $rule = [
                     //'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|required'
-                    'file' => 'mimes:xlsx,xls|required'
+                    'file' => 'required'
                 ];
                 $filename_to_store = "enrollments4_".$school->code.".xlsx";
                 $values = array(

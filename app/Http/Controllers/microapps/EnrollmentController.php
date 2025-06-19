@@ -103,7 +103,8 @@ class EnrollmentController extends Controller
                 if($school->primary == 1){//Τα δημοτικά ανεβάζουν αρχείο
                     if($request->file('file')){
                         $rule = [
-                            'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            //'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            'file' => 'mimes:xlsx,xls|required'
                         ];
                     
                         $filename_to_store = "a1_a2_file_".$school->code.".xlsx";
@@ -192,7 +193,8 @@ class EnrollmentController extends Controller
             case 'boundary_students': //Καταχώρηση αρχείου για μαθητές στα όρια
                 if($school->enrollments == null) return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
                 $rule = [
-                    'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|required'
+                    //'file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|required'
+                    'file' => 'mimes:xlsx,xls|required'
                 ];
                 $filename_to_store = "enrollments4_".$school->code.".xlsx";
                 $values = array(
@@ -262,6 +264,7 @@ class EnrollmentController extends Controller
         if($rule){
             $validator = Validator::make($request->all(), $rule);
             if($validator->fails()){ 
+                //dd($validator->errors(), $request->file('file')->getMimeType());
                 return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου');
             }
             try{

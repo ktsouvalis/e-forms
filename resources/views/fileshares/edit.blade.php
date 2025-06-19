@@ -73,6 +73,40 @@
                 });
             });
         </script>
+        // Add this script to your blade file
+        <script>
+        $(document).ready(function() {
+            // Chunked upload for common files
+            $('input[name="fileshare_common_files[]"]').fileupload({
+                url: '{{ url("/fileshares/chunked_upload/$fileshare->id/common") }}',
+                formData: {_token: '{{ csrf_token() }}'},
+                dataType: 'json',
+                done: function (e, data) {
+                    console.log('Upload finished', data.result);
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#common-progress .progress-bar').css('width', progress + '%').text(progress + '%');
+                },
+                chunkSize: 5 * 1024 * 1024 // 5MB chunks
+            });
+
+            // Chunked upload for personal files
+            $('input[name="fileshare_personal_files[]"]').fileupload({
+                url: '{{ url("/fileshares/chunked_upload/$fileshare->id/personal") }}',
+                formData: {_token: '{{ csrf_token() }}'},
+                dataType: 'json',
+                done: function (e, data) {
+                    console.log('Upload finished', data.result);
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#personal-progress .progress-bar').css('width', progress + '%').text(progress + '%');
+                },
+                chunkSize: 5 * 1024 * 1024 // 5MB chunks
+            });
+        });
+        </script>
     @endpush
     @push('title')
         <title>{{$fileshare->name}}</title>
@@ -94,14 +128,20 @@
                         <input name="name" type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon2" required value="{{$fileshare->name}}"><br>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">Κοινά αρχεία</span>
-                        <input name="fileshare_common_files[]" type="file" class="form-control" multiple ><br>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text w-25" id="basic-addon2">Προσωπικά αρχεία</span>
-                        <input name="fileshare_personal_files[]" type="file" class="form-control" multiple><br>
-                    </div>
-                    
+    <span class="input-group-text w-25" id="basic-addon2">Κοινά αρχεία</span>
+    <input name="fileshare_common_files[]" type="file" class="form-control" multiple>
+    <div id="common-progress" class="progress mt-2 w-100">
+        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+    </div>
+</div>
+
+<div class="input-group">
+    <span class="input-group-text w-25" id="basic-addon2">Προσωπικά αρχεία</span>
+    <input name="fileshare_personal_files[]" type="file" class="form-control" multiple>
+    <div id="personal-progress" class="progress mt-2 w-100">
+        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+    </div>
+</div>
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>

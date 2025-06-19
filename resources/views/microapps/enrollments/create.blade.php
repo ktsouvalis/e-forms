@@ -301,6 +301,10 @@
                                     @endfor
                                 @else {{-- Αν τα τμήματα είναι λιγότερα από 6 --}}
                                     @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
+                                        @php 
+                                            if(isset($morning_classes[$i-1]->nr_of_sections)){ $nr_of_sec = $morning_classes[$i-1]->nr_of_sections; }
+                                            else { $nr_of_sec = '1'; }
+                                        @endphp
                                         <td>
                                             <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="{{$nr_of_sec}}">
                                         </td>

@@ -261,26 +261,51 @@
                         {{-- αν έχουν καταχωρηθεί τμήματα --}}
                         @if($enrollments_classes)
                         <tr>
+                            
+                            @if($school->special_needs == 0) {{-- Αν δεν είναι Ειδικό Σχολείο --}}
                             <td>
                                 Αριθμός τμημάτων  <br><small>αυτόματος υπολογισμός από το σύστημα με βάση τον αριθμό μαθητών (μετά την υποβολή). <br><strong>Δεν επιτρέπεται η τροποποίηση.</strong><br>
-                               Αν προγραμματίζετε τη λειτουργία επιπλέον τμήματος σημειώστε το στις παρατηρήσεις.</small>                            </td>
-                            @if($nextYearLeitourgikotita >= 6) {{-- Αν τα τμήματα είναι περισσότερα από 6 --}}
-                                @for($i=1; $i<=6; $i++)
-                                    @php 
-                                        if(isset($morning_classes[$i-1]->nr_of_sections)){ $nr_of_sec = $morning_classes[$i-1]->nr_of_sections; }
-                                        else { $nr_of_sec = '1'; }
-                                    @endphp
-                                    <td>
-                                        <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="{{$nr_of_sec}}" readonly 
-                                         >
-                                    </td>
-                                @endfor
-                            @else {{-- Αν τα τμήματα είναι λιγότερα από 6 --}}
-                                @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
-                                    <td>
-                                        <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="1" readonly>
-                                    </td>
-                                @endfor
+                               Αν προγραμματίζετε τη λειτουργία επιπλέον τμήματος σημειώστε το στις παρατηρήσεις.</small>                            
+                            </td>
+                                @if($nextYearLeitourgikotita >= 6) {{-- Αν τα τμήματα είναι περισσότερα από 6 --}}
+                                    @for($i=1; $i<=6; $i++)
+                                        @php 
+                                            if(isset($morning_classes[$i-1]->nr_of_sections)){ $nr_of_sec = $morning_classes[$i-1]->nr_of_sections; }
+                                            else { $nr_of_sec = '1'; }
+                                        @endphp
+                                        <td>
+                                            <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="{{$nr_of_sec}}" readonly 
+                                            >
+                                        </td>
+                                    @endfor
+                                @else {{-- Αν τα τμήματα είναι λιγότερα από 6 --}}
+                                    @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
+                                        <td>
+                                            <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="1" readonly>
+                                        </td>
+                                    @endfor
+                                @endif
+                            @else {{-- Αν είναι Ειδικό Σχολείο --}}
+                                <td>
+                                    Αριθμός τμημάτων για Ειδικό Σχολείο<br>                        
+                                </td>
+                                @if($nextYearLeitourgikotita >= 6) {{-- Αν τα τμήματα είναι περισσότερα από 6 --}}
+                                    @for($i=1; $i<=6; $i++)
+                                        @php 
+                                            if(isset($morning_classes[$i-1]->nr_of_sections)){ $nr_of_sec = $morning_classes[$i-1]->nr_of_sections; }
+                                            else { $nr_of_sec = '1'; }
+                                        @endphp
+                                        <td>
+                                            <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="{{$nr_of_sec}}">
+                                        </td>
+                                    @endfor
+                                @else {{-- Αν τα τμήματα είναι λιγότερα από 6 --}}
+                                    @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
+                                        <td>
+                                            <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="1">
+                                        </td>
+                                    @endfor
+                                @endif
                             @endif
                         </tr>
                         <tr>

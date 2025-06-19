@@ -302,7 +302,7 @@
                                 @else {{-- Αν τα τμήματα είναι λιγότερα από 6 --}}
                                     @for($i=1; $i<=$nextYearLeitourgikotita; $i++)
                                         <td>
-                                            <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="1">
+                                            <input name="nr_of_sections{{$i}}" id="nr_of_sections{{$i}}" type="text" class="form-control input-sm" value="{{$nr_of_sec}}">
                                         </td>
                                     @endfor
                                 @endif

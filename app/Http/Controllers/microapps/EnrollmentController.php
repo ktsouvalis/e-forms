@@ -225,8 +225,10 @@ class EnrollmentController extends Controller
                     if($request->input('nr_of_students'.$i) !== null)
                         $section['nr_of_students'] = $request->input('nr_of_students'.$i);
                     // υπολόγισε τον αριθμό των τμημάτων - αν είναι ολιγοθέσιο 1 αλλιώς ανάλογα με τον αριθμό των μαθητών
-
-                    $section['nr_of_sections'] = $this->countNrOfSections($school->primary, $school->leitourgikotita, $request->input('nr_of_students'.$i));
+                    if($school->special_needs == 0)
+                        $section['nr_of_sections'] = $this->countNrOfSections($school->primary, $school->leitourgikotita, $request->input('nr_of_students'.$i));
+                    else
+                        $section['nr_of_sections'] = $request->input('nr_of_sections'.$i);
                     if($request->input('comment'.$i) !== null)
                         $section['comment'] = $request->input('comment'.$i);
                     $sections[] = $section;

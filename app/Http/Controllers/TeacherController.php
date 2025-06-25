@@ -188,7 +188,7 @@ class TeacherController extends Controller
             
             //myschool stores the afm like eg "=999999999"
             $afm = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-            $check['afm']= substr($afm, 2, -1); // remove from start =" and remove from end "
+            $check['afm'] = str_contains($afm, '=')?substr($afm, 2, -1):$afm; // remove from start =" and remove from end "
 
             //check obvious fields
             $check['gender']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
@@ -268,8 +268,11 @@ class TeacherController extends Controller
             
             //myschool stores the afm like eg "=999999999"
             $afm = $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(2, $row)->getValue();
-            $check['afm'] = substr($afm, 2, -1); // remove from start =" and remove from end "
-
+            $check['afm'] = str_contains($afm, '=')?substr($afm, 2, -1):$afm; // remove from start =" and remove from end "
+            if($afm == '101759088'){
+                dd($check['afm']);
+            }
+                
             //check obvious fields
             $check['gender']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(3, $row)->getValue();
             $check['telephone']= $spreadsheet2->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue();
@@ -327,7 +330,7 @@ class TeacherController extends Controller
             else{
                 $ignore_record = 1;  //ignore those that belongs to ΑΧΑΪΑ because they are in the database through the 4.1 report (organiki) 
             }
-        
+            
             //prepare teachers_array for session
             if(!$ignore_record)array_push($teachers_array, $check);
 
@@ -355,7 +358,7 @@ class TeacherController extends Controller
      * Insert teachers from session to database
      * @return \Illuminate\Http\RedirectResponse The redirect response.
      */
-    public function insertTeachers(){
+    public function insertTeachers() {
         //read the teachers_array which is prepared from the importTeachers() method
         $teachers_array = session('teachers_array');
         session()->forget('teachers_array');
@@ -364,6 +367,7 @@ class TeacherController extends Controller
         // CREATE OR UPDATE (based on 'afm' field) EXISTING TEACHERS
         foreach($teachers_array as $teacher){
             try{
+                
                 $teacherModel = Teacher::updateOrcreate(
                     [
                         'afm'=> $teacher['afm'] 
@@ -390,6 +394,7 @@ class TeacherController extends Controller
                         'active'=>1
                     ]
                 );
+                //print_r($teacherModel->getAttributes());
                 echo "<script>console.log('".$teacher['afm']."')</script>";
                 if($teacherModel->wasRecentlyCreated or $teacherModel->wasChanged()){
                     $wasChanged = true;
@@ -404,6 +409,7 @@ class TeacherController extends Controller
                 continue; 
             }
         }
+        //dd($teacher);
         // make not active the teachers that exist in database but not in 4.1 and 4.2
         Teacher::whereNotIn('afm', collect($teachers_array)->pluck('afm'))->update(['active' => 0]);
         

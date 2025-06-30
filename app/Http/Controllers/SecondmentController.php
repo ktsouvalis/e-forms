@@ -211,6 +211,8 @@ class SecondmentController extends Controller
         $fileHandler = new FilesController();
         $files = json_decode($secondment->files_json, true);
         try{
+            Log::channel('files')->info(Auth::guard('teacher')->user()->afm." Before Deleting File DB: ".$secondment->files_json);
+            Log::channel('files')->info(Auth::guard('teacher')->user()->afm." Deleting file: ".$serverFileName);
             $response = $fileHandler->delete_file('secondments', $serverFileName, 'local');
             if($response->getStatusCode() != 200){
                 Log::channel('files')->error(Auth::guard('teacher')->user()->afm." Secondment file to delete failed");
@@ -228,6 +230,7 @@ class SecondmentController extends Controller
             //dd($files);
             $secondment->files_json = json_encode($files);
             $secondment->update();
+            Log::channel('files')->info(Auth::guard('teacher')->user()->afm." After Deleting File DB: ".$secondment->files_json);
         } catch(\Exception $e) {
             Log::channel('files')->error(Auth::guard('teacher')->user()->afm." Secondment files failed to update database field files_json");
             return back()->with('failure', 'Αποτυχία διαγραφής αρχείου.');
@@ -239,9 +242,9 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
-        $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
-            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10000',
-        ]);
+        // $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
+        //     'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10000',
+        // ]);
         $files = $request->file('files');
         $fileNames = [];
         //Βρες πόσα αρχεία έχει ήδη ανεβάσει
@@ -261,6 +264,8 @@ class SecondmentController extends Controller
             $filesCount++;
             $serverFileName = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
             $fileNames[$serverFileName] = $file->getClientOriginalName();//πρόσθεσε στον πίνακα το όνομα του αρχείου που θα ανεβάσεις
+            Log::channel('files')->info($teacherAfm." Before Uploading File DB: ".$secondment->files_json);
+            Log::channel('files')->info($teacherAfm." Uploading file: ".$fileNames[$serverFileName]);
             $fileHandler = new FilesController();
             $uploaded = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);
             
@@ -272,6 +277,7 @@ class SecondmentController extends Controller
         $secondment->files_json = json_encode($fileNames);
         try{
             $secondment->save();
+            Log::channel('files')->info($teacherAfm." After Uploading Files DB: ".$secondment->files_json);
         } catch(\Exception $e) {
             //dd($e->getMessage());
             Log::channel('files')->error($teacherAfm." Secondment Files failed to update database field files_json");

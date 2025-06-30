@@ -208,10 +208,20 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
+        // Debugging code
+        $totalSearchFiles = '';
+        for($i=1; $i <= 15; $i++){
+            $searchFileName = Auth::guard('teacher')->user()->afm."_".$i.".pdf";
+            if(Storage::disk($driver)->exists($directory."/".$searchFileName)){
+                $totalSearchFiles .= $searchFileName . ', ';
+            }
+        }
+        // Debugging code
         $fileHandler = new FilesController();
         $files = json_decode($secondment->files_json, true);
         try{
             Log::channel('files')->info(Auth::guard('teacher')->user()->afm." Before Deleting File DB: ".$secondment->files_json);
+            Log::channel('files')->info(Auth::guard('teacher')->user()->afm." Before Deleting File FILES: ".$totalSearchFiles);
             Log::channel('files')->info(Auth::guard('teacher')->user()->afm." Deleting file: ".$serverFileName);
             $response = $fileHandler->delete_file('secondments', $serverFileName, 'local');
             if($response->getStatusCode() != 200){
@@ -242,9 +252,9 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
-        // $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
-        //     'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10000',
-        // ]);
+        $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
+            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10000',
+        ]);
         $files = $request->file('files');
         $fileNames = [];
         //Βρες πόσα αρχεία έχει ήδη ανεβάσει
@@ -260,11 +270,22 @@ class SecondmentController extends Controller
         $lastFileNumber = $filesCount; // κράτα τον αριθμό του τελευταίου αρχείου για την περίπτωση που θα ανεβάσει επιπλέον αρχεία
         $directory = "secondments";
         $teacherAfm = Auth::guard('teacher')->user()->afm;
+        // Debugging code
+        $totalSearchFiles = '';
+        for($i=1; $i <= 15; $i++){
+            $searchFileName = $teacherAfm."_".$i.".pdf";
+            if(Storage::disk($driver)->exists($directory."/".$searchFileName)){
+                $totalSearchFiles .= $searchFileName . ', ';
+            }
+
+        }
+        // Debugging code
         foreach($files as $file){ // Για κάθε αρχείο που ανεβάζεις
             $filesCount++;
             $serverFileName = $teacherAfm."_".$filesCount.".".$file->getClientOriginalExtension();
             $fileNames[$serverFileName] = $file->getClientOriginalName();//πρόσθεσε στον πίνακα το όνομα του αρχείου που θα ανεβάσεις
             Log::channel('files')->info($teacherAfm." Before Uploading File DB: ".$secondment->files_json);
+            Log::channel('files')->info($teacherAfm." Before Uploading File FILES: ".$totalSearchFiles);   
             Log::channel('files')->info($teacherAfm." Uploading file: ".$fileNames[$serverFileName]);
             $fileHandler = new FilesController();
             $uploaded = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);

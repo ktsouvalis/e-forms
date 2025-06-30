@@ -211,7 +211,15 @@ class SecondmentController extends Controller
         $fileHandler = new FilesController();
         $files = json_decode($secondment->files_json, true);
         try{
-            $fileHandler->delete_file('secondments', $serverFileName, 'local');
+            $response = $fileHandler->delete_file('secondments', $serverFileName, 'local');
+            if($response->getStatusCode() != 200){
+                Log::channel('files')->error(Auth::guard('teacher')->user()->afm." Secondment file to delete failed");
+                return back()->with('failure', 'Αποτυχία διαγραφής αρχείου. Επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr');
+            }
+        } catch(\Exception $e) {
+            Log::channel('files')->error(Auth::guard('teacher')->user()->afm." Secondment files failed to delete with exception");
+        }
+        try{
             $databaseFileName = $files[$serverFileName];
             $key = array_search($databaseFileName, $files);
             if ($key !== false) {
@@ -221,6 +229,7 @@ class SecondmentController extends Controller
             $secondment->files_json = json_encode($files);
             $secondment->update();
         } catch(\Exception $e) {
+            Log::channel('files')->error(Auth::guard('teacher')->user()->afm." Secondment files failed to update database field files_json");
             return back()->with('failure', 'Αποτυχία διαγραφής αρχείου.');
         }
         return back()->with('success', 'Επιτυχής διαγραφή αρχείου: "'.$databaseFileName.'"');
@@ -231,7 +240,7 @@ class SecondmentController extends Controller
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
         $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
-            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10000',
         ]);
         $files = $request->file('files');
         $fileNames = [];

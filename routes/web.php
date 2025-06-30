@@ -167,7 +167,7 @@ Route::group(['prefix'=>'users', 'middleware'=>'boss'], function(){
 
 Route::view('/schools', 'schools')->middleware('auth')->middleware('can:viewAny, '. School::class);
 
-Route::view('/directors', 'directors')->middleware('auth')->middleware('can:viewDirectors, '. School::class);
+// to delete Route::view('/directors', 'directors')->middleware('auth')->middleware('can:viewDirectors, '. School::class);
 
 Route::post('/upload_schools_template', [SchoolController::class, 'importSchools']);
 

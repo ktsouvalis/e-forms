@@ -54,12 +54,15 @@ class FilesController extends Controller
 
     public function delete_file($directory, $original_filename, $driver){
         try{
+            if(!Storage::disk($driver)->exists($directory."/".$original_filename)){
+                return response()->json(['error'=>'File not found'], 404);
+            }
             Storage::disk($driver)->delete($directory."/".$original_filename);
+            return response()->json(['success'=>'File deleted successfully'], 200);
         }
         catch(\Exception $e){
             return response()->json(['error'=>$e->getMessage()], 500);
         }
-        return response()->json(['success'=>'File deleted successfully'], 200);   
     }
 
     public function delete_directory($directory, $driver){

@@ -210,6 +210,7 @@ class SecondmentController extends Controller
         }
         // Debugging code
         $totalSearchFiles = '';
+        $directory = "secondments";
         for($i=1; $i <= 15; $i++){
             $searchFileName = Auth::guard('teacher')->user()->afm."_".$i.".pdf";
             if(Storage::disk('local')->exists($directory."/".$searchFileName)){

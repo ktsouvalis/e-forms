@@ -212,7 +212,7 @@ class SecondmentController extends Controller
         $totalSearchFiles = '';
         for($i=1; $i <= 15; $i++){
             $searchFileName = Auth::guard('teacher')->user()->afm."_".$i.".pdf";
-            if(Storage::disk($driver)->exists($directory."/".$searchFileName)){
+            if(Storage::disk('local')->exists($directory."/".$searchFileName)){
                 $totalSearchFiles .= $searchFileName . ', ';
             }
         }
@@ -274,7 +274,7 @@ class SecondmentController extends Controller
         $totalSearchFiles = '';
         for($i=1; $i <= 15; $i++){
             $searchFileName = $teacherAfm."_".$i.".pdf";
-            if(Storage::disk($driver)->exists($directory."/".$searchFileName)){
+            if(Storage::disk('local')->exists($directory."/".$searchFileName)){
                 $totalSearchFiles .= $searchFileName . ', ';
             }
 

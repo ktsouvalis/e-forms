@@ -234,10 +234,8 @@ class SecondmentController extends Controller
         }
         try{
             $databaseFileName = $files[$serverFileName];
-            $key = array_search($databaseFileName, $files);
-            if ($key !== false) {
-                unset($files[$key]);
-            }
+            unset($files[$serverFileName]);
+            
             //dd($files);
             $secondment->files_json = json_encode($files);
             $secondment->update();

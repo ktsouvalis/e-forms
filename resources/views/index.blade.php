@@ -1,174 +1,338 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="el">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Ηλεκτρονικές Υπηρεσίες</title>
-    <link rel="stylesheet" href="{{asset('bootstrap/css/bootstrap.css')}}" rel="stylesheet"/>
+    <title>Ηλεκτρονικές Υπηρεσίες - Διεύθυνση Π.Ε. Αχαΐας</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
     
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+    <!-- Favicon -->
     <link rel="icon" href="{!! asset('/favicon/favicon.ico') !!}"/>
     <link rel="apple-touch-icon" sizes="180x180" href="{{asset('favicon/apple-touch-icon.png')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{asset("favicon/favicon-32x32.png")}}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{asset("favicon/favicon-16x16.png")}}">
-    <link rel="manifest" href="{{asset('favicon/site.webmanifest')}}">
-    <link rel="mask-icon" href="{{asset('favicon/safari-pinned-tab.svg')}}" color="#5bbad5">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
     
-    <!-- fontawesome -->
+    <!-- Font Awesome -->
     <script src="https://kit.fontawesome.com/5083d79d45.js" crossorigin="anonymous"></script>
-  
-</head> 
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+        }
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans', sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .sidebar {
+            background: linear-gradient(135deg, var(--primary-color), #1a2530);
+            color: white;
+            min-height: 100vh;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            padding: 2rem;
+        }
+        
+        .card-service {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .card-service:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .form-control {
+            border-radius: 50px;
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .info-section {
+            background: linear-gradient(135deg, var(--primary-color), #1a2530);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+                width: 100%;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
 <body>
-<div class="row">
-    <!-- This blank div appears only in small screens-->
-    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary d-md-none" style="width: 280px; opacity:0.2;">
-    </div>
-    <!-- This div does not appear in small screens-->
-    <div class="col-2 d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary d-none d-md-block " style="width: 280px; opacity:0.2;">
-        <div class="d-flex justify-content-center"><img src="{{asset('favicon/android-chrome-512x512.png')}}" width="100" height="100" alt="services"></div>
-          <div class="d-flex justify-content-center h6">ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΠΑΤΡΩΝ</div>
-          <hr>
-          <ul class="nav nav-pills flex-column mb-auto">
-            <p>
-            <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1" style="width: 15rem; background-color:DodgerBlue; text-align:center;">
-              <a href="" style="text-decoration:none;" class="text-dark bi bi-house"> Αρχική</a>
-            </div>
-            </li>
-            </p>
-            <li class="nav-item">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            {{-- <div class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-dark">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <img src="{{asset('favicon/android-chrome-512x512.png')}}" width="80" height="80" alt="services" class="rounded-circle border border-white">
+                        <h5 class="mt-3">ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΠΑΤΡΩΝ</h5>
+                    </div>
+                    <hr class="bg-light">
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="bi bi-house-door"></i>
+                                Αρχική
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-headset"></i>
+                                Τεχνική Στήριξη
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="far fa-sun"></i>
+                                Ολοήμερο, Πρωινή Υποδοχή
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-bus"></i>
+                                Εκδρομές
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-suitcase"></i>
+                                Πρόσφυγες Μαθητές
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-file-signature"></i>
+                                Εσωτερικός Κανονισμός
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-file-pdf"></i>
+                                Αρχεία Διεύθυνσης
+                            </a>
+                        </li>
+                        <li class="nav-item mt-4">
+                            <a href="#" class="nav-link text-danger">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Αποσύνδεση
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div> --}}
             
-                                        <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:DarkKhaki; text-align:center;">
-                  <div class="text-dark fa-solid fa-headset"></div> 
-                    Τεχνική Στήριξη
+            <!-- Main Content -->
+            <div class="col px-5 ms-sm-auto main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας - Ηλεκτρονικές Φόρμες</h1>
+                    <div class="col-md-4 d-flex justify-content-end">
+                        <div class="btn-toolbar mb-2 px-1 mb-md-0">
+                            <a href="{{url('/index_school')}}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt"></i> Σύνδεση Σχολείου
+                            </a>
+                        </div>
+                        <div class="btn-toolbar mb-2 px-1 mb-md-0">
+                            <a href="{{url('/index_user')}}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt"></i> Σύνδεση Υπαλλήλου Διεύθυνσης
+                            </a>
+                        </div>
+                    </div>
+                    
                 </div>
-                </li> 
-                                                    <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:skyblue; text-align:center;">
-                  <div class="text-dark fa-regular fa-sun"></div> 
-                  Ολοήμερο, Πρωινή Υποδοχή
+                
+                @include('components/messages')
+                
+                <div class="info-section">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3><i class="fas fa-paper-plane me-2"></i>Αποστολή Συνδέσμου Πρόσβασης</h3>
+                            <p class="mb-0">Μπορείτε να λάβετε στο e-mail σας το Σύνδεσμο με τη <strong>Μοναδική Καρτέλα</strong> σας, συμπληρώνοντας τα ακόλουθα στοιχεία:</p>
+                        </div>
+                        <div class="col-md-4">
+                            <form action="{{url("/find_entity")}}" method="post" class="needs-validation" novalidate>
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <small><strong>ΑΜ ή ΑΦΜ</strong> για Εκπαιδευτικό<br>
+                                        <strong>7ψήφιος Κωδικός Υ.ΠΑΙ.Θ.Α.</strong> για Σχολείο</small>
+                                    </label>
+                                    <input type="text" value="{{old('username')}}" name="entity_code" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        Παρακαλώ εισάγετε έγκυρο κωδικό.
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Αποστολή Συνδέσμου
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                </li> 
-                                                    <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:Khaki; text-align:center;">
-                  <div class="text-dark fa-solid fa-bus"></div> 
-                        Εκδρομές
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body text-center py-4">
+                                <h4 class="card-title">Ηλεκτρονικές Φόρμες</h4>
+                                <p class="card-text">Ένα Πληροφοριακό Σύστημα για γρήγορη ανταλλαγή (συλλογή και διαμοιρασμό) στοιχείων και αρχείων μεταξύ της Διεύθυνσης και των Σχολικών Μονάδων καθώς και των Εκπαιδευτικών.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                </li> 
-                                                                            <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:Plum; text-align:center;">
-                  <div class="text-dark fa-solid fa-suitcase"></div> 
-                     Πρόσφυγες Μαθητές
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-service h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <i class="fas fa-video fa-3x text-danger mb-3"></i>
+                                    <h5>Εκπαιδευτικά Βίντεο</h5>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item border-0">
+                                        <a href="https://youtu.be/4RCUqXGDDTQ" target="_blank" class="text-decoration-none text-danger">
+                                            <i class="fas fa-play-circle me-2"></i>Αίτηση Απόσπασης εντός ΠΥΣΠΕ
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item border-0">
+                                        <a href="https://youtu.be/v6EviCZKyfI" target="_blank" class="text-decoration-none text-info">
+                                            <i class="fas fa-play-circle me-2"></i>Συλλογή Αρχείου
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item border-0">
+                                        <a href="https://youtu.be/V8TlBVjCSs4" target="_blank" class="text-decoration-none text-warning">
+                                            <i class="fas fa-play-circle me-2"></i>Αποστολή Αρχείων
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-service h-100 shadow-sm bg-primary text-white">
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <i class="fas fa-key fa-3x mb-3"></i>
+                                    <h5>Μοναδική Πρόσβαση</h5>
+                                </div>
+                                <p>Η σύνδεση κάθε Σχολείου αλλά και κάθε Εκπαιδευτικού αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέσα από ένα <strong>μοναδικό σύνδεσμο / μοναδική καρτέλα</strong> τον οποίο μπορείτε κάθε στιγμή να ανακτήσετε μέσα από αυτή τη σελίδα.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card card-service h-100 shadow-sm bg-warning">
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                                    <h5>Ασφάλεια & Υποστήριξη</h5>
+                                </div>
+                                <p>Δεν επιτρέπεται πρόσβαση στις Ηλεκτρονικές Φόρμες για μη εξουσιοδοτημένους χρήστες.</p>
+                                <div class="alert alert-light mt-3">
+                                    <i class="fas fa-envelope me-2"></i>Υποστήριξη: <a href="mailto:it@dipe.ach.sch.gr">it@dipe.ach.sch.gr</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                </li> 
-                                                    <li class="nav-item">
-                <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:#f1948a; text-align:center;">
-                  <div class="text-dark fa-solid fa-file-signature"></div> 
-                    Εσωτερικός Κανονισμός
-                </div>
-                </li> 
-                        
-            
-            <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:#00bfff; text-align:center;">
-              <div class="text-dark fa-solid fa-file-pdf"></div> 
-                Αρχεία Διεύθυνσης
             </div>
-            </li> 
-
-
-            <p>
-            <li class="nav-item">
-            <div class="badge text-wrap py-2 m-1 text-dark" style="width: 15rem; background-color:Gainsboro; text-align:center;">
-                <div class="text-dark fa-solid fa-arrow-right-from-bracket"></div>
-                    Αποσύνδεση
-            </div>
-            </li>
-            </p>
-          </ul>
-          <hr>
-    </div>
-    <div class="col-8">
-        <div class="container ">
-            <div class="row justify-content-md-center">
-                <div class="col py-3 h4">
-                    Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας
-                </div>
-            </div>
-            <div class="row flex justify-content-end">
-                <div class="col px-4 pb-3 h2">Ηλεκτρονικές Φόρμες</div>
-                <div class="col px-4 pb-3"> <a href="{{url('/index_user')}}" class="position-absolute bottom-0 end-0 text-secondary"><i class="fa fa-sign-in" aria-hidden="true"> Σύνδεση Υπαλλήλου Διεύθυνσης</i></a>
-                </div>
         </div>
     </div>
-@include('components/messages')
-
-<div class="row justify-content-md-center">
-    <div class="col"></div>
-    <div class="col">
-        <br><br><br>Μπορείτε να λάβετε στο e-mail σας το Σύνδεσμο με τη <strong>Μοναδική Καρτέλα</strong> σας, συμπληρώνοντας τα ακόλουθα στοιχεία:
-        <br><br>
-        <form action="{{url("/find_entity")}}" method="post">
-            @csrf
-            <div class="mb-3">
-                <label for="username" class="form-label"><strong>ΑΜ ή ΑΦΜ</strong> για Εκπαιδευτικό <br> <strong>7ψήφιος Κωδικός Υ.ΠΑΙ.Θ.Α.</strong> για Σχολείο</label>
-                <div class="py-2">
-                    <input type="text" value="{{old('username')}}" name="entity_code" class="form-control">
-                    @error('username')
-                        {{$message}}
-                    @enderror
-                </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Αποστολή Συνδέσμου</button>
-        </form>
-        
-    </div>
-    <div class="col"></div>
-</div>   
-<div class="row bg-dark bg-gradient p-5 m-2  border border-danger rounded shadow text-white justify-content-md-center">
-    Οι Ηλεκτρονικές Φόρμες είναι ένα Πληροφοριακό Σύστημα που έχει αναπτυχθεί στη Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας προκειμένου μέσα από αυτό να επιτυγχάνεται 
-        γρήγορη ανταλλαγή (συλλογή και διαμοιρασμός) στοιχείων και αρχείων μεταξύ της Υπηρεσίας και των Σχολικών Μονάδων καθώς και των Εκπαιδευτικών.
-</div>
-<div class="row justify-content-md-center m-2">
-    <div class="col p-5 my-2 me-2 bg-success border border-danger shadow rounded text-white">
-        <p>Εενδεικτική Παρουσίαση λειτουργιών:</p>
-        <ul>
-            <li><a target="_blank" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/4RCUqXGDDTQ">Αίτηση Απόσπασης εντός ΠΥΣΠΕ</a></li>
-            <li><a target="_blank" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/v6EviCZKyfI">Συλλογή Αρχείου</a></li>
-            <li><a target="_blank" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/V8TlBVjCSs4">Αποστολή Αρχείων</a> <span><em>(και <a target="_blank" class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="https://youtu.be/0i41NzpvJv8">Παραγωγή εγγράφων</a> για αυτόματη αποστολή.</em></span>)</li>
-        </ul>
-        
-    </div>
-    <div class="col p-5 my-2 mx-2 bg-primary bg-gradient border border-danger shadow rounded text-light">
-        Η σύνδεση κάθε Σχολείου αλλά και κάθε Εκπαιδευτικού αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέσα από ένα <strong>μοναδικό σύνδεσμο / μοναδική καρτέλα</strong> τον οποίο μπορείτε κάθε στιγμή να ανακτήσετε
-        μέσα από αυτή τη σελίδα
-    </div>
-    <div class="col p-5 my-2 ms-2 bg-warning border border-danger shadow rounded text-dark">
-        <p>Δεν επιτρέπεται πρόσβαση στις Ηλεκτρονικές Φόρμες για μη εξουσιοδοτημένους χρήστες.</p>
-        <p>Υποστήριξη: it@dipe.ach.sch.gr</p>
-    </div>
     
-</div>
-         
-<!-- footer begins -->
-</div>
-
-</div>
-       <footer class="border-top text-center small text-muted py-3">
-      <p class="m-0">Copyright &copy; {{Illuminate\Support\Carbon::now()->year}} <a href="" class="text-muted">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <p class="m-0">Copyright &copy; {{Illuminate\Support\Carbon::now()->year}} <a href="#" class="text-white">e-forms</a>. Διεύθυνση Π.Ε. Αχαΐας - Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Ηλεκτρονικές Υπηρεσίες.</p>
+        </div>
     </footer>
-    <script src="{{asset('bootstrap/js/bootstrap.js')}}"></script>
-
-        </div> <!-- container closing -->
-   
-    <div class="d-flex justify-content-center"><p class="h3" style="color:black"> </p></div>
-       </body>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
 </html>

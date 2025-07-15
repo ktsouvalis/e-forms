@@ -31,36 +31,36 @@ class CasAuthController extends Controller
         // Get authenticated user and attributes
         $user = \phpCAS::getUser();
         $attributes = \phpCAS::getAttributes();
-        dd($user, $attributes);
-        // if (!$user) {
-        //     dd('User not authenticated1');
-        //     // If user is not authenticated, redirect to login page
-        //     return redirect()->route('index')->withErrors(['error' => 'Αποτυχία ταυτοποίησης.']);
-        // }
-        // // Check if user is a teacher
-        // if (isset($attributes['employeenumber'])) {
-        //     if(strlen($attributes['employeenumber']) == 6) { // 6-digit ΑΜ
-        //         $teacher = Teacher::where('am', $attributes['employeenumber'])->firstOrFail();
-        //         Auth::guard('teacher')->login($teacher);
-        //         session()->regenerate();
-        //         $teacher->logged_in_at = Carbon::now();   
-        //         $teacher->save();
-        //         return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
-        //     }
-        //     if(strlen($attributes['employeenumber']) == 9) { // 9-digit ΑΦΜ
-        //         $teacher = Teacher::where('afm', $attributes['employeenumber'])->firstOrFail();
-        //         Auth::guard('teacher')->login($teacher);
-        //         session()->regenerate();
-        //         $teacher->logged_in_at = Carbon::now();   
-        //         $teacher->save();
-        //         return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
-        //     }
+        //dd($user, $attributes);
+        if (!$user) {
+            //dd('User not authenticated1');
+            // If user is not authenticated, redirect to login page
+            return redirect()->route('index')->withErrors(['error' => 'Αποτυχία ταυτοποίησης.']);
+        }
+        // Check if user is a teacher
+        if (isset($attributes['employeenumber'])) {
+            if(strlen($attributes['employeenumber']) == 6) { // 6-digit ΑΜ
+                $teacher = Teacher::where('am', $attributes['employeenumber'])->firstOrFail();
+                Auth::guard('teacher')->login($teacher);
+                session()->regenerate();
+                $teacher->logged_in_at = Carbon::now();   
+                $teacher->save();
+                return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
+            }
+            if(strlen($attributes['employeenumber']) == 9) { // 9-digit ΑΦΜ
+                $teacher = Teacher::where('afm', $attributes['employeenumber'])->firstOrFail();
+                Auth::guard('teacher')->login($teacher);
+                session()->regenerate();
+                $teacher->logged_in_at = Carbon::now();   
+                $teacher->save();
+                return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
+            }
             
-        // }
+        }
 
-        // // Check if user is a school
-        // if (isset($attributes['l'])) {
-        
-        // }
+        // Check if user is a school
+        if (isset($attributes['l'])) {
+            dd('User is a school', $attributes);
+        }
     }
 }

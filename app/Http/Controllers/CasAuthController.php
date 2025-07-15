@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\School;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -84,11 +85,11 @@ class CasAuthController extends Controller
 
                     Auth::guard('teacher')->login($teacher);
                     session()->regenerate();
-                    $teacher->logged_in_at = Carbon::now();   
-                    $teacher->save();
+                    $school->logged_in_at = Carbon::now();   
+                    $school->save();
                     return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
                 } catch(\Exception $e) {
-                    // If teacher not found, redirect to index with error
+                    // If school not found, redirect to index with error
                     return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο.']);
                 }
         }

@@ -195,8 +195,8 @@
                     <h1 class="h2">Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας - Ηλεκτρονικές Φόρμες</h1>
                     <div class="col-md-4 d-flex justify-content-end">
                         <div class="btn-toolbar mb-2 px-1 mb-md-0">
-                            <a href="{{url('/index_school')}}" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-sign-in-alt"></i> Σύνδεση Σχολείου
+                            <a href="{{url('/sch_sso_login')}}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt"></i> Σύνδεση Σχολείου / Εκπαιδευτικού
                             </a>
                         </div>
                         <div class="btn-toolbar mb-2 px-1 mb-md-0">

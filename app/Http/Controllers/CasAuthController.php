@@ -28,6 +28,7 @@ class CasAuthController extends Controller
         // Get authenticated user and attributes
         $user = \phpCAS::getUser();
         $attributes = \phpCAS::getAttributes();
+        dd($user, $attributes);
 	
         // Pass to view
         return view('cas.success', compact('user', 'attributes'));

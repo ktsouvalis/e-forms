@@ -125,6 +125,73 @@
                     </div>
                 </div>
             </div>
+        @else
+            <!-- Login Form for non-authenticated schools -->
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-4">
+                                    <img src="{{ asset('favicon/android-chrome-512x512.png') }}" alt="Logo" width="80" class="mb-3">
+                                    <h4 class="card-title">Σύνδεση Σχολείου</h4>
+                                </div>
+                                
+                                @if(session('error'))
+                                    <div class="alert alert-danger">
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                
+                                <form method="POST" action="{{ route('school.login') }}">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">7ψήφιος Κωδικός Σχολείου</label>
+                                        <input type="text" class="form-control @error('username') is-invalid @enderror" 
+                                               id="username" name="username" required>
+                                        @error('username')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Κωδικός Πρόσβασης</label>
+                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                               id="password" name="password" required>
+                                        @error('password')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-6 offset-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                                <label class="form-check-label" for="remember">
+                                                    {{ __('Μόνιμη Σύνδεση') }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Σύνδεση
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Αν έχετε ξεχάσει τον κωδικό σας, επικοινωνήστε με την υποστήριξη.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endauth
         
         </div>

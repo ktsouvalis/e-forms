@@ -145,7 +145,7 @@ Route::view('/school_areas', 'public/school_areas')->name('school_areas_public')
 Route::view('/contract_teachers', 'public/contract_teachers')->name('contract_teachers_public');
 
 //// CAS ROUTES for SSO of SCH.gr
-Route::get('/cas-login', [CasAuthController::class, 'login']);
+Route::get('/sch_sso_login', [CasAuthController::class, 'login']);
 
 Route::get('/curl-check', function () { //// USER ROUTES
     ob_start(); Route::post('/login', [UserController::class,'login'])->middleware('guest');

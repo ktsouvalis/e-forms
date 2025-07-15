@@ -72,6 +72,7 @@ class CasAuthController extends Controller
         }
         // Check if user is a school
         if (isset($attributes['l'])) {
+<<<<<<< HEAD
           
             try{
                 $school = School::where('mail', 'like', '%' . $attributes['employeenumber'] . '%')->firstOrFail();
@@ -85,6 +86,8 @@ class CasAuthController extends Controller
                     // If teacher not found, redirect to index with error
                     return redirect()->route('index')->withErrors(['error' => 'Ο εκπαιδευτικός δεν ανήκει στη Διεύθυνση.']);
                 }
+=======
+>>>>>>> 7a8e677b0db5a6ee2d436b2d5e4d37a6f9522009
         }
     }
 }

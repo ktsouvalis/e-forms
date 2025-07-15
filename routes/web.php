@@ -147,14 +147,13 @@ Route::view('/contract_teachers', 'public/contract_teachers')->name('contract_te
 //// CAS ROUTES for SSO of SCH.gr
 Route::get('/sch_sso_login', [CasAuthController::class, 'login']);
 
-Route::get('/curl-check', function () { //// USER ROUTES
-    ob_start(); Route::post('/login', [UserController::class,'login'])->middleware('guest');
-    phpinfo(INFO_MODULES); Route::view('/index_user', 'index_user');
-    $info = ob_get_clean(); Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
+Route::post('/login', [UserController::class,'login'])->middleware('guest');
+Route::view('/index_user', 'index_user');
+Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
 Route::view('/change_password', 'password_change_form')->middleware('auth');
-    return Str::contains($info, 'SSL Version') ? '✅ SSL Supported by cURL' : '❌ No SSL support in cURL'; Route::post('/change_password', [UserController::class, 'passwordChange']);
-});
+Route::post('/change_password', [UserController::class, 'passwordChange']);
+
 
 // MANAGING USER ROUTES
 

@@ -19,6 +19,7 @@ use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Models\FilecollectStakeholder;
+use App\Http\Controllers\CasAuthController;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
@@ -143,17 +144,17 @@ Route::post('/find_entity', function(Request $request){
 Route::view('/school_areas', 'public/school_areas')->name('school_areas_public');
 Route::view('/contract_teachers', 'public/contract_teachers')->name('contract_teachers_public');
 
-//// USER ROUTES
+//// CAS ROUTES for SSO of SCH.gr
+Route::get('/cas-login', [CasAuthController::class, 'login']);
 
-Route::post('/login', [UserController::class,'login'])->middleware('guest');
-
-Route::view('/index_user', 'index_user');
-
-Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
+Route::get('/curl-check', function () { //// USER ROUTES
+    ob_start(); Route::post('/login', [UserController::class,'login'])->middleware('guest');
+    phpinfo(INFO_MODULES); Route::view('/index_user', 'index_user');
+    $info = ob_get_clean(); Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
 Route::view('/change_password', 'password_change_form')->middleware('auth');
-
-Route::post('/change_password', [UserController::class, 'passwordChange']);
+    return Str::contains($info, 'SSL Version') ? '✅ SSL Supported by cURL' : '❌ No SSL support in cURL'; Route::post('/change_password', [UserController::class, 'passwordChange']);
+});
 
 // MANAGING USER ROUTES
 

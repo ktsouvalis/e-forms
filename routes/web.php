@@ -429,7 +429,7 @@ Route::group(['prefix' => 'actions', 'middleware' => 'canViewMicroapp'], functio
     // Calls Show method of ActionsController
     Route::get('/index_school', [ActionsController::class, 'index_school'])->name('actions.index_school');
 
-    Route::get('actions/consultants_supervisor', [ActionController::class, 'indexForConsultantsSupervisor'])->name('actions.consultants_supervisor');
+    Route::get('actions/consultants_supervisor', [ActionsController::class, 'indexForConsultantsSupervisor'])->name('actions.consultants_supervisor');
 
     Route::get('/check', [ActionsController::class, 'check'])->name('actions.check');
 });

@@ -148,14 +148,14 @@ Route::view('/contract_teachers', 'public/contract_teachers')->name('contract_te
 Route::get('/sch_sso_login', [CasAuthController::class, 'login']);
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
-Route::view('/index_user', 'index_user');
+
 Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
+// USER ROUTES
+
+Route::view('/index_user', 'index_user');
 Route::view('/change_password', 'password_change_form')->middleware('auth');
 Route::post('/change_password', [UserController::class, 'passwordChange']);
-
-
-// MANAGING USER ROUTES
 
 Route::resource('users', UserController::class)->middleware('boss');
 

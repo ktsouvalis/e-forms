@@ -201,32 +201,6 @@ class SchoolController extends Controller
         return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
     }
 
-    public function login_with_password(Request $request){ 
-        //dd($request->all());
-         $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-        ]);
-        //dd($request->username);
-        School::where('code', $request->username)->firstOrFail();
-        $school = School::where('code', $request->username)->firstOrFail();
-        dd($school);
-        if (Auth::guard('school')->attempt($credentials, $request->filled('remember'))) {
-            $request->session()->regenerate();
-            return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
-        }
-
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
-        $school = School::where('md5', $md5)->firstOrFail();
-        Auth::guard('school')->login($school);
-        $school->logged_in_at = Carbon::now();
-        $school->save();
-        session()->regenerate();
-    }
-
-
     public function logout(){
         
         auth()->guard('school')->logout();

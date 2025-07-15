@@ -87,7 +87,7 @@ class CasAuthController extends Controller
                     session()->regenerate();
                     $school->logged_in_at = Carbon::now();   
                     $school->save();
-                    return redirect(url('/index_teacher'))->with('success',"$school->name καλωσήρθατε!");
+                    return redirect(url('/index_school'))->with('success',"$school->name καλωσήρθατε!");
                 } catch(\Exception $e) {
                     // If school not found, redirect to index with error
                     return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο.']);

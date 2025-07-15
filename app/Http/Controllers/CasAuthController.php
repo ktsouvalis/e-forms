@@ -72,10 +72,15 @@ class CasAuthController extends Controller
         }
         // Check if user is a school
         if (isset($attributes['l'])) {
-<<<<<<< HEAD
-          
+            //extract the school name from the DN
+            $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
+            $start = strpos($dn, '=') + 1;
+            $end = strpos($dn, ',');
+            $length = $end - $start;
+            $value = substr($dn, $start, $length);
+
             try{
-                $school = School::where('mail', 'like', '%' . $attributes['employeenumber'] . '%')->firstOrFail();
+                $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
 
                     Auth::guard('teacher')->login($teacher);
                     session()->regenerate();
@@ -84,10 +89,8 @@ class CasAuthController extends Controller
                     return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
                 } catch(\Exception $e) {
                     // If teacher not found, redirect to index with error
-                    return redirect()->route('index')->withErrors(['error' => 'Ο εκπαιδευτικός δεν ανήκει στη Διεύθυνση.']);
+                    return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο.']);
                 }
-=======
->>>>>>> 7a8e677b0db5a6ee2d436b2d5e4d37a6f9522009
         }
     }
 }

@@ -39,9 +39,9 @@ class CasAuthController extends Controller
         }
         // Check if user is a teacher
         if (isset($attributes['employeenumber'])) {
-            dd('User is a teacher', $attributes);
             if(strlen($attributes['employeenumber']) == 6) { // 6-digit ΑΜ
                 $teacher = Teacher::where('am', $attributes['employeenumber'])->firstOrFail();
+                dd('teacher', $teacher);
                 Auth::guard('teacher')->login($teacher);
                 session()->regenerate();
                 $teacher->logged_in_at = Carbon::now();   

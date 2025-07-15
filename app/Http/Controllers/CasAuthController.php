@@ -83,11 +83,11 @@ class CasAuthController extends Controller
             try{
                 $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
 
-                    Auth::guard('teacher')->login($teacher);
+                    Auth::guard('school')->login($school);
                     session()->regenerate();
                     $school->logged_in_at = Carbon::now();   
                     $school->save();
-                    return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
+                    return redirect(url('/index_teacher'))->with('success',"$school->name καλωσήρθατε!");
                 } catch(\Exception $e) {
                     // If school not found, redirect to index with error
                     return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο.']);

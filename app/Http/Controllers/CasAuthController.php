@@ -72,7 +72,7 @@ class CasAuthController extends Controller
         }
         // Check if user is a school
         if (isset($attributes['l'])) {
-            dd('User is a school', $attributes);
+            dd('User is a school', $attributes['l']);
         }
     }
 }

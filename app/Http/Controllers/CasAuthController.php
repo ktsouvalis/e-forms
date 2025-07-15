@@ -72,7 +72,19 @@ class CasAuthController extends Controller
         }
         // Check if user is a school
         if (isset($attributes['l'])) {
-            dd('User is a school', $attributes);
+          
+            try{
+                $school = School::where('mail', 'like', '%' . $attributes['employeenumber'] . '%')->firstOrFail();
+
+                    Auth::guard('teacher')->login($teacher);
+                    session()->regenerate();
+                    $teacher->logged_in_at = Carbon::now();   
+                    $teacher->save();
+                    return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
+                } catch(\Exception $e) {
+                    // If teacher not found, redirect to index with error
+                    return redirect()->route('index')->withErrors(['error' => 'Ο εκπαιδευτικός δεν ανήκει στη Διεύθυνση.']);
+                }
         }
     }
 }

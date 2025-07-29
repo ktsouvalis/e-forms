@@ -265,7 +265,7 @@ class FilecollectController extends Controller
                 $docx = json_decode($filecollect->fileMime, true)['docx'];
                 $xlsx = json_decode($filecollect->fileMime, true)['xlsx'];
                 
-                $types_and_mimes = [['type'=>'pdf', 'mime'=>'application/pdf'], ['type'=>'docx', 'mime'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document'] , ['type'=>'xlsx', 'mime'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet ,application/vnd.ms-excel']];
+                $types_and_mimes = [['type'=>'pdf', 'mime'=>'application/pdf'], ['type'=>'docx', 'mime'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document'] , ['type'=>'xlsx', 'mime'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel']];
                 foreach($types_and_mimes as $type_and_mime){
                     $t = $type_and_mime['type'];
                     $m = $type_and_mime['mime'];
@@ -273,12 +273,14 @@ class FilecollectController extends Controller
                         for ($i = 1; $i<=$$t; $i++) {
                             $rule["the_file_".$t.$i] = "file|required|max:3000|mimetypes:".$m;
                         }
-                        $validator = Validator::make($request->all(), $rule);
-                        if($validator->fails()){ 
-                            return back()->with('failure', $validator->errors()->first());
-                        }
+                        //$validator = Validator::make($request->all(), $rule);
+                        // if($validator->fails()){ 
+                        //  //   dd($validator->errors());
+                        //     return back()->with('failure', $validator->errors()->first());
+                        // }
                     }
                 }
+                
                 $types = ['pdf', 'docx', 'xlsx'];
                 $files_array_for_db =[];
                 $index = 1;

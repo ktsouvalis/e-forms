@@ -163,6 +163,8 @@ Route::group(['prefix'=>'users', 'middleware'=>'boss'], function(){
     Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->name('users.reset_password');
 });
 
+Route::get('/login_as/{md5}', [UserController::class, 'login_as'])->name('user_login_as')->middleware('auth');
+
 //////// SCHOOL ROUTES
 
 Route::view('/schools', 'schools')->middleware('auth')->middleware('can:viewAny, '. School::class);

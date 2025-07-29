@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\UsersOperations;
+use App\Models\School;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
+use App\Models\UsersOperations;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -34,6 +36,23 @@ class UserController extends Controller
         }
         else{
             return redirect(url('/index_user'))->with('failure', 'Λάθος όνομα χρήστη ή κωδικός πρόσβασης');
+        }
+    }
+
+    public function login_as($md5){
+        // Check if user is looging in as a school
+        $school = School::where('md5', $md5)->first();
+        if($school) {
+            Auth::guard('school')->login($school);
+            session()->regenerate();
+            return redirect(url('/index_school'))->with('success', "Συνδεθήκατε ως $school->name");
+        }
+        // Check if user is logging in as a teacher
+        $teacher = Teacher::where('md5', $md5)->first();
+        if($teacher) {
+            Auth::guard('teacher')->login($teacher);
+            session()->regenerate();
+            return redirect(url('/index_teacher'))->with('success', "$teacher->name καλωσήρθατε!");
         }
     }
 

@@ -194,11 +194,11 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας - Ηλεκτρονικές Φόρμες</h1>
                     <div class="col-md-4 d-flex justify-content-end">
-                        <div class="btn-toolbar mb-2 px-1 mb-md-0">
+                        <!-- <div class="btn-toolbar mb-2 px-1 mb-md-0">
                             <a href="{{url('/sch_sso_login')}}" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-sign-in-alt"></i> Σύνδεση Σχολείου / Εκπαιδευτικού
                             </a>
-                        </div>
+                        </div> -->
                         <div class="btn-toolbar mb-2 px-1 mb-md-0">
                             <a href="{{url('/index_user')}}" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-sign-in-alt"></i> Σύνδεση Υπαλλήλου Διεύθυνσης
@@ -213,26 +213,15 @@
                 <div class="info-section">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h3><i class="fas fa-paper-plane me-2"></i>Αποστολή Συνδέσμου Πρόσβασης</h3>
-                            <p class="mb-0">Μπορείτε να λάβετε στο e-mail σας το Σύνδεσμο με τη <strong>Μοναδική Καρτέλα</strong> σας, συμπληρώνοντας τα ακόλουθα στοιχεία:</p>
+                            <h3 class="fw-bold"><i class="fas fa-user-lock bg-dark text-white p-2 rounded-circle me-2"></i>Σύνδεση</h3>
+                            <p class="my-4"> Η σύνδεση στις Ηλεκτρονικές Φόρμες για Σχολεία και Εκπαιδευτικούς πραγματοποιείται με χρήση των κωδικών του Πανελλήνιου Σχολικού Δικτύου.</p>
                         </div>
                         <div class="col-md-4">
-                            <form action="{{url("/find_entity")}}" method="post" class="needs-validation" novalidate>
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">
-                                        <small><strong>ΑΜ ή ΑΦΜ</strong> για Εκπαιδευτικό<br>
-                                        <strong>7ψήφιος Κωδικός Υ.ΠΑΙ.Θ.Α.</strong> για Σχολείο</small>
-                                    </label>
-                                    <input type="text" value="{{old('username')}}" name="entity_code" class="form-control" required>
-                                    <div class="invalid-feedback">
-                                        Παρακαλώ εισάγετε έγκυρο κωδικό.
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Αποστολή Συνδέσμου
-                                </button>
-                            </form>
+                            <div class="btn-toolbar mb-2 px-1 mb-md-0">
+                                <a href="{{url('/sch_sso_login')}}" class="btn btn-primary w-100">
+                                    <i class="fas fa-sign-in-alt"></i> Σύνδεση Σχολείου / Εκπαιδευτικού
+                                </a>
+                            </div>        
                         </div>
                     </div>
                 </div>
@@ -284,7 +273,9 @@
                                     <i class="fas fa-key fa-3x mb-3"></i>
                                     <h5>Μοναδική Πρόσβαση</h5>
                                 </div>
-                                <p>Η σύνδεση κάθε Σχολείου αλλά και κάθε Εκπαιδευτικού αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέσα από ένα <strong>μοναδικό σύνδεσμο / μοναδική καρτέλα</strong> τον οποίο μπορείτε κάθε στιγμή να ανακτήσετε μέσα από αυτή τη σελίδα.</p>
+                                <p>Η σύνδεση Σχολείων και Εκπαιδευτικών αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέ χρήση των κωδικών του Πανελλήνιου Σχολικού Δικτύου. 
+                                    Οι Σχολικές Μονάδες θα πρέπει να χρησιμοποιήσουν τους κωδικούς πρόσβασης στο MySchool.
+                                </p>
                             </div>
                         </div>
                     </div>

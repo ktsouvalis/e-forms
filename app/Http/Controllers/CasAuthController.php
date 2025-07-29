@@ -12,6 +12,7 @@ class CasAuthController extends Controller
 {
     public function login()
     {
+        
         // Load the phpCAS library
         require_once app_path('Libraries/phpCAS/CAS.php');
 

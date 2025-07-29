@@ -383,7 +383,7 @@
                                         {{$i}}{{ $i == 1 ? 'ο' : 'ο' }} Αρχείο Excel
                                     </label>
                                     <input name="the_file_xlsx{{$i}}" type="file" class="form-control" 
-                                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
                                 </div>
                             @endfor
 

@@ -265,7 +265,7 @@ class FilecollectController extends Controller
                 $docx = json_decode($filecollect->fileMime, true)['docx'];
                 $xlsx = json_decode($filecollect->fileMime, true)['xlsx'];
                 
-                $types_and_mimes = [['type'=>'pdf', 'mime'=>'application/pdf'], ['type'=>'docx', 'mime'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document'] , ['type'=>'xlsx', 'mime'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']];
+                $types_and_mimes = [['type'=>'pdf', 'mime'=>'application/pdf'], ['type'=>'docx', 'mime'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document'] , ['type'=>'xlsx', 'mime'=>'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet ,application/vnd.ms-excel']];
                 foreach($types_and_mimes as $type_and_mime){
                     $t = $type_and_mime['type'];
                     $m = $type_and_mime['mime'];

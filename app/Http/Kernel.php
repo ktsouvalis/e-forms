@@ -61,6 +61,7 @@ class Kernel extends HttpKernel
         'isConsultant' => \App\Http\Middleware\ConsultantAuth::class,
         'canViewMicroapp' => \App\Http\Middleware\CanViewMicroapp::class,
         'boss' => \App\Http\Middleware\isBoss::class,
+        'canLoginAs' => \App\Http\Middleware\CanLoginAs::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,

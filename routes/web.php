@@ -19,7 +19,6 @@ use App\Models\MicroappStakeholder;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use App\Models\FilecollectStakeholder;
-use App\Http\Controllers\CasAuthController;
 use App\Models\microapps\InternalRule;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
@@ -29,6 +28,7 @@ use App\Http\Controllers\FilesController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\WhocanController;
+use App\Http\Controllers\CasAuthController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\MicroappController;
@@ -163,7 +163,9 @@ Route::group(['prefix'=>'users', 'middleware'=>'boss'], function(){
     Route::post('/reset_password/{user}', [UserController::class, 'passwordReset'])->name('users.reset_password');
 });
 
-Route::get('/login_as/{md5}', [UserController::class, 'login_as'])->name('user_login_as')->middleware('auth');
+Route::get('/login_as/{md5}', [UserController::class, 'login_as'])->name('user_login_as')->middleware('canLoginAs');
+
+Route::get('/impersonation/leave', [UserController::class, 'impersonation_logout'])->name('impersonation.leave')->middleware('auth');
 
 //////// SCHOOL ROUTES
 

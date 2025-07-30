@@ -40,28 +40,51 @@ class UserController extends Controller
     }
 
     public function login_as($md5){
-        // Check if user is looging in as a school
+        // Check if a directory user (employee) is logged in
+        $user = Auth::guard('web')->user();
+        if(!Auth::check('user')) {
+            return redirect(url('/'))->with('warning', 'Πρέπει να είστε συνδεδεμένος για να κάνετε αυτή τη λειτουργία.');
+        }
+        // Check if user is logging in as a school
         $school = School::where('md5', $md5)->first();
         if($school) {
-            Auth::guard('school')->login($school);
-            session()->regenerate();
-            return redirect(url('/index_school'))->with('success', "Συνδεθήκατε ως $school->name");
+            $target = $school;
+            $guard = 'school';
         }
         // Check if user is logging in as a teacher
         $teacher = Teacher::where('md5', $md5)->first();
         if($teacher) {
-            Auth::guard('teacher')->login($teacher);
-            session()->regenerate();
-            return redirect(url('/index_teacher'))->with('success', "$teacher->name καλωσήρθατε!");
+            $target = $teacher;
+            $guard = 'teacher';
         }
+
+        if (!$target) {
+            return redirect('/')->with('error', 'Ο χρήστης δεν βρέθηκε.');
+        }
+
+        session([
+            'impersonator_id' => $user->id,
+            'impersonator_guard' => 'web',
+            'impersonation_guard' => $guard,
+        ]);
+
+        Auth::guard($guard)->login($target);
+        session()->regenerate();
+        return redirect(url('/index_' . $guard))->with('success', "$user->username έχετε συνδεθεί ως $target->name");
+       
     }
 
     public function logout(Request $request){
-        // $request->session()->flush(); OR
+        $request->session()->flush();
         auth()->logout();
         return redirect(url('/index_user'))->with('success','Αποσυνδεθήκατε...');
     }
 
+    public function impersonation_logout() {
+        session()->forget(['impersonator_id', 'impersonator_guard', 'impersonation_guard']);
+        return redirect('/index_user')->with('success', 'Αποσυνδεθήκατε από την λειτουργία σύνδεσης ως άλλος χρήστης.');
+    }
+    
     public function passwordChange(Request $request){
         $incomingFields = $request->all();
         $rules = [

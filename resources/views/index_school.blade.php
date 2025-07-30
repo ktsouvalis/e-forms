@@ -1,12 +1,10 @@
+
 <x-layout_school>
-    @php
-    
-  @endphp
     <body class="bg-light">
     
     <div class="row hidden-md-up justify-content-center">
         @auth('school')
-        @php 
+        @php
             $school = Illuminate\Support\Facades\Auth::guard('school')->user();
             $active_microapp=false;
             if($school->microapps->count()){
@@ -32,7 +30,6 @@
             @push('title')
                 <title>Καρτέλα {{$school->name}}</title>
             @endpush
-            
 
             <div class="py-5">
                 <div class="container">

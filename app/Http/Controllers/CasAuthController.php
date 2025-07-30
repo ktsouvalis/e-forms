@@ -12,7 +12,6 @@ class CasAuthController extends Controller
 {
     public function login()
     {
-        
         // Load the phpCAS library
         require_once app_path('Libraries/phpCAS/CAS.php');
 
@@ -83,7 +82,6 @@ class CasAuthController extends Controller
 
             try{
                 $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
-
                     Auth::guard('school')->login($school);
                     session()->regenerate();
                     $school->logged_in_at = Carbon::now();   

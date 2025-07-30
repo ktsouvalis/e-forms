@@ -41,6 +41,13 @@ class FilecollectController extends Controller
     }
 
     public function show(Filecollect $filecollect){
+        //Check first if a user is logged in as a school or teacher
+        if(session('impersonator_guard') == 'web'){
+            $user = Auth::user();
+            $target = session('impersonation_guard');
+            return view('filecollects.'.$target.'-filecollect', ['filecollect' => $filecollect]);
+        }
+        
         if(Auth::guard('teacher')->check()){
             $stakeholder = $filecollect->stakeholders->where('stakeholder_id', Auth::guard('teacher')->id())->where('stakeholder_type', 'App\Models\Teacher')->first();
             if(!$stakeholder or !$filecollect->visible){

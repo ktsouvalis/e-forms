@@ -73,15 +73,18 @@ class CasAuthController extends Controller
         }
         // Check if user is a school
         if (isset($attributes['l'])) {
+            if(!is_numeric($attributes['uid'])) {
+                return redirect()->route('index')->withErrors(['error' => 'Συνδεθείτε με τους κωδικούς του Myschool.']);
+            }
             //extract the school name from the DN
-            $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
-            $start = strpos($dn, '=') + 1;
-            $end = strpos($dn, ',');
-            $length = $end - $start;
-            $value = substr($dn, $start, $length);
+            // $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
+            // $start = strpos($dn, '=') + 1;
+            // $end = strpos($dn, ',');
+            // $length = $end - $start;
+            // $value = substr($dn, $start, $length);
 
             try{
-                $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
+                $school = School::where('code', $attributes['uid'])->firstOrFail();
                 Auth::guard('school')->login($school);
                 session()->regenerate();
                 $school->logged_in_at = Carbon::now();   

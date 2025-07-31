@@ -4,28 +4,36 @@
         {{session('success')}}
         </div>
     </div>
-    @endif
+@endif
 
-    @if(session()->has('failure'))
+@if(session()->has('failure'))
     <div class='container container-narrow'>
     <div class='alert alert-danger text-center'>
         {{session('failure')}}
     </div>
     </div>
-    @endif
+@endif
     
-    @if(session()->has('warning'))
+@if(session()->has('warning'))
     <div class='container container-narrow'>
     <div class='alert alert-warning text-center'>
         {{session('warning')}}
     </div>
     </div>
-    @endif 
+@endif 
 
-    @if(session()->has('command'))
+@if(session()->has('command'))
     <div class='container container-narrow'>
     <div class='alert alert-dark text-center fw-bold'>
         {{session('command')}}
     </div>
     </div>
 @endif 
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        @foreach ($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif

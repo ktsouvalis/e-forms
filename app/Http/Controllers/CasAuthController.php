@@ -6,6 +6,7 @@ use App\Models\School;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class CasAuthController extends Controller
@@ -19,6 +20,7 @@ class CasAuthController extends Controller
         \phpCAS::client(SAML_VERSION_1_1, 'sso.sch.gr', 443, '');
 
         // Disable SSL validation (only for testing!)
+
         \phpCAS::setNoCasServerValidation();
 
         // Handle logout requests
@@ -71,10 +73,17 @@ class CasAuthController extends Controller
             }
             
         }
-        // Check if user is a school
+        // Check if user is a school there is an l in the attributes
         if (isset($attributes['l'])) {
+            // Check if school tries to login with sch credentials
             if(!is_numeric($attributes['uid'])) {
-                return redirect()->route('index')->withErrors(['error' => 'Συνδεθείτε με τους κωδικούς του Myschool.']);
+                 Log::channel('login_as')->warning('Non-numeric UID attempted during login.', [
+                    'uid' => $attributes['uid'],
+                    'l' => $attributes['l'],
+                    'ip' => $attributes['clientIpAddress'],
+                    'time' => now(),
+                ]);
+                return redirect()->route('index')->withErrors(['error' => 'Για τη σύνδεση παρακαλούμε να χρησιμοποιήσετε τους κωδικούς του Myschool.']);
             }
             //extract the school name from the DN
             // $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
@@ -82,7 +91,6 @@ class CasAuthController extends Controller
             // $end = strpos($dn, ',');
             // $length = $end - $start;
             // $value = substr($dn, $start, $length);
-
             try{
                 $school = School::where('code', $attributes['uid'])->firstOrFail();
                 Auth::guard('school')->login($school);

@@ -473,15 +473,13 @@
                     </form> --}}
                     Η αίτηση έχει πρωτοκολληθεί με αριθ. πρωτ.<strong> {{$secondment->protocol_nr}} - {{$secondment->protocol_date}} </strong>στο Πρωτόκολλο του ΠΥΣΠΕ Αχαΐας.
                 </div>
-                @if(!in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ60.50', 'ΠΕ70.50', 'ΠΕ71' ]))
-                    <div class="text-center">
-                        <form action="{{route('secondments.revoke', ['secondment'=>$secondment])}}" method="post">
-                            @csrf
-                                <button class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke" onclick="return confirm('Θα πραγματοποιηθεί διαγραφή της αίτησης και ανάκληση από το Πρωτόκολλο του ΠΥΣΠΕ. Είστε βέβαιοι;')">Ανάκληση</button>
-                        </form>
-                            Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
-                    </div>
-                @endif
+                <div class="text-center">
+                    <form action="{{route('secondments.revoke', ['secondment'=>$secondment])}}" method="post">
+                    @csrf
+                        <button class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke" onclick="return confirm('Θα πραγματοποιηθεί διαγραφή της αίτησης και ανάκληση από το Πρωτόκολλο του ΠΥΣΠΕ. Είστε βέβαιοι;')">Ανάκληση</button>
+                    </form>
+                    Πατώντας ανάκληση, η αίτηση θα ακυρωθεί.
+                </div>
             @else
                 <div class="text-center">
                     <ul><li>Με την Οριστική Υποβολή, η αίτηση Πρωτοκολλείται αυτόματα στο Πρωτόκολλο του ΠΥΣΠΕ προκειμένου να προχωρήσει η διαδικασία μοριοδότησης.</li>

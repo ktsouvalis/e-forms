@@ -38,6 +38,7 @@ use App\Http\Controllers\ConsultantController;
 use App\Http\Controllers\SecondmentController;
 use App\Http\Controllers\FilecollectController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ResetMicroappsController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\LeavesController;
@@ -264,6 +265,18 @@ Route::group(['prefix' =>'operations'], function(){
     Route::post('/set_menu_priority', [OperationController::class,'setMenuPriority'])->name('operations.set_menu_priority');
 });
 
+Route::view('/reset_microapps', 'reset_microapps');
+
+///// RESET MICROAPPS /////
+Route::post('/reset_microapp/{microapp}', [ResetMicroappsController::class, 'reset_microapp'])->name('reset_microapp');
+
+Route::get('/download_files/{microapp}', [ResetMicroappsController::class, 'download_files'])->name('download_files');
+
+Route::get('/download_excel/{microapp}', [ResetMicroappsController::class, 'download_excel'])->name('download_excel');
+
+Route::get('/delete_files/{microapp}', [ResetMicroappsController::class, 'delete_files'])->name('delete_files');
+
+Route::get('/reset_db/{microapp}', [ResetMicroappsController::class, 'reset_db'])->name('reset_db');
 //////// MANAGING MICROAPPS ROUTES
 Route::resource('microapps', MicroappController::class)->middleware('auth');
 

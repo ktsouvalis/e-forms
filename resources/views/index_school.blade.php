@@ -1,198 +1,464 @@
 <x-layout_school>
     @php
+        
+        
+        function formatDeadline($deadline) {
+            if (!$deadline) return '';
+            $date = \Carbon\Carbon::parse($deadline);
+            return $date->format('d/m/Y');
+        }
+        
+        function getDaysRemaining($deadline) {
+            if (!$deadline) return null;
+            $date = \Carbon\Carbon::parse($deadline);
+            $now = \Carbon\Carbon::now();
+            $days = $now->diffInDays($date, false);
+            
+            if ($days < 0) {
+                return 'Έληξε πριν ' . abs($days) . ' ημέρες';
+            } else if ($days == 0) {
+                return 'Λήγει σήμερα!';
+            } else if ($days == 1) {
+                return 'Λήγει αύριο';
+            } else {
+                return 'Απομένουν ' . $days . ' ημέρες';
+            }
+        }
+        
+        // List of microapps without deadline
+        $noDeadlineMicroapps = ['tickets', 'outings', 'internal_rules', 'timetables'];
+    @endphp
+
+    @push('title')
+        <title>Καρτέλα {{auth('school')->user()->name ?? 'Σχολείου'}}</title>
+    @endpush
+
+    <!-- Add Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-  @endphp
-    <body class="bg-light">
+    <style>
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .status-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .compact-card {
+            height: 180px; /* Smaller height for compact cards */
+        }
+        .compact-card .card-icon {
+            width: 50px;
+            height: 50px;
+        }
+        .compact-card .card-title {
+            font-size: 1rem;
+        }
+    </style>
+
+    <body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen">
     
-    <div class="row hidden-md-up justify-content-center">
-        @auth('school')
+    @auth('school')
         @php 
             $school = Illuminate\Support\Facades\Auth::guard('school')->user();
-            $active_microapp=false;
+            $active_microapp = false;
             if($school->microapps->count()){
                 foreach($school->microapps as $microapp){
                     if($microapp->microapp->visible){
-                    $active_microapp = true;
-                    break;
+                        $active_microapp = true;
+                        break;
                     }
                 } 
             }
             
-            $active_filecollect=false;
+            $active_filecollect = false;
             if($school->filecollects->count()){
                 foreach($school->filecollects as $filecollect){
                     if($filecollect->filecollect->visible){
-                    $active_filecollect=true;
-                    break;
+                        $active_filecollect = true;
+                        break;
                     }
                 } 
             }
-        @endphp
-                        
-            @push('title')
-                <title>Καρτέλα {{$school->name}}</title>
-            @endpush
             
+            // Separate microapps with and without deadlines
+            $microappsWithDeadline = [];
+            $microappsWithoutDeadline = [];
+            
+            foreach ($school->microapps as $one_microapp) {
+                if ($one_microapp->microapp->visible) {
+                    if (in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || 
+                        empty($one_microapp->microapp->closes_at)) {
+                        $microappsWithoutDeadline[] = $one_microapp;
+                    } else {
+                        $microappsWithDeadline[] = $one_microapp;
+                    }
+                }
+            }
+        @endphp
 
-            <div class="py-5">
-                <div class="container">
-                    <div class="row hidden-md-up justify-content-center">
-                        {{--
-                        @foreach ($school->forms as $one_form)
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:{{$one_form->form->color}}; text-align:center;">
-                                @php
-                                    $ofi = $one_form->form->id; 
-                                @endphp
-                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/school_view/$ofi")}}">
-                                <div class="h5 card-title {{$one_form->form->icon}}"></div>
-                                <div>{{$one_form->form->name}}</div>
-                                </a> 
-                            </div>
-                        </div>  
-                        <hr>
-                        @endforeach --}}
-                        @if($active_microapp or $active_filecollect)
-                        <div class="container h-100">
-                            <div class="row h-100 align-items-center">
-                            <div class="col-12 text-center">
-                                <h3 class="fw-light">Υποβολή Στοιχείων</h3>
-                            </div>
-                            </div>
-                        </div>
-                        @endif
-                        @foreach ($school->microapps as $one_microapp)
-                        @if($one_microapp->microapp->visible)                      
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:{{$one_microapp->microapp->color}}; text-align:center;">
-                                @php $resource = substr($one_microapp->microapp->url, 1); @endphp
-                                {{-- <a  class="text-dark" style="text-decoration:none;" href="{{url($one_microapp->microapp->url."/create")}}"> --}}
-                                <a  class="text-dark" style="text-decoration:none;" href="{{route("$resource.create")}}">
-                                <div class="h5 card-title {{$one_microapp->microapp->icon}}"></div>
-                                <div>{{$one_microapp->microapp->name}}</div>
-                                </a> 
-                            </div>
-                        </div> 
-                        @endif
-                        @endforeach
-                        @foreach($school->filecollects as $filecollect)
-                            @php
-                                $ffi = $filecollect->filecollect->id
-                            @endphp
-                            @if($filecollect->filecollect->visible)
-                            <div class="col-md-4 py-2" style="max-width:15rem">
-                                <div class="card py-5" style="background-color:#4bac97; text-align:center;">
-                                    <a  class="text-dark" style="text-decoration:none;" href="{{url("/filecollects/$ffi")}}">
-                                    <div class="h5 card-title fa-solid fa-file-pdf"></div>
-                                    <div>{{$filecollect->filecollect->name}}</div>
-                                    </a> 
-                                </div>
-                            </div>
-                            @endif
-                        @endforeach
-                        @if(!(count($school->fileshares)==0))
-                        <hr>
-                        <div class="container h-100">
-                            <div class="row h-100 align-items-center">
-                            <div class="col-12 text-center">
-                                <h3 class="fw-light">Παραλαβή Εγγράφων</h3>
-                            </div>
-                            </div>
-                        </div>
-                        @endif
-                        @foreach($school->fileshares as $fileshare)
-                            @php
-                                $ffi = $fileshare->fileshare->id
-                            @endphp
-                            <div class="col-md-4 py-2" style="max-width:15rem">
-                                <div class="card py-5" style="background-color:#00bfff; text-align:center;">
-                                    <a  class="text-dark" style="text-decoration:none;" href="{{url("/fileshares/$ffi")}}">
-                                    <div class="h5 card-title fa-solid fa-file-pdf"></div>
-                                    <div>{{$fileshare->fileshare->name}}</div>
-                                    </a> 
-                                </div>
-                            </div>
-                        @endforeach
-                        <hr>
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">
-                                <a class="text-dark" href="{{url('/slogout')}}">
-                                <div class="h5 card-title fa-solid fa-arrow-right-from-bracket"></div>
-                                <div>Αποσύνδεση</div>
-                                </a> 
-                            </div>
-                        </div> 
+        <!-- Header -->
+        <div class="gradient-bg text-white py-8 mb-8">
+            <div class="container mx-auto px-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <i class="fas fa-school mr-3"></i>
+                            {{$school->name}}
+                        </h1>
+                        <p class="text-blue-100 text-lg">Ηλεκτρονικές Φόρμες</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-blue-100 text-sm">Σήμερα</div>
+                        <div class="text-xl font-semibold">{{ now()->format('d/m/Y') }}</div>
                     </div>
                 </div>
             </div>
-        @else
-            <!-- Login Form for non-authenticated schools -->
-            <div class="container py-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-4">
-                                    <img src="{{ asset('favicon/android-chrome-512x512.png') }}" alt="Logo" width="80" class="mb-3">
-                                    <h4 class="card-title">Σύνδεση Σχολείου</h4>
-                                </div>
-                                
-                                @if(session('error'))
-                                    <div class="alert alert-danger">
-                                        {{ session('error') }}
-                                    </div>
-                                @endif
-                                
-                                <form method="POST" action="{{ route('school.login') }}">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label for="username" class="form-label">7ψήφιος Κωδικός Σχολείου</label>
-                                        <input type="text" class="form-control @error('username') is-invalid @enderror" 
-                                               id="username" name="username" required>
-                                        @error('username')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Κωδικός Πρόσβασης</label>
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                               id="password" name="password" required>
-                                        @error('password')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-6 offset-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                                <label class="form-check-label" for="remember">
-                                                    {{ __('Μόνιμη Σύνδεση') }}
-                                                </label>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container mx-auto px-6 pb-8">
+            @if($active_microapp or $active_filecollect)
+                <!-- Microapps without deadline (compact section) -->
+                @if(count($microappsWithoutDeadline) > 0)
+                <div class="mb-8">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Υποβολή Σχολείου</h2>
+                        <p class="text-gray-600">Αιτήματα που υποβάλλει το Σχολείο για βοήθεια ή έγκριση.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+                        @foreach ($microappsWithoutDeadline as $one_microapp)
+                            @php 
+                                $resource = substr($one_microapp->microapp->url, 1);
+                                $submissionExists = false; // Assuming no submission exists for no deadline microapps
+                                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                            @endphp
+                            <div class="card-hover">
+                                <div class="bg-white rounded-lg shadow-sm border border-gray-200 compact-card relative overflow-hidden">
+                                    <a href="{{route("$resource.create")}}" class="block h-full">
+                                        <div class="p-4 h-full flex flex-col">
+                                            <!-- Icon and Title Section -->
+                                            <div class="text-center mb-4">
+                                                <div class="rounded-full card-icon flex items-center justify-center mx-auto mb-3 shadow" style="background: {{$one_microapp->microapp->color}};">
+                                                    <i class="{{$one_microapp->microapp->icon}} text-xl {{$status['text']}}"></i>
+                                                </div>
+                                                <h3 class="card-title font-semibold text-gray-800 hover:text-blue-600 transition-colors">
+                                                    {{$one_microapp->microapp->name}}
+                                                </h3>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="d-grid gap-2">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-sign-in-alt me-2"></i>Σύνδεση
-                                        </button>
-                                    </div>
-                                </form>
-                                
-                                <div class="text-center mt-3">
-                                    <small class="text-muted">
-                                        Αν έχετε ξεχάσει τον κωδικό σας, επικοινωνήστε με την υποστήριξη.
-                                    </small>
+                                    </a>
                                 </div>
                             </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Submissions Section with Deadlines -->
+                <div class="mb-12">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Υποβολή Στοιχείων</h2>
+                        <p class="text-gray-600">Στοιχεία που ζητά η Διεύθυνση με προθεσμία.</p>
+                    </div>
+
+                    <!-- Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        @foreach ($microappsWithDeadline as $one_microapp)
+                            @php 
+                                $resource = substr($one_microapp->microapp->url, 1);
+                                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $school);
+                                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                            @endphp
+                            <div class="card-hover h-100">
+                                <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full relative overflow-hidden">
+                                    <!-- Status Badge -->
+                                    <div class="absolute top-4 right-4 z-10">
+                                        <span class="{{$status['color']}} {{$status['text']}} px-3 py-1 rounded-full text-xs font-semibold status-pulse">
+                                            {{$status['badge']}}
+                                        </span>
+                                    </div>
+
+                                    <a href="{{route("$resource.create")}}" class="block h-full">
+                                        <div class="p-6 h-full flex flex-col">
+                                            <!-- Icon and Title Section -->
+                                            <div class="text-center mb-6">
+                                                <div class="{{$status['color']}} rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                                    <i class="{{$one_microapp->microapp->icon}} text-3xl {{$status['text']}}"></i>
+                                                </div>
+                                                <h3 class="text-xl font-semibold text-gray-800 mb-2 hover:text-blue-600 transition-colors">
+                                                    {{$one_microapp->microapp->name}}
+                                                </h3>
+                                            </div>
+                                            
+                                            <!-- Deadline Information -->
+                                            @if(isset($one_microapp->microapp->closes_at))
+                                                <div class="border-t border-gray-100 pt-4 mt-auto">
+                                                    <div class="space-y-3">
+                                                        <div class="flex items-center justify-between text-sm">
+                                                            <span class="text-gray-500 flex items-center">
+                                                                <i class="fas fa-calendar-alt mr-2"></i>
+                                                                Προθεσμία:
+                                                            </span>
+                                                            <span class="font-semibold text-gray-700">{{formatDeadline($one_microapp->microapp->closes_at)}}</span>
+                                                        </div>
+                                                        <div class="flex items-center justify-between text-sm">
+                                                            <span class="text-gray-500 flex items-center">
+                                                                <i class="fas fa-clock mr-2"></i>
+                                                                Κατάσταση:
+                                                            </span>
+                                                            <span class="font-semibold {{$status['status'] === 'overdue' ? 'text-red-600' : ($status['status'] === 'urgent' ? 'text-orange-600' : 'text-gray-700')}}">
+                                                                {{getDaysRemaining($one_microapp->microapp->closes_at)}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <!-- Progress indicator -->
+                                            <div class="{{isset($one_microapp->microapp->closes_at) ? 'mt-4' : 'mt-auto'}} text-center">
+                                                @if($submissionExists)
+                                                    <div class="flex items-center justify-center text-green-600 text-sm font-semibold bg-green-50 py-2 px-4 rounded-lg">
+                                                        <i class="fas fa-check-circle mr-2"></i>
+                                                        Ολοκληρώθηκε
+                                                    </div>
+                                                @else
+                                                    <div class="flex items-center justify-center text-gray-500 text-sm bg-gray-50 py-2 px-4 rounded-lg">
+                                                        <i class="fas fa-clock mr-2"></i>
+                                                        Εκκρεμεί
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        @foreach($school->filecollects as $filecollect)
+                            @if($filecollect->filecollect->visible)
+                                @php
+                                    $ffi = $filecollect->filecollect->id;
+                                    $submissionExists = false;
+                                    $status = App\Http\Controllers\SchoolController::getSubmissionStatus($filecollect->filecollect, $submissionExists);
+                                @endphp
+                                <div class="card-hover h-100">
+                                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full relative overflow-hidden">
+                                        <!-- Status Badge -->
+                                        <div class="absolute top-4 right-4 z-10">
+                                            <span class="{{$status['color']}} {{$status['text']}} px-3 py-1 rounded-full text-xs font-semibold status-pulse">
+                                                {{$status['badge']}}
+                                            </span>
+                                        </div>
+
+                                        <a href="{{url("/filecollects/$ffi")}}" class="block h-full">
+                                            <div class="p-6 h-full flex flex-col">
+                                                <!-- Icon and Title Section -->
+                                                <div class="text-center mb-6">
+                                                    <div class="{{$status['color']}} rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                                        <i class="fa-solid fa-file-pdf text-3xl {{$status['text']}}"></i>
+                                                    </div>
+                                                    <h3 class="text-xl font-semibold text-gray-800 mb-2 hover:text-blue-600 transition-colors">
+                                                        {{$filecollect->filecollect->name}}
+                                                    </h3>
+                                                </div>
+                                                
+                                                <!-- Deadline Information -->
+                                                @if(isset($filecollect->filecollect->deadline))
+                                                    <div class="border-t border-gray-100 pt-4 mt-auto">
+                                                        <div class="space-y-3">
+                                                            <div class="flex items-center justify-between text-sm">
+                                                                <span class="text-gray-500 flex items-center">
+                                                                    <i class="fas fa-calendar-alt mr-2"></i>
+                                                                    Προθεσμία:
+                                                                </span>
+                                                                <span class="font-semibold text-gray-700">{{formatDeadline($filecollect->filecollect->deadline)}}</span>
+                                                            </div>
+                                                            <div class="flex items-center justify-between text-sm">
+                                                                <span class="text-gray-500 flex items-center">
+                                                                    <i class="fas fa-clock mr-2"></i>
+                                                                    Κατάσταση:
+                                                                </span>
+                                                                <span class="font-semibold {{$status['status'] === 'overdue' ? 'text-red-600' : ($status['status'] === 'urgent' ? 'text-orange-600' : 'text-gray-700')}}">
+                                                                    {{getDaysRemaining($filecollect->filecollect->deadline)}}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                <!-- Progress indicator -->
+                                                <div class="{{isset($filecollect->filecollect->deadline) ? 'mt-4' : 'mt-auto'}} text-center">
+                                                    @if($submissionExists)
+                                                        <div class="flex items-center justify-center text-green-600 text-sm font-semibold bg-green-50 py-2 px-4 rounded-lg">
+                                                            <i class="fas fa-check-circle mr-2"></i>
+                                                            Ολοκληρώθηκε
+                                                        </div>
+                                                    @else
+                                                        <div class="flex items-center justify-center text-gray-500 text-sm bg-gray-50 py-2 px-4 rounded-lg">
+                                                            <i class="fas fa-upload mr-2"></i>
+                                                            Εκκρεμεί αρχείο
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            @if(!(count($school->fileshares)==0))
+                <!-- Document Retrieval Section -->
+                <div class="mb-12">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Παραλαβή Εγγράφων</h2>
+                        <p class="text-gray-600">Έγγραφα διαθέσιμα για λήψη</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach($school->fileshares as $fileshare)
+                            @php
+                                $ffi = $fileshare->fileshare->id;
+                            @endphp
+                            <div class="card-hover h-100">
+                                <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full">
+                                    <a href="{{url("/fileshares/$ffi")}}" class="block h-full">
+                                        <div class="p-6 h-full flex flex-col">
+                                            <!-- Icon and Title Section -->
+                                            <div class="text-center mb-6">
+                                                <div class="bg-cyan-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                                    <i class="fa-solid fa-file-pdf text-3xl text-white"></i>
+                                                </div>
+                                                <h3 class="text-xl font-semibold text-gray-800 mb-2 hover:text-cyan-600 transition-colors">
+                                                    {{$fileshare->fileshare->name}}
+                                                </h3>
+                                            </div>
+                                            
+                                            <!-- Status Section -->
+                                            <div class="mt-auto text-center">
+                                                <div class="flex items-center justify-center text-cyan-600 text-sm font-semibold bg-cyan-50 py-2 px-4 rounded-lg">
+                                                    <i class="fas fa-download mr-2"></i>
+                                                    Διαθέσιμο για λήψη
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- Logout Section -->
+            <div class="text-center">
+                <div class="max-w-sm mx-auto">
+                    <div class="card-hover">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <a href="{{url('/slogout')}}" class="block p-6 text-center hover:bg-red-50 transition-colors rounded-lg">
+                                <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 hover:bg-red-100 transition-colors">
+                                    <i class="fa-solid fa-arrow-right-from-bracket text-2xl text-gray-600 hover:text-red-600 transition-colors"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-800 hover:text-red-600 transition-colors">
+                                    Αποσύνδεση
+                                </h3>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        @endauth
-        
         </div>
+
+    @else
+        <!-- Login Form for non-authenticated schools -->
+        <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <div class="text-center mb-8">
+                        <img src="{{ asset('favicon/android-chrome-512x512.png') }}" alt="Logo" class="mx-auto h-20 w-20 mb-4">
+                        <h2 class="text-3xl font-bold text-gray-900">Σύνδεση Σχολείου</h2>
+                        <p class="mt-2 text-gray-600">Εισάγετε τα στοιχεία σας για πρόσβαση</p>
+                    </div>
+                    
+                    @if(session('error'))
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    
+                    <form method="POST" action="{{ route('school.login') }}" class="space-y-6">
+                        @csrf
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">7ψήφιος Κωδικός Σχολείου</label>
+                            <input type="text" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('username') border-red-500 @enderror" 
+                                   id="username" 
+                                   name="username" 
+                                   required
+                                   placeholder="Εισάγετε τον κωδικό σας">
+                            @error('username')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Κωδικός Πρόσβασης</label>
+                            <input type="password" 
+                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-500 @enderror" 
+                                   id="password" 
+                                   name="password" 
+                                   required
+                                   placeholder="Εισάγετε τον κωδικό πρόσβασης">
+                            @error('password')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" 
+                                   id="remember" 
+                                   name="remember" 
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="remember" class="ml-2 block text-sm text-gray-700">
+                                Μόνιμη Σύνδεση
+                            </label>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200 font-semibold">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Σύνδεση
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-6">
+                        <p class="text-sm text-gray-500">
+                            Αν έχετε ξεχάσει τον κωδικό σας, επικοινωνήστε με την υποστήριξη.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endauth
+
+    </body>
 </x-layout_school>

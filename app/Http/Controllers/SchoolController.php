@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Throwable;
+use App\Models\Month;
 use App\Models\School;
 use App\Models\Teacher;
 use App\Models\Municipality;
@@ -429,4 +430,60 @@ class SchoolController extends Controller
         $directors_array = array_values($directors_array);
         return $directors_array;
     }
+    // Helper function to get school's submission status
+    public static function getSubmissionStatus($item, $submissionExists = false) {
+            if (!isset($item->closes_at) || empty($item->closes_at)) {
+                return ['status' => 'no-deadline', 'color' => 'bg-gray-500', 'text' => 'text-white', 'badge' => 'Χωρίς προθεσμία'];
+            }
+            
+            $deadline = \Carbon\Carbon::parse($item->closes_at);
+            $now = \Carbon\Carbon::now();
+            $daysUntilDeadline = $now->diffInDays($deadline, false);
+            
+            if ($submissionExists) {
+                return ['status' => 'completed', 'color' => 'bg-green-500', 'text' => 'text-white', 'badge' => 'Ολοκληρώθηκε'];
+            }
+            
+            if ($deadline->isPast()) {
+                return ['status' => 'overdue', 'color' => 'bg-red-500', 'text' => 'text-white', 'badge' => 'Εκπρόθεσμη'];
+            }
+            
+            if ($daysUntilDeadline <= 3) {
+                return ['status' => 'urgent', 'color' => 'bg-orange-500', 'text' => 'text-white', 'badge' => 'Επείγουσα'];
+            }
+            
+            return ['status' => 'pending', 'color' => 'bg-blue-500', 'text' => 'text-white', 'badge' => 'Εκκρεμεί'];
+        }
+
+        public static function getSubmissionExists($microapp, School $school) {
+            
+            if($microapp->url == '/all_day_school'){
+                $active_month = Month::getActiveMonth();
+                $vmonth = $school->vmonth;
+                $accepts = $microapp->accepts; 
+                $name = $microapp->name;
+                if(!$school->vmonth or $school->vmonth->vmonth == 0){
+                    $month_to_store = $active_month->id;
+                }
+                else{
+                    $month_to_store = $vmonth->vmonth;
+                }
+                $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first();
+                if($old_data){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+                
+            } 
+
+            if($microapp->url == '/enrollments'){
+                if($school->enrollments){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
 }

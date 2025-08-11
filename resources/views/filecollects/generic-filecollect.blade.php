@@ -182,7 +182,7 @@
                 <div class="card-header bg-info bg-opacity-10 border-info">
                     <h5 class="card-title mb-0">
                         <i class="bi bi-info-circle me-2"></i>
-                        Περιγραφή Συλλογής
+                        Περιγραφή
                     </h5>
                 </div>
                 <div class="card-body">

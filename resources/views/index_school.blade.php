@@ -8,22 +8,7 @@
             return $date->format('d/m/Y');
         }
         
-        function getDaysRemaining($deadline) {
-            if (!$deadline) return null;
-            $date = \Carbon\Carbon::parse($deadline);
-            $now = \Carbon\Carbon::now();
-            $days = $now->diffInDays($date, false);
-            
-            if ($days < 0) {
-                return 'Έληξε πριν ' . abs($days) . ' ημέρες';
-            } else if ($days == 0) {
-                return 'Λήγει σήμερα!';
-            } else if ($days == 1) {
-                return 'Λήγει αύριο';
-            } else {
-                return 'Απομένουν ' . $days . ' ημέρες';
-            }
-        }
+        
         
         // List of microapps without deadline
         $noDeadlineMicroapps = ['tickets', 'outings', 'internal_rules', 'timetables'];
@@ -139,7 +124,7 @@
                 <div class="mb-8">
                     <div class="text-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">Υποβολή Σχολείου</h2>
-                        <p class="text-gray-600">Αιτήματα που υποβάλλει το Σχολείο για βοήθεια ή έγκριση.</p>
+                        <p class="text-gray-600">Αιτήματα που υποβάλλει το Σχολείο για βοήθεια ή έγκριση και δεν έχουν συγκεκριμένη προθεσμία.</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
@@ -155,12 +140,15 @@
                                         <div class="p-4 h-full flex flex-col">
                                             <!-- Icon and Title Section -->
                                             <div class="text-center mb-4">
-                                                <div class="rounded-full card-icon flex items-center justify-center mx-auto mb-3 shadow" style="background: {{$one_microapp->microapp->color}};">
-                                                    <i class="{{$one_microapp->microapp->icon}} text-xl {{$status['text']}}"></i>
+                                                <div class="{{$status['color']}} rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg" style="background: #868484ff">
+                                                    <i class="{{$one_microapp->microapp->icon}} text-3xl {{$status['text']}}"></i>
                                                 </div>
-                                                <h3 class="card-title font-semibold text-gray-800 hover:text-blue-600 transition-colors">
+                                                <!-- <div class="rounded-full card-icon flex items-center justify-center mx-auto mb-3 shadow" style="background: #868484ff">
+                                                    <i class="{{$one_microapp->microapp->icon}} text-xl {{$status['text']}}"></i>
+                                                </div> -->
+                                                <h2 class="text-xl font-semibold text-gray-800 mb-2 hover:text-blue-600 transition-colors">
                                                     {{$one_microapp->microapp->name}}
-                                                </h3>
+                                                </h2>
                                             </div>
                                         </div>
                                     </a>
@@ -224,7 +212,7 @@
                                                                 Κατάσταση:
                                                             </span>
                                                             <span class="font-semibold {{$status['status'] === 'overdue' ? 'text-red-600' : ($status['status'] === 'urgent' ? 'text-orange-600' : 'text-gray-700')}}">
-                                                                {{getDaysRemaining($one_microapp->microapp->closes_at)}}
+                                                                {{App\Http\Controllers\SchoolController::getDaysRemaining($one_microapp->microapp->closes_at)}}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -255,7 +243,7 @@
                             @if($filecollect->filecollect->visible)
                                 @php
                                     $ffi = $filecollect->filecollect->id;
-                                    $submissionExists = false;
+                                    $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($filecollect, $school);
                                     $status = App\Http\Controllers\SchoolController::getSubmissionStatus($filecollect->filecollect, $submissionExists);
                                 @endphp
                                 <div class="card-hover h-100">
@@ -280,7 +268,7 @@
                                                 </div>
                                                 
                                                 <!-- Deadline Information -->
-                                                @if(isset($filecollect->filecollect->deadline))
+                                                @if(isset($filecollect->filecollect->closes_at))
                                                     <div class="border-t border-gray-100 pt-4 mt-auto">
                                                         <div class="space-y-3">
                                                             <div class="flex items-center justify-between text-sm">
@@ -288,7 +276,7 @@
                                                                     <i class="fas fa-calendar-alt mr-2"></i>
                                                                     Προθεσμία:
                                                                 </span>
-                                                                <span class="font-semibold text-gray-700">{{formatDeadline($filecollect->filecollect->deadline)}}</span>
+                                                                <span class="font-semibold text-gray-700">{{formatDeadline($filecollect->filecollect->closes_at)}}</span>
                                                             </div>
                                                             <div class="flex items-center justify-between text-sm">
                                                                 <span class="text-gray-500 flex items-center">
@@ -296,7 +284,7 @@
                                                                     Κατάσταση:
                                                                 </span>
                                                                 <span class="font-semibold {{$status['status'] === 'overdue' ? 'text-red-600' : ($status['status'] === 'urgent' ? 'text-orange-600' : 'text-gray-700')}}">
-                                                                    {{getDaysRemaining($filecollect->filecollect->deadline)}}
+                                                                    {{App\Http\Controllers\SchoolController::getDaysRemaining($filecollect->filecollect->closes_at)}}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -304,7 +292,7 @@
                                                 @endif
 
                                                 <!-- Progress indicator -->
-                                                <div class="{{isset($filecollect->filecollect->deadline) ? 'mt-4' : 'mt-auto'}} text-center">
+                                                <div class="{{isset($filecollect->filecollect->closes_at) ? 'mt-4' : 'mt-auto'}} text-center">
                                                     @if($submissionExists)
                                                         <div class="flex items-center justify-center text-green-600 text-sm font-semibold bg-green-50 py-2 px-4 rounded-lg">
                                                             <i class="fas fa-check-circle mr-2"></i>

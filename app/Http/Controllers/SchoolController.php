@@ -420,7 +420,7 @@ class SchoolController extends Controller
                 }
             }
         }
-    
+
         // Second pass: Remove rows marked for deletion
         foreach ($rowsToDelete as $index) {
             unset($directors_array[$index]);
@@ -430,6 +430,7 @@ class SchoolController extends Controller
         $directors_array = array_values($directors_array);
         return $directors_array;
     }
+    
     // Helper function to get school's submission status
     public static function getSubmissionStatus($item, $submissionExists = false) {
             if (!isset($item->closes_at) || empty($item->closes_at)) {
@@ -437,7 +438,10 @@ class SchoolController extends Controller
             }
             
             $deadline = \Carbon\Carbon::parse($item->closes_at);
+            
             $now = \Carbon\Carbon::now();
+            //$now = \Carbon\Carbon::create(2025, 9, 25, 15, 30, 0); // YYYY, MM, DD, HH, MM, SS
+
             $daysUntilDeadline = $now->diffInDays($deadline, false);
             
             if ($submissionExists) {
@@ -449,41 +453,82 @@ class SchoolController extends Controller
             }
             
             if ($daysUntilDeadline <= 3) {
-                return ['status' => 'urgent', 'color' => 'bg-orange-500', 'text' => 'text-white', 'badge' => 'Επείγουσα'];
+                return ['status' => 'urgent', 'color' => 'bg-orange-500', 'text' => 'text-white', 'badge' => 'Λήγει σύντομα'];
             }
             
-            return ['status' => 'pending', 'color' => 'bg-blue-500', 'text' => 'text-white', 'badge' => 'Εκκρεμεί'];
+            return ['status' => 'pending', 'color' => 'bg-blue-500', 'text' => 'text-white', 'badge' => 'Προς υποβολή'];
         }
 
-        public static function getSubmissionExists($microapp, School $school) {
-            
-            if($microapp->url == '/all_day_school'){
-                $active_month = Month::getActiveMonth();
-                $vmonth = $school->vmonth;
-                $accepts = $microapp->accepts; 
-                $name = $microapp->name;
-                if(!$school->vmonth or $school->vmonth->vmonth == 0){
-                    $month_to_store = $active_month->id;
-                }
-                else{
-                    $month_to_store = $vmonth->vmonth;
-                }
-                $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first();
-                if($old_data){
-                    return true;
-                }
-                else{
-                    return false;
-                }
-                
-            } 
+        public static function getSubmissionExists($microappOrFilecollect, School $school) {
+            if($microappOrFilecollect instanceof \App\Models\Microapp) {// Handle Microapps
+                $microapp = $microappOrFilecollect;
+                if($microapp->url == '/all_day_school'){
+                    $active_month = Month::getActiveMonth();
+                    $vmonth = $school->vmonth;
+                    $accepts = $microapp->accepts; 
+                    $name = $microapp->name;
+                    if(!$school->vmonth or $school->vmonth->vmonth == 0){
+                        $month_to_store = $active_month->id;
+                    }
+                    else{
+                        $month_to_store = $vmonth->vmonth;
+                    }
+                    $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first();
+                    if($old_data){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    }
+                    
+                } 
 
-            if($microapp->url == '/enrollments'){
-                if($school->enrollments){
-                    return true;
-                } else {
-                    return false;
+                if($microapp->url == '/enrollments'){
+                    if($school->enrollments){
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
+
+                if($microapp->url == '/immigrants'){
+                    if($school->immigrants){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            } else { // Handle Filecollects
+                $filecollect = $microappOrFilecollect;
+                $old_data = $school->filecollects()->where('filecollect_id', $filecollect->filecollect_id)->exists();
+                if($old_data) {
+                    return true; // Submission exists
+                } else {
+                    return false; // No submission found
+
+                }
+            }   
+        }
+
+        public static function getDaysRemaining($deadline) {
+            if (!$deadline) return null;
+            $date = \Carbon\Carbon::parse($deadline);
+            $now = \Carbon\Carbon::now()->startOfDay(); // Ensure we compare only the date part
+            $days = $now->diffInDays($date, false);
+            //dd($deadline, $days);
+            
+            if ($days < 0) {
+                if($days == -1) {
+                    return 'Έληξε πριν 1 ημέρα';
+                } else {
+                return 'Έληξε πριν ' . abs($days) . ' ημέρες';
+                }
+            } else if ($days == 0) {
+                return 'Λήγει σήμερα!';
+            } else if ($days == 1) {
+                return 'Λήγει αύριο';
+            } else {
+                return 'Απομένουν ' . $days . ' ημέρες';
             }
         }
 }

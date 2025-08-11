@@ -207,6 +207,7 @@ class FilecollectController extends Controller
             return back()->with('failure', 'Ο αριθμός των αρχείων προς υποβολή δεν πρέπει να ξεπερνάει το 5');
         $filecollect->fileMime = json_encode(array('pdf'=>$incomingFields['no_of_pdf_files'], 'docx'=>$incomingFields['no_of_docx_files'], 'xlsx'=>$incomingFields['no_of_xlsx_files']));
         $filecollect->name = $incomingFields['name'];
+        $filecollect->closes_at = $incomingFields['closes_at'];
         $filecollect->no_of_files = $incomingFields['no_of_pdf_files']+ $incomingFields['no_of_docx_files']+ $incomingFields['no_of_xlsx_files'];
         $edited=false;
             

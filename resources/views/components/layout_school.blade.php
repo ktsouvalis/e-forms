@@ -20,10 +20,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
+
     
     @stack('links')
   </head> 
-  <body>
+  <body style="background-color: #ebf1fcff;">
     @include('components.spinner')
   @auth('school')
   @php
@@ -38,7 +39,7 @@
     <div class="d-flex px-2"><a href='{{url('/slogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
   </div>
   @endpush
-  <div class="justify-content-auto" style="background-color: #fffde3;"> 
+  <div class="justify-content-auto" style="background-color: #dfdfdeff;"> 
     <div class="container">
       <div class="row justify-content-md-center">
         <div class="col">
@@ -78,40 +79,96 @@
   </div>
   @endif
 
-    @if(Illuminate\Support\Facades\Request::path()!='index_school')
-      <nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: rgb(13, 37, 54);">
-        @foreach ($user->microapps as $one_microapp)
-          @if($one_microapp->microapp->visible)
-            <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
-              <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
-              @php $resource = substr($one_microapp->microapp->url, 1); @endphp
-              {{-- <a href="{{url($one_microapp->microapp->url."/create")}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a> --}}
-              <a href="{{route($resource.'.create')}}" style=" text-decoration:none;" class="text-dark"> {{$one_microapp->microapp->name}}</a>
+@if(Illuminate\Support\Facades\Request::path()!='index_school')
+<nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: #f8f9fad7;">
+   
+  
+<!-- Microapps Section -->
+    @foreach ($user->microapps as $one_microapp)
+        @if($one_microapp->microapp->visible)
+            @php
+                $resource = substr($one_microapp->microapp->url, 1);
+                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $user);
+                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                $isNoDeadline = in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || empty($one_microapp->microapp->closes_at);
+                if($isNoDeadline){  // Map status to background colors
+                  $bgColor = '#b4b4b4ff';//$one_microapp->microapp->color; // Original color
+                } else {
+                  // Map status to background colors
+                  if ($status['status'] === 'overdue') {
+                      $bgColor = '#dc3545'; // Red
+                  } elseif ($status['status'] === 'urgent') {
+                      $bgColor = '#ffc107'; // Orange
+                  } elseif ($submissionExists) {
+                      $bgColor = '#28a745'; // Green
+                  } else {
+                      $bgColor = '#2196F3';//$one_microapp->microapp->color; // Original color
+                  }
+                }
+            @endphp
+
+            <div class="badge text-wrap py-2"
+                 style="width: 10rem;
+                        background-color: {{ $bgColor }};
+                        text-align: center;">
+                <div class="text-dark {{ $one_microapp->microapp->icon }}"></div> 
+                <a href="{{ route($resource.'.create') }}" style="text-decoration:none;" class="text-dark">
+                    {{ $one_microapp->microapp->name }}
+                </a>
             </div>
-          @endif
-        @endforeach
-        @foreach($user->fileshares as $fileshare)
-          @php
-              $ffi = $fileshare->fileshare->id
-          @endphp
-          <div class="badge text-wrap py-2" style="width: 10rem; background-color:#00bfff; text-align:center;">
+        @endif
+    @endforeach
+
+    @foreach($user->fileshares as $fileshare)
+        @php 
+            $ffi = $fileshare->fileshare->id;
+        @endphp
+        <div class="badge text-wrap py-2"
+             style="width: 10rem;
+                    background-color: #00bfff;
+                    text-align: center;">
             <div class="text-dark fa-solid fa-file-pdf"></div> 
-            <a href="{{url("/fileshares/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$fileshare->fileshare->name}}</a>
-          </div>
-        @endforeach
-        @foreach($user->filecollects as $filecollect)
-          @php
-              $ffi = $filecollect->filecollect->id
-          @endphp
-          @if($filecollect->filecollect->visible)
-          <div class="badge text-wrap py-2" style="width: 10rem; background-color:#4bac97; text-align:center;">
-            <div class="text-dark fa-solid fa-file-pdf"></div> 
-            <a href="{{url("/filecollects/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$filecollect->filecollect->name}}</a>
-          </div>
-          @endif
-        @endforeach
-    </nav>
-    @endif
+            <a href="{{ url("/fileshares/$ffi") }}" style="text-decoration:none;" class="text-dark">
+                {{ $fileshare->fileshare->name }}
+            </a>
+        </div>
+    @endforeach
+
+    @foreach($user->filecollects as $filecollect)
+        @if($filecollect->filecollect->visible)
+            @php 
+                $ffi = $filecollect->filecollect->id;
+                $resource = substr($one_microapp->microapp->url, 1);
+                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $user);
+                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                $isNoDeadline = in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || empty($one_microapp->microapp->closes_at);
+                
+                // Map status to background colors
+                if ($status['status'] === 'overdue') {
+                    $bgColor = '#dc3545'; // Red
+                } elseif ($status['status'] === 'urgent') {
+                    $bgColor = '#ffc107'; // Orange
+                } elseif ($submissionExists) {
+                    $bgColor = '#28a745'; // Green
+                } else {
+                    $bgColor = $one_microapp->microapp->color; // Original color
+                }
+            @endphp
+            <div class="badge text-wrap py-2"
+                 style="width: 10rem;
+                        background-color: {{ $bgColor }};
+                        text-align: center;">
+                <div class="text-dark fa-solid fa-file-pdf"></div> 
+                <a href="{{ url("/filecollects/$ffi") }}" style="text-decoration:none;" class="text-dark">
+                    {{ $filecollect->filecollect->name }}
+                </a>
+            </div>
+        @endif
+    @endforeach
+
+</nav>
+@endif
+
   @endauth
   @include('components/messages')
   <div class="container-xl px-2"> {{-- Custom container --}} 

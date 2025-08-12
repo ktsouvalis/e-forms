@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Models\SchoolUsernameMappings;
 
 class CasAuthController extends Controller
 {
@@ -36,7 +37,7 @@ class CasAuthController extends Controller
         $attributes = \phpCAS::getAttributes();
         //dd($user, $attributes);
         if (!$user) {
-            dd('User not authenticated1');
+        //    dd('User not authenticated1');
             // If user is not authenticated, redirect to login page
             return redirect()->route('index')->withErrors(['error' => 'Αποτυχία ταυτοποίησης.']);
         }
@@ -73,46 +74,130 @@ class CasAuthController extends Controller
             }
             
         }
-        // Check if user is a school there is an l in the attributes
+        // //////
+        // $attributes['l'] = 'ou=drgn,ou=schools,dc=sch,dc=gr'; // Example value for testing
+        // $attributes['uid'] = '9060169'; // Example value for testing 10dimpat
+        // $attributes['clientIpAddress'] = '90.60.123.456'; // Example value for testing
+
+
+        /////
+        // Check if user is a school. At schools there is an l in the attributes ////
+        //// If the user is a school, we will try to find it by the uid or l attribute. Schools can login with either their MySchool credentials (uid -> numeric) or their ΠΣΔ credentials (uid -> username).
         if (isset($attributes['l'])) {
             // Check if school tries to login with sch credentials
             if(!is_numeric($attributes['uid'])) {
-                //extract the school name from the DN
-                $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
-                $start = strpos($dn, '=') + 1;
-                $end = strpos($dn, ',');
-                $length = $end - $start;
-                $value = substr($dn, $start, $length);
+                // If uid is not numeric, it's a username for ΠΣΔ credentials
                 try{
-                    $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
-                    Auth::guard('school')->login($school);
-                    session()->regenerate();
-                    $school->logged_in_at = Carbon::now();   
-                    $school->save();
-                    Log::channel('login_as')->warning('Non-numeric UID attempted during login.', [
-                        'uid' => $attributes['uid'],
-                        'l' => $attributes['l'],
-                        'ip' => $attributes['clientIpAddress'],
-                        'time' => now(),
-                    ]);
-                    return redirect(url('/index_school'))->with('success',"$school->name καλωσήρθατε!");
-                } catch(\Exception $e) {
-                    // If school not found, redirect to index with error
-                    return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο. Δοκιμάστε να συνδεθείτε με τους κωδικούς του Myschool.']);
+                    $school = $this->findSchoolByUsername($attributes['uid']);
+                    //dd('school', $school);
+                    if ($school) {
+                        // Login successful with UID fallback
+                        $this->loginSchool($school, $attributes);
+                        Log::channel('login_as')->info('School login successful by username', [
+                            'school_code' => $school->code,
+                            'school_name' => $school->name,
+                            'uid' => $attributes['uid'],
+                            'l' => $attributes['l'],
+                            'time' => now(),
+                        ]);
+                        return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε!");
+                    } else {
+                        throw new \Exception('School not found by Username');
+                    }
+                } catch(\Exception $uidException) {
+                    // Login by username failed
+                        Log::channel('login_as')->error('Login by Username failed: ', [
+                            'school_code' => 'Δε βρέθηκε.',
+                            'school_name' => 'Δε βρέθηκε.',
+                            'uid' => $attributes['uid'],
+                            'l' => $attributes['l'],
+                            'time' => now()
+                        ]);
+                    //extract the school name from the attributes['l'] (DN format)
+                    $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
+                    $start = strpos($dn, '=') + 1;
+                    $end = strpos($dn, ',');
+                    $length = $end - $start;
+                    $value = substr($dn, $start, $length);
+                    try {
+                        
+                        // Second attempt: Search by extracted value from DN
+                        $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
+                        
+                        $this->loginSchool($school, $attributes);
+                        Log::channel('login_as')->info('Login by mail success: ', [
+                            'school_code' => $school->code,
+                            'school_name' => $school->name,
+                            'uid' => $attributes['uid'],
+                            'l' => $attributes['l'],
+                            'time' => now()
+                        ]);
+                        return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε!");
+        
+                    } catch(\Exception $e) {
+                        // Both methods failed
+                        Log::channel('login_as')->error('Login by username and mail failed: ', [
+                            'school_code' => 'Δε βρέθηκε.',
+                            'school_name' => 'Δε βρέθηκε.',
+                            'uid' => $attributes['uid'],
+                            'l' => $attributes['l'],
+                            'time' => now(),
+                        ]);
+                        // Redirect to index with error
+                        return redirect()->route('index')->withErrors([
+                            'error' => 'Δεν αναγνωρίστηκε το Σχολείο. Δοκιμάστε να συνδεθείτε με τους κωδικούς του Myschool.'
+                        ]);
+                    }
                 }
             }
-            
             try{
                 $school = School::where('code', $attributes['uid'])->firstOrFail();
-                Auth::guard('school')->login($school);
-                session()->regenerate();
-                $school->logged_in_at = Carbon::now();   
-                $school->save();
+                $this->loginSchool($school, $attributes);
+                Log::channel('login_as')->info('School login successful with MySchool credentials', [
+                    'school_code' => $school->code,
+                    'school_name' => $school->name,
+                    'uid' => $attributes['uid'],
+                    'ip' => $attributes['clientIpAddress'],
+                    'time' => now(),
+                ]);
                 return redirect(url('/index_school'))->with('success',"$school->name καλωσήρθατε!");
             } catch(\Exception $e) {
+                Log::channel('login_as')->error('School login failed with MySchool credentials', [
+                    'school_code' => $school->code,
+                    'school_name' => $school->name,
+                    'uid' => $attributes['uid'],
+                    'ip' => $attributes['clientIpAddress'],
+                    'time' => now(),
+                ]);
                 // If school not found, redirect to index with error
                 return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο.']);
             }
         }
+    }
+
+    private function findSchoolByUsername($username)
+    {
+        $school_code = SchoolUsernameMappings::getSchoolCodeByUsername($username);
+        if ($school_code) {
+            return School::where('code', $school_code)->first();    
+        } else {
+            return null;
+        }
+    }
+
+    private function loginSchool($school, $attributes)
+    {
+        Auth::guard('school')->login($school);
+        session()->regenerate();
+        $school->logged_in_at = Carbon::now();  
+        $school->save();
+        
+        Log::channel('login_as')->info('School login successful', [
+            // 'school_code' => $school->code,
+            // 'school_name' => $school->name,
+            // 'uid' => $attributes['uid'],
+            // 'ip' => $attributes['clientIpAddress'],
+            // 'time' => now(),
+        ]);
     }
 }

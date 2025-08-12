@@ -187,7 +187,7 @@ return [
         'login_as' => [
             'driver' => 'single',
             'path' => storage_path('logs/login_as.log'),
-            'level' => 'warning',
+            'level' => 'info',
         ],
     ],
 

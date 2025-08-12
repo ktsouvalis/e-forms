@@ -77,20 +77,31 @@ class CasAuthController extends Controller
         if (isset($attributes['l'])) {
             // Check if school tries to login with sch credentials
             if(!is_numeric($attributes['uid'])) {
-                 Log::channel('login_as')->warning('Non-numeric UID attempted during login.', [
-                    'uid' => $attributes['uid'],
-                    'l' => $attributes['l'],
-                    'ip' => $attributes['clientIpAddress'],
-                    'time' => now(),
-                ]);
-                return redirect()->route('index')->withErrors(['error' => 'Για τη σύνδεση παρακαλούμε να χρησιμοποιήσετε τους κωδικούς του Myschool.']);
+                //extract the school name from the DN
+                $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
+                $start = strpos($dn, '=') + 1;
+                $end = strpos($dn, ',');
+                $length = $end - $start;
+                $value = substr($dn, $start, $length);
+                try{
+                    $school = School::where('mail', 'like', '%' . $value . '%')->firstOrFail();
+                    Auth::guard('school')->login($school);
+                    session()->regenerate();
+                    $school->logged_in_at = Carbon::now();   
+                    $school->save();
+                    Log::channel('login_as')->warning('Non-numeric UID attempted during login.', [
+                        'uid' => $attributes['uid'],
+                        'l' => $attributes['l'],
+                        'ip' => $attributes['clientIpAddress'],
+                        'time' => now(),
+                    ]);
+                    return redirect(url('/index_school'))->with('success',"$school->name καλωσήρθατε!");
+                } catch(\Exception $e) {
+                    // If school not found, redirect to index with error
+                    return redirect()->route('index')->withErrors(['error' => 'Δεν αναγνωρίστηκε το Σχολείο. Δοκιμάστε να συνδεθείτε με τους κωδικούς του Myschool.']);
+                }
             }
-            //extract the school name from the DN
-            // $dn = $attributes['l']; // Example: "ou=50dim-patron,ou=schools,dc=sch,dc=gr"
-            // $start = strpos($dn, '=') + 1;
-            // $end = strpos($dn, ',');
-            // $length = $end - $start;
-            // $value = substr($dn, $start, $length);
+            
             try{
                 $school = School::where('code', $attributes['uid'])->firstOrFail();
                 Auth::guard('school')->login($school);

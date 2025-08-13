@@ -49,7 +49,7 @@ class ResetMicroappsController extends Controller
             if (!class_exists($modelClass)) {
                 return response()->json(['error' => "Model $model_name not found."], 404);
             }
-
+            
             $data = $modelClass::all();
             
             if ($data->isEmpty()) {
@@ -57,7 +57,7 @@ class ResetMicroappsController extends Controller
             }
 
             $columns = Schema::getColumnListing((new $modelClass)->getTable());
-
+            
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -73,18 +73,16 @@ class ResetMicroappsController extends Controller
                     $sheet->setCellValueByColumnAndRow($colIndex + 1, $rowIndex + 2, $rowArray[$column] ?? '');
                 }
             }
-
-            // Send headers and file
+            
+            // Send headers and file using Laravel's StreamedResponse
             $filename = 'export_' . $model_name . '_' . date('Y-m-d_H-i-s') . '.xlsx';
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header("Content-Disposition: attachment; filename=\"$filename\"");
-            header('Cache-Control: max-age=0');
-
-            $writer = new Xlsx($spreadsheet);
-            $writer->save('php://output');
-
-            // Clean output buffer and terminate
-            ob_end_flush();
+            return response()->streamDownload(function () use ($spreadsheet) {
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('php://output');
+            }, $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Cache-Control' => 'max-age=0',
+            ]);
             exit;
 
         } catch (\Throwable $e) {

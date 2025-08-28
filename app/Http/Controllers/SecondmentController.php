@@ -33,6 +33,11 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
+        // Τροποποίηση μόνο για Νηπιαγωγούς - Προσωρινός κώδικας
+        //dd(Auth::guard('teacher')->user()->klados);
+        if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
+            return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
+        }
         if($request->input()['criteriaOrPreferences'] == 1){        //Αποθήκευση μοριοδοτούμενων κριτηρίων
             if($request->input('action') == "submit"){ //Ζητάει οριστική υποβολή κριτηρίων
                 // Αποθήκευσε την αίτηση

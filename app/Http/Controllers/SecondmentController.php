@@ -33,7 +33,7 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
-        // Τροποποίηση μόνο για Νηπιαγωγούς - Προσωρινός κώδικας
+        // Τροποποίηση μόνο για Νηπιαγωγούς - Προσωρινός κώδικας - 2 αλλαγές στον controller και 1 στο view
         //dd(Auth::guard('teacher')->user()->klados);
         if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
             return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
@@ -203,6 +203,11 @@ class SecondmentController extends Controller
     public function modify(Secondment $secondment){
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
+        }
+        // Τροποποίηση μόνο για Νηπιαγωγούς - Προσωρινός κώδικας - 2 αλλαγές στον controller και 1 στο view
+        //dd(Auth::guard('teacher')->user()->klados);
+        if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
+            return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
         }
         $secondment->submitted = 0;
         $secondment->save();

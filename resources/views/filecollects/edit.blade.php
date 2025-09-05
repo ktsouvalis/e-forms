@@ -170,6 +170,10 @@
                     <input name="name" type="text" class="form-control" placeholder="Name" required value="{{$filecollect->name}}">
                 </div>
                 <div class="input-group">
+                    <span class="input-group-text w-25" id="">Προθεσμία</span>
+                    <input name="closes_at" type="date" class="form-control" placeholder="Closes_at" value="{{ $filecollect->closes_at ? \Carbon\Carbon::parse($filecollect->closes_at)->format('Y-m-d') : '' }}">
+                </div>
+                <div class="input-group">
                     <span class="input-group-text text-wrap w-25" id="basic-addon2">Πόσα αρχεία pdf θα ζητηθούν; </span>
                     @php
                         $pdfCount = json_decode($filecollect->fileMime, true)['pdf'];

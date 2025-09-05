@@ -126,7 +126,7 @@
         <div class="badge text-wrap py-2"
              style="width: 10rem;
                     /* background-color: #00bfff; */
-                    background-color: #868484ff;
+                    background-color: #06b6d4;
                     text-align: center;">
             <div class="text-dark fa-solid fa-file-pdf"></div> 
             <a href="{{ url("/fileshares/$ffi") }}" style="text-decoration:none;" class="text-dark">

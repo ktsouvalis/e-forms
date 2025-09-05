@@ -57,7 +57,7 @@
         }
     </style>
 
-    <body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen">
+    <body>
     
     @auth('school')
         @php 
@@ -99,11 +99,11 @@
         @endphp
 
         <!-- Header -->
-        <div class="gradient-bg text-white py-8 mb-8">
+        <div class="text-dark py-8 mb-8 shadow-lg" style="background: #74c8dfff; backdrop-filter: blur(10px);">
             <div class="container mx-auto px-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-4xl font-bold mb-2">
+                        <h1 class="text-2xl font-semibold mb-2">
                             <i class="fas fa-school mr-3"></i>
                             {{$school->name}}
                         </h1>
@@ -111,7 +111,7 @@
                     </div>
                     <div class="text-right">
                         <div class="text-blue-100 text-sm">Σήμερα</div>
-                        <div class="text-xl font-semibold">{{ now()->format('d/m/Y') }}</div>
+                        <div class="text-xl">{{ now()->format('d/m/Y') }}</div>
                     </div>
                 </div>
             </div>

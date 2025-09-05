@@ -24,31 +24,19 @@
     
     @stack('links')
   </head> 
-  <body style="background-color: #ebf1fcff;">
+  <body style="background-color:  #ebf1fcff;">
     @include('components.spinner')
   @auth('school')
   @php
-    $school = Auth::guard('school')->user();
+    $user = Auth::guard('school')->user();
   @endphp
   @push('app-icon')
   <div class="hstack justify-content-start gap-2">
     @if(Illuminate\Support\Facades\Request::path()!='index_school')
       <div class=" d-flex px-2"><a href='{{url('/index_school')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
     @endif
-    <div class="d-flex px-2"><a href='{{url('/index_school')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$school->name}} </a></div>
+    <div class="d-flex px-2"><a href='{{url('/index_school')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} </a></div>
     <div class="d-flex px-2"><a href='{{url('/slogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
-    <div class= "d-flex">
-        @if(session('impersonator_guard') == 'web')
-            @php
-                $user = App\Models\User::find(session('impersonator_id'));
-            @endphp
-            <div>
-                <strong>{{ $user->username }}</strong> <span class="text-danger">συνδεδεμένος ως</span> {{$school->name}}.
-                <a href="{{ route('impersonation.leave') }}" class="">Επιστροφή</a>
-            </div>
-    
-        @endif
-    </div>
   </div>
   @endpush
   <div class="justify-content-auto" style="background-color: #dfdfdeff;"> 
@@ -63,8 +51,8 @@
 
   @php
     $active_microapp=false;
-    if($school->microapps->count()){
-      foreach($school->microapps as $microapp){
+    if($user->microapps->count()){
+      foreach($user->microapps as $microapp){
         if($microapp->microapp->visible){
           $active_microapp = true;
           break;
@@ -73,8 +61,8 @@
     }
     
     $active_filecollect=false;
-    if($school->filecollects->count()){
-      foreach($school->filecollects as $filecollect){
+    if($user->filecollects->count()){
+      foreach($user->filecollects as $filecollect){
         if($filecollect->filecollect->visible){
           $active_filecollect=true;
           break;
@@ -83,7 +71,7 @@
     }
   @endphp
   
-  @if(!$active_microapp AND count($school->fileshares)==0 AND !$active_filecollect)
+  @if(!$active_microapp AND count($user->fileshares)==0 AND !$active_filecollect)
   <div class='container container-narrow pt-4'>
     <div class='alert alert-info text-center'>
     Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για το σχολείο. Ευχαριστούμε για την επίσκεψη!
@@ -92,7 +80,7 @@
   @endif
 
 @if(Illuminate\Support\Facades\Request::path()!='index_school')
-<nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: #f8f9fad7;">
+<nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: #74c8dfff;">
    
   
 <!-- Microapps Section -->
@@ -130,8 +118,8 @@
             </div>
         @endif
     @endforeach
-    
-    @foreach($school->fileshares as $fileshare)
+
+    @foreach($user->fileshares as $fileshare)
         @php 
             $ffi = $fileshare->fileshare->id;
         @endphp
@@ -146,14 +134,14 @@
         </div>
     @endforeach
 
-    @foreach($school->filecollects as $filecollect)
+    @foreach($user->filecollects as $filecollect)
         @if($filecollect->filecollect->visible)
             @php 
                 $ffi = $filecollect->filecollect->id;
-                
-                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($filecollect->microapp, $user);
-                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($filecollect->microapp, $submissionExists);
-                $isNoDeadline = in_array($filecollect->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || empty($filecollect->microapp->closes_at);
+                $resource = substr($one_microapp->microapp->url, 1);
+                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $user);
+                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                $isNoDeadline = in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || empty($one_microapp->microapp->closes_at);
                 
                 // Map status to background colors
                 if ($status['status'] === 'overdue') {
@@ -163,7 +151,7 @@
                 } elseif ($submissionExists) {
                     $bgColor = '#28a745'; // Green
                 } else {
-                    $bgColor = $filecollect->microapp->color; // Original color
+                    $bgColor = $one_microapp->microapp->color; // Original color
                 }
             @endphp
             <div class="badge text-wrap py-2"

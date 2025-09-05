@@ -127,68 +127,6 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            {{-- <div class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-dark">
-                <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <img src="{{asset('favicon/android-chrome-512x512.png')}}" width="80" height="80" alt="services" class="rounded-circle border border-white">
-                        <h5 class="mt-3">ΔΗΜΟΤΙΚΟ ΣΧΟΛΕΙΟ ΠΑΤΡΩΝ</h5>
-                    </div>
-                    <hr class="bg-light">
-                    
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <i class="bi bi-house-door"></i>
-                                Αρχική
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-headset"></i>
-                                Τεχνική Στήριξη
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-sun"></i>
-                                Ολοήμερο, Πρωινή Υποδοχή
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-bus"></i>
-                                Εκδρομές
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-suitcase"></i>
-                                Πρόσφυγες Μαθητές
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-file-signature"></i>
-                                Εσωτερικός Κανονισμός
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-file-pdf"></i>
-                                Αρχεία Διεύθυνσης
-                            </a>
-                        </li>
-                        <li class="nav-item mt-4">
-                            <a href="#" class="nav-link text-danger">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Αποσύνδεση
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div> --}}
-            
             <!-- Main Content -->
             <div class="col px-5 ms-sm-auto main-content">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -210,11 +148,11 @@
                 
                 @include('components/messages')
                 
-                <div class="info-section">
+                <div class="info-section background" style="background: #74c8dfff; backdrop-filter: blur(10px)";>
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h3 class="fw-bold"><i class="fas fa-user-lock bg-dark text-white p-2 rounded-circle me-2"></i>Σύνδεση</h3>
-                            <p class="my-4"> Η σύνδεση στις Ηλεκτρονικές Φόρμες για Σχολεία και Εκπαιδευτικούς πραγματοποιείται με χρήση των κωδικών του Πανελλήνιου Σχολικού Δικτύου.</p>
+                            <h3 class="fw-bold text-dark"><i class="fas fa-user-lock bg-dark text-white p-2 rounded-circle me-2"></i>Σύνδεση</h3>
+                            <p class="my-4 text-dark font-semibold"> Η σύνδεση στις Ηλεκτρονικές Φόρμες για Σχολεία και Εκπαιδευτικούς πραγματοποιείται με χρήση των κωδικών του Πανελλήνιου Σχολικού Δικτύου.</p>
                         </div>
                         <div class="col-md-4">
                             <div class="btn-toolbar mb-2 px-1 mb-md-0">
@@ -271,7 +209,7 @@
                             <div class="card-body">
                                 <div class="text-center mb-3">
                                     <i class="fas fa-key fa-3x mb-3"></i>
-                                    <h5>Μοναδική Πρόσβαση</h5>
+                                    <h5>Ασφαλής Πρόσβαση</h5>
                                 </div>
                                 <p>Η σύνδεση Σχολείων και Εκπαιδευτικών αρμοδιότητας της Δι.Π.Ε. Αχαΐας πραγματοποιείται μέ χρήση των κωδικών του Πανελλήνιου Σχολικού Δικτύου.
                                 </p>

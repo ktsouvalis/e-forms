@@ -191,18 +191,19 @@ class SchoolController extends Controller
 
     //
     public function login($md5){ 
+        
+        return redirect(url('/'))->with('warning', "Η σύνδεση γίνεται πλέον με τους κωδικούς του σχολείου στο ΠΣΔ ή στο Myschool. Πατήστε 'Σύνδεση Σχολείου / Εκπαιδευτικού' για να συνδεθείτε.");
+        
+        // $school = School::where('md5', $md5)->firstOrFail();
+        // Auth::guard('school')->login($school);
+        // $school->logged_in_at = Carbon::now();
+        // $school->save();
+        // session()->regenerate();
 
-        $school = School::where('md5', $md5)->firstOrFail();
-        Auth::guard('school')->login($school);
-        $school->logged_in_at = Carbon::now();
-        $school->save();
-        session()->regenerate();
-
-        return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
+        // return redirect(url('/index_school'))->with('success', "$school->name καλωσήρθατε");
     }
 
     public function logout(){
-        
         auth()->guard('school')->logout();
         return redirect(url('/'))->with('success', 'Αποσυνδεθήκατε');
     }

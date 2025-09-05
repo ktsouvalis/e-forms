@@ -4,7 +4,7 @@
     
     <div class="row hidden-md-up justify-content-center">
         @auth('teacher')
-            @php 
+            @php
                 $teacher = Illuminate\Support\Facades\Auth::guard('teacher')->user(); 
                 $active_microapp=false;
                 if($teacher->microapps->count()){
@@ -47,7 +47,6 @@
             @push('title')
                 <title>Καρτέλα {{$teacher->surname}} {{$teacher->name}}</title>
             @endpush
-            
 
             <div class="py-5">
                 <div class="container">

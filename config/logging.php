@@ -183,6 +183,12 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        
+        'login_as' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/login_as.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

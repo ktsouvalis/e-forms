@@ -27,7 +27,7 @@
   @auth('teacher')
   
   @php
-    $user = Auth::guard('teacher')->user();
+    $teacher = Auth::guard('teacher')->user();
   @endphp
   <!--show a line containing: FrontPage, ProfileName, Logout-->
   <div class="justify-content-auto" style="background-color: #fffde3;"> 
@@ -38,8 +38,20 @@
             @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
               <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
             @endif
-              <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} {{$user->surname}}</a></div>
+              <div class=" d-flex px-2"><a href='{{url('/index_teacher')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$teacher->name}} {{$teacher->surname}}</a></div>
               <div class=" d-flex px-2"><a href='{{url('/tlogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
+              <div class= "d-flex">
+                @if(session('impersonator_guard') == 'web')
+                    @php
+                        $user = App\Models\User::find(session('impersonator_id'));
+                    @endphp
+                    <div>
+                        <strong>{{ $user->username }}</strong> <span class="text-danger">συνδεδεμένος ως</span> {{$teacher->surname}} {{$teacher->name}}.
+                        <a href="{{ route('impersonation.leave') }}" class="">Επιστροφή</a>
+                    </div>
+            
+                @endif
+            </div>
           </div>
         </div>
       </div>
@@ -48,8 +60,8 @@
 
   @php
     $active_microapp=false;
-    if($user->microapps->count()){
-      foreach($user->microapps as $microapp){
+    if($teacher->microapps->count()){
+      foreach($teacher->microapps as $microapp){
         if($microapp->microapp->visible){
           $active_microapp = true;
           break;
@@ -63,7 +75,7 @@
             $criteria = json_decode($one_microapp->accessCriteria->criteria, true);
             $satisfiesCriteria = true;
             foreach ($criteria as $key => $value) {
-                if (!in_array($user->$key, $value)) {
+                if (!in_array($teacher->$key, $value)) {
                     $satisfiesCriteria = false;
                     break;
                 }  
@@ -75,8 +87,8 @@
     }
     
     $active_filecollect=false;
-    if($user->filecollects->count()){
-      foreach($user->filecollects as $filecollect){
+    if($teacher->filecollects->count()){
+      foreach($teacher->filecollects as $filecollect){
         if($filecollect->filecollect->visible){
           $active_filecollect=true;
           break;
@@ -85,7 +97,7 @@
     }
   @endphp
   
-  @if(!$active_microapp AND count($user->fileshares)==0 AND !$active_filecollect)
+  @if(!$active_microapp AND count($teacher->fileshares)==0 AND !$active_filecollect)
     <div class='container container-narrow pt-4'>
       <div class='alert alert-info text-center'>
       Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για σας. Ευχαριστούμε για την επίσκεψη!
@@ -94,7 +106,7 @@
   @endif
   @if(Illuminate\Support\Facades\Request::path()!='index_teacher')
     <nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: rgb(13, 37, 54);">
-      @foreach ($user->microapps as $one_microapp)
+      @foreach ($teacher->microapps as $one_microapp)
         @if($one_microapp->microapp->visible)
           <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
             <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
@@ -111,7 +123,7 @@
                 $satisfiesCriteria = true;
 
                 foreach ($criteria as $key => $value) {
-                  if (!in_array($user->$key, $value)) {
+                  if (!in_array($teacher->$key, $value)) {
                       $satisfiesCriteria = false;
                       break;
                   }
@@ -119,7 +131,7 @@
             @endphp
               
             @if ($satisfiesCriteria)
-              @if(!$user->microapps->where('microapp_id', $one_microapp->id)->count())
+              @if(!$teacher->microapps->where('microapp_id', $one_microapp->id)->count())
                   <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->color}}; text-align:center;">
                     <div class="text-dark {{$one_microapp->icon}}"></div> 
                     @php $resource = substr($one_microapp->url, 1); @endphp
@@ -131,7 +143,7 @@
           @endif
       @endforeach
       
-      @foreach($user->fileshares as $fileshare)
+      @foreach($teacher->fileshares as $fileshare)
         @php
           $ffi = $fileshare->fileshare->id
         @endphp
@@ -140,7 +152,7 @@
           <a href="{{url("/fileshares/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$fileshare->fileshare->name}}</a>
         </div>
       @endforeach
-      @foreach($user->filecollects as $filecollect)
+      @foreach($teacher->filecollects as $filecollect)
         @php
             $ffi = $filecollect->filecollect->id
         @endphp

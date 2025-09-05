@@ -27,15 +27,27 @@
     @include('components.spinner')
   @auth('school')
   @php
-    $user = Auth::guard('school')->user();
+    $school = Auth::guard('school')->user();
   @endphp
   @push('app-icon')
   <div class="hstack justify-content-start gap-2">
     @if(Illuminate\Support\Facades\Request::path()!='index_school')
       <div class=" d-flex px-2"><a href='{{url('/index_school')}}' class="text-dark bi bi-house" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική"> </a></div>   
     @endif
-    <div class="d-flex px-2"><a href='{{url('/index_school')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$user->name}} </a></div>
+    <div class="d-flex px-2"><a href='{{url('/index_school')}}' class="text-dark" style="text-decoration:none; " data-toggle="tooltip" title="Αρχική">{{$school->name}} </a></div>
     <div class="d-flex px-2"><a href='{{url('/slogout')}}' class="text-dark bi bi-box-arrow-right" style="text-decoration:none; " data-toggle="tooltip" title="Αποσύνδεση"> </a></div>
+    <div class= "d-flex">
+        @if(session('impersonator_guard') == 'web')
+            @php
+                $user = App\Models\User::find(session('impersonator_id'));
+            @endphp
+            <div>
+                <strong>{{ $user->username }}</strong> <span class="text-danger">συνδεδεμένος ως</span> {{$school->name}}.
+                <a href="{{ route('impersonation.leave') }}" class="">Επιστροφή</a>
+            </div>
+    
+        @endif
+    </div>
   </div>
   @endpush
   <div class="justify-content-auto" style="background-color: #fffde3;"> 
@@ -50,8 +62,8 @@
 
   @php
     $active_microapp=false;
-    if($user->microapps->count()){
-      foreach($user->microapps as $microapp){
+    if($school->microapps->count()){
+      foreach($school->microapps as $microapp){
         if($microapp->microapp->visible){
           $active_microapp = true;
           break;
@@ -60,8 +72,8 @@
     }
     
     $active_filecollect=false;
-    if($user->filecollects->count()){
-      foreach($user->filecollects as $filecollect){
+    if($school->filecollects->count()){
+      foreach($school->filecollects as $filecollect){
         if($filecollect->filecollect->visible){
           $active_filecollect=true;
           break;
@@ -70,7 +82,7 @@
     }
   @endphp
   
-  @if(!$active_microapp AND count($user->fileshares)==0 AND !$active_filecollect)
+  @if(!$active_microapp AND count($school->fileshares)==0 AND !$active_filecollect)
   <div class='container container-narrow pt-4'>
     <div class='alert alert-info text-center'>
     Δεν υπάρχει αυτή τη στιγμή κάποια ενεργή ηλεκτρονική υπηρεσία για το σχολείο. Ευχαριστούμε για την επίσκεψη!
@@ -80,7 +92,7 @@
 
     @if(Illuminate\Support\Facades\Request::path()!='index_school')
       <nav class="navbar navbar-light justify-content-auto p-2 mb-2" style="background-color: rgb(13, 37, 54);">
-        @foreach ($user->microapps as $one_microapp)
+        @foreach ($school->microapps as $one_microapp)
           @if($one_microapp->microapp->visible)
             <div class="badge text-wrap py-2" style="width: 10rem; background-color:{{$one_microapp->microapp->color}}; text-align:center;">
               <div class="text-dark {{$one_microapp->microapp->icon}}"></div> 
@@ -90,7 +102,7 @@
             </div>
           @endif
         @endforeach
-        @foreach($user->fileshares as $fileshare)
+        @foreach($school->fileshares as $fileshare)
           @php
               $ffi = $fileshare->fileshare->id
           @endphp
@@ -99,7 +111,7 @@
             <a href="{{url("/fileshares/$ffi")}}" style=" text-decoration:none;" class="text-dark"> {{$fileshare->fileshare->name}}</a>
           </div>
         @endforeach
-        @foreach($user->filecollects as $filecollect)
+        @foreach($school->filecollects as $filecollect)
           @php
               $ffi = $filecollect->filecollect->id
           @endphp

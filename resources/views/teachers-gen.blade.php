@@ -146,7 +146,7 @@
         <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover"  style="font-size: small">
             <thead>
                 <tr>
-                    <th class="align-middle">Αντιγραφή συνδέσμου</th>
+                    <th class="align-middle">Σύνδεση ως</th>
                     <th id="search">ΑΦΜ</th>
                     <th id="search">Επώνυμο</th>
                     <th id="search">Όνομα</th>
@@ -168,7 +168,9 @@
                 
                 <tr> 
                     <td style="text-align:center">
-                        <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button>
+                        <!-- <button class="copy-button btn btn-outline-secondary bi bi-clipboard" data-clipboard-text="{{$text}}"> </button> -->
+                         <a href="{{url("/login_as/$teacher->md5")}}" class="btn btn-outline-secondary bi bi-person-badge no-spinner" title="Σύνδεση ως {{$teacher->surname}}"> </a>
+                      
                     </td>
                     <td>{{$teacher->afm}}</td>
                     <td>

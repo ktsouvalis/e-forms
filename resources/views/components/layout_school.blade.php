@@ -130,8 +130,8 @@
             </div>
         @endif
     @endforeach
-
-    @foreach($user->fileshares as $fileshare)
+    
+    @foreach($school->fileshares as $fileshare)
         @php 
             $ffi = $fileshare->fileshare->id;
         @endphp
@@ -146,14 +146,14 @@
         </div>
     @endforeach
 
-    @foreach($user->filecollects as $filecollect)
+    @foreach($school->filecollects as $filecollect)
         @if($filecollect->filecollect->visible)
             @php 
                 $ffi = $filecollect->filecollect->id;
-                $resource = substr($one_microapp->microapp->url, 1);
-                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $user);
-                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
-                $isNoDeadline = in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || empty($one_microapp->microapp->closes_at);
+                
+                $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($filecollect->microapp, $user);
+                $status = App\Http\Controllers\SchoolController::getSubmissionStatus($filecollect->microapp, $submissionExists);
+                $isNoDeadline = in_array($filecollect->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || empty($filecollect->microapp->closes_at);
                 
                 // Map status to background colors
                 if ($status['status'] === 'overdue') {
@@ -163,7 +163,7 @@
                 } elseif ($submissionExists) {
                     $bgColor = '#28a745'; // Green
                 } else {
-                    $bgColor = $one_microapp->microapp->color; // Original color
+                    $bgColor = $filecollect->microapp->color; // Original color
                 }
             @endphp
             <div class="badge text-wrap py-2"

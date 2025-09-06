@@ -499,6 +499,14 @@ class SchoolController extends Controller
                         return false;
                     }
                 }
+
+                if($microapp->url == '/building_problems'){
+                    if($school->buildingProblems){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             } else { // Handle Filecollects
                 $filecollect = $microappOrFilecollect;
                 $old_data = $school->filecollects()->where('filecollect_id', $filecollect->filecollect_id)->exists();

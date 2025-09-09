@@ -4,6 +4,7 @@ namespace App\Models;
 
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Invoices;
 use App\Models\microapps\Desks;
 use App\Models\microapps\Fruit;
 use App\Models\microapps\Action;

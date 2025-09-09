@@ -31,6 +31,7 @@ use App\Http\Controllers\WhocanController;
 use App\Http\Controllers\CasAuthController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\TeacherController;
+
 use App\Http\Controllers\MicroappController;
 use App\Http\Controllers\FileshareController;
 use App\Http\Controllers\OperationController;
@@ -42,6 +43,7 @@ use App\Http\Controllers\ResetMicroappsController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\LeavesController;
+use App\Http\Controllers\microapps\InvoicesController;
 use App\Http\Controllers\microapps\ActionsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
@@ -188,7 +190,7 @@ Route::view('/preview_directors', "preview-directors")->middleware('can:updateDi
 
 Route::post('/insert_schools', [SchoolController::class, 'insertSchools']);
 
-Route::post('/insert_directors', [SchoolController::class, 'insertDirectors']);
+Route::get('/insert_directors', [SchoolController::class, 'insertDirectors']);
 
 Route::get('/school/{md5}', [SchoolController::class, 'login'])->name('school_login');
 
@@ -514,6 +516,10 @@ Route::group(['prefix' => 'work_planning', 'middleware'=>'canViewMicroapp'], fun
 
     Route::post('/extract_work_plan/{yearWeek}', [WorkPlanController::class, 'extractWorkPlan'])->name('work_planning.extract_work_plan')->middleware('isConsultant');
 });
+
+// INVOICES ROUTES
+
+Route::resource('invoices', InvoicesController::class);//->middleware('canViewMicroapp');
 
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);

@@ -317,12 +317,12 @@ class SchoolController extends Controller
         
         session(['directors_array' => $directors_array]);
         session(['subdirectors_array' => $subdirectors_array]);
-
+     
         if($error){
-            return redirect(url('/import_directors'))
+            return redirect(url('/insert_directors'))
                 ->with('asks_to','save');
-        }else{
-            return redirect(url('/import_directors'))
+        }else{  
+            return redirect(url('/insert_directors'))
                 ->with('asks_to','save');
         }
     }
@@ -372,7 +372,8 @@ class SchoolController extends Controller
                 }
             }
             catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['teacher_id'].' '.$e->getMessage());
+                //dd($one_director);
+                Log::channel('throwable_db')->error(Auth::user()->username.' link director error '.$one_director['school_name'].' '.$e->getMessage());
                 $error=true;
                 continue;    
             }

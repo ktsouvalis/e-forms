@@ -510,12 +510,13 @@ class SchoolController extends Controller
                 }
             } else { // Handle Filecollects
                 $filecollect = $microappOrFilecollect;
-                $old_data = $school->filecollects()->where('filecollect_id', $filecollect->filecollect_id)->exists();
+                
+                $old_data = $school->filecollects()->where('filecollect_id', $filecollect->filecollect_id)->exists() && $school->filecollects->where('filecollect_id', $filecollect->filecollect_id)->first()->file != null;
+                
                 if($old_data) {
                     return true; // Submission exists
                 } else {
                     return false; // No submission found
-
                 }
             }   
         }

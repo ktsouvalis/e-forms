@@ -143,7 +143,7 @@ class SchoolsUsernameMappingsSeeder extends Seeder
         SchoolUsernameMappings::create(['username' => 'dimpaous', 'school_code' => '9060115',]);
         SchoolUsernameMappings::create(['username' => 'dimvracn', 'school_code' => '9060168',]);
         SchoolUsernameMappings::create(['username' => '2nipvrach', 'school_code' => '9520946',]);
-        SchoolUsernameMappings::create(['username' => NULL, 'school_code' => '9060169',]);
+        SchoolUsernameMappings::create(['username' => 'nipvrachn', 'school_code' => '9060169',]);
         SchoolUsernameMappings::create(['username' => NULL, 'school_code' => '9060541',]);
         SchoolUsernameMappings::create(['username' => NULL, 'school_code' => '9060174',]);
         SchoolUsernameMappings::create(['username' => 'niptsouk', 'school_code' => '9060504',]);

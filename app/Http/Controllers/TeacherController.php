@@ -27,14 +27,16 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class TeacherController extends Controller
 {
     public function login($md5){ 
-        $teacher = Teacher::where('md5', $md5)->firstOrFail();
-        //logs the teacher in using the 'teacher' guard
-        Auth::guard('teacher')->login($teacher);
-        session()->regenerate();
-        $teacher->logged_in_at = Carbon::now();   
-        $teacher->save();
+        return redirect(url('/'))->with('warning', "Η σύνδεση γίνεται πλέον με τους κωδικούς στο ΠΣΔ. Πατήστε 'Σύνδεση Σχολείου / Εκπαιδευτικού' για να συνδεθείτε.");
+        
+        // $teacher = Teacher::where('md5', $md5)->firstOrFail();
+        // //logs the teacher in using the 'teacher' guard
+        // Auth::guard('teacher')->login($teacher);
+        // session()->regenerate();
+        // $teacher->logged_in_at = Carbon::now();   
+        // $teacher->save();
 
-        return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
+        // return redirect(url('/index_teacher'))->with('success',"$teacher->name καλωσήρθατε!");
     }
 
     public function logout(){

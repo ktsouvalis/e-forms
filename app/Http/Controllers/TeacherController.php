@@ -200,13 +200,33 @@ class TeacherController extends Controller
             $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
             $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
             $dateString = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue();
-            if (Date::isDateTime($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row))) {
+            if (Date::isDateTime($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row))) {  
                 $dateValue = Date::excelToDateTimeObject($dateString);
                 $formattedDate = $dateValue->format('Y-m-d');
                 $check['appointment_date'] = $formattedDate;
-            }
-            else{
-                $check['appointment_date'] = null;
+
+                Log::channel('login_as')->info('Επώνυμο: ', [
+                    'surname' => $check['surname'],
+                    'date' => $formattedDate
+                ]);
+            } else {
+                // Try to parse the date string manually if Excel doesn't recognize it
+                $parsedDate = $this->parseDateString($dateString);
+                
+                if ($parsedDate) {
+                    $check['appointment_date'] = $parsedDate->format('Y-m-d');
+                    Log::channel('login_as')->info('Επώνυμο: ', [
+                        'surname' => $check['surname'],
+                        'date_manual_parsed' => $parsedDate->format('Y-m-d'),
+                        'original_string' => $dateString
+                    ]);
+                } else {
+                    $check['appointment_date'] = null;
+                    Log::channel('login_as')->info('Επώνυμο: ', [
+                        'surname' => $check['surname'],
+                        'date_not_detected' => $dateString
+                    ]);
+                }
             }
             $check['appointment_fek'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(21, $row)->getValue();
             //cross check sxesi_ergasias with database
@@ -611,6 +631,40 @@ class TeacherController extends Controller
             $formattedDate = null;
         }
         return $formattedDate;
+    }
+
+    private function parseDateString($dateString)
+    {
+        // Remove any whitespace
+        $dateString = trim($dateString);
+        
+        // Try different date formats
+        $formats = [
+            'd/m/Y',    // 16/08/2007
+            'd/m/y',    // 16/08/07
+            'd-m-Y',    // 16-08-2007
+            'd-m-y',    // 16-08-07
+            'Y-m-d',    // 2007-08-16
+            'm/d/Y',    // 08/16/2007
+            'm/d/y',    // 08/16/07
+        ];
+        
+        foreach ($formats as $format) {
+            $date = DateTime::createFromFormat($format, $dateString);
+            if ($date && $date->format($format) === $dateString) {
+                return $date;
+            }
+        }
+        
+        // Try strtotime as a fallback
+        $timestamp = strtotime($dateString);
+        if ($timestamp !== false) {
+            $date = new DateTime();
+            $date->setTimestamp($timestamp);
+            return $date;
+        }
+        
+        return null;
     }
 
 }

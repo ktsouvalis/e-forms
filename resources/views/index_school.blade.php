@@ -173,13 +173,32 @@
                                 $resource = substr($one_microapp->microapp->url, 1);
                                 $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $school);
                                 $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                                //dd($school->internal_rule);
                             @endphp
                             <div class="card-hover h-100">
                                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full relative overflow-hidden">
                                     <!-- Status Badge -->
                                     <div class="absolute top-4 right-4 z-10">
                                         <span class="{{$status['color']}} {{$status['text']}} px-3 py-1 rounded-full text-xs font-semibold status-pulse">
-                                            {{$status['badge']}}
+                                            @php
+                                                // Special case for no-deadline microapps
+                                                if ($one_microapp->microapp->url == '/internal_rules') { // έχει υπογραφεί και από τους δύο;
+                                                    if($school->internal_rule->consultant_signed_file && $school->internal_rule->director_signed_file){
+                                                        echo 'Ολοκληρώθηκε';
+                                                    } else { // δεν έχει ολοκληρωθεί και κάποιος ζητά διόρθωση
+                                                        if($school->internal_rule->approved_by_director && $school->internal_rule->approved_by_consultant){
+                                                            echo 'Αναμονή Τελικής Υπογραφής';
+                                                        } elseif($school->internal_rule->consultant_comments_file || $school->internal_rule->director_comments_file){
+                                                            echo 'Αναμονή Διόρθωσης';
+                                                        }
+                                                    }
+                                                    
+                                                    
+                                                    echo 'Υποβλήθηκε';
+                                                } else {
+                                                    echo $status['badge'];
+                                                }
+                                            @endphp
                                         </span>
                                     </div>
 

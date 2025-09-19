@@ -185,16 +185,18 @@
                                                 if ($one_microapp->microapp->url == '/internal_rules') { // έχει υπογραφεί και από τους δύο;
                                                     if($submissionExists){
                                                         if($school->internal_rule->consultant_signed_file && $school->internal_rule->director_signed_file){
-                                                        echo 'Ολοκληρώθηκε';
-                                                    } elseif(!$school->internal_rule->consultant_signed_file || !$school->internal_rule->director_signed_file) { // δεν έχει ολοκληρωθεί και κάποιος ζητά διόρθωση
-                                                        if($school->internal_rule->approved_by_director && $school->internal_rule->approved_by_consultant){
-                                                            echo 'Αναμονή Υπογραφών';
-                                                        } else if($school->internal_rule->consultant_comments_file || $school->internal_rule->director_comments_file){
-                                                            echo 'Αναμονή Διόρθωσης';
+                                                            echo 'Ολοκληρώθηκε';
+                                                        } elseif(!$school->internal_rule->consultant_signed_file || !$school->internal_rule->director_signed_file) { // δεν έχει ολοκληρωθεί και κάποιος ζητά διόρθωση
+                                                            if($school->internal_rule->approved_by_director && $school->internal_rule->approved_by_consultant){
+                                                                echo 'Αναμονή Υπογραφών';
+                                                            } else if($school->internal_rule->consultant_comments_file || $school->internal_rule->director_comments_file){
+                                                                echo 'Αναμονή Διόρθωσης';
+                                                            }
+                                                        } else {
+                                                            echo 'Εκκρεμεί';
                                                         }
                                                     } else {
                                                         echo 'Εκκρεμεί';
-                                                    }
                                                     }
                                                     
                                                 } else {

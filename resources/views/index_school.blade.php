@@ -183,18 +183,20 @@
                                             @php
                                                 // Special case for no-deadline microapps
                                                 if ($one_microapp->microapp->url == '/internal_rules') { // έχει υπογραφεί και από τους δύο;
-                                                    if($school->internal_rule->consultant_signed_file && $school->internal_rule->director_signed_file){
+                                                    if($submissionExists){
+                                                        if($school->internal_rule->consultant_signed_file && $school->internal_rule->director_signed_file){
                                                         echo 'Ολοκληρώθηκε';
-                                                    } else { // δεν έχει ολοκληρωθεί και κάποιος ζητά διόρθωση
+                                                    } elseif(!$school->internal_rule->consultant_signed_file || !$school->internal_rule->director_signed_file) { // δεν έχει ολοκληρωθεί και κάποιος ζητά διόρθωση
                                                         if($school->internal_rule->approved_by_director && $school->internal_rule->approved_by_consultant){
-                                                            echo 'Αναμονή Τελικής Υπογραφής';
-                                                        } elseif($school->internal_rule->consultant_comments_file || $school->internal_rule->director_comments_file){
+                                                            echo 'Αναμονή Υπογραφών';
+                                                        } else if($school->internal_rule->consultant_comments_file || $school->internal_rule->director_comments_file){
                                                             echo 'Αναμονή Διόρθωσης';
                                                         }
+                                                    } else {
+                                                        echo 'Εκκρεμεί';
+                                                    }
                                                     }
                                                     
-                                                    
-                                                    echo 'Υποβλήθηκε';
                                                 } else {
                                                     echo $status['badge'];
                                                 }

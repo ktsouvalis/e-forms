@@ -10,9 +10,8 @@
         }
         
         
-        
         // List of microapps without deadline
-        $noDeadlineMicroapps = ['tickets', 'outings', 'internal_rules', 'timetables'];
+        $noDeadlineMicroapps = ['tickets', 'outings', 'timetables'];
     @endphp
 
     @push('title')
@@ -88,7 +87,7 @@
             
             foreach ($school->microapps as $one_microapp) {
                 if ($one_microapp->microapp->visible) {
-                    if (in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/internal_rules', '/timetables']) || 
+                    if (in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/timetables']) || 
                         empty($one_microapp->microapp->closes_at)) {
                         $microappsWithoutDeadline[] = $one_microapp;
                     } else {

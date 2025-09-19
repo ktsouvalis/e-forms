@@ -493,6 +493,14 @@ class SchoolController extends Controller
                     }
                 }
 
+                if($microapp->url == '/internal_rules'){
+                    if($school->internal_rule){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
                 if($microapp->url == '/immigrants'){
                     if($school->immigrants){
                         return true;

@@ -158,13 +158,14 @@ class TimetablesController extends Controller
         
         try{
             $fileHandler->delete_file('timetables', $serverFileName, 'local');
-            if(count($files) == 1){
+            //dd($files, $serverFileName, $timetableFile->status);
+            if(count($files) == 1){ //Αν ήταν το μόνο αρχείο, διέγραψέ το και διέγραψε και την εγγραφή στη βάση δεδομένων
                 $timetableFile->delete();
-            } else {
+            } else {                //Αν δεν ήταν το μόνο, διέγραψε το αρχείο και αφαίρεσέ το από τον πίνακα των ονομάτων
                 unset($files[$serverFileName]);
                 $timetableFile->filenames_json = json_encode($files);
                 if($timetableFile->status == 2){
-                    $timetableFile->status = 1;
+                    $timetableFile->status = 0;
                 }
                 $timetableFile->update();
             }

@@ -100,9 +100,10 @@
                     <form action="{{route('timetables.upload_files', ['timetable' => $timetable])}}" method="post" class="container-fluid" enctype="multipart/form-data">
                         @csrf
                         <div class="text-center">
-                            <input  type="file" id="files" name="files[]" multiple required >
-                            <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
+                            <input type="file" id="files" name="files[]" multiple required >
+                            <input type="submit" value="Υποβολή (για Νέα Αρχεία)" class="btn btn-info btn-block rounded-2 py-2"
                             @if($microapp->accepts == 0 || $lockNewFileSubmission == true) disabled @endif >
+                            <small class="d-block mt-1">(Για νέα αρχεία ωρολογίου προγράμματος)</small>
                         </div>
                     </form>   
                 </div>
@@ -150,10 +151,16 @@
                                 @if(($timetableFile->status == 0 || $timetableFile->status == 1 || $timetableFile->status == 2) && $thisCount == $filesCount)
                                 <form action="{{route('timetables.upload_file', ['timetableFileId' => $fileId])}}" method="post" class="container-fluid" enctype="multipart/form-data">
                                     @csrf
-                                    <div class="text-center">
-                                    <input  type="file" id="file" name="file"  required >
-                                    <input type="submit" value="Υποβολή" class="btn btn-info btn-block btn-sm rounded-2 py-2"
-                                    >
+                                    <div class="mt-2">
+                                        <p><small><strong>Υποβολή διορθωμένου αρχείου:</strong></small></p>
+                                        <form action="{{route('timetables.upload_file', ['timetableFileId' => $fileId])}}" method="post" class="container-fluid" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="text-center">
+                                                <input type="file" id="file" name="file" required >
+                                                <input type="submit" value="Υποβολή (διόρθωση αντίστοιχου αρχείου)" class="btn btn-warning btn-block btn-sm rounded-2 py-2">
+                                                <small class="d-block mt-1">(Για αντικατάσταση υπάρχοντος αρχείου με διορθωμένη έκδοση)</small>
+                                            </div>
+                                        </form>
                                     </div>
                                 </form>
                                 @endif

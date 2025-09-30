@@ -502,9 +502,21 @@ class SchoolController extends Controller
                 }
 
                 if($microapp->url == '/immigrants'){
-                    if($school->immigrants){
+                    $active_month = Month::getActiveMonth();
+                    $vmonth = $school->vmonth;
+                    $accepts = $microapp->accepts; 
+                    $name = $microapp->name;
+                    if(!$school->vmonth or $school->vmonth->vmonth == 0){
+                        $month_to_store = $active_month->id;
+                    }
+                    else{
+                        $month_to_store = $vmonth->vmonth;
+                    }
+                    $old_data = $school->immigrants->where('month_id', $month_to_store)->first();
+                    if($old_data){
                         return true;
-                    } else {
+                    }
+                    else{
                         return false;
                     }
                 }

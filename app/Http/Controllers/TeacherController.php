@@ -105,6 +105,7 @@ class TeacherController extends Controller
                 $var_field_straight = $var_field;
             } 
             if(!Teacher::where('afm', $teacher_afm)->count()){
+                
                 $row++;
                 $rowSumValue="";
                 for($col=1;$col<=54;$col++){
@@ -129,10 +130,11 @@ class TeacherController extends Controller
                     continue;
                 }
                 else{
-                    $structure = app("App\\Models\\$model")->where($field, $var_field_straight)->first();   
+                    $structure = app("App\\Models\\$model")->where($field, $var_field_straight)->first();
                     $teacher->ypiretisi_id = $structure->id;
                     $teacher->ypiretisi_type = "App\\Models\\$model";
-                    if($teacher->isDirty()){
+
+                    if($teacher->isDirty()){                        
                         $wasChanged = true;
                         $teacher->save();
                     }    
@@ -644,9 +646,9 @@ class TeacherController extends Controller
             'd/m/y',    // 16/08/07
             'd-m-Y',    // 16-08-2007
             'd-m-y',    // 16-08-07
-            'Y-m-d',    // 2007-08-16
-            'm/d/Y',    // 08/16/2007
-            'm/d/y',    // 08/16/07
+            // 2007-08-16
+            // 08/16/2007
+            // 08/16/07
         ];
         
         foreach ($formats as $format) {

@@ -202,7 +202,7 @@ class TeacherController extends Controller
             $check['klados']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue();
             $check['am']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, $row)->getValue();
             $dateString = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue();
-            if (Date::isDateTime($spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row))) {  
+            if (Date::isDateTime($dateString)) {  
                 $dateValue = Date::excelToDateTimeObject($dateString);
                 $formattedDate = $dateValue->format('Y-m-d');
                 $check['appointment_date'] = $formattedDate;

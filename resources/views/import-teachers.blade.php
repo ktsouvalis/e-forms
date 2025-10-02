@@ -178,7 +178,13 @@
 
                     @php
                         //print $teacher['sxesi_ergasias'];
-                        $sxesi = $teacher['sxesi_ergasias']!="Error: Κενό πεδίο" ? App\Models\SxesiErgasias::find($teacher['sxesi_ergasias'])->name : $teacher['sxesi_ergasias'] ;
+                        try{
+                            $sxesi = $teacher['sxesi_ergasias']!="Error: Κενό πεδίο" ? App\Models\SxesiErgasias::find($teacher['sxesi_ergasias'])->name : $teacher['sxesi_ergasias'] ;
+                        } catch (\Exception $e) {
+                            dd($teacher, $e->getMessage());
+                            $sxesi = "Error: Άγνωστος κωδικός σχέσης εργασίας";
+                        }
+                        
                     @endphp
                     <td @if($sxesi=="Κενό πεδίο") style='color: red' @endif>{{$sxesi}}</td>
 

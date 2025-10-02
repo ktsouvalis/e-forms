@@ -10,11 +10,11 @@
                         <strong>Εισαγωγή Οργανικά Ανηκόντων και Αποσπασμένων</strong>
                     </div>
                     <div class="hstack gap-3">
-                        <span class="">Οργανικά ανήκοντες (4.1)</span>
+                        <span class="">Οργανικά ανήκοντες (4.1 .csv)</span>
                         <input  type="file" id="organiki" name="organiki_file" required>
                     </div>
                     <div class="hstack gap-3">
-                        <span class="">Αποσπασμένοι (4.2)</span>
+                        <span class="">Αποσπασμένοι (4.2 .csv)</span>
                         <input  type="file" id="apospasi" name="apospasi_file" required>
                     </div>         
                     <div>       
@@ -34,12 +34,12 @@
                     </div>
                     <div class="hstack gap-1">
                         <input type="radio" id="didaskalia" name="template_file" value="didaskalia">
-                        <label class="px-1" for="didaskalia">Διδάσκουν (4.9)</label><br> 
+                        <label class="px-1" for="didaskalia">Διδάσκουν (4.9 .csv)</label><br> 
                     </div> 
                     <div class="hstack gap-1">
                         <input type="radio" id="apousia" name="template_file" value="apousia">
-                        <label class="px-1" for="apousia">Απουσιάζουν </label><br> 
-                        <div>(4.16: Πρέπει από το report να διαγραφούν οι αιτιολογήσεις απουσίας: ΑΠΕΥΘΕΙΑΣ ΑΠΟΣΠΑΣΗ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ, ΑΠΟΣΠΑΣΗ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ ΕΝΤΟΣ ΠΥΣΠΕ/ΠΥΣΔΕ, ΕΠΙ ΘΗΤΕΙΑ ΣΕ ΣΧΟΛΙΚΗ ΜΟΝΑΔΑ, ΟΛΙΚΗ ΔΙΑΘΕΣΗ ΣΕ ΣΧ. ΜΟΝΑΔΑ.<br> Πρέπει να σβηστούν τα ιδιωτικά σχολεία.)</div>
+                        <label class="px-1" for="apousia">Απουσιάζουν (4.16 .csv) </label><br> 
+                        <div></div>
                     </div> 
                     <input type="file" name="import_teachers" required>     
                     <div>
@@ -94,27 +94,6 @@
         </nav>
         <hr>
         <nav class="navbar navbar-light bg-light">
-            <form action="{{url('/upload_leaves_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
-                @csrf
-                
-                <div class="vstack gap-3">
-                    <div class="input-group">
-                        <strong>Εισαγωγή Διευθυντών / Υποδιευθυντών (Στατιστικά 4.24 (που εξάγεται ως 4.25) και 4.25 (που εξάγεται ως 4.26) από mySchool)</strong>
-                    </div>
-                    <div class="hstack gap-1">
-                        {{-- <input type="radio" id="leaves" name="leaves" value="teachers_leaves"> --}}
-                        <label class="px-1" for="leaves">Άδειες </label><br> 
-                        <div>(4.21)</div>
-                    </div> 
-                    <input type="file" name="leaves_file" required>     
-                    <div>
-                        <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>
-                    </div>
-                </div>
-            </form>
-        </nav>
-        <hr>
-        <nav class="navbar navbar-light bg-light">
             <form action="{{url('/upload_directors_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
                 <div class="vstack gap-3">
@@ -122,11 +101,11 @@
                         <strong>Εισαγωγή Διευθυντών και Υποδιευθυντών</strong>
                     </div>
                     <div class="hstack gap-3">
-                        <span class="">Διευθυντές (4.24 - που εξάγεται ως 4.25 (???) απ' το mySchool)</span>
+                        <span class="">Διευθυντές (4.24 - που εξάγεται ως 4.25 (???) απ' το mySchool .csv)</span>
                         <input  type="file" id="directors" name="directors_file" required>
                     </div>
                     <div class="hstack gap-3">
-                        <span class="">Διευθυντές (4.25 - που εξάγεται ως 4.26 (???) απ' το mySchool)</span>
+                        <span class="">Διευθυντές (4.25 - που εξάγεται ως 4.26 (???) απ' το mySchool .csv)</span>
                         <input  type="file" id="subdirectors" name="subdirectors_file" required>
                     </div>         
                     <div>       

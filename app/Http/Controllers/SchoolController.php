@@ -382,8 +382,6 @@ public function insertDirectors(){
         // Update schools records based on 'code' field
         try {
             $school = School::find($one_director['school_id']);
-            if($school->code ='9060579')
-                dd($one_director);
             $school_director = Teacher::find($one_director['teacher_id']);
             $school->director_id = $school_director->id;
             if ($school->isDirty()) {

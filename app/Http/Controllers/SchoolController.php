@@ -235,6 +235,8 @@ class SchoolController extends Controller
         fgetcsv($handle, 0, ";");
         
         $row = 2; // Start from row 2 (after header)
+        // Tell PHP this file is Windows-1253 encoded
+        stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         
         while (($data = fgetcsv($handle, 0, ";")) !== FALSE && $row < 10000) {
             // Check if row is empty
@@ -303,7 +305,8 @@ class SchoolController extends Controller
         fgetcsv($handle, 0, ";");
         
         $row = 2;
-        
+        // Tell PHP this file is Windows-1253 encoded
+        stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         while (($data = fgetcsv($handle, 0, ";")) !== FALSE && $row < 10000) {
             // Check if row is empty
             if (empty(array_filter($data))) {
@@ -379,6 +382,8 @@ public function insertDirectors(){
         // Update schools records based on 'code' field
         try {
             $school = School::find($one_director['school_id']);
+            if($school->code ='9060579')
+                dd($one_director);
             $school_director = Teacher::find($one_director['teacher_id']);
             $school->director_id = $school_director->id;
             if ($school->isDirty()) {

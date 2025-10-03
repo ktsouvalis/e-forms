@@ -473,7 +473,7 @@ private function removeDuplicateDeputyDirectors($directors_array) {
                 return ['status' => 'completed', 'color' => 'bg-green-500', 'text' => 'text-white', 'badge' => 'Ολοκληρώθηκε'];
             }
             
-            if ($deadline->isPast()) {
+            if ($now->toDateString() > $deadline->toDateString()) {
                 return ['status' => 'overdue', 'color' => 'bg-red-500', 'text' => 'text-white', 'badge' => 'Εκπρόθεσμη'];
             }
             

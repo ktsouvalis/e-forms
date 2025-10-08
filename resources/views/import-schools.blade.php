@@ -6,7 +6,7 @@
             <form action="{{url('/upload_schools_template')}}" method="post" class="container-fluid" enctype="multipart/form-data">
                 @csrf
                 <div class="hstack gap-3">
-                    <span class="">Εκτεταμένα Στοιχεία Σχολικών Μονάδων (2.2)</span>
+                    <span class="">Εκτεταμένα Στοιχεία Σχολικών Μονάδων (2.2 .csv)</span>
                     <input type="file" name="import_schools" >    
                 </div>
                 <button type="submit" class="btn bi bi-filetype-xlsx btn-primary"> Αποστολή αρχείου</button>

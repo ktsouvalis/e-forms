@@ -21,175 +21,192 @@ use Illuminate\Support\Facades\Validator;
 class SchoolController extends Controller
 {
     /**
-     * Import and read the xlsx file
-     *
-     * @param Request $request The HTTP request object.
-     * @return \Illuminate\Http\RedirectResponse The redirect response.
-     */
-    public function importSchools(Request $request){
-
-        //validate the user's input
-        $rule = [
-            'import_schools' => 'required|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        ];
-        $validator = Validator::make($request->all(), $rule);
-        if($validator->fails()){ 
-            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
-        }
-
-        //store the file
-        $filename = "schools_file".Auth::id().".xlsx";
-        $path = $request->file('import_schools')->storeAs('files', $filename);
-
-        //load the file with phpspreadsheet
-        $mime = Storage::mimeType($path);
-        $spreadsheet = IOFactory::load("../storage/app/$path");
-        $schools_array=array();
-        $row=3;
-        $error=0;
-        $rowSumValue="1";
-
-        //read the file line by line
-        while ($rowSumValue != "" && $row<10000){
-            $check=array();
-            $check['name'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(14, $row)->getValue();
-            $code = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(13, $row)->getValue();
-            if(str_contains($code, "=")){
-                $check['code'] = substr($code, 2, -1);
-            } else {
-                $check['code'] = $code;
-            }
-            $municipality_name = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(7, $row)->getValue();
-
-            //cross check municipality with database
-            if(Municipality::where('name', $municipality_name)->count()){
-                $check['municipality'] = Municipality::where('name', $municipality_name)->first()->id;
-            }else{
-                $error=1;
-                $check['municipality']="";
-                Auth::user()->notify(new UserNotification("Στη γραμμή $row o Δήμος $municipality_name δεν υπάρχει στη βάση δεδομένων", 'Σφάλμα: Άγνωστος Δήμος '. $municipality_name));
-            }
-
-            //check other obvious fields
-            $check['primary']=0;
-            if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Δημοτικό Σχολείο"))
-                $check['primary']= 1;
-            $check['leitourgikotita']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(15, $row)->getValue():0;
-            $check['organikotita']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(16, $row)->getValue():0;
-            $check['telephone']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(18, $row)->getValue():"-";
-            $check['is_active']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(50, $row)->getValue()=="NAI")?0:1;
-            $check['has_all_day']= ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(51, $row)->getValue()=="NAI")?0:1;
-            $check['mail']= $spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(20, $row)->getValue():"-";
-            $check['address'] = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue()!=""?$spreadsheet->getActiveSheet()->getCellByColumnAndRow(22, $row)->getValue():"-";
-            $check['has_integration_section'] = ($spreadsheet->getActiveSheet()->getCellByColumnAndRow(34, $row)->getValue()=="NAI")?1:0;
-            
-            $check['special_needs']=0;
-            if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Ειδικής Αγωγής"))
-                $check['special_needs']= 1;
-
-            $check['experimental']=0;
-            if(str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(12, $row)->getValue(), "Πειραματικό"))
-                $check['experimental']= 1;
-
-            $check['public']=0;
-            if(!str_contains($spreadsheet->getActiveSheet()->getCellByColumnAndRow(11, $row)->getValue(), "Ιδιωτικά Σχολεία"))
-                $check['public']= 1;
-
-            if($spreadsheet->getActiveSheet()->getCellByColumnAndRow(71, $row)->getValue()=="")
-                $check['schregion_id']=11;
-
-            $check['md5']="";
-
-            //prepare schools array to pass it in session
-            array_push($schools_array, $check);
-
-            //change line and check if it's empty
-            $row++;
-            $rowSumValue="";
-            for($col=1;$col<=54;$col++){
-                $rowSumValue .= $spreadsheet->getActiveSheet()->getCellByColumnAndRow($col, $row)->getValue();   
-            }
-        }
-        
-        session(['schools_array' => $schools_array]);
-
-        if($error){
-            return redirect(url('/import_schools'))
-                ->with('asks_to','error');
-        }else{
-            return redirect(url('/import_schools'))
-                ->with('asks_to','save');
-        }
+ * Import and process schools from CSV file
+ *
+ * @param Request $request The HTTP request object.
+ * @return \Illuminate\Http\RedirectResponse The redirect response.
+ */
+public function importSchools(Request $request)
+{
+    // Validate the user's input
+    $rule = [
+        'import_schools' => 'required|mimetypes:text/csv,text/plain,application/csv'
+    ];
+    $validator = Validator::make($request->all(), $rule);
+    
+    if ($validator->fails()) { 
+        return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: csv)');
     }
 
-    /**
-     * Read the schools array from session and save the data
-     * @return \Illuminate\Http\RedirectResponse The redirect response.
-     */
-    public function insertSchools(){
-        $schools_array = session('schools_array');
-        session()->forget('schools_array');
-        $error=false;
-        $wasChanged = false;
-        foreach($schools_array as $school){
-            // CREATE school WHO IS IN XLSX BUT NOT IN DATABASE, update existing records based on 'code' field
-            try{
+    // Store the file temporarily
+    $filename = "schools_file" . Auth::id() . ".csv";
+    $path = $request->file('import_schools')->storeAs('files', $filename);
+    $fullPath = storage_path("app/$path");
+
+    $error = false;
+    $wasChanged = false;
+    $processedCount = 0;
+    $errorCount = 0;
+
+    try {
+        // Open and read CSV file
+        if (($handle = fopen($fullPath, "r")) === false) {
+            throw new \Exception("Unable to open CSV file");
+        }
+
+        // Skip header rows (assuming first 2 rows are headers)
+        fgetcsv($handle);
+        //fgetcsv($handle);
+        // Tell PHP this file is Windows-1253 encoded
+        stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
+        
+        // Process each row
+        while (($data = fgetcsv($handle, 0, ';')) !== false) {
+            //dd($data[6]);
+            // Skip empty rows
+            if (empty(array_filter($data))) {
+                continue;
+            }
+
+            $processedCount++;
+            
+            try {
+                // Extract data from CSV columns (adjust indices based on your CSV structure)
+                $schoolData = $this->extractSchoolDataFromCsv($data);
+                
+                // Validate municipality exists
+                if (!Municipality::where('name', $schoolData['municipality_name'])->exists()) {
+                    $errorCount++;
+                    Auth::user()->notify(new UserNotification(
+                        "Στη γραμμή " . ($processedCount + 2) . " o Δήμος {$schoolData['municipality_name']} δεν υπάρχει στη βάση δεδομένων",
+                        'Σφάλμα: Άγνωστος Δήμος ' . $schoolData['municipality_name']
+                    ));
+                    continue;
+                }
+
+                $municipalityId = Municipality::where('name', $schoolData['municipality_name'])->first()->id;
+    
+                // Create or update school
                 $schoolModel = School::updateOrCreate(
+                    ['code' => $schoolData['code']],
                     [
-                        'code' => $school['code']
-                    ],
-                    [
-                        'name' => str_replace('/', '', $school['name']),
-                        'code' => $school['code'],
-                        'municipality_id' => $school['municipality'],
-                        'primary' => $school['primary'],
-                        'leitourgikotita' => $school['leitourgikotita'],
-                        'organikotita' => $school['organikotita'],
-                        'telephone' => $school['telephone'],
-                        'is_active' => $school['is_active'],
-                        'has_all_day' => $school['has_all_day'],
-                        'md5' => md5($school['code']),
-                        'mail' => $school['mail'],
-                        'experimental' => $school['experimental'],
-                        'special_needs' => $school['special_needs'],
-                        'public' => $school['public'],
-                        'has_integration_section' => $school['has_integration_section'],
-                        'address' => $school['address'],
-                        // 'schregion_id' => $school['schregion_id'],
+                        'name' => str_replace('/', '', $schoolData['name']),
+                        'code' => $schoolData['code'],
+                        'municipality_id' => $municipalityId,
+                        'primary' => $schoolData['primary'],
+                        'leitourgikotita' => $schoolData['leitourgikotita'],
+                        'organikotita' => $schoolData['organikotita'],
+                        'telephone' => $schoolData['telephone'],
+                        'is_active' => $schoolData['is_active'],
+                        'has_all_day' => $schoolData['has_all_day'],
+                        'md5' => md5($schoolData['code']),
+                        'mail' => $schoolData['mail'],
+                        'experimental' => $schoolData['experimental'],
+                        'special_needs' => $schoolData['special_needs'],
+                        'public' => $schoolData['public'],
+                        'has_integration_section' => $schoolData['has_integration_section'],
+                        'address' => $schoolData['address'],
                     ]
                 );
-                if ($schoolModel->wasRecentlyCreated or $schoolModel->wasChanged()) {
+
+                if ($schoolModel->wasRecentlyCreated || $schoolModel->wasChanged()) {
                     $wasChanged = true;
                 }
-            }
-            catch(Throwable $e){
-                Log::channel('throwable_db')->error(Auth::user()->username.' create school error '.$school['code'].' '.$e->getMessage());
-                $error=true;
-                // Auth::user()->notify(new UserNotification("Υπήρξε σφάλμα κατά την εισαγωγή του σχολείου ".$school['code'].' με μήνυμα '.$e->getMessage() , 'Σφάλμα κατά την εισαγωγή σχολείου '. $school['code']));
-                continue;    
+
+            } catch (\Throwable $e) {
+                $error = true;
+                $errorCount++;
+                Log::channel('throwable_db')->error(
+                    Auth::user()->username . ' create school error ' . 
+                    ($schoolData['code'] ?? 'unknown') . ' ' . $e->getMessage()
+                );
             }
         }
+
+        fclose($handle);
+
+        // Clean up temporary file
+        Storage::delete($path);
+
+        // Update last modified timestamp if changes were made
         if ($wasChanged) {
-            DB::table('last_update_schools')->updateOrInsert(['id'=>1],['date_updated'=>now()]);
+            DB::table('last_update_schools')->updateOrInsert(
+                ['id' => 1],
+                ['date_updated' => now()]
+            );
             event(new SchoolsTeachersUpdated());
-        }   
-        if(!$error){
+        }
+
+        // Return appropriate response
+        if (!$error) {
             if ($wasChanged) {
-                Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools');
-                return redirect(url('/schools'))->with('success', 'Η εισαγωγή ολοκληρώθηκε');
-            }else{
-                Log::channel('user_memorable_actions')->info(Auth::user()->username.' insertSchools with no change.');
-                return redirect(url('/schools'))->with('success', 'Δεν υπήρχε καμία μεταβολή στα στοιχεία των Σχολείων.');
+                Log::channel('user_memorable_actions')->info(Auth::user()->username . ' importSchools');
+                return redirect(url('/schools'))
+                    ->with('success', "Η εισαγωγή ολοκληρώθηκε. Επεξεργάστηκαν $processedCount εγγραφές.");
+            } else {
+                Log::channel('user_memorable_actions')->info(Auth::user()->username . ' importSchools with no change.');
+                return redirect(url('/schools'))
+                    ->with('success', 'Δεν υπήρχε καμία μεταβολή στα στοιχεία των Σχολείων.');
             }
-            
-        }
-        else{
-            Log::channel('user_memorable_actions')->warning(Auth::user()->username.' insertSchools with errors');
+        } else {
+            Log::channel('user_memorable_actions')->warning(Auth::user()->username . ' importSchools with errors');
             return redirect(url('/schools'))
-                ->with('warning', 'Η εισαγωγή ολοκληρώθηκε με σφάλματα που καταγράφηκαν στο log throwable_db');
+                ->with('warning', "Η εισαγωγή ολοκληρώθηκε με $errorCount σφάλματα που καταγράφηκαν στο log throwable_db");
         }
+
+    } catch (\Throwable $e) {
+        // Clean up file on error
+        if (Storage::exists($path)) {
+            Storage::delete($path);
+        }
+
+        Log::channel('throwable_db')->error(
+            Auth::user()->username . ' importSchools fatal error: ' . $e->getMessage()
+        );
+        
+        return back()->with('failure', 'Υπήρξε σφάλμα κατά την επεξεργασία του αρχείου');
+    }
+}
+
+/**
+ * Extract school data from CSV row
+ *
+ * @param array $data CSV row data
+ * @return array Processed school data
+ */
+private function extractSchoolDataFromCsv(array $data): array
+{
+    //dd($data);
+    // Handle code field (remove formula if present)
+    $code = $data[12] ?? '';
+    if (str_contains($code, "=")) {
+        $code = substr($code, 2, -1);
     }
 
+    // Extract school type from column 11
+    $schoolType = $data[11] ?? '';
+    if($code == '7061041'){
+        //dd($data[49]);
+    }
+    return [
+        'name' => $data[13] ?? '',
+        'code' => $code,
+        'municipality_name' => $data[6] ?? '',
+        'primary' => str_contains($schoolType, "Δημοτικό Σχολείο") ? 1 : 0,
+        'leitourgikotita' => !empty($data[14]) ? $data[14] : 0,
+        'organikotita' => !empty($data[15]) ? $data[15] : 0,
+        'telephone' => !empty($data[17]) ? $data[17] : '-',
+        'is_active' => ($data[49] ?? '') == "NAI" ? 0 : 1, // Invert logic: True means inactive
+        'has_all_day' => ($data[50] ?? '') == "NAI" ? 0 : 1, // Invert logic: True means all-day suspended
+        'mail' => !empty($data[19]) ? $data[19] : '-',
+        'address' => !empty($data[21]) ? $data[21] : '-',
+        'has_integration_section' => ($data[33] ?? '') == "NAI" ? 1 : 0,
+        'special_needs' => str_contains($schoolType, "Ειδικής Αγωγής") ? 1 : 0,
+        'experimental' => str_contains($schoolType, "Πειραματικό") ? 1 : 0,
+        'public' => !str_contains($data[10] ?? '', "Ιδιωτικά Σχολεία") ? 1 : 0,
+    ];
+    
+}
     //
     public function login($md5){ 
         

@@ -554,7 +554,11 @@ private function removeDuplicateDeputyDirectors($directors_array) {
                     }
                     $old_data = $school->immigrants->where('month_id', $month_to_store)->first();
                     if($old_data){
-                        return true;
+                        if($old_data->no_refugees == 1 || $old_data->file){
+                            return true;
+                        }else{
+                            return false;
+                        }
                     }
                     else{
                         return false;

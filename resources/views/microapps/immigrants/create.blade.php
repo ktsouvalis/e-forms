@@ -31,12 +31,10 @@
                 </div>
             </div>
             </div>
-            {{-- <form action="{{url("/immigrants/download_template/yes")}}" method="get"> --}}
             <form action="{{route('immigrants.download_template')}}" method="get">
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
             </form>      
             <nav class="navbar navbar-light bg-light">
-                {{-- <form action="{{url("/immigrants")}}" method="post" enctype="multipart/form-data" class="container-fluid"> --}}
                 <form action="{{route('immigrants.store')}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
@@ -93,11 +91,12 @@
                     <td> {{$one->month->name}}</td>
                     <td> {{$one->comments}}</td>
                     <td>
-                        {{-- <form action="{{url("/immigrants/download_file/$one->id")}}" method="get"> --}}
                         @if($one->file)
                         <form action="{{route("immigrants.download_file",["immigrant" => $one->id])}}" method="get">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
-                        </form>   
+                        </form>
+                        @else
+                            -
                         @endif
                     </td>
                     <td>{{$one->updated_at}}</td>

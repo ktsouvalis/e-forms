@@ -43,7 +43,10 @@
             @endif
         
         @php
-            $immigrants = App\Models\microapps\Immigrant::all()->sortByDesc('updated_at');
+            $immigrants = App\Models\microapps\Immigrant::where('no_refugees', 1)
+            ->orWhereNotNull('file')
+            ->orderByDesc('updated_at')
+            ->get();
         @endphp
             <div class="table-responsive py-2">
                 <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
@@ -64,10 +67,13 @@
                     <td> {{$one->school->name}}</td>
                     <td> {{$one->comments}}</td>
                     <td>
-                        {{-- <form action="{{url("/immigrants/download_file/$one->id")}}" method="get"> --}}
+                        @if($one->file)
                         <form action="{{route("immigrants.download_file", ["immigrant" => $one->id])}}" method="get">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   
+                        @else
+                            -
+                        @endif
                     </td>
                     <td>{{$one->updated_at}}</td>
                     </tr>

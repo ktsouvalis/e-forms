@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('school_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('month_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->text('comments')->nullable();
-            $table->string('file');
+            $table->string('file')->nullable();
+            $table->boolean('no_refugees')->default(false);
             $table->timestamps();
         });
     }

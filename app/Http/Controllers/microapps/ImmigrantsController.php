@@ -168,4 +168,31 @@ class ImmigrantsController extends Controller
             return back()->with('failure', 'Δεν ήταν δυνατή η λήψη του αρχείου, προσπαθήστε ξανά');    
         }
     }
+
+    public function no_refugees(Request $request){
+        
+        $school = Auth::guard('school')->user();
+        $month = Month::getActiveMonth();
+
+        // $immigrant = $school->immigrants()->updateOrCreate(
+        //     ['month_id' => $month_id],
+        //     ['no_refugees' => $request->no_refugees]
+        // );
+        $comments = '';
+        if($request->no_refugees == 1){
+            $comments = 'Δεν υπάρχουν πρόσφυγες μαθητές στο σχολείο μας.';
+        }
+        
+        Immigrant::updateOrCreate(
+                [
+                    'month_id'=>$month->id,
+                    'school_id'=>$school->id
+                ],
+                [
+                    'no_refugees' => $request->no_refugees,
+                    'comments' => $comments,
+                ]);
+        
+        return response()->json(['success' => true]);
+    }
 }

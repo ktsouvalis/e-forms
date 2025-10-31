@@ -477,6 +477,8 @@ Route::group(['prefix' => 'immigrants', 'middleware' => 'canViewMicroapp'], func
     Route::post('/update_template', [ImmigrantsController::class, 'update_template'])->name('immigrants.update_template')->middleware('boss');
 
     Route::get('/download_file/{immigrant}', [ImmigrantsController::class, 'download_file'])->name('immigrants.download_file'); //access rights are checked inside the method
+
+    Route::post('/immigrants/no-refugees', [ImmigrantsController::class, 'no_refugees'])->name('immigrants.no_refugees');
 });
 
 // TWO FILES ROUTES

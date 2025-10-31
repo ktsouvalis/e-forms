@@ -9,9 +9,28 @@
     $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
     $accepts = $microapp->accepts; //fetch microapp 'accepts' field
     $old_data = $school->immigrants->where('month_id', $active_month->id)->first(); 
+    //dd($old_data);
 @endphp
 <div class="container">
     <div class="container px-5">  
+            <div class="form-check ms-2 m-5 d-flex justify-content-center align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="mx-5 mb-3 p-3 bg-light border-start border-info border-4">
+    <p class="mb-2 text-secondary">
+        Αν κατά τον τρέχοντα μήνα δεν υπάρχουν πρόσφυγες μαθητές στο Σχολείο σας πατήστε την ακόλουθη δήλωση:
+    </p>
+    <div class="d-flex align-items-center">
+        <input class="form-check-input me-2 m-3" type="checkbox" id="no_refugees" name="no_refugees" 
+            @if($old_data && $old_data->no_refugees == 1) checked @endif>
+        <label class="form-check-label" for="no_refugees">
+            <strong>Δεν έχω πρόσφυγες μαθητές</strong>
+        </label>
+    </div>
+    
+</div>
+                </div>
+            </div>
+            </div>
             {{-- <form action="{{url("/immigrants/download_template/yes")}}" method="get"> --}}
             <form action="{{route('immigrants.download_template')}}" method="get">
                 <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> Πίνακας προς συμπλήρωση </button>
@@ -29,6 +48,7 @@
                         <span class="input-group-text w-25 text-wrap">Παρατηρήσεις</span>
                         <textarea name="comments" id="comments" class="form-control" cols="30" rows="5" style="resize: none;" >@if($old_data){{$old_data->comments}}@endif</textarea>
                     </div>
+                    
                     <div class="input-group">
                         <span class="input-group-text w-25" id="basic-addon4">Πίνακας</span>
                         <input name="table_file" type="file" class="form-control" @if(!$old_data) {{"required"}} @endif><br>
@@ -41,17 +61,14 @@
                         <div class="input-group">
                             <span class="w-25"></span>
                             <button type="submit" class="btn btn-primary m-2 bi bi-plus-circle"> Υποβολή</button>
-                            {{-- <a href="{{url("/$appname/create")}}" class="btn btn-outline-secondary m-2">Ακύρωση</a> --}}
                             <a href="{{route('immigrants.create')}}" class="btn btn-outline-secondary m-2">Ακύρωση</a>
                         </div>
                     @endif
                 </form>
-                
             </nav>
-        </div> 
+        </div>
         <div class="container px-5 py-2">
-            @if($old_data)
-                {{-- <form action="{{url("/immigrants/download_file/$old_data->id")}}" method="get"> --}}
+            @if($old_data && $old_data->file)
                 <form action="{{route("immigrants.download_file", ['immigrant' => $old_data->id])}}" method="get">
                    Αρχείο που έχετε υποβάλλει: <button class="btn btn-success bi bi-box-arrow-down" title="Λήψη αρχείου">  {{$old_data->file}}</button> 
                 </form>   
@@ -77,9 +94,11 @@
                     <td> {{$one->comments}}</td>
                     <td>
                         {{-- <form action="{{url("/immigrants/download_file/$one->id")}}" method="get"> --}}
+                        @if($one->file)
                         <form action="{{route("immigrants.download_file",["immigrant" => $one->id])}}" method="get">
                             <button class="btn btn-secondary bi bi-box-arrow-down" title="Λήψη αρχείου"> </button> 
                         </form>   
+                        @endif
                     </td>
                     <td>{{$one->updated_at}}</td>
                     </tr>
@@ -90,4 +109,32 @@
         
         </div>  
 </div>
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#no_refugees').change(function() {
+        const isChecked = $(this).is(':checked');
+        
+        $.ajax({
+            url: '{{ route("immigrants.no_refugees") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                no_refugees: isChecked ? 1 : 0,
+                month_id: {{ $active_month->id }}
+            },
+            success: function(response) {
+                if(response.success) {
+                    alert('Η απάντησή σας καταγράφηκε. Δε χρειάζεται να υποβάλετε πίνακα ούτε να πατήσετε το κουμπί υποβολής.');
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr);
+                alert('Σφάλμα κατά την αποθήκευση. Παρακαλώ δοκιμάστε ξανά.');
+            }
+        });
+    });
+});
+</script>
+@endpush
 </x-layout_school>

@@ -31,7 +31,7 @@
     <script src="tabs.js"></script>
 @endpush
 @push('title')
-    <title>Αξιολόγηση</title>
+    <title>Αξιολόγηση 2</title>
 @endpush
 
 <div class="container-fluid">

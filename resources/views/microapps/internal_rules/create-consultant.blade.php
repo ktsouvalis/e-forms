@@ -22,7 +22,7 @@
     @php
         $user = Auth::guard('consultant')->user(); //check which user is logged in
         $microapp = App\Models\Microapp::where('url', '/internal_rules')->first();
-        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
+        $accepts = 1;//$microapp->accepts; //fetch microapp 'accepts' field
     @endphp
     <div class="container pt-2">
         <div class="h4">Έλεγχος, επεξεργασία και έγκριση Εσωτερικού Κανονισμού Λειτουργίας Σχ. Μονάδων</div>

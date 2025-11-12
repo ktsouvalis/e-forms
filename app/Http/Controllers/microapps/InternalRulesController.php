@@ -151,7 +151,7 @@ class InternalRulesController extends Controller
     }
 
     public function upload_director_comments_file(InternalRule $internal_rule, Request $request){
-        if($this->microapp->accepts){
+        if($this->microapp->accepts or 1==1){ // ignore microapps status for director and consultant
             $rule = [
                 "director_comment_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ];
@@ -221,7 +221,7 @@ class InternalRulesController extends Controller
     }
 
     public function upload_director_signed_file(InternalRule $internal_rule, Request $request){
-        if($this->microapp->accepts){
+        if($this->microapp->accepts || 1==1){ // ignore microapps status for director and consultant
             $rule = [
                 "director_signed_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ];
@@ -293,7 +293,7 @@ class InternalRulesController extends Controller
 
     public function upload_consultant_signed_file(InternalRule $internal_rule, Request $request){
         if(Auth::guard('consultant')->user()->schregion->id == $internal_rule->school->schregion->id) {
-            if($this->microapp->accepts){
+            if($this->microapp->accepts || 1==1){ // ignore microapps status for director and consultant
                 $rule = [
                     "consultant_signed_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 ];
@@ -354,7 +354,7 @@ class InternalRulesController extends Controller
 
     public function upload_consultant_comments_file(InternalRule $internal_rule, Request $request){
         if(Auth::guard('consultant')->user()->schregion->id == $internal_rule->school->schregion->id) {    
-            if($this->microapp->accepts){
+            if($this->microapp->accepts || 1==1){ // ignore microapps status for director and consultant
                 $rule = [
                     "consultant_comment_file" => 'mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 ];

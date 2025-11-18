@@ -168,7 +168,9 @@ class TeacherController extends Controller
                     $rowNumber++;
                     continue;
                 }
-                
+                print_r("Processing row $rowNumber: AFM = $afm, Field Value = $fieldValue\n");
+
+                    
                 $updateResult = $this->updateTeacherAssignment(
                     $afm, 
                     $fieldValue, 
@@ -190,7 +192,7 @@ class TeacherController extends Controller
         if ($wasChanged) {
             $this->updateLastModifiedTimestamp();
         }
-        
+        dd('finished');
         return $error;
     }
 

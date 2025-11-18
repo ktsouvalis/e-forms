@@ -102,7 +102,7 @@
     <div class="hstack gap-3">
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyCodeButton"> Αντιγραφή ΑΦΜ εκπαιδευτικών</button>
         <button class="btn btn-secondary bi bi-clipboard my-2" id="copyMailButton"> Αντιγραφή emails εκπαιδευτικών</button>
-        @if(Auth::check())
+        <!-- @if(Auth::check())
             @if(Auth::user()->isAdmin())
                 @if(App\Models\Teacher::where('sent_link_mail',0)->count())
                     <form action="{{url("share_links_to_all/teacher")}}" method="post">
@@ -116,7 +116,7 @@
                     </form>
                 @endif
             @endif
-        @endif
+        @endif -->
     </div>
     <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

@@ -16,7 +16,6 @@ class TeacherPolicy
     public function viewAny(User $user): bool
     {
         //
-        return true;
         if(Superadmin::where('user_id',$user->id)->exists()) return true;
         $operation = Operation::find(2); // teachers operation is id 2 from the seeder
         return ($operation->users->where('user_id', $user->id)->count());

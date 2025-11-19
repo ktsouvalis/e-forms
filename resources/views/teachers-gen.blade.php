@@ -48,9 +48,6 @@
         <script src="datatable_init_teachers.js"></script>
         <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script>
-            //var teachers = @json($all_teachers);
-        </script>
-        <script>
             $(document).ready(function() {                
                 $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
                     event.preventDefault();

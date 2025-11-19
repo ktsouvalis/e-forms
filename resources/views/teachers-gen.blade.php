@@ -48,32 +48,48 @@
         <script src="datatable_init_teachers.js"></script>
         <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script>
-            var teachers = @json($all_teachers);
+            //var teachers = @json($all_teachers);
         </script>
         <script>
             $(document).ready(function() {                
                 $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
                     event.preventDefault();
                     var teacherId = $(this).data('teacher-id');
-                    var teacher = teachers.find(teacher => teacher.id == teacherId);
-                    var workExperience = teachers.find(teacher => teacher.id == teacherId).work_experience;
-                    $('#infoModal .modal-body p:eq(0)').text('Επώνυμο: ' + teacher.surname);
-                    $('#infoModal .modal-body p:eq(1)').text('Όνομα: ' + teacher.name);
-                    $('#infoModal .modal-body p:eq(2)').text('Α.Μ.: ' + teacher.am);
-                    $('#infoModal .modal-body p:eq(3)').text('Τηλέφωνο: ' + teacher.telephone);
-                    $('#infoModal .modal-body p:eq(4)').text('Mail ΠΣΔ: ' + teacher.sch_mail);
-                    if(teacher.work_experience != null){
-                        $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2025: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες ' + teacher.work_experience.days + ' ημέρες');
-                    }
-                    else{
-                        $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2025: Δεν έχει καταχωρηθεί προϋπηρεσία');
-                    }
-                    $('#infoModal .modal-body p:eq(6)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
-                    setTimeout(function() {
-                        $('#infoModal').modal('show');
-                    }, 50);
+                    // var teacher = teachers.find(teacher => teacher.id == teacherId);
+                    // var workExperience = teachers.find(teacher => teacher.id == teacherId).work_experience;
+                    console.log('Fetching data for teacher ID:', teacherId);
+                    $.ajax({
+                        url: '/api/teachers/' + teacherId, // Adjust this URL to match your API endpoint
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function(teacher) {
+                            // Access teacher data
+                            console.log('ok', teacher);
+                            var workExperience = teacher.work_experience;
+                            
+                            $('#infoModal .modal-body p:eq(0)').text('Επώνυμο: ' + teacher.surname);
+                            $('#infoModal .modal-body p:eq(1)').text('Όνομα: ' + teacher.name);
+                            $('#infoModal .modal-body p:eq(2)').text('Α.Μ.: ' + teacher.am);
+                            $('#infoModal .modal-body p:eq(3)').text('Τηλέφωνο: ' + teacher.telephone);
+                            $('#infoModal .modal-body p:eq(4)').text('Mail ΠΣΔ: ' + teacher.sch_mail);
+                            if(teacher.work_experience != null){
+                                $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2025: ' + teacher.work_experience.years + ' χρόνια ' + teacher.work_experience.months + ' μήνες ' + teacher.work_experience.days + ' ημέρες');
+                            }
+                            else{
+                                $('#infoModal .modal-body p:eq(5)').text('Προϋπηρεσία έως 31-8-2025: Δεν έχει καταχωρηθεί προϋπηρεσία');
+                            }
+                            $('#infoModal .modal-body p:eq(6)').text('Τελευταία σύνδεση: ' + teacher.logged_in_at);
+                        
+                            $('#infoModal').modal('show');
+                        
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching teacher:', error);
+                            // Handle error appropriately
+                            alert('Failed to load teacher information');
+                        }
+                    });
                 });
-                
             });
         </script>
     @endpush

@@ -4,6 +4,7 @@ use App\Models\Fileshare;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\FileshareController;
 
 /*
@@ -40,3 +41,7 @@ use App\Http\Controllers\FileshareController;
 
 //     return response()->json($result->getData(), $result->getStatusCode());
 // });
+
+//Route::get('/api/teachers/{id}', [TeacherController::class, 'sendTeachersData']); //for fetching teacher data in teachers-gen.blade.php
+
+Route::get('/teachers/{id}', [TeacherController::class, 'sendTeachersData']); //for fetching teacher data in teachers-gen.blade.php

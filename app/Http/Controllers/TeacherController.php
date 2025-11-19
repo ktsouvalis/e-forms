@@ -804,4 +804,12 @@ class TeacherController extends Controller
         return null;
     }
 
+    public function sendTeachersData($teacherId) {
+        $teacher = Teacher::where('id', $teacherId)->first();
+        if(!$teacher){
+            return response()->json(['error' => 'Teacher not found'], 404);
+        }
+        return response()->json($teacher);
+    }
+
 }

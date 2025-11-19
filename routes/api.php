@@ -42,6 +42,4 @@ use App\Http\Controllers\FileshareController;
 //     return response()->json($result->getData(), $result->getStatusCode());
 // });
 
-//Route::get('/api/teachers/{id}', [TeacherController::class, 'sendTeachersData']); //for fetching teacher data in teachers-gen.blade.php
-
-Route::get('/teachers/{id}', [TeacherController::class, 'sendTeachersData']); //for fetching teacher data in teachers-gen.blade.php
+Route::get('/teachers/{id}', [TeacherController::class, 'sendTeachersData']);//->middleware('auth'); //for fetching teacher data in teachers-gen.blade.php

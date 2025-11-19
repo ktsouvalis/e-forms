@@ -54,14 +54,15 @@
                     var teacherId = $(this).data('teacher-id');
                     // var teacher = teachers.find(teacher => teacher.id == teacherId);
                     // var workExperience = teachers.find(teacher => teacher.id == teacherId).work_experience;
-                    //console.log('Fetching data for teacher ID:', teacherId);
                     $.ajax({
                         url: '{{ url("api/teachers") }}/' + teacherId,
                         method: 'GET',
-                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN' : @json(env('HARDCODED_TOKEN'))
+                        },
                         success: function(teacher) {
                             // Access teacher data
-                            //console.log('ok', teacher);
+                            console.log('ok', teacher);
                             var workExperience = teacher.work_experience;
                             
                             $('#infoModal .modal-body p:eq(0)').text('Επώνυμο: ' + teacher.surname);

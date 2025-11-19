@@ -804,7 +804,17 @@ class TeacherController extends Controller
         return null;
     }
 
-    public function sendTeachersData($teacherId) {
+    public function sendTeachersData(Request $request, $teacherId) {
+        
+        $token = $request->header('X-CSRF-TOKEN');
+        //return response()->json(['token' => $token]);
+        if (!$token || $token !== env('HARDCODED_TOKEN')) {
+             return response()->json(['error' => 'Invalid token'], 401);
+        }
+
+        // if(!Auth::check('user')) {
+        //     return response()->json(['error' => 'Unauthorized'], 401);
+        // }
         $teacher = Teacher::where('id', $teacherId)->first();
         if(!$teacher){
             return response()->json(['error' => 'Teacher not found'], 404);

@@ -62,7 +62,7 @@
                         },
                         success: function(teacher) {
                             // Access teacher data
-                            console.log('ok', teacher);
+                            //console.log('ok', teacher);
                             var workExperience = teacher.work_experience;
                             
                             $('#infoModal .modal-body p:eq(0)').text('Επώνυμο: ' + teacher.surname);

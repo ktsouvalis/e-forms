@@ -192,7 +192,7 @@ class TeacherController extends Controller
         if ($wasChanged) {
             $this->updateLastModifiedTimestamp();
         }
-        dd('finished');
+        //dd('finished');
         return $error;
     }
 
@@ -807,7 +807,7 @@ class TeacherController extends Controller
     public function sendTeachersData(Request $request, $teacherId) {
         
         $token = $request->header('X-CSRF-TOKEN');
-        //return response()->json(['token' => $token]);
+        
         if (!$token || $token !== env('HARDCODED_TOKEN')) {
              return response()->json(['error' => 'Invalid token'], 401);
         }

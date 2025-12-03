@@ -16,6 +16,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Illuminate\Database\QueryException;
 
 class LeavesController extends Controller
 {
@@ -41,132 +42,148 @@ class LeavesController extends Controller
         
         // Validate the input file type
         $rule = [
-            'leaves_file' => 'mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            'leaves_file' => 'mimes:csv,txt|max:10240' // 10MB max
         ];
         
         $validator = Validator::make($request->all(), $rule);
         if ($validator->fails()) {
-            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: xlsx)');
+            return back()->with('failure', 'Μη επιτρεπτός τύπος αρχείου (Επιτρεπτός τύπος: CSV)');
         }
         
         // Increase execution time for this request
         ini_set('max_execution_time', 300); // 5 minutes
         
         // Store the file
-        $filename = "teachers_file_leaves" . Auth::id() . ".xlsx";
+        $filename = "teachers_file_leaves" . Auth::id() . ".csv";
         $path = $request->file('leaves_file')->storeAs('files', $filename);
+        $fullPath = storage_path("app/$path");
         
         // Truncate table before processing
-        DB::statement('TRUNCATE TABLE teacher_leaves');
-        
-        // Load the file with ChunkReadFilter to reduce memory usage
-        $reader = IOFactory::createReader('Xlsx');
-        $reader->setReadDataOnly(true);
-        
-        // Configure to read only columns we need
-        $spreadsheet = $reader->load("../storage/app/$path");
-        $worksheet = $spreadsheet->getActiveSheet();
-        
+        //DB::statement('TRUNCATE TABLE teacher_leaves');
         // Process variables
-        $row = 2; // Start from row 2
-        $batchSize = 50; // Process 50 rows at a time
+        $batchSize = 50;
         $totalProcessed = 0;
         $errors = 0;
         $processedBatch = [];
+        $rowNumber = 0;
         
-        // Get the highest row with data
-        $highestRow = min($worksheet->getHighestDataRow(), 10000); // Safety limit
+        // Open CSV file with UTF-8 encoding
+        if (($handle = fopen($fullPath, 'r')) === false) {
+            return back()->with('failure', 'Αδυναμία ανάγνωσης αρχείου CSV');
+        }
         
-        // Process rows in batches
-        while ($row <= $highestRow) {
-            $rowEmpty = true;
+        // Skip header row
+        $titles = fgetcsv($handle, 0, ';');
+        $numOfColumns = count($titles);
+        $rowNumber++;
+               
+        // Tell PHP this file is Windows-1253 encoded
+        stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
             
-            // Check if row has data
-            $cellValue = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-            if ($cellValue) {
-                $rowEmpty = false;
-            } else {
-                // Check a few more columns to be sure it's truly empty
-                for ($col = 2; $col <= 5; $col++) {
-                    if ($worksheet->getCellByColumnAndRow($col, $row)->getValue()) {
-                        $rowEmpty = false;
-                        break;
-                    }
-                }
-            }
-            
-            if ($rowEmpty) {
-                $row++;
+        // Process CSV rows
+        while (($row = fgetcsv($handle, 0, ';')) !== false) {
+            if(count($row) != $numOfColumns + 1){ // MySchool extraction has an extra semicolon in each row except title's row
+                Log::channel('throwable_db')->error("update leaves column count error at row $rowNumber: expected $numOfColumns, got ".count($row));
+                $errors++;
                 continue;
             }
+            $rowNumber++;
             
-            // Extract teacher AFM
-            $rawAfm = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+            if (empty(array_filter($row))) {
+                continue;
+            }
+            // Extract teacher AFM (column index 1, 0-based)
+            $rawAfm = isset($row[1]) ? trim($row[1]) : '';
+            // Remove =" and ending " if present (Excel formula notation)
             $teacherAfm = is_string($rawAfm) ? substr($rawAfm, 2, -1) : $rawAfm;
             
             // Verify teacher exists
             if (!$teacherAfm || !Teacher::where('afm', $teacherAfm)->exists()) {
-                Log::channel('throwable_db')->error("update leaves afm error: " . $teacherAfm);
+                Log::channel('throwable_db')->error("update leaves afm error at row $rowNumber: " . $teacherAfm);
                 $errors++;
-                $row++;
                 continue;
             }
             
             try {
-                // Helper function to safely get cell values
-                $getCellValue = function($col) use ($worksheet, $row) {
-                    $value = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-                    return $value !== null ? $value : '';
+                // Helper function to safely get cell values with UTF-8 encoding
+                $getValue = function($index) use ($row) {
+                    if (!isset($row[$index])) {
+                        return '';
+                    }
+                    $value = trim($row[$index]);
+                    
+                    // Ensure UTF-8 encoding
+                    if (!mb_check_encoding($value, 'UTF-8')) {
+                        // Try to convert from Windows-1253 (Greek) to UTF-8
+                        $value = mb_convert_encoding($value, 'UTF-8', 'Windows-1253');
+                    }
+                    
+                    return $value !== '' ? $value : '';
                 };
                 
-                // Helper function to safely convert Excel dates
-                $getExcelDate = function($col) use ($worksheet, $row) {
-                    $cell = $worksheet->getCellByColumnAndRow($col, $row);
-                    if (!$cell->getValue()) {
+                // Helper function to parse dates
+                $parseDate = function($index) use ($row, $getValue) {
+                    $value = $getValue($index);
+                    if (empty($value)) {
                         return null;
                     }
-                    $dateTime = Date::excelToDateTimeObject($cell->getValue());
-        
-                    // Format to Y-m-d for database storage
-                    return $dateTime->format('Y-m-d');
-                    //return LeavesController::convertExcelDate($cell);
+                    
+                    // Try to parse various date formats
+                    try {
+                        // Handle Excel serial dates if present (numeric values)
+                        if (is_numeric($value)) {
+                            $unix = ($value - 25569) * 86400;
+                            return date('Y-m-d', $unix);
+                        }
+                        
+                        // Handle common date formats
+                        $date = \Carbon\Carbon::parse($value);
+                        return $date->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        Log::channel('throwable_db')->warning("Date parsing failed for value: $value");
+                        return null;
+                    }
                 };
+                
+                // Extract creator entity code (remove Excel formula notation)
+                $creatorEntityCode = $getValue(21);
+                $creatorEntityCodeRaw = is_string($creatorEntityCode) ? substr($creatorEntityCode, 2, -1) : $creatorEntityCode;
                 
                 // Create data array with safe value extraction
                 $leaveData = [
                     'afm' => $teacherAfm,
-                    'leave_type' => $getCellValue(16),
-                    'leave_start_date' => $getExcelDate(17),
-                    'leave_days' => $getCellValue(18),
-                    'am' => $getCellValue(1),
-                    'sex' => $getCellValue(3),
-                    'surname' => $getCellValue(4),
-                    'name' => $getCellValue(5),
-                    'fathers_name' => $getCellValue(6),
-                    'specialty_code' => $getCellValue(7),
-                    'specialty' => $getCellValue(8),
-                    'directorate' => $getCellValue(12),
-                    'employment_relation' => $getCellValue(14),
-                    'leave_state' => $getCellValue(15),
-                    'leave_protocol_number' => $getCellValue(19),
-                    'leave_protocol_date' => $getExcelDate(20),
-                    'leave_description' => $getCellValue(21),
-                    'creator_entity_code' => is_string($getCellValue(22)) ? substr($getCellValue(22), 2, -1) : $getCellValue(22),
-                    'creator_entity_name' => $getCellValue(23),
-                    'creation_date' => $getExcelDate(24),
-                    'submission_date' => $getExcelDate(25),
-                    'approved_days' => $getCellValue(26),
-                    'approved_months' => $getCellValue(27),
-                    'approved_years' => $getCellValue(28),
-                    'approved_protocol_number' => $getCellValue(29),
-                    'approved_protocol_date' => $getExcelDate(30),
-                    'approved_description' => substr($getCellValue(31), 0, 255),
-                    'revoke_description' => $getCellValue(32),
-                    'approving_authority_code' => $getCellValue(33),
-                    'approving_authority_name' => $getCellValue(34),
-                    'last_change_date' => $getExcelDate(35),
+                    'leave_type' => $getValue(15),
+                    'leave_start_date' => $parseDate(16),
+                    'leave_days' => $getValue(17),
+                    'am' => $getValue(0),
+                    'sex' => $getValue(2),
+                    'surname' => $getValue(3),
+                    'name' => $getValue(4),
+                    'fathers_name' => $getValue(5),
+                    'specialty_code' => $getValue(6),
+                    'specialty' => $getValue(7),
+                    'directorate' => $getValue(11),
+                    'employment_relation' => $getValue(13),
+                    'leave_state' => $getValue(14),
+                    'leave_protocol_number' => $getValue(18),
+                    'leave_protocol_date' => $parseDate(19),
+                    'leave_description' => $getValue(20),
+                    'creator_entity_code' => $creatorEntityCodeRaw,
+                    'creator_entity_name' => $getValue(22),
+                    'creation_date' => $parseDate(23),
+                    'submission_date' => $parseDate(24),
+                    'approved_days' => $getValue(25),
+                    'approved_months' => $getValue(26),
+                    'approved_years' => $getValue(27),
+                    'approved_protocol_number' => $getValue(28),
+                    'approved_protocol_date' => $parseDate(29),
+                    'approved_description' => mb_substr($getValue(30), 0, 191), // varchar(191) limit
+                    'revoke_description' => $getValue(31),
+                    'approving_authority_code' => $getValue(32),
+                    'approving_authority_name' => $getValue(33),
+                    'last_change_date' => $parseDate(34),
                 ];
-                //dd($leaveData);
+                
                 // Add to batch
                 $processedBatch[] = $leaveData;
                 $totalProcessed++;
@@ -181,12 +198,13 @@ class LeavesController extends Controller
                 }
                 
             } catch (Throwable $e) {
-                Log::channel('throwable_db')->error($teacherAfm . ' ' . $e->getMessage());
+                Log::channel('throwable_db')->error("Row $rowNumber - AFM: $teacherAfm - " . $e->getMessage());
                 $errors++;
             }
-            
-            $row++;
         }
+        
+        // Close file handle
+        fclose($handle);
         
         // Process any remaining records
         if (!empty($processedBatch)) {
@@ -194,8 +212,6 @@ class LeavesController extends Controller
         }
         
         // Free memory
-        $spreadsheet->disconnectWorksheets();
-        unset($spreadsheet);
         gc_collect_cycles();
         
         if ($errors > 0) {
@@ -223,8 +239,16 @@ class LeavesController extends Controller
                 unset($data['afm'], $data['leave_type'], $data['leave_start_date'], $data['leave_days']);
                 
                 TeacherLeaves::updateOrCreate($keys, $data);
+                
             }
             DB::commit();
+        // } catch (QueryException $e) {
+        //     DB::rollBack();
+        //     Log::channel('throwable_db')->error('Query Exception: ' . $e->getMessage());
+        //     Log::channel('throwable_db')->error('SQL: ' . $e->getSql());
+        //     Log::channel('throwable_db')->error('Bindings: ' . json_encode($e->getBindings()));
+        //     Log::channel('throwable_db')->error('Error Code: ' . $e->getCode());
+        //     throw $e;
         } catch (Throwable $e) {
             DB::rollBack();
             Log::channel('throwable_db')->error('Batch save error: ' . $e->getMessage());
@@ -371,12 +395,12 @@ class LeavesController extends Controller
     }
 
     public function sendLeaveToProtocol(TeacherLeaves $leave){
-        
+       
         // Find leave type from lookup table
         $leaveType = \App\Models\LeaveType::where('description', $leave->leave_type)->first();
         $leaveProtocolDate = Carbon::createFromFormat('Y-m-d', $leave->leave_protocol_date)->format('d/m/Y');
         $schoolProtocol = $leave->leave_protocol_number .'-'. $leaveProtocolDate;
-        //dd($leave->leave_type, $leaveType);
+        
         if(!$leaveType){
             return back()->with('failure', 'Δε βρέθηκε ο τύπος της άδειας. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr');
         }
@@ -408,7 +432,7 @@ class LeavesController extends Controller
                 ];
             }
         }
-                        
+                     
         $client = new Client();
         
         //return "5184 - 2024/08/06";
@@ -422,6 +446,7 @@ class LeavesController extends Controller
         // Get the response body
         $status = $response->getStatusCode();
         $body = $response->getBody()->getContents();
+      
         //dd($status, $body);
         if($status != 200){
             //dd($body);

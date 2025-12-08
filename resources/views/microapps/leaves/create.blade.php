@@ -1,6 +1,6 @@
 <x-layout_school>
     @push('scripts')
-    <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <!-- <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script> -->
     <script src="{{asset("leaves.js")}}"></script>
     @endpush
     @php
@@ -15,8 +15,8 @@
         foreach($leaves as $leave1){
             foreach($revokedLeaves as $leave2){
                 if($leave1->leave_protocol_number == $leave2->leave_protocol_number && $leave1->leave_protocol_date == $leave2->leave_protocol_date){
-                    echo 'Σε Ισχύ: ' . $leave1->surname . ' ' . $leave1->leave_type . ' ' . $leave1->leave_start_date .  ' ' . $leave1->leave_days . ' / 
-                    Ανακλημένη: '   . $leave2->surname . ' ' . $leave2->leave_type .   ' ' . $leave2->leave_start_date .  ' ' . $leave2->leave_days . '<br>';
+                    //echo 'Σε Ισχύ: ' . $leave1->surname . ' ' . $leave1->leave_type . ' ' . $leave1->leave_start_date .  ' ' . $leave1->leave_days . ' / 
+                    //Ανακλημένη: '   . $leave2->surname . ' ' . $leave2->leave_type .   ' ' . $leave2->leave_start_date .  ' ' . $leave2->leave_days . '<br>';
                 }
             }
         }
@@ -55,6 +55,39 @@
 
     <div class="container">
     <h3>Υποβολή αδειών εκπαιδευτικών στη Διεύθυνση Π.Ε. Αχαΐας</h3>
+       <div>
+                <h4>Εσωτερικός Κανονισμός Σχολικής Μονάδας</h4>
+                <div>
+                    <button class="btn btn-primary m-3" type="button" data-bs-toggle="collapse" data-bs-target="#instructionsList" aria-expanded="false" aria-controls="instructionsList">
+                        <h6>Για αναλυτική περιγραφή της διαδικασίας υποβολής και έγκρισης Αδειών Εκπαιδευτικών πατήστε εδώ</h6>
+                    </button>
+                    <div class="collapse" id="instructionsList">
+                        
+                        <ul class="list-group m-3">
+                            <li class="list-group-item">1) Καταχώρηση άδειας από το Σχολείο στο mySchool. 
+                            </li>
+                            <li class="list-group-item">2) Αυτόματη ενημέρωση εφαρμογής "Ηλεκτρονικές Φόρμες" με τις άδειες του mySchool. Με την ενημέρωση οι άδειες του σχολείου εμφανίζονται στις Ηλεκτρονικές Φόρμες.
+                                <br><em>(η ενημέρωση γίνεται καθημερινά στις 10:00 π.μ. και στις 12 μ.)</em>
+                            </li>
+                            <li class="list-group-item">3) Ανέβασμα απαραίτητων αρχείων από τη Σχολική Μονάδα στις Ηλεκτρονικές Φόρμες 
+                                <br><em>(π.χ. ιατρικές βεβαιώσεις, δικαιολογητικά κλπ)</em>
+                            </li>
+                            <li class="list-group-item">4) Υποβολή άδειας από τη Σχολική Μονάδα στη Διεύθυνση Π.Ε. Αχαΐας
+                                <br><em>(Η άδεια πρωτοκολείται αυτόματα και χρεώνεται στον αρμόδιο υπάλληλο. Στη συνέχεια
+                                    , κατά περίπτωση, προχωράει η διαδικασία ενημέρωσης του φακέλου του εκπαιδευτικού, έγκριση της άδειας και διαβίβαση στην υγειονομική επιτροπή ανάλογα με το είδος και τη διάρκεια της άδειας.   )</em>
+                            </li>
+                            <li class="list-group-item">5) Με την τελική έγκριση της άδειας (όπου απαιτείται) από τη Διεύθυνση Π.Ε. Αχαΐας, η Σχολική Μονάδα ενημερώνεται αυτόματα μέσω email και η έγκριση εμφανίζεται στην αντίστοιχη άδεια στην παρούσα καρτέλα.
+                            </li>
+                            
+                        </ul>
+                        <div class="alert alert-info" role="alert">
+                            <strong><i class="bi bi-info-circle"></i> Σημείωση:</strong> Οι άδειες των εκπαιδευτικών που είναι αποσπασμένοι από άλλους νομούς υποβάλλονται απευθείας από το Σχολείο στην αντίστοιχη διεύθυνση οργανικής του εκπαιδευτικού
+                            και όχι στη Διεύθυνση Π.Ε. Αχαΐας.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
     <div class="row">
         <div class="col-md-2">
             <strong>Επώνυμο</strong>
@@ -73,6 +106,7 @@
         </div>
     </div>
     @foreach ($leaves as $leave)
+
         <div class="row">
             <div class="col-md-2">
                 {{ $leave->surname }} {{ $leave->name }}
@@ -112,7 +146,7 @@
                                 <form action="{{route('leaves.submit', [ 'leave' => $leave->id ])}}" method="post">
                                     @csrf
                                     <button type="submit" class="btn btn-info">
-                                        <i class="bi bi-send"></i> Υποβολή
+                                        <i class="bi bi-send"></i> Υποβολή στη Διεύθυνση
                                     </button>
                                 </form>
                             @endif
@@ -149,6 +183,10 @@
                     </div>
                 @endif {{-- end of if Files exist--}}
                 @endif {{-- end of if absence--}}
+            @else {{-- if teacher is not permanent (doesn't have am)--}}
+                <div class="col-md-2">
+                    <em>Αναπληρωτής εκπαιδευτικός (ανάρτηση στο invoices)</em>
+                </div>
             @endif {{-- end of if teacher is permanent (doesn't have am)--}}   
     </div> {{-- ROW END --}}
     <hr>

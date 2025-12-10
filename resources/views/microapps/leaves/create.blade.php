@@ -3,7 +3,7 @@
     <!-- <script src="{{asset('/bootstrap/js/bootstrap.bundle.min.js')}}"></script> -->
     <script src="{{asset("leaves.js")}}"></script>
     @endpush
-    @php
+    @php   
         $school = Auth::guard('school')->user(); //check which school is logged in
         $microapp = App\Models\Microapp::where('url', '/leaves')->first();
         $accepts = $microapp->accepts;
@@ -66,8 +66,8 @@
                         <ul class="list-group m-3">
                             <li class="list-group-item">1) Καταχώρηση άδειας από το Σχολείο στο mySchool. 
                             </li>
-                            <li class="list-group-item">2) Αυτόματη ενημέρωση εφαρμογής "Ηλεκτρονικές Φόρμες" με τις άδειες του mySchool. Με την ενημέρωση οι άδειες του σχολείου εμφανίζονται στις Ηλεκτρονικές Φόρμες.
-                                <br><em>(η ενημέρωση γίνεται καθημερινά στις 10:00 π.μ. και στις 12 μ.)</em>
+                            <li class="list-group-item">2) Εμφάνιση των καταχωρημένων αδειών στις Ηλεκτρονικές Φόρμες καθημερινά στις 10π.μ. και στις 12μ.
+                                <br><em></em>
                             </li>
                             <li class="list-group-item">3) Ανέβασμα απαραίτητων αρχείων από τη Σχολική Μονάδα στις Ηλεκτρονικές Φόρμες 
                                 <br><em>(π.χ. ιατρικές βεβαιώσεις, δικαιολογητικά κλπ)</em>
@@ -105,8 +105,8 @@
             <strong>Αποστολή</strong>
         </div>
     </div>
-    @foreach ($leaves as $leave)
 
+    @foreach ($leaves as $leave)
         <div class="row">
             <div class="col-md-2">
                 {{ $leave->surname }} {{ $leave->name }}
@@ -125,7 +125,7 @@
                 @else 
                     ημέρες από 
                 @endif 
-                {{$leave->leave_start_date}}
+                {{ Carbon\Carbon::parse($leave->leave_start_date)->format('d/m/Y') }}
             </div>
             @if($leave->am != null)
                 @if($leave->leave_type != 'Απουσία')

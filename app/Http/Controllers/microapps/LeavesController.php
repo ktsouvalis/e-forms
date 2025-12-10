@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\microapps;
 
+use DateTime;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Models\Teacher;
@@ -12,11 +13,11 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\TeacherLeaves;
+use Illuminate\Database\QueryException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Illuminate\Database\QueryException;
 
 class LeavesController extends Controller
 {
@@ -72,7 +73,7 @@ class LeavesController extends Controller
             return back()->with('failure', 'Αδυναμία ανάγνωσης αρχείου CSV');
         }
         
-        // Skip header row
+        // Read header row and determine number of columns
         $titles = fgetcsv($handle, 0, ';');
         $numOfColumns = count($titles);
         $rowNumber++;
@@ -82,13 +83,14 @@ class LeavesController extends Controller
             
         // Process CSV rows
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
+            // Check if any row has unexpected number of columns
             if(count($row) != $numOfColumns + 1){ // MySchool extraction has an extra semicolon in each row except title's row
                 Log::channel('throwable_db')->error("update leaves column count error at row $rowNumber: expected $numOfColumns, got ".count($row));
                 $errors++;
                 continue;
             }
             $rowNumber++;
-            
+            // Check for empty row
             if (empty(array_filter($row))) {
                 continue;
             }
@@ -121,29 +123,29 @@ class LeavesController extends Controller
                     return $value !== '' ? $value : '';
                 };
                 
-                // Helper function to parse dates
-                $parseDate = function($index) use ($row, $getValue) {
-                    $value = $getValue($index);
-                    if (empty($value)) {
-                        return null;
-                    }
+                // // Helper function to parse dates
+                // $parseDate = function($index) use ($row, $getValue) {
+                //     $value = $getValue($index);
+                //     if (empty($value)) {
+                //         return null;
+                //     }
                     
-                    // Try to parse various date formats
-                    try {
-                        // Handle Excel serial dates if present (numeric values)
-                        if (is_numeric($value)) {
-                            $unix = ($value - 25569) * 86400;
-                            return date('Y-m-d', $unix);
-                        }
+                //     // Try to parse various date formats
+                //     try {
+                //         // Handle Excel serial dates if present (numeric values)
+                //         if (is_numeric($value)) {
+                //             $unix = ($value - 25569) * 86400;
+                //             return date('Y-m-d', $unix);
+                //         }
                         
-                        // Handle common date formats
-                        $date = \Carbon\Carbon::parse($value);
-                        return $date->format('Y-m-d');
-                    } catch (\Exception $e) {
-                        Log::channel('throwable_db')->warning("Date parsing failed for value: $value");
-                        return null;
-                    }
-                };
+                //         // Handle common date formats
+                //         $date = \Carbon\Carbon::parse($value);
+                //         return $date->format('Y-m-d');
+                //     } catch (\Exception $e) {
+                //         Log::channel('throwable_db')->warning("Date parsing failed for value: $value");
+                //         return null;
+                //     }
+                // };
                 
                 // Extract creator entity code (remove Excel formula notation)
                 $creatorEntityCode = $getValue(21);
@@ -153,7 +155,7 @@ class LeavesController extends Controller
                 $leaveData = [
                     'afm' => $teacherAfm,
                     'leave_type' => $getValue(15),
-                    'leave_start_date' => $parseDate(16),
+                    'leave_start_date' => $this->convertDate($getValue(16)),
                     'leave_days' => $getValue(17),
                     'am' => $getValue(0),
                     'sex' => $getValue(2),
@@ -166,24 +168,24 @@ class LeavesController extends Controller
                     'employment_relation' => $getValue(13),
                     'leave_state' => $getValue(14),
                     'leave_protocol_number' => $getValue(18),
-                    'leave_protocol_date' => $parseDate(19),
+                    'leave_protocol_date' => $this->convertDate($getValue(19)),
                     'leave_description' => $getValue(20),
                     'creator_entity_code' => $creatorEntityCodeRaw,
                     'creator_entity_name' => $getValue(22),
-                    'creation_date' => $parseDate(23),
-                    'submission_date' => $parseDate(24),
+                    'creation_date' => $this->convertDate($getValue(23)),
+                    'submission_date' => $this->convertDate($getValue(24)),
                     'approved_days' => $getValue(25),
                     'approved_months' => $getValue(26),
                     'approved_years' => $getValue(27),
                     'approved_protocol_number' => $getValue(28),
-                    'approved_protocol_date' => $parseDate(29),
+                    'approved_protocol_date' => $this->convertDate($getValue(29)),
                     'approved_description' => mb_substr($getValue(30), 0, 191), // varchar(191) limit
                     'revoke_description' => $getValue(31),
                     'approving_authority_code' => $getValue(32),
                     'approving_authority_name' => $getValue(33),
-                    'last_change_date' => $parseDate(34),
+                    'last_change_date' => $this->convertDate($getValue(34)),
                 ];
-                
+                //dd('leave data: ', $leaveData); 
                 // Add to batch
                 $processedBatch[] = $leaveData;
                 $totalProcessed++;
@@ -192,7 +194,6 @@ class LeavesController extends Controller
                 if (count($processedBatch) >= $batchSize) {
                     $this->saveTeacherLeavesBatch($processedBatch);
                     $processedBatch = []; // Reset batch
-                    
                     // Free up memory
                     gc_collect_cycles();
                 }
@@ -226,10 +227,10 @@ class LeavesController extends Controller
         DB::beginTransaction();
         try {
             foreach ($batch as $leaveData) {
+                
                 $keys = [
                     'afm' => $leaveData['afm'],
                     'leave_type' => $leaveData['leave_type'],
-                    //'leave_start_date' => $this->convertExcelDate($leaveData['leave_start_date']),
                     'leave_start_date' => $leaveData['leave_start_date'],
                     'leave_days' => $leaveData['leave_days'],
                 ];
@@ -238,17 +239,10 @@ class LeavesController extends Controller
                 $data = $leaveData;
                 unset($data['afm'], $data['leave_type'], $data['leave_start_date'], $data['leave_days']);
                 
-                TeacherLeaves::updateOrCreate($keys, $data);
-                
+                TeacherLeaves::updateOrCreate($keys, $data);  
             }
             DB::commit();
-        // } catch (QueryException $e) {
-        //     DB::rollBack();
-        //     Log::channel('throwable_db')->error('Query Exception: ' . $e->getMessage());
-        //     Log::channel('throwable_db')->error('SQL: ' . $e->getSql());
-        //     Log::channel('throwable_db')->error('Bindings: ' . json_encode($e->getBindings()));
-        //     Log::channel('throwable_db')->error('Error Code: ' . $e->getCode());
-        //     throw $e;
+        
         } catch (Throwable $e) {
             DB::rollBack();
             Log::channel('throwable_db')->error('Batch save error: ' . $e->getMessage());
@@ -256,15 +250,20 @@ class LeavesController extends Controller
         }
     }
 
-    public static function convertExcelDate($dateCell){
-        if (Date::isDateTime($dateCell)) {
-            $dateValue = Date::excelToDateTimeObject($dateCell->getValue());
-            $formattedDate = $dateValue->format('Y-m-d');
+    public function convertDate($csvDate){
+        
+        if (empty($csvDate)) {
+            //dd('empty date');
+            return null;
         }
-        else{
-            $formattedDate = null;
+        
+        $date = DateTime::createFromFormat('d/m/Y', $csvDate);
+        
+        if ($date) {
+            return $date->format('Y-m-d');
+        } else {
+            return null;
         }
-        return $formattedDate;
     }
     
     public function upload_files(Request $request, TeacherLeaves $teacher_leave){
@@ -326,6 +325,7 @@ class LeavesController extends Controller
                 return back()->with('failure', 'Aπέτυχε η αποστολή στο πρωτόκολλο. Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
         } catch(\Exception $e) {
+            print($e->getMessage());
             print_r($e->getMessage());
             dd('stop');
             return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο της Διεύθυνσης. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
@@ -395,7 +395,7 @@ class LeavesController extends Controller
     }
 
     public function sendLeaveToProtocol(TeacherLeaves $leave){
-       
+        
         // Find leave type from lookup table
         $leaveType = \App\Models\LeaveType::where('description', $leave->leave_type)->first();
         $leaveProtocolDate = Carbon::createFromFormat('Y-m-d', $leave->leave_protocol_date)->format('d/m/Y');
@@ -422,7 +422,7 @@ class LeavesController extends Controller
             // ['name' => 'LeaveProtocolNumber', 'contents' => ($leave->leave_protocol_number)],
             // ['name' => 'LeaveComments', 'contents' => ($leave->comments)],
         ];
-        //dd($data);
+       
         if($leave->files_json){
             $fileNames = json_decode($leave->files_json, true);
             foreach($fileNames as $serverFileName => $databaseFileName){
@@ -432,24 +432,34 @@ class LeavesController extends Controller
                 ];
             }
         }
-                     
+        //dd($data);            
         $client = new Client();
         
         //return "5184 - 2024/08/06";
-        $response = $client->request('POST', env('E_DIRECTORATE').'/leaves/new', [
-            'headers' => [
-                'X-API-Key' => env('API_KEY'),
-            ],
-            'multipart' => $data,
-        ]);
+        Log::channel('files')->info("before request");
+        try{
+           $response = $client->request('POST', env('E_DIRECTORATE').'/leaves/new', [
+                'headers' => [
+                    'X-API-Key' => env('API_KEY'),
+                ],
+                'multipart' => $data,
+            ]); 
+        } catch (\Exception $e) {
+            
+            Log::channel('files')->error("Leave ID: ".$leave->id." - Protocol Request Exception: " . $e->getMessage());
+            Log::channel('files')->info("Leave ID: ".$leave->id." - Data: " . json_encode($data));
+            return false;
+        }
         
+        Log::channel('files')->info("After request");
         // Get the response body
         $status = $response->getStatusCode();
         $body = $response->getBody()->getContents();
-      
+        Log::channel('files')->info("Leave ID: ".$leave->id." - Protocol Response Status: $status - Body: $body");
         //dd($status, $body);
         if($status != 200){
-            //dd($body);
+
+            
             return false;
         } else {
             //dd($body);

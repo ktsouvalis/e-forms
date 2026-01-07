@@ -106,7 +106,9 @@
         </div>
     </div>
 
-    @foreach ($leaves as $leave)
+    
+    @forelse ($leaves as $leave)
+        
         <div class="row">
             <div class="col-md-2">
                 {{ $leave->surname }} {{ $leave->name }}
@@ -190,6 +192,11 @@
             @endif {{-- end of if teacher is permanent (doesn't have am)--}}   
     </div> {{-- ROW END --}}
     <hr>
-    @endforeach
+    @empty
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i>
+            Δεν υπάρχουν καταχωρημένες άδειες αυτή τη στιγμή. Ξεκινήστε καταχωρόντας τις άδειες στο mySchool.
+        </div>
+    @endforelse
     </div> {{-- Container END--}}
 </x-layout_school>

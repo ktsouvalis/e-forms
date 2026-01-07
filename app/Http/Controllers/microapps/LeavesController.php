@@ -331,7 +331,7 @@ class LeavesController extends Controller
             return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο της Διεύθυνσης. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
         }
         try{
-            $protocol_message = explode(" - ", $protocol_message);
+            $protocol_message = explode(" - ", $protocol_message['message']);
             $leave->protocol_number = $protocol_message[0];
             //$leave->protocol_date = $protocol_message[1];
             $leave->protocol_date = Carbon::createFromFormat('d/m/Y', $protocol_message[1])->format('Y-m-d');

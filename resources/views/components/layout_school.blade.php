@@ -90,7 +90,8 @@
                 $resource = substr($one_microapp->microapp->url, 1);
                 $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $school);
                 $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
-                $isNoDeadline = in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/timetables']) || empty($one_microapp->microapp->closes_at);
+                // This affects the color of microapps without deadline (tickets, outings, timetables, leaves) in the menu. You have to change also in index_school.blade.php
+                $isNoDeadline = in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/timetables', '/leaves']) || empty($one_microapp->microapp->closes_at);
                 if($isNoDeadline){  // Map status to background colors
                   $bgColor = '#b4b4b4ff';//$one_microapp->microapp->color; // Original color
                 } else {

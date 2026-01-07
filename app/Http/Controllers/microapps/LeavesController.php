@@ -321,8 +321,8 @@ class LeavesController extends Controller
         try{
             $protocol_message = $this->sendLeaveToProtocol($leave);
             //dd('after sendLeaveToProtocol');
-            if($protocol_message == false){
-                return back()->with('failure', 'Aπέτυχε η αποστολή στο πρωτόκολλο. Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
+            if($protocol_message['success'] == false){
+                return back()->with('failure', 'Aπέτυχε η αποστολή στο πρωτόκολλο με μήνυμα: ' . $protocol_message['message'] . ' Παρακαλούμε για την αποστολή mail στο it@dipe.ach.sch.gr.');
             }
         } catch(\Exception $e) {
             print($e->getMessage());
@@ -395,16 +395,15 @@ class LeavesController extends Controller
     }
 
     public function sendLeaveToProtocol(TeacherLeaves $leave){
-        
         // Find leave type from lookup table
         $leaveType = \App\Models\LeaveType::where('description', $leave->leave_type)->first();
         $leaveProtocolDate = Carbon::createFromFormat('Y-m-d', $leave->leave_protocol_date)->format('d/m/Y');
         $schoolProtocol = $leave->leave_protocol_number .'-'. $leaveProtocolDate;
         
         if(!$leaveType){
-            return back()->with('failure', 'Δε βρέθηκε ο τύπος της άδειας. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr');
+            return ['success' => false, 'message' => 'No leave type found for: ' . $leave->leave_type];
         }
-        //dd($leave);
+        
         $data = [
             ['name' => 'Afm', 'contents' => $leave->afm ],
             ['name' => 'SchoolCode', 'contents' => $leave->creator_entity_code ],
@@ -412,15 +411,6 @@ class LeavesController extends Controller
             ['name' => 'StartDate', 'contents' => $leave->leave_start_date ],
             ['name' => 'Days', 'contents' => $leave->leave_days ],
             ['name' => 'SchoolProtocol', 'contents' => $schoolProtocol ],
-            
-            // ['name' => 'LeaveState', 'contents' => $leave->leave_state],
-            // ['name' => 'LeaveEndDate', 'contents' => $leave->leave_end_date],
-            // ['name' => 'LeaveAm', 'contents' => $leave->am],
-            // ['name' => 'LeaveSex', 'contents' => $leave],
-            // ['name' => 'LeaveStartDate', 'contents' => ($leave->start_date)],
-            // ['name' => 'LeaveDays', 'contents' => ($leave->days)],
-            // ['name' => 'LeaveProtocolNumber', 'contents' => ($leave->leave_protocol_number)],
-            // ['name' => 'LeaveComments', 'contents' => ($leave->comments)],
         ];
        
         if($leave->files_json){
@@ -432,7 +422,7 @@ class LeavesController extends Controller
                 ];
             }
         }
-        //dd($data);            
+                  
         $client = new Client();
         
         //return "5184 - 2024/08/06";
@@ -448,7 +438,7 @@ class LeavesController extends Controller
             
             Log::channel('files')->error("Leave ID: ".$leave->id." - Protocol Request Exception: " . $e->getMessage());
             Log::channel('files')->info("Leave ID: ".$leave->id." - Data: " . json_encode($data));
-            return false;
+            return ['success' => false, 'message' => 'Protocol Request Exception: ' . $e->getMessage()];
         }
         
         Log::channel('files')->info("After request");
@@ -460,10 +450,10 @@ class LeavesController extends Controller
         if($status != 200){
 
             
-            return false;
+            return ['success' => false, 'message' => 'Protocol Response Status: ' . $status];
         } else {
             //dd($body);
-            return $body;
+            return ['success' => true, 'message' => $body];
         }
     }
 

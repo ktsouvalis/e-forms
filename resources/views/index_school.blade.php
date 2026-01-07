@@ -462,9 +462,8 @@
                     </form>
                     
                     <div class="text-center mt-6">
-                        <p class="text-sm text-gray-500">
-                            Αν έχετε ξεχάσει τον κωδικό σας, επικοινωνήστε με την υποστήριξη.
-                        </p>
+                        
+                    
                     </div>
                 </div>
             </div>

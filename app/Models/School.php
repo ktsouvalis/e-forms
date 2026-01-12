@@ -22,6 +22,7 @@ use App\Models\microapps\TeacherLeaves;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use App\Models\microapps\BuildingProblems;
+use App\Models\microapps\DailyAbsenceReport;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -154,6 +155,11 @@ class School extends Authenticatable
     public function buildingProblems()
     {
         return $this->hasOne(BuildingProblems::class);
+    }
+
+    public function dailyAbsenceReport()
+    {
+        return $this->hasMany(DailyAbsenceReport::class);
     }
 
     public function revokedLeaves() {

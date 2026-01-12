@@ -475,6 +475,21 @@ private function removeDuplicateDeputyDirectors($directors_array) {
 }
     // Helper function to get school's submission status
     public static function getSubmissionStatus($item, $submissionExists = false) {
+            // Handle custom logic for daily absence reports with deadline everyday at 10:00 AM
+            if($item->url == '/daily_absence_reports'){
+                $now = \Carbon\Carbon::now();
+                $deadline = \Carbon\Carbon::today()->setHour(10)->setMinute(0)->setSecond(0);
+                
+                if ($submissionExists) {
+                    return ['status' => 'completed', 'color' => 'bg-green-500', 'text' => 'text-white', 'badge' => 'Ολοκληρώθηκε'];
+                }
+                
+                if ($now->greaterThan($deadline)) {
+                    return ['status' => 'overdue', 'color' => 'bg-red-500', 'text' => 'text-white', 'badge' => 'Έληξε'];
+                } else {
+                    return ['status' => 'pending', 'color' => 'bg-blue-500', 'text' => 'text-white', 'badge' => 'Προς υποβολή'];
+                }
+            }
             if (!isset($item->closes_at) || empty($item->closes_at)) {
                 return ['status' => 'no-deadline', 'color' => 'bg-gray-500', 'text' => 'text-white', 'badge' => 'Χωρίς προθεσμία'];
             }
@@ -567,6 +582,14 @@ private function removeDuplicateDeputyDirectors($directors_array) {
 
                 if($microapp->url == '/building_problems'){
                     if($school->buildingProblems){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+
+                if($microapp->url == '/daily_absence_reports'){
+                    if($school->dailyAbsenceReport()->whereDate('report_date', Carbon::today())->exists()) {
                         return true;
                     } else {
                         return false;

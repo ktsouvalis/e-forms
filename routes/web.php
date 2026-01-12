@@ -43,10 +43,10 @@ use App\Http\Controllers\ResetMicroappsController;
 use App\Http\Controllers\microapps\DesksController;
 use App\Http\Controllers\microapps\FruitsController;
 use App\Http\Controllers\microapps\LeavesController;
-use App\Http\Controllers\microapps\InvoicesController;
 use App\Http\Controllers\microapps\ActionsController;
 use App\Http\Controllers\microapps\OutingsController;
 use App\Http\Controllers\microapps\TicketsController;
+use App\Http\Controllers\microapps\InvoicesController;
 use App\Http\Controllers\microapps\SwimmingController;
 use App\Http\Controllers\microapps\TwoFilesController;
 use App\Http\Controllers\microapps\WorkPlanController;
@@ -59,6 +59,7 @@ use App\Http\Controllers\microapps\ActionTypesController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
 use App\Http\Controllers\microapps\BuildingProblemsController;
+use App\Http\Controllers\microapps\DailyAbsenceReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -968,3 +969,37 @@ Route::get('/convert_old_filecollects_to_json', function(){
     }
     return redirect('/index_user')->with('success', 'ok');
 })->middleware('boss');
+
+
+// Daily Absence Reports Routes
+// Routes for schools (authenticated school users)
+// Route::middleware(['auth'])->group(function () {
+//     // School submits/updates their daily report
+//     Route::get('/daily-absence-report', [DailyAbsenceReportController::class, 'create'])
+//         ->name('absence-report.create');
+    
+//     Route::post('/daily-absence-report', [DailyAbsenceReportController::class, 'store'])
+//         ->name('absence-report.store');
+    
+//     Route::get('/daily-absence-report/history', [DailyAbsenceReportController::class, 'history'])
+//         ->name('absence-report.history');
+// });
+
+// Routes for directorate (admin/directorate users)
+// Route::middleware(['auth', 'role:directorate'])->group(function () {
+//     Route::get('/directorate/absence-reports', [DailyAbsenceReportController::class, 'index'])
+//         ->name('directorate.absence-reports.index');
+    
+//     Route::get('/directorate/absence-reports/{date}', [DailyAbsenceReportController::class, 'show'])
+//         ->name('directorate.absence-reports.show');
+// });
+
+// INTERNAL RULES ROUTES
+Route::resource('daily_absence_reports', DailyAbsenceReportController::class)->middleware('canViewMicroapp');
+
+// Route::get('/daily_absence_report', [DailyAbsenceReportController::class, 'create'])
+//         ->name('absence-report.create');
+// Route::post('/daily_absence_report', [DailyAbsenceReportController::class, 'store'])
+//         ->name('absence-report.store');
+// Route::get('/directorate/absence-reports', [DailyAbsenceReportController::class, 'index'])
+//         ->name('directorate.absence-reports.index');

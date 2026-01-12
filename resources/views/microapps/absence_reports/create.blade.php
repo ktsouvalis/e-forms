@@ -123,20 +123,20 @@
                                     id="comments"
                                     rows="4"
                                     class="form-control @error('comments') is-invalid @enderror"
-                                    placeholder="Προσθέστε σχόλια για την απουσία (π.χ. αιτιολογία, σχολικές εκδρομές, κλπ.)"
+                                    placeholder=""
                                 >{{ old('comments', $todayReport->comments ?? '') }}</textarea>
                                 @error('comments')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <small class="text-muted">
+                                <!-- <small class="text-muted">
                                     Μπορείτε να προσθέσετε σχόλια για περισσότερες πληροφορίες σχετικά με τις απουσίες.
-                                </small>
+                                </small> -->
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary disabled">
                                     <i class="bi bi-send me-2"></i>
-                                    {{ $todayReport ? 'Ενημέρωση Αναφοράς' : 'Υποβολή Αναφοράς' }}
+                                    {{ $todayReport ? 'Ενημέρωση' : 'Υποβολή' }}
                                 </button>
 
                                 @if($todayReport)
@@ -145,6 +145,10 @@
                                         Τελευταία ενημέρωση: {{ $todayReport->submitted_at->format('H:i') }}
                                     </small>
                                 @endif
+                                <small class="text-danger">
+                                        <i class="bi bi-clock me-1"></i>
+                                        Η διαδικασία υποβολών θα ξεκινήσει από τις 13 Ιανουαρίου 2026
+                                    </small>
                             </div>
                         </form>
                     @endif

@@ -120,5 +120,5 @@ class DailyAbsenceReportController extends Controller
         ));
     }
 
-    
+
 }

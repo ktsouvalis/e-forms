@@ -477,6 +477,7 @@ private function removeDuplicateDeputyDirectors($directors_array) {
     public static function getSubmissionStatus($item, $submissionExists = false) {
             // Handle custom logic for daily absence reports with deadline everyday at 10:00 AM
             if($item->url == '/daily_absence_reports'){
+                return ['status' => 'pending', 'color' => 'bg-blue-500', 'text' => 'text-white', 'badge' => 'Προς υποβολή'];
                 $now = \Carbon\Carbon::now();
                 $deadline = \Carbon\Carbon::today()->setHour(10)->setMinute(0)->setSecond(0);
                 

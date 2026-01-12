@@ -41,7 +41,7 @@ class DailyAbsenceReport extends Model
     // Check if deadline has passed for a given date
     public static function deadlinePassed($date)
     {
-        
+        //  To be removed tomorow - removew also from blade
         $startDate = Carbon::create(2026, 1, 12, 23, 59, 59);
         if (now()->lt($startDate)) {
             return false;

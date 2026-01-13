@@ -134,7 +134,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <button type="submit" class="btn btn-primary disabled">  <!-- disabled TO BE REMOVED TOMOROW - remove also from DailyAbsenceReport Model-->
+                                <button type="submit" class="btn btn-primary">  
                                     <i class="bi bi-send me-2"></i>
                                     {{ $todayReport ? 'Ενημέρωση' : 'Υποβολή' }}
                                 </button>
@@ -145,11 +145,7 @@
                                         Τελευταία ενημέρωση: {{ $todayReport->submitted_at->format('H:i') }}
                                     </small>
                                 @endif
-                                <!-- TO BE REMOVED TOMOROW  - remove onw above and also from DailyAbsenceReport Mode-->
-                                <small class="text-danger">
-                                        <i class="bi bi-clock me-1"></i>
-                                        Η διαδικασία υποβολών θα ξεκινήσει από τις 13 Ιανουαρίου 2026
-                                    </small>  <!-- TO BE REMOVED TOMOROW -->
+                                
                             </div>
                         </form>
                     @endif

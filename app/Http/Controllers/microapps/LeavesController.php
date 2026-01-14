@@ -267,6 +267,7 @@ class LeavesController extends Controller
     }
     
     public function upload_files(Request $request, TeacherLeaves $teacher_leave){
+        // Method for the school to upload files
         if(Auth::guard('school')->user()->code != $teacher_leave->creator_entity_code){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της άδειας.');
         }
@@ -314,6 +315,7 @@ class LeavesController extends Controller
     }
 
     public function submit(TeacherLeaves $leave){
+        // Method that sends leave to protocol
         if(Auth::guard('school')->user()->code != $leave->creator_entity_code){
             return back()->with('failure', 'Δεν έχετε δικαίωμα υποβολής αυτής της άδειας.');
         }

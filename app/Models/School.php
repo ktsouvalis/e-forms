@@ -148,6 +148,12 @@ class School extends Authenticatable
         return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')->orderBy('creation_date', 'desc');
     }
 
+    public function revokedLeaves() {
+        return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')
+                    ->withoutGlobalScope('leave_state')
+                    ->where('leave_state', '5-Ανακλήθηκε');
+    }
+
     public function timetables(){
         return $this->hasMany(Timetables::class);
     }
@@ -160,12 +166,6 @@ class School extends Authenticatable
     public function dailyAbsenceReport()
     {
         return $this->hasMany(DailyAbsenceReport::class);
-    }
-
-    public function revokedLeaves() {
-        return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')
-                    ->withoutGlobalScope('leave_state')
-                    ->where('leave_state', '5-Ανακλήθηκε');
     }
 
     public function addedbys()

@@ -33,8 +33,46 @@ class LeavesController extends Controller
         return view('microapps.leaves.index', ['appname' => 'leaves']);
     }
 
-    public function create(){
-        return view('microapps.leaves.create', ['appname' => 'leaves']);
+    public function create()
+    {
+        $school = Auth::guard('school')->user();
+        $microapp = Microapp::where('url', '/leaves')->first();
+        
+        $leaves = $school->leaves;
+        $revokedLeaves = $school->revokedLeaves;
+        
+        // Find leaves to replace (you can expand this logic as needed)
+        $leavesToReplace = $this->findLeavesToReplace($leaves, $revokedLeaves);
+        
+        return view('microapps.leaves.create', [
+            'appname' => 'leaves',
+            'microapp' => $microapp,
+            'leaves' => $leaves,
+            'revokedLeaves' => $revokedLeaves,
+            'leavesToReplace' => $leavesToReplace,
+        ]);
+    }
+
+    /**
+     * Find leaves that should be replaced based on protocol number and date
+     */
+    private function findLeavesToReplace($leaves, $revokedLeaves)
+    {
+        $leavesToReplace = [];
+        
+        foreach($leaves as $leave1) {
+            foreach($revokedLeaves as $leave2) {
+                if($leave1->leave_protocol_number == $leave2->leave_protocol_number && 
+                $leave1->leave_protocol_date == $leave2->leave_protocol_date) {
+                    $leavesToReplace[] = [
+                        'active' => $leave1,
+                        'revoked' => $leave2
+                    ];
+                }
+            }
+        }
+        
+        return $leavesToReplace;
     }
 
     public function import_leaves(Request $request)

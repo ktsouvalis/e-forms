@@ -14,6 +14,14 @@ class TeacherLeaves extends Model
 
     protected $table = 'teacher_leaves';
     protected $guarded = ['id'];
+    protected $casts = [
+        'leave_start_date' => 'date',
+        'leave_protocol_date' => 'date',
+        'creation_date' => 'date',
+        'approved_protocol_date' => 'date',
+        'last_change_date' => 'date',
+        'protocol_date' => 'date',
+    ];
     protected static function booted() {
         static::addGlobalScope('leave_state', function (Builder $builder) {
             $builder->where('leave_state', '!=', '5-Ανακλήθηκε');

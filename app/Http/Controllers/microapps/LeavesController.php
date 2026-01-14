@@ -239,6 +239,7 @@ class LeavesController extends Controller
                 $data = $leaveData;
                 unset($data['afm'], $data['leave_type'], $data['leave_start_date'], $data['leave_days']);
                 
+                
                 TeacherLeaves::updateOrCreate($keys, $data);  
             }
             DB::commit();

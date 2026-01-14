@@ -149,7 +149,7 @@
                             <input type="file" name="files[]" class="form-control" multiple required>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary" @if($leave->submitted==1) disabled @endif>
+                        <button type="submit" class="btn btn-primary" disabled @if($leave->submitted==1) disabled @endif>
                             <i class="bi bi-filetype-pdf"></i> Ανέβασμα αρχείου/ων
                         </button>
                         </form>
@@ -159,7 +159,7 @@
                             @if($leave->files_json != Null) 
                                 <form action="{{route('leaves.submit', [ 'leave' => $leave->id ])}}" method="post">
                                     @csrf
-                                    <button type="submit" class="btn btn-info">
+                                    <button type="submit" class="btn btn-info" disabled>
                                         <i class="bi bi-send"></i> Υποβολή στη Διεύθυνση
                                     </button>
                                 </form>

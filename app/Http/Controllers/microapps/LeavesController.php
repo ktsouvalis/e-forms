@@ -38,41 +38,17 @@ class LeavesController extends Controller
         $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/leaves')->first();
         
-        $leaves = $school->leaves;
-        $revokedLeaves = $school->revokedLeaves;
+        $leavesExceptRevoked = $school->leaves;
         
         // Find leaves to replace (you can expand this logic as needed)
-        $leavesToReplace = $this->findLeavesToReplace($leaves, $revokedLeaves);
+        // NOT NEEDED - PROBABLY TO BE REMOVED
+        //$leavesToReplace = $this->findLeavesToReplace($leaves, $revokedLeaves);
         
         return view('microapps.leaves.create', [
             'appname' => 'leaves',
             'microapp' => $microapp,
-            'leaves' => $leaves,
-            'revokedLeaves' => $revokedLeaves,
-            'leavesToReplace' => $leavesToReplace,
+            'leaves' => $leavesExceptRevoked,
         ]);
-    }
-
-    /**
-     * Find leaves that should be replaced based on protocol number and date
-     */
-    private function findLeavesToReplace($leaves, $revokedLeaves)
-    {
-        $leavesToReplace = [];
-        
-        foreach($leaves as $leave1) {
-            foreach($revokedLeaves as $leave2) {
-                if($leave1->leave_protocol_number == $leave2->leave_protocol_number && 
-                $leave1->leave_protocol_date == $leave2->leave_protocol_date) {
-                    $leavesToReplace[] = [
-                        'active' => $leave1,
-                        'revoked' => $leave2
-                    ];
-                }
-            }
-        }
-        
-        return $leavesToReplace;
     }
 
     public function import_leaves(Request $request)
@@ -161,30 +137,6 @@ class LeavesController extends Controller
                     return $value !== '' ? $value : '';
                 };
                 
-                // // Helper function to parse dates
-                // $parseDate = function($index) use ($row, $getValue) {
-                //     $value = $getValue($index);
-                //     if (empty($value)) {
-                //         return null;
-                //     }
-                    
-                //     // Try to parse various date formats
-                //     try {
-                //         // Handle Excel serial dates if present (numeric values)
-                //         if (is_numeric($value)) {
-                //             $unix = ($value - 25569) * 86400;
-                //             return date('Y-m-d', $unix);
-                //         }
-                        
-                //         // Handle common date formats
-                //         $date = \Carbon\Carbon::parse($value);
-                //         return $date->format('Y-m-d');
-                //     } catch (\Exception $e) {
-                //         Log::channel('throwable_db')->warning("Date parsing failed for value: $value");
-                //         return null;
-                //     }
-                // };
-                
                 // Extract creator entity code (remove Excel formula notation)
                 $creatorEntityCode = $getValue(21);
                 $creatorEntityCodeRaw = is_string($creatorEntityCode) ? substr($creatorEntityCode, 2, -1) : $creatorEntityCode;
@@ -253,6 +205,13 @@ class LeavesController extends Controller
         // Free memory
         gc_collect_cycles();
         
+        try {
+            $this->linkCorrectedLeavesToRevoked();
+        } catch(Throwable $e) {
+                Log::channel('throwable_db')->error("Error in linkCorrectedLeavesToRevoked");
+                //$errors++;
+            }
+
         if ($errors > 0) {
             return redirect(url('/teachers'))->with('warning', "Ενημέρωση αδειών εκπαιδευτικών με $errors σφάλματα που καταγράφηκαν στο log throwable_db. Επεξεργάστηκαν επιτυχώς $totalProcessed εγγραφές.");
         } else {
@@ -265,18 +224,24 @@ class LeavesController extends Controller
         DB::beginTransaction();
         try {
             foreach ($batch as $leaveData) {
+                // Ignore Απουσία
+                if($leaveData['leave_type'] == 'Απουσία') {
+                    continue;
+                }
                 
+                // Keys on which update or create is happening
                 $keys = [
                     'afm' => $leaveData['afm'],
-                    'leave_type' => $leaveData['leave_type'],
-                    'leave_start_date' => $leaveData['leave_start_date'],
-                    'leave_days' => $leaveData['leave_days'],
+                    'leave_state' => $leaveData['leave_state'],
+                    'creator_entity_code' => $leaveData['creator_entity_code'],
+                    'leave_protocol_number' => $leaveData['leave_protocol_number'],
+                    'leave_protocol_date' => $leaveData['leave_protocol_date'],
                 ];
                 
                 // Remove key fields from the data array
                 $data = $leaveData;
-                unset($data['afm'], $data['leave_type'], $data['leave_start_date'], $data['leave_days']);
                 
+                unset($data['afm'], $data['creator_entity_code'], $data['leave_protocol_number'], $data['leave_protocol_date']);
                 
                 TeacherLeaves::updateOrCreate($keys, $data);  
             }
@@ -303,6 +268,32 @@ class LeavesController extends Controller
         } else {
             return null;
         }
+    }
+
+    private function linkCorrectedLeavesToRevoked() {
+        $leavesToCheck = TeacherLeaves::whereIn('leave_state', ['2-Υποβλήθηκε', '3-Εγκρίθηκε'])->get();
+        
+        // Check if this leave (if it's state 5- Ανακλήθηκε) has a related active leave
+        // Αν βρούμε την ίδια άδεια (ΑΦΜ, αριθμό πρωτοκόλλου, ημερομηνία πρωτοκόλλου) σε κατάσταση Ανακλήθηκε και σε κατάσταση Υποβλήθηκε ή Εγκρίθηκε
+        // Συνδέουμε τις δύο άδειες ώστε μετά να δείξουμε στο χρήστη τη σωστή αντί της ανακλημένης
+        foreach($leavesToCheck as $leave){
+            $revokedLeave = TeacherLeaves::getRevokedLeaves()
+                ->where('afm', $leave->afm)
+                ->where('creator_entity_code', $leave->creator_entity_code)
+                ->where('leave_protocol_number', $leave->leave_protocol_number)
+                ->where('leave_protocol_date', $leave->leave_protocol_date)
+                ->first();
+            
+                // If we found an active leave, set the related_leave_id
+                if ($revokedLeave) {
+                    $leave->related_leave_id = $revokedLeave->id;
+                    $leave->submitted = 0;
+                    //dd($revokedLeave);
+                    $leave->save();
+                }
+            
+        }
+        
     }
     
     public function upload_files(Request $request, TeacherLeaves $teacher_leave){
@@ -368,7 +359,7 @@ class LeavesController extends Controller
         } catch(\Exception $e) {
             print($e->getMessage());
             print_r($e->getMessage());
-            dd('stop');
+            //dd('stop');
             return back()->with('failure', 'Αποτυχία αποστολής αίτησης στο Πρωτόκολλο της Διεύθυνσης. Παρακαλούμε επικοινωνήστε με το Τμήμα Πληροφορικής στο it@dipe.ach.sch.gr.');
         }
         try{
@@ -513,5 +504,19 @@ class LeavesController extends Controller
             'leaves' => $leaves,
             'isDirector' => $isDirector,
         ]);
+    }
+
+    public function leaveUnlock(TeacherLeaves $teacher_leave) {
+        if($teacher_leave->submitted == 1){
+            $teacher_leave->submitted = 0;
+            try {
+                $teacher_leave->save();
+                return redirect()->back()->with('success', 'Η άδεια ξεκλειδώθηκε επιτυχώς και μπορείτε να την επεξεργαστείτε.');
+            } catch (\Exception $e) { 
+                return redirect()->back()->with('error', 'Σφάλμα κατά το ξεκλείδωμα της άδειας: ' . $e->getMessage());
+            }
+        } else {
+            return redirect()->back()->with('warning', 'Η άδεια δεν είναι υποβεβλημένη και δεν χρειάζεται ξεκλείδωμα.');
+        }
     }
 }

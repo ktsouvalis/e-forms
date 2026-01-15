@@ -22,14 +22,26 @@ class TeacherLeaves extends Model
         'last_change_date' => 'date',
         'protocol_date' => 'date',
     ];
-    protected static function booted() {
-        static::addGlobalScope('leave_state', function (Builder $builder) {
-            $builder->where('leave_state', '!=', '5-Ανακλήθηκε');
-        });
+    // Global Scope to fetch only not ανακλήθηκε leaves. It causes many problems so i removed.
+    // protected static function booted() {
+    //     static::addGlobalScope('leave_state', function (Builder $builder) {
+    //         $builder->where('leave_state', '!=', '5-Ανακλήθηκε');
+    //     });
+    // }
+
+    public static function getRevokedLeaves()
+    {
+        return static::where('leave_state', '5-Ανακλήθηκε');
     }
 
-    public static function getRevoked() {
-        return self::withoutGlobalScope('leave_state')->where('leave_state', '5-Ανακλήθηκε')->get();
+    public function relatedLeave()
+    {
+        return $this->belongsTo(TeacherLeave::class, 'related_leave_id');
+    }
+
+    public function linkedLeaves()
+    {
+        return $this->hasMany(TeacherLeave::class, 'related_leave_id');
     }
 
     public function teacher() {

@@ -145,12 +145,13 @@ class School extends Authenticatable
     }
 
     public function leaves(){
-        return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')->orderBy('creation_date', 'desc');
+        return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')
+                    ->whereNot('leave_state', '5-Ανακλήθηκε')
+                    ->orderBy('creation_date', 'desc');
     }
 
     public function revokedLeaves() {
         return $this->hasMany(TeacherLeaves::class, 'creator_entity_code', 'code')
-                    ->withoutGlobalScope('leave_state')
                     ->where('leave_state', '5-Ανακλήθηκε');
     }
 

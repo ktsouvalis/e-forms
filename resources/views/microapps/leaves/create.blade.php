@@ -172,7 +172,7 @@
                 <h2 class="accordion-header" id="headingManagement">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManagement" aria-expanded="false" aria-controls="collapseManagement">
                         <i class="bi bi-sliders me-2"></i>
-                        <strong>Επιλογές Διαχείρισης Αδειών</strong>
+                        <strong>Διόρθωση, Απόκρυψη και επανεμφάνιση Αδειών</strong>
                     </button>
                 </h2>
                 <div id="collapseManagement" class="accordion-collapse collapse" aria-labelledby="headingManagement" data-bs-parent="#leavesInstructionsAccordion">
@@ -279,12 +279,18 @@
                 <div class="alert alert-info border-info">
                     <h6 class="alert-heading">
                         <i class="bi bi-info-circle-fill"></i> 
-                        Σημείωση για Αποσπασμένους
+                        Σημείώσεις:
                     </h6>
-                    <p class="mb-0 small">
+                    <p class="mb-2 small">
                         Οι άδειες των εκπαιδευτικών που είναι <strong>αποσπασμένοι από άλλους νομούς</strong> 
                         υποβάλλονται απευθείας από το Σχολείο στην αντίστοιχη διεύθυνση οργανικής του εκπαιδευτικού 
                         και <strong>όχι</strong> στη Διεύθυνση Π.Ε. Αχαΐας.
+                    </p>
+                    <p class="mb-2 small">
+                        Οι άδειες των αναπληρωτών εκπαιδευτικών υποβάλλονται στο <strong>invoices</strong>
+                    </p>
+                    <p class="mb-2 small">
+                        Άδειες που έχουν αποσταλεί ήδη στη Διεύθυνση μέσα από το e-mail adeies@dipe.... δεν πρέπει να ανέβουν εδώ. Μπορείτε απλά να τις κάνετε απόκρυψη.
                     </p>
                 </div>
             </div>

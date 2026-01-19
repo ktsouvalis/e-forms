@@ -27,7 +27,7 @@
     
     @if($leave->am != null)
         {{-- File Upload Section --}}
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="row g-2">
                 @if(!$leave->submitted)
                     {{-- Warning for unlocked leave with protocol --}}
@@ -42,7 +42,7 @@
                     @endif
 
                     {{-- Upload Form --}}
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <form action="{{ route('leaves.upload_files', ['teacher_leave' => $leave->id]) }}" 
                               method="post" 
                               enctype="multipart/form-data" 
@@ -59,9 +59,9 @@
                         </form>
                     </div>
                     
-                    {{-- Submit to Directorate --}}
-                    <div class="col-md-6">
-                        @if($leave->files_json)
+                    {{-- Submit to Directorate Button --}}
+                    @if($leave->files_json)
+                        <div class="col-12">
                             <form action="{{ route('leaves.submit', ['leave' => $leave->id]) }}" method="post">
                                 @csrf
                                 <button type="submit" class="btn btn-info btn-sm w-100">
@@ -69,45 +69,62 @@
                                     {{ $leave->protocol_number ? 'Επανυποβολή' : 'Υποβολή' }} στη Διεύθυνση
                                 </button>
                             </form>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 @else
                     {{-- Submitted Status --}}
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <div class="alert alert-success mb-0 py-2 d-flex align-items-center">
                             <i class="bi bi-check-circle-fill me-2"></i>
                             <strong>Αρ. Πρωτ.:</strong> {{ $leave->protocol_number }} - 
                             {{ $leave->protocol_date->format('d-m-Y') }}
                         </div>
                     </div>
-                    
-                    {{-- Action Buttons --}}
-                    <div class="col-md-6">
-                        <div class="d-flex gap-2">
-                            {{-- Unlock Button --}}
-                            <form action="{{ route('leaves.leave_unlock', ['teacher_leave' => $leave->id]) }}" 
-                                  method="post" 
-                                  class="flex-fill">
-                                @csrf
-                                <button type="submit" class="btn btn-warning btn-sm w-100">
-                                    <i class="bi bi-unlock-fill"></i> Διόρθωση
-                                </button>
-                            </form>
-                            
-                            {{-- Hide Leave Button --}}
-                            <form action="#" 
-                                  method="post" 
-                                  class="flex-fill"
-                                  onsubmit="return confirm('Είστε σίγουροι ότι θέλετε να αποκρύψετε αυτή την άδεια;')">
-                                @csrf
-                                <button type="submit" class="btn btn-secondary btn-sm w-100">
-                                    <i class="bi bi-eye-slash-fill"></i> Απόκρυψη
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 @endif
             </div>
+        </div>
+        
+        {{-- Secondary Actions (Hide/Unlock) - Moved to separate column --}}
+        <div class="col-md-1">
+            @if(!$leave->submitted)
+                {{-- Hide Button (only when submitted=0 and no files) --}}
+                @if(!$leave->files_json)
+                    <form action="{{ route('leaves.hide', ['teacher_leave' => $leave->id]) }}" 
+                          method="post" 
+                          class="w-100"
+                          onsubmit="return confirm('Μπορείτε να προβάλετε τις αποκρυμμένες άδειες στο κάτω μέρος αυτής της σελίδας.')">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="bi bi-eye-slash"></i>
+                            <small class="d-block">Απόκρυψη</small>
+                        </button>
+                    </form>
+                @endif
+            @else
+                {{-- Action Buttons for Submitted Leaves --}}
+                <div class="d-flex flex-column gap-1">
+                    {{-- Unlock Button --}}
+                    <form action="{{ route('leaves.leave_unlock', ['teacher_leave' => $leave->id]) }}" 
+                          method="post">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-warning btn-sm w-100">
+                            <i class="bi bi-unlock"></i>
+                            <small class="d-block">Διόρθωση</small>
+                        </button>
+                    </form>
+                    
+                    {{-- Hide Leave Button --}}
+                    <form action="{{ route('leaves.hide', ['teacher_leave' => $leave->id]) }}" 
+                          method="post"
+                          onsubmit="return confirm('Είστε σίγουροι ότι θέλετε να αποκρύψετε αυτή την άδεια;')">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                            <i class="bi bi-eye-slash"></i>
+                            <small class="d-block">Απόκρυψη</small>
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
     @else
         {{-- Substitute Teacher Note --}}

@@ -38,16 +38,19 @@ class LeavesController extends Controller
         $school = Auth::guard('school')->user();
         $microapp = Microapp::where('url', '/leaves')->first();
         
-        $leavesExceptRevoked = $school->leaves;
+        // Φέρνουμε τις άδειες του σχολείου που:
+        // 1. ΔΕΝ είναι σε κατάσταση "Ανακλήθηκε" (από το μοντέλο School)
+        // 2. ΚΑΙ είναι ορατές (is_visible = 1)
+        $leavesExceptRevoked = $school->leaves()->where('is_visible', 1)->get();
         
-        // Find leaves to replace (you can expand this logic as needed)
-        // NOT NEEDED - PROBABLY TO BE REMOVED
-        //$leavesToReplace = $this->findLeavesToReplace($leaves, $revokedLeaves);
+        // Ελέγχουμε αν υπάρχουν αποκρυμμένες άδειες (is_visible = 0)
+        $hasHiddenLeaves = $school->leaves()->where('is_visible', 0)->exists();
         
         return view('microapps.leaves.create', [
             'appname' => 'leaves',
             'microapp' => $microapp,
             'leaves' => $leavesExceptRevoked,
+            'showHiddenLeavesLink' => $hasHiddenLeaves,
         ]);
     }
 
@@ -291,7 +294,6 @@ class LeavesController extends Controller
                     //dd($revokedLeave);
                     $leave->save();
                 }
-            
         }
         
     }
@@ -427,11 +429,14 @@ class LeavesController extends Controller
     }
 
     public function sendLeaveToProtocol(TeacherLeaves $leave){
+        
         // Find leave type from lookup table
         $leaveType = \App\Models\LeaveType::where('description', $leave->leave_type)->first();
-        $leaveProtocolDate = Carbon::createFromFormat('Y-m-d', $leave->leave_protocol_date)->format('d/m/Y');
-        $schoolProtocol = $leave->leave_protocol_number .'-'. $leaveProtocolDate;
+        //dd($leave->leave_protocol_date);
+        $leaveProtocolDate = $leave->leave_protocol_date->format('d/m/Y');;
         
+        $schoolProtocol = $leave->leave_protocol_number .'-'. $leaveProtocolDate;
+        //dd('reached 1');
         if(!$leaveType){
             return ['success' => false, 'message' => 'No leave type found for: ' . $leave->leave_type];
         }
@@ -454,11 +459,16 @@ class LeavesController extends Controller
                 ];
             }
         }
-                  
+
+        if($leave->protocol_number && $leave->protocol_date){
+            $data[] = ['name' => 'ProtocolNum', 'contents' => $leave->protocol_number];
+            $data[] = ['name' => 'ProtocolYear', 'contents' => $leave->protocol_date->format('Y')];
+        }
+        // dd($data);
         $client = new Client();
         
         //return "5184 - 2024/08/06";
-        Log::channel('files')->info("before request");
+        //Log::channel('files')->info("before request");
         try{
            $response = $client->request('POST', env('E_DIRECTORATE').'/leaves/new', [
                 'headers' => [
@@ -473,15 +483,13 @@ class LeavesController extends Controller
             return ['success' => false, 'message' => 'Protocol Request Exception: ' . $e->getMessage()];
         }
         
-        Log::channel('files')->info("After request");
+        //Log::channel('files')->info("After request");
         // Get the response body
         $status = $response->getStatusCode();
         $body = $response->getBody()->getContents();
         Log::channel('files')->info("Leave ID: ".$leave->id." - Protocol Response Status: $status - Body: $body");
         //dd($status, $body);
         if($status != 200){
-
-            
             return ['success' => false, 'message' => 'Protocol Response Status: ' . $status];
         } else {
             //dd($body);
@@ -519,4 +527,89 @@ class LeavesController extends Controller
             return redirect()->back()->with('warning', 'Η άδεια δεν είναι υποβεβλημένη και δεν χρειάζεται ξεκλείδωμα.');
         }
     }
+
+    /**
+     * Εμφάνιση αποκρυμμένων αδειών για το σχολείο
+     */
+    public function showHidden()
+    {
+        $school = Auth::guard('school')->user();
+        $microapp = Microapp::where('url', '/leaves')->first();
+        
+        // Φέρνουμε τις αποκρυμμένες άδειες του σχολείου
+        // (εκτός από τις ανακληθείσες)
+        $hiddenLeaves = $school->leaves()
+            ->where('is_visible', 0)
+            ->orderBy('leave_start_date', 'desc')
+            ->get();
+        
+        return view('microapps.leaves.hidden', [
+            'appname' => 'leaves',
+            'microapp' => $microapp,
+            'hiddenLeaves' => $hiddenLeaves,
+        ]);
+    }
+
+    /**
+     * Απόκρυψη άδειας
+     */
+    public function hideLeave($teacher_leave)
+    {
+        $school = Auth::guard('school')->user();
+        $leave = TeacherLeaves::findOrFail($teacher_leave);
+        
+        // Έλεγχος ότι η άδεια ανήκει στο σχολείο
+        // Προσάρμοσε το πεδίο ανάλογα με το πώς συνδέεται η άδεια με το σχολείο
+        if ($leave->creator_entity_code !== $school->code) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Έλεγχος: Μπορεί να αποκρυφθεί μόνο αν:
+        // 1. submitted = 0 ΚΑΙ protocol_number = null
+        // 2. submitted = 1 ΚΑΙ protocol_number υπάρχει
+        $canHide = false;
+        
+        if (!$leave->submitted && !$leave->protocol_number) {
+            $canHide = true;
+        } elseif ($leave->submitted && $leave->protocol_number) {
+            $canHide = true;
+        }
+        
+        if (!$canHide) {
+            return redirect()->back()->with('error', 'Δεν μπορείτε να αποκρύψετε αυτή την άδεια σε αυτή την κατάσταση.');
+        }
+        
+        // Έλεγχος ότι δεν είναι ανακληθείσα
+        if ($leave->leave_state === 'Ανακλήθηκε') {
+            return redirect()->back()->with('error', 'Δεν μπορείτε να αποκρύψετε μια ανακληθείσα άδεια.');
+        }
+        
+        // Ενημέρωση της άδειας
+        $leave->is_visible = 0;
+        $leave->save();
+        
+        return redirect()->back()->with('success', 'Η άδεια αποκρύφθηκε επιτυχώς.');
+    }
+
+    /**
+     * Επαναφορά ορατότητας άδειας
+     */
+    public function unhideLeave($teacher_leave)
+    {
+        $school = Auth::guard('school')->user();
+        $leave = TeacherLeaves::findOrFail($teacher_leave);
+        
+        // Έλεγχος ότι η άδεια ανήκει στο σχολείο
+        if ($leave->creator_entity_code !== $school->code) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Επαναφορά της ορατότητας
+        $leave->is_visible = 1;
+        $leave->save();
+        
+        return redirect()->route('leaves.create')->with('success', 'Η άδεια εμφανίζεται πάλι στη λίστα.');
+    }
+
+    
 }

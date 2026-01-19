@@ -364,7 +364,9 @@ Route::group(['prefix' => 'leaves', 'middleware' => 'canViewMicroapp'], function
     Route::get('/download_file/{serverFileName}/{databaseFileName}', [LeavesController::class, 'download_file'])->name('leaves.download_file');
     Route::get('/delete_file/{serverFileName}/{teacher_leave}', [LeavesController::class, 'delete_file'])->name('leaves.delete_file');
     Route::post('/leave_unlock/{teacher_leave}', [LeavesController::class, 'leaveUnlock'])->name('leaves.leave_unlock');
-    Route::post('/hide_leave/{teacher_leave}', [LeavesController::class, '']);
+    Route::post('/leaves/{teacher_leave}/hide', [LeavesController::class, 'hideLeave'])->name('leaves.hide');
+    Route::get('/leaves/hidden', [LeavesController::class, 'showHidden'])->name('leaves.hidden');
+    Route::post('/leaves/{teacher_leave}/unhide', [LeavesController::class, 'unhideLeave'])->name('leaves.unhide');
     Route::get('/getTeacherLeavesApi/{teacher_leave}', [LeavesController::class, 'getTeacherLeaves'])->name('leaves.getTeacherLeavesApi');
 });
 

@@ -38,48 +38,314 @@
         </div>
     </div>
 
-    <div class="container">
-        <h3>Υποβολή αδειών εκπαιδευτικών στη Διεύθυνση Π.Ε. Αχαΐας</h3>
-        
-        <div>
-            <h4>ΔΟΚΙΜΑΣΤΙΚΗ ΛΕΙΤΟΥΡΓΙΑ - Ιανουάριος 2026</h4>
-            <div class="alert alert-info text-center">
-                <i class="bi bi-info-circle"></i>
-                <p>Στα πλαίσια της ΠΙΛΟΤΙΚΗΣ ΛΕΙΤΟΥΡΓΙΑΣ έχει υποβληθεί εξαιρετικά μεγάλος αριθμός αδειών από τις Σχολικές Μονάδες. 
-                <br>Σας ευχαριστούμε πάρα πολύ για τη συνεργασία!</p>
-                <br><br><hr>
-                <p class="text-danger">
-                Ωστόσο η λειτουργία θα απενεργοποιηθεί προσωρινά έως ότου διορθωθούν μικρο-προβλήματα που εντοπίστηκαν. Παρακαλούμε μην ανεβάζετε νέες άδειες έως ότου αφαιρεθούν αυτά τα μηνύματα!
-                Παρακαλούμε να αποστέλλονται οι άδειες στο mail.
-                <br><br>
-                Τμήμα Πληροφορικής & Νέων Τεχνολογιών - Διεύθυνση Π.Ε. Αχαΐας
-                </p>
-            </div>
+    <div class="container my-4">
+        <div class="text-center mb-4">
+            <h2 class="text-primary">
+                <i class="bi bi-file-earmark-text"></i>
+                Υποβολή Αδειών Εκπαιδευτικών
+            </h2>
+            <p class="text-muted">Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας</p>
+        </div>
+
+        {{-- Accordion Container --}}
+        <div class="accordion mb-4" id="leavesInstructionsAccordion">
             
-            <div>
-                <button class="btn btn-primary m-3" type="button" data-bs-toggle="collapse" data-bs-target="#instructionsList" aria-expanded="false" aria-controls="instructionsList">
-                    <h6>Για αναλυτική περιγραφή της διαδικασίας υποβολής και έγκρισης Αδειών Εκπαιδευτικών πατήστε εδώ</h6>
-                </button>
-                <div class="collapse" id="instructionsList">
-                    <ul class="list-group m-3">
-                        <li class="list-group-item">1) Καταχώρηση άδειας στο mySchool από τη Σχολική Μονάδα.</li>
-                        <li class="list-group-item">2) Εμφάνιση των καταχωρημένων αδειών στις Ηλεκτρονικές Φόρμες καθημερινά στις 9:00, στις 10:00 και στις 14:00.
-                            <br><em>Η μετάπτωση πραγματοποιείται αυτόματα και είναι προγραμματισμένη στις ανωτέρω αναφερόμενες ώρες.</em>
-                        </li>
-                        <li class="list-group-item">3) Ανέβασμα απαραίτητων αρχείων από τη Σχολική Μονάδα στις Ηλεκτρονικές Φόρμες 
-                            <br><em>(π.χ. ιατρικές βεβαιώσεις, δικαιολογητικά κλπ)</em>
-                        </li>
-                        <li class="list-group-item">4) Υποβολή άδειας από τη Σχολική Μονάδα στη Διεύθυνση Π.Ε. Αχαΐας
-                            <br><em>(Η άδεια πρωτοκολείται αυτόματα και χρεώνεται στον αρμόδιο υπάλληλο. Στη συνέχεια, κατά περίπτωση, προχωράει η διαδικασία ενημέρωσης του φακέλου του εκπαιδευτικού, έγκριση της άδειας και διαβίβαση στην υγειονομική επιτροπή ανάλογα με το είδος και τη διάρκεια της άδειας.)</em>
-                        </li>
-                        <li class="list-group-item">5) Με την τελική έγκριση της άδειας (όπου απαιτείται) από τη Διεύθυνση Π.Ε. Αχαΐας, η Σχολική Μονάδα ενημερώνεται αυτόματα μέσω email.</li>
-                    </ul>
-                    <div class="alert alert-info" role="alert">
-                        <strong><i class="bi bi-info-circle"></i> Σημείωση:</strong> Οι άδειες των εκπαιδευτικών που είναι αποσπασμένοι από άλλους νομούς υποβάλλονται απευθείας από το Σχολείο στην αντίστοιχη διεύθυνση οργανικής του εκπαιδευτικού και όχι στη Διεύθυνση Π.Ε. Αχαΐας.
+            {{-- Main Process Section --}}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingProcess">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProcess" aria-expanded="false" aria-controls="collapseProcess">
+                        <i class="bi bi-diagram-3 me-2"></i>
+                        <strong>Διαδικασία Υποβολής και Έγκρισης Αδειών</strong>
+                    </button>
+                </h2>
+                <div id="collapseProcess" class="accordion-collapse collapse" aria-labelledby="headingProcess" data-bs-parent="#leavesInstructionsAccordion">
+                    <div class="accordion-body">
+                        <div class="timeline">
+                            {{-- Step 1 --}}
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <strong>1</strong>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-primary mb-1">
+                                        <i class="bi bi-pencil-square"></i> Καταχώρηση στο mySchool
+                                    </h6>
+                                    <p class="mb-0 text-muted">
+                                        Η Σχολική Μονάδα καταχωρεί την άδεια στο mySchool.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {{-- Step 2 --}}
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <strong>2</strong>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-primary mb-1">
+                                        <i class="bi bi-arrow-repeat"></i> Αυτόματη Μετάπτωση
+                                    </h6>
+                                    <p class="mb-1 text-muted">
+                                        Οι άδειες εμφανίζονται αυτόματα στις Ηλεκτρονικές Φόρμες καθημερινά στις:
+                                    </p>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <span class="badge bg-info">09:00</span>
+                                        <span class="badge bg-info">10:00</span>
+                                        <span class="badge bg-info">14:00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Step 3 --}}
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <strong>3</strong>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-primary mb-1">
+                                        <i class="bi bi-cloud-upload"></i> Ανέβασμα Δικαιολογητικών
+                                    </h6>
+                                    <p class="mb-1 text-muted">
+                                        Η Σχολική Μονάδα ανεβάζει τα απαραίτητα αρχεία:
+                                    </p>
+                                    <small class="text-muted">
+                                        • Ιατρικές βεβαιώσεις<br>
+                                        • Δικαιολογητικά<br>
+                                        • Άλλα απαραίτητα έγγραφα
+                                    </small>
+                                </div>
+                            </div>
+
+                            {{-- Step 4 --}}
+                            <div class="d-flex mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <strong>4</strong>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-primary mb-1">
+                                        <i class="bi bi-send"></i> Υποβολή στη Διεύθυνση
+                                    </h6>
+                                    <p class="mb-1 text-muted">
+                                        Η Σχολική Μονάδα υποβάλλει την άδεια στη Διεύθυνση Π.Ε. Αχαΐας.
+                                    </p>
+                                    <div class="alert alert-light border mt-2 mb-0">
+                                        <small>
+                                            <i class="bi bi-info-circle text-primary"></i>
+                                            Η άδεια πρωτοκολείται αυτόματα και χρεώνεται στον αρμόδιο υπάλληλο. 
+                                            Ακολουθεί η διαδικασία έγκρισης ανάλογα με το είδος και τη διάρκεια της άδειας.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Step 5 --}}
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="text-success mb-1">
+                                        <i class="bi bi-envelope-check"></i> Τελική Έγκριση & Ενημέρωση
+                                    </h6>
+                                    <p class="mb-0 text-muted">
+                                        Με την τελική έγκριση της άδειας, η Σχολική Μονάδα ενημερώνεται αυτόματα μέσω email.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Management Options Section --}}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingManagement">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManagement" aria-expanded="false" aria-controls="collapseManagement">
+                        <i class="bi bi-sliders me-2"></i>
+                        <strong>Επιλογές Διαχείρισης Αδειών</strong>
+                    </button>
+                </h2>
+                <div id="collapseManagement" class="accordion-collapse collapse" aria-labelledby="headingManagement" data-bs-parent="#leavesInstructionsAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                    {{-- Hide Option --}}
+                    <div class="col-md-4">
+                        <div class="card h-100 border-secondary">
+                            <div class="card-body text-center">
+                                <i class="bi bi-eye-slash fs-1 text-secondary mb-3"></i>
+                                <h5 class="card-title">Απόκρυψη Άδειας</h5>
+                                <p class="card-text small text-muted">
+                                    Για λόγους οργάνωσης και μόνο μπορείτε να αποκρύψετε μια άδεια από τη λίστα:
+                                </p>
+                                <ul class="list-unstyled text-start small">
+                                    <li class="mb-2">
+                                        <i class="bi bi-check-circle text-success"></i>
+                                        Είτε δεν έχει υποβληθεί ακόμα μέσα από τις Ηλεκτρονικές Φόρμες (π.χ. έχει υποβληθεί ήδη με e-mail)
+                                    </li>
+                                    <li>
+                                        <i class="bi bi-check-circle text-success"></i>
+                                        Είτε έχει υποβληθεί και εγκριθεί.
+                                    </li>
+                                </ul>
+                                <div class="alert alert-light border mt-3 mb-0">
+                                    <small>
+                                        <i class="bi bi-info-circle text-primary"></i>
+                                        Η άδεια δεν διαγράφεται - απλά κρύβεται από την κύρια λίστα.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Edit Option --}}
+                    <div class="col-md-4">
+                        <div class="card h-100 border-warning">
+                            <div class="card-body text-center">
+                                <i class="bi bi-unlock fs-1 text-warning mb-3"></i>
+                                <h5 class="card-title">Διόρθωση Άδειας</h5>
+                                <p class="card-text small text-muted">
+                                    Σε περίπτωση λάθους ή ανάκλησης και επανυποβολής μπορείτε να ξεκλειδώσετε μια άδεια που έχει ήδη υποβληθεί.
+                                </p>
+                                <ul class="list-unstyled text-start small">
+                                    <li class="mb-2">
+                                        <i class="bi bi-arrow-clockwise text-warning"></i>
+                                        Ξεκλείδωμα άδειας
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-pencil text-warning"></i>
+                                        Προσθήκη/αφαίρεση αρχείων
+                                    </li>
+                                    <li>
+                                        <i class="bi bi-send text-warning"></i>
+                                        Επανυποβολή στη Διεύθυνση
+                                    </li>
+                                </ul>
+                                <div class="alert alert-warning border-warning mt-3 mb-0">
+                                    <small>
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                        Μετά το ξεκλείδωμα πρέπει να επανυποβάλετε την άδεια.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Unhide Option --}}
+                    <div class="col-md-4">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center">
+                                <i class="bi bi-eye fs-1 text-primary mb-3"></i>
+                                <h5 class="card-title">Επανεμφάνιση Άδειας</h5>
+                                <p class="card-text small text-muted">
+                                    Μπορείτε να επαναφέρετε αποκρυμμένες άδειες στην κύρια λίστα.
+                                </p>
+                                <ul class="list-unstyled text-start small">
+                                    <li class="mb-2">
+                                        <i class="bi bi-list-ul text-primary"></i>
+                                        Προβολή αποκρυμμένων αδειών
+                                    </li>
+                                    <li>
+                                        <i class="bi bi-arrow-counterclockwise text-primary"></i>
+                                        Επαναφορά στην κύρια λίστα
+                                    </li>
+                                </ul>
+                                <div class="alert alert-light border mt-3 mb-0">
+                                    <small>
+                                        <i class="bi bi-info-circle text-primary"></i>
+                                        Οι αποκρυμμένες άδειες εμφανίζονται σε ξεχωριστή σελίδα.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- Important Notes Section --}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info border-info">
+                    <h6 class="alert-heading">
+                        <i class="bi bi-info-circle-fill"></i> 
+                        Σημείωση για Αποσπασμένους
+                    </h6>
+                    <p class="mb-0 small">
+                        Οι άδειες των εκπαιδευτικών που είναι <strong>αποσπασμένοι από άλλους νομούς</strong> 
+                        υποβάλλονται απευθείας από το Σχολείο στην αντίστοιχη διεύθυνση οργανικής του εκπαιδευτικού 
+                        και <strong>όχι</strong> στη Διεύθυνση Π.Ε. Αχαΐας.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .timeline {
+        position: relative;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 24px;
+        top: 50px;
+        bottom: 50px;
+        width: 2px;
+        background: linear-gradient(to bottom, #0d6efd 80%, #198754);
+    }
+    /* Accordion header colors */
+    .accordion-button.collapsed {
+        background-color: #589afc;
+        color: white;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .accordion-button:not(.collapsed) i {
+        color: white;
+    }
+
+    /* Different color for second accordion when open */
+    #headingManagement .accordion-button.collapsed {
+        background-color: #71b193;
+    }
+
+    #headingManagement .accordion-button:not(.collapsed) {
+        background-color: #198754;
+    }
+
+    /* Hover effect */
+    .accordion-button:hover {
+        background-color: #3688fa;
+    }
+
+    #headingManagement .accordion-button:hover {
+        background-color: #2c885d;
+    }
+
+    .accordion-button:not(.collapsed):hover {
+        background-color: #0b5ed7;
+    }
+
+    #headingManagement .accordion-button:not(.collapsed):hover {
+        background-color: #157347;
+    }
+    </style>
 
         {{-- Table Header --}}
         <div class="row">
@@ -96,8 +362,29 @@
         @empty
             <div class="alert alert-info text-center">
                 <i class="bi bi-info-circle"></i>
-                Δεν υπάρχουν καταχωρημένες άδειες αυτή τη στιγμή. Ξεκινήστε καταχωρόντας τις άδειες στο mySchool.
+                Δεν υπάρχουν καταχωρημένες νέες άδειες αυτή τη στιγμή. Ξεκινήστε καταχωρώντας τις άδειες που τυχόν υπάρχουν στο mySchool.
             </div>
         @endforelse
+
+        {{-- Hidden Leaves Section (place this at the bottom of the main view, outside the loop) --}}
+        @if(isset($showHiddenLeavesLink) && $showHiddenLeavesLink)
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-eye-slash"></i> Αποκρυμμένες Άδειες
+                            </h5>
+                            <p class="card-text">
+                                Έχετε αποκρυμμένες άδειες που δεν εμφανίζονται στη λίστα.
+                            </p>
+                            <a href="{{ route('leaves.hidden') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-eye"></i> Προβολή Αποκρυμμένων Αδειών
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </x-layout_school>

@@ -86,7 +86,7 @@
             $microappsWithoutDeadline = [];
             
             foreach ($school->microapps as $one_microapp) {
-                if ($one_microapp->microapp->visible) { // this changes display of schools dashboard page. you have to change also in menu
+                if ($one_microapp->microapp->visible || ($one_microapp->microapp->name == 'Άδειες' && in_array($school->code, [9060002, 9060055, 9060146, 9060208, 9060397, 9060613, 9060300]))) { // this changes display of schools dashboard page. you have to change also in menu
                     if (in_array($one_microapp->microapp->url, ['/tickets', '/outings', '/timetables', '/leaves']) || 
                         empty($one_microapp->microapp->closes_at)) {
                         $microappsWithoutDeadline[] = $one_microapp;

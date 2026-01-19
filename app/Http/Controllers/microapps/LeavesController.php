@@ -464,7 +464,7 @@ class LeavesController extends Controller
             $data[] = ['name' => 'ProtocolNum', 'contents' => $leave->protocol_number];
             $data[] = ['name' => 'ProtocolYear', 'contents' => $leave->protocol_date->format('Y')];
         }
-        // dd($data);
+     
         $client = new Client();
         
         //return "5184 - 2024/08/06";

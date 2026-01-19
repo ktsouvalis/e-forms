@@ -85,7 +85,7 @@
   
 <!-- Microapps Section -->
     @foreach ($school->microapps as $one_microapp)
-        @if($one_microapp->microapp->visible)
+        @if($one_microapp->microapp->visible || ($one_microapp->microapp->name == 'Άδειες' && in_array($school->code, [9060002, 9060055, 9060146, 9060208, 9060397, 9060613, 9060300])))
             @php
                 $resource = substr($one_microapp->microapp->url, 1);
                 $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $school);

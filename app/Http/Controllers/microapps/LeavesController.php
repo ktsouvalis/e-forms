@@ -228,7 +228,8 @@ class LeavesController extends Controller
         try {
             foreach ($batch as $leaveData) {
                 // Ignore Απουσία
-                if($leaveData['leave_type'] == 'Απουσία') {
+                if($leaveData['leave_type'] == 'Απουσία' || $leaveData['leave_state'] == '1-Δημιουργήθηκε') {
+                    Log::channel('throwable_db')->info("Ignoring leave for AFM: " . $leaveData['afm'] . " with type 'Απουσία' or state '1-Δημιουργήθηκε'");
                     continue;
                 }
                 

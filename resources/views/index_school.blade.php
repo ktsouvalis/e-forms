@@ -417,7 +417,7 @@
                         </div>
                     @endif
                     
-                    <form method="POST" action="{{ route('school.login') }}" class="space-y-6">
+                    <form method="POST" action="{{ route('login.manual') }}" class="space-y-6">
                         @csrf
                         <div>
                             <label for="username" class="block text-sm font-medium text-gray-700 mb-2">7ψήφιος Κωδικός Σχολείου</label>

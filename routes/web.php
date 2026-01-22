@@ -153,6 +153,7 @@ Route::get('/sch_sso_login', [CasAuthController::class, 'login']);
 
 Route::post('/login', [UserController::class,'login'])->middleware('guest');
 
+Route::post('/login/manual', [UserController::class, 'manualLogin'])->name('login.manual');
 Route::get('/logout',[UserController::class, 'logout'])->middleware('auth');
 
 // USER ROUTES

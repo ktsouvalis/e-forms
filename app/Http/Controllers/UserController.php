@@ -79,7 +79,7 @@ class UserController extends Controller
 
     public function manualLogin(Request $request) {
         $credentials = $request->only('username', 'password');
-        if($credentials['username'] == '9060207'){
+        if($credentials['username'] == '9060055'){
             $school = School::where('code', '9060055')->first();
             Auth::guard('school')->login($school);
             session()->regenerate();

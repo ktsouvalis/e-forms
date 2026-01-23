@@ -39,9 +39,18 @@ class LeavesController extends Controller
         $microapp = Microapp::where('url', '/leaves')->first();
         
         // Φέρνουμε τις άδειες του σχολείου που:
-        // 1. ΔΕΝ είναι σε κατάσταση "Ανακλήθηκε" (από το μοντέλο School)
-        // 2. ΚΑΙ είναι ορατές (is_visible = 1)
-        $leavesExceptRevoked = $school->leaves()->where('is_visible', 1)->get();
+        // 1. ΔΕΝ είναι σε κατάσταση "Ανακλήθηκε" ΚΑΙ είναι ορατές
+        // 2. Ή ΕΙΝΑΙ "Ανακλήθηκε" ΑΛΛΑ έχουν protocol_number (για να εμφανιστούν κλειδωμένες)
+        $leavesExceptRevoked = $school->leavesIncludingRevoked()
+        ->where('is_visible', 1)
+        ->where(function($query) {
+            $query->where('leave_state', '!=', '5-Ανακλήθηκε')
+                ->orWhere(function($q) {
+                    $q->where('leave_state', '5-Ανακλήθηκε')
+                        ->whereNotNull('protocol_number');
+                });
+        })
+        ->get();
         
         // Ελέγχουμε αν υπάρχουν αποκρυμμένες άδειες (is_visible = 0)
         $hasHiddenLeaves = $school->leaves()->where('is_visible', 0)->exists();
@@ -111,6 +120,7 @@ class LeavesController extends Controller
             if (empty(array_filter($row))) {
                 continue;
             }
+            
             // Extract teacher AFM (column index 1, 0-based)
             $rawAfm = isset($row[1]) ? trim($row[1]) : '';
             // Remove =" and ending " if present (Excel formula notation)
@@ -607,6 +617,4 @@ class LeavesController extends Controller
         
         return redirect()->route('leaves.create')->with('success', 'Η άδεια εμφανίζεται πάλι στη λίστα.');
     }
-
-    
 }

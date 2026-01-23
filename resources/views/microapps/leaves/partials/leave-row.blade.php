@@ -1,3 +1,8 @@
+{{-- Check if this is a revoked leave with protocol --}}
+@php
+    $isRevokedWithProtocol = ($leave->leave_state == '5-Ανακλήθηκε' && $leave->protocol_number);
+@endphp
+
 <div class="row align-items-center mb-3">
     {{-- Teacher Name --}}
     <div class="col-md-2">
@@ -26,6 +31,17 @@
     </div>
     
     @if($leave->am != null)
+        @if($isRevokedWithProtocol)
+            {{-- Revoked Leave Alert --}}
+            <div class="col-md-6">
+                <div class="alert alert-danger mb-0 py-2 d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Ανακλήθηκε!</strong> Η άδεια πρέπει να υποβληθεί εκ νέου στο mySchool
+                    (Αρ. Πρωτ.: {{ $leave->protocol_number }})
+                </div>
+            </div>
+        @else
+
         {{-- File Upload Section --}}
         <div class="col-md-5">
             <div class="row g-2">
@@ -126,14 +142,15 @@
                 </div>
             @endif
         </div>
+        @endif
     @else
         {{-- Substitute Teacher Note --}}
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
             <div class="alert alert-info mb-0 py-2">
                 <i class="bi bi-info-circle"></i>
                 <em>Αναπληρωτής εκπαιδευτικός (ανάρτηση στο invoices)</em>
             </div>
-        </div>
+        </div> -->
     @endif
 </div>
 

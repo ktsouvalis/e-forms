@@ -173,7 +173,7 @@
                 <h2 class="accordion-header" id="headingManagement">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManagement" aria-expanded="false" aria-controls="collapseManagement">
                         <i class="bi bi-sliders me-2"></i>
-                        <strong>Διόρθωση, Απόκρυψη και επανεμφάνιση Αδειών</strong>
+                        <strong>Διόρθωση και αλλαγή ορατότητας Αδειών</strong>
                     </button>
                 </h2>
                 <div id="collapseManagement" class="accordion-collapse collapse" aria-labelledby="headingManagement" data-bs-parent="#leavesInstructionsAccordion">
@@ -184,9 +184,9 @@
                         <div class="card h-100 border-secondary">
                             <div class="card-body text-center">
                                 <i class="bi bi-eye-slash fs-1 text-secondary mb-3"></i>
-                                <h5 class="card-title">Απόκρυψη Άδειας</h5>
+                                <h5 class="card-title">Μη εμφάνιση Άδειας</h5>
                                 <p class="card-text small text-muted">
-                                    Για λόγους οργάνωσης και μόνο μπορείτε να αποκρύψετε μια άδεια από τη λίστα:
+                                    Για λόγους οργάνωσης και μόνο μπορείτε να κάνετε μη εμφανή μια άδεια από τη λίστα:
                                 </p>
                                 <ul class="list-unstyled text-start small">
                                     <li class="mb-2">
@@ -201,7 +201,7 @@
                                 <div class="alert alert-light border mt-3 mb-0">
                                     <small>
                                         <i class="bi bi-info-circle text-primary"></i>
-                                        Η άδεια δεν διαγράφεται - απλά κρύβεται από την κύρια λίστα και μπορείτε να την επαναφέρετε όποτε θελήσετε.
+                                        Η άδεια δεν διαγράφεται - απλά αποκρύπτεται από την κύρια λίστα και μπορείτε να την επαναφέρετε όποτε θελήσετε.
                                     </small>
                                 </div>
                             </div>
@@ -250,12 +250,12 @@
                                 <i class="bi bi-eye fs-1 text-primary mb-3"></i>
                                 <h5 class="card-title">Επανεμφάνιση Άδειας</h5>
                                 <p class="card-text small text-muted">
-                                    Μπορείτε να επαναφέρετε αποκρυμμένες άδειες στην κύρια λίστα.
+                                    Μπορείτε να επαναφέρετε μη εμφανείς άδειες στην κύρια λίστα.
                                 </p>
                                 <ul class="list-unstyled text-start small">
                                     <li class="mb-2">
                                         <i class="bi bi-list-ul text-primary"></i>
-                                        Προβολή αποκρυμμένων αδειών
+                                        Προβολή μη εμφανών αδειών
                                     </li>
                                     <li>
                                         <i class="bi bi-arrow-counterclockwise text-primary"></i>
@@ -265,7 +265,7 @@
                                 <div class="alert alert-light border mt-3 mb-0">
                                     <small>
                                         <i class="bi bi-info-circle text-primary"></i>
-                                        Οι αποκρυμμένες άδειες εμφανίζονται σε ξεχωριστή σελίδα.
+                                        Οι μη εμφανείς άδειες εμφανίζονται σε ξεχωριστή σελίδα.
                                     </small>
                                 </div>
                             </div>
@@ -293,7 +293,7 @@
                         Οι άδειες των αναπληρωτών εκπαιδευτικών υποβάλλονται στο <strong>invoices</strong>
                     </p>
                     <p class="mb-2 small">
-                        Άδειες που έχουν αποσταλεί ήδη στη Διεύθυνση μέσα από το e-mail adeies@dipe.... δεν πρέπει να ανέβουν εδώ. Μπορείτε απλά να τις κάνετε απόκρυψη.
+                        Άδειες που έχουν αποσταλεί ήδη στη Διεύθυνση μέσα από το e-mail adeies@dipe.... δεν πρέπει να ανέβουν εδώ. Μπορείτε απλά να τις κάνετε μη εμφανείς.
                     </p>
                 </div>
             </div>
@@ -382,13 +382,13 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <i class="bi bi-eye-slash"></i> Αποκρυμμένες Άδειες
+                                <i class="bi bi-eye-slash"></i> Μη εμφανείς Άδειες
                             </h5>
                             <p class="card-text">
-                                Έχετε αποκρυμμένες άδειες που δεν εμφανίζονται στη λίστα.
+                                Έχετε μη εμφανείς άδειες.
                             </p>
                             <a href="{{ route('leaves.hidden') }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-eye"></i> Προβολή Αποκρυμμένων Αδειών
+                                <i class="bi bi-eye"></i> Προβολή μη εμφανών Αδειών
                             </a>
                         </div>
                     </div>

@@ -234,13 +234,8 @@ class LeavesController extends Controller
                 }
                 
                 // Keys on which update or create is happening
-                $keys = [
-                    'afm' => $leaveData['afm'],
-                    // 'leave_state' => $leaveData['leave_state'], Δημιουργούσε διπλότυπα όταν άλλαζε η κατάσταση της άδειας στο myschool
-                    'creator_entity_code' => $leaveData['creator_entity_code'],
-                    'leave_protocol_number' => $leaveData['leave_protocol_number'],
-                    'leave_protocol_date' => $leaveData['leave_protocol_date'],
-                ];
+                
+                
                 
                 // Remove key fields from the data array
                 $data = $leaveData;
@@ -286,6 +281,7 @@ class LeavesController extends Controller
                 ->where('creator_entity_code', $leave->creator_entity_code)
                 ->where('leave_protocol_number', $leave->leave_protocol_number)
                 ->where('leave_protocol_date', $leave->leave_protocol_date)
+                ->orderBy('id', 'desc')
                 ->first();
             
                 // If we found an active leave, set the related_leave_id

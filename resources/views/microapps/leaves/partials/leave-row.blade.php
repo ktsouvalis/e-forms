@@ -92,11 +92,11 @@
                     <form action="{{ route('leaves.hide', ['teacher_leave' => $leave->id]) }}" 
                           method="post" 
                           class="w-100"
-                          onsubmit="return confirm('Μπορείτε να προβάλετε τις αποκρυμμένες άδειες στο κάτω μέρος αυτής της σελίδας.')">
+                          onsubmit="return confirm('Μπορείτε να προβάλετε τις μη εφανείς άδειες στο κάτω μέρος αυτής της σελίδας.')">
                         @csrf
                         <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
                             <i class="bi bi-eye-slash"></i>
-                            <small class="d-block">Απόκρυψη</small>
+                            <small class="d-block">Μη εμφάνιση</small>
                         </button>
                     </form>
                 @endif
@@ -120,7 +120,7 @@
                         @csrf
                         <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
                             <i class="bi bi-eye-slash"></i>
-                            <small class="d-block">Απόκρυψη</small>
+                            <small class="d-block">Μη εμφάνιση</small>
                         </button>
                     </form>
                 </div>

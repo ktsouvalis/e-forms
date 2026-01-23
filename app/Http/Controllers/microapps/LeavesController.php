@@ -236,7 +236,7 @@ class LeavesController extends Controller
                 // Keys on which update or create is happening
                 $keys = [
                     'afm' => $leaveData['afm'],
-                    'leave_state' => $leaveData['leave_state'],
+                    // 'leave_state' => $leaveData['leave_state'], Δημιουργούσε διπλότυπα όταν άλλαζε η κατάσταση της άδειας στο myschool
                     'creator_entity_code' => $leaveData['creator_entity_code'],
                     'leave_protocol_number' => $leaveData['leave_protocol_number'],
                     'leave_protocol_date' => $leaveData['leave_protocol_date'],

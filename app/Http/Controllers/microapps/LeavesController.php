@@ -242,6 +242,11 @@ class LeavesController extends Controller
                     //Log::channel('throwable_db')->info("Ignoring leave for AFM: " . $leaveData['afm'] . " with type 'Απουσία' or state '1-Δημιουργήθηκε'");
                     continue;
                 }
+
+                if($leaveData['employment_relation'] != 'Μόνιμος') {
+                    //Log::channel('throwable_db')->info("Ignoring leave for AFM: " . $leaveData['afm'] . " with employment relation: " . $leaveData['employment_relation']);
+                    continue;
+                }
                 
                 $keys = [
                     'afm' => $leaveData['afm'],

@@ -69,6 +69,25 @@ class WorkPlanController extends Controller
         }
     }
 
+    private function weekHasWorkdayInMonth($year, $week, $month, $targetYear)
+    {
+        // Η μέθοδος δημιουργήθηκε γιατί προέκυπτε πρόβλημα στο Δεκέμβριο όπου η τελευταία εβδομάδα
+        // του έτους μπορεί να είναι η 01 της επόμενης χρονιάς και να μην εντοπίζεται σωστά.
+        // Βρίσκουμε τη Δευτέρα της εβδομάδας
+        $monday = Carbon::create()->setISODate($year, $week, 1);
+        
+        // Ελέγχουμε Δευτέρα έως Παρασκευή (1-5)
+        for ($day = 1; $day <= 5; $day++) {
+            $currentDay = Carbon::create()->setISODate($year, $week, $day);
+            // Ελέγχουμε αν η μέρα είναι στον σωστό μήνα ΚΑΙ έτος
+            if ($currentDay->month == $month && $currentDay->year == $targetYear) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     public function extractWorkPlan($yearWeek) {
         $user = Auth::guard('consultant')->user(); //check which user is logged in
         //found and fix date of month to extract
@@ -78,13 +97,31 @@ class WorkPlanController extends Controller
         $selected_day = Carbon::create()->setISODate($year, $week);
         $first_day_of_month = new Carbon('first day of '.$selected_day->format('M')." ".$selected_day->format('Y'));
         $last_day_of_month = new Carbon('last day of '.$selected_day->format('M')." ".$selected_day->format('Y'));
-        $start_week = $first_day_of_month->format('W');
-        $end_week = $last_day_of_month->format('W');
-        $end__week_and_year = $last_day_of_month->format('W-o');
-        //$end_week cannot be 01 so if it is 01 means that the last day of the month is in the previous year
-        if($end_week == 01){
-            $end_week = 52;
+        $month = $selected_day->month;
+        $targetYear = $selected_day->year;
+
+        // Βρίσκουμε τη Δευτέρα της πρώτης εβδομάδας
+        $currentMonday = $first_day_of_month->copy()->startOfWeek();
+
+        // Συλλέγουμε όλες τις εβδομάδες που έχουν εργάσιμες μέρες στον μήνα
+        $weeks = [];
+        // Προσθέτουμε +7 μέρες στο τέλος για να πιάσουμε και την τελευταία εβδομάδα
+        $endDate = $last_day_of_month->copy()->addWeek();
+
+        while ($currentMonday <= $endDate) {
+            $weekNumber = $currentMonday->weekOfYear;
+            $weekYear = $currentMonday->year;
+            
+            if ($this->weekHasWorkdayInMonth($weekYear, $weekNumber, $month, $targetYear)) {
+                $weeks[] = ['year' => $weekYear, 'week' => $weekNumber];
+            }
+            
+            $currentMonday->addWeek();
         }
+        //$end_week cannot be 01 so if it is 01 means that the last day of the month is in the previous year
+        // if($end_week == 01){
+        //     $end_week = 52;
+        // }
         // Create a new Spreadsheet object
         $spreadsheet = new Spreadsheet();
         // Setting font to Calibri
@@ -169,14 +206,13 @@ class WorkPlanController extends Controller
             
         // Insert data      
         $row=8;
-        $start_week_int = intval($start_week);
-        $end_week_int = intval($end_week);
-        for($w=$start_week_int;$w<=$end_week_int;$w++){
-            // Create a DateTime object for the first day of the desired week
-            $firstDayOfWeek = Carbon::create()->setISODate(date('Y'), $w, 1);
-            // Format the DateTime object to get the week format
-            $week_format = $firstDayOfWeek->format('W'); 
-            $yw=$year.$w;
+        foreach($weeks as $weekData){
+            $weekYear = $weekData['year'];
+            $weekNumber = $weekData['week'];
+            
+            $firstDayOfWeek = Carbon::create()->setISODate($weekYear, $weekNumber, 1);
+            $week_format = str_pad($weekNumber, 2, '0', STR_PAD_LEFT);
+            $yw = $weekYear . $week_format;
             $monday = date( "d/m/Y", strtotime($year."W".$week_format."1") );
             $friday = date( "d/m/Y", strtotime($year."W".$week_format."5") );
             $activeWorksheet->getCell('A'.$row)->setValue($monday." έως ".$friday);

@@ -129,20 +129,20 @@ class LeavesController extends Controller
 
     private function processCsvFile($fullPath)
     {
-        // ✨ PASS 1: Μάθε πόσα states έχει κάθε ομάδα
+        // Pass 1: Μάθε τι υπάρχει
         $leaveGroups = $this->scanCsvForGroups($fullPath);
         
-        // ✨ PASS 2: Συλλογή ομάδων
+        // Pass 2: Επεξεργασία
         if (($handle = fopen($fullPath, 'r')) === false) {
             throw new \Exception('Αδυναμία ανάγνωσης αρχείου');
         }
         
-        fgetcsv($handle, 0, ';');
+        fgetcsv($handle, 0, ';'); // Skip header
         stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         
-        $groupAccumulator = []; // ✨ Συλλέγει όλες τις εγγραφές ανά key
+        $groupAccumulator = []; // Συλλέγει γραμμές ανά key
         $processedGroups = 0;
-        $batchSize = 20; // ✨ Ομάδες (όχι εγγραφές)
+        $batchSize = 50;
         
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
             if (empty(array_filter($row))) continue;
@@ -150,37 +150,37 @@ class LeavesController extends Controller
             $leaveData = $this->extractLeaveData($row);
             if (!$leaveData) continue;
             
-            $key = $leaveData['afm'] . '|' . 
-                $leaveData['creator_entity_code'] . '|' . 
-                $leaveData['leave_protocol_number'] . '|' . 
-                $leaveData['leave_protocol_date'];
+            // Grouping key
+            $key = "{$leaveData['afm']}|{$leaveData['creator_entity_code']}|" .
+                "{$leaveData['leave_protocol_number']}|{$leaveData['leave_protocol_date']}";
             
-            // ✨ Πρόσθεσε στον accumulator
+            // Πρόσθεσε στον accumulator
             if (!isset($groupAccumulator[$key])) {
                 $groupAccumulator[$key] = [];
             }
             $groupAccumulator[$key][] = $leaveData;
             
-            // ✨ Τσέκαρε αν η ομάδα είναι πλήρης
-            $expectedStates = $leaveGroups[$key] ?? [];
+            // Τσέκαρε αν η ομάδα είναι πλήρης
+            $expectedStates = $leaveGroups[$key]['states'] ?? [];
             $currentStates = array_map(fn($l) => $l['leave_state'], $groupAccumulator[$key]);
             
             if ($this->isGroupComplete($currentStates, $expectedStates)) {
-                // Επεξεργασία αυτής της ομάδας
-                $this->processCompleteGroup($key, $groupAccumulator[$key]);
-                unset($groupAccumulator[$key]); // Καθάρισμα
+                // Επεξεργασία ομάδας
+                $this->processCompleteGroup($key, $groupAccumulator[$key], $leaveGroups[$key]);
+                
+                unset($groupAccumulator[$key]);
                 $processedGroups++;
                 
-                // Commit ανά X ομάδες
+                // Garbage collection ανά batch
                 if ($processedGroups % $batchSize == 0) {
                     gc_collect_cycles();
                 }
             }
         }
         
-        // ✨ Επεξεργασία τυχόν υπολειπόμενων ομάδων
-        foreach ($groupAccumulator as $key => $group) {
-            $this->processCompleteGroup($key, $group);
+        // Επεξεργασία τυχόν υπολειπόμενων
+        foreach ($groupAccumulator as $key => $leaves) {
+            $this->processCompleteGroup($key, $leaves, $leaveGroups[$key]);
         }
         
         fclose($handle);
@@ -190,109 +190,108 @@ class LeavesController extends Controller
 
     private function isGroupComplete($currentStates, $expectedStates)
     {
-        // Έχουμε δει όλα τα states που περιμένουμε;
         sort($currentStates);
         sort($expectedStates);
         return $currentStates === $expectedStates;
     }
+
     private function scanCsvForGroups($fullPath)
+
+//     [
+//     '123456|9999|1234|2025-01-15' => [
+//         'states' => ['2-Υποβλήθηκε', '5-Ανακλήθηκε'],
+//         'has_revoked' => true,
+//         'has_active' => true
+//     ]
+// ]
     {
         if (($handle = fopen($fullPath, 'r')) === false) {
             throw new \Exception('Αδυναμία ανάγνωσης αρχείου');
         }
         
-        fgetcsv($handle, 0, ';');
+        fgetcsv($handle, 0, ';'); // Skip header
         stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         
-        $groups = []; // ✨ Ελαφρύ array με μόνο τα keys + states
+        $groups = [];
         
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
             if (empty(array_filter($row))) continue;
             
-            // Διάβασε μόνο τα απαραίτητα πεδία
-            $getValue = function($index) use ($row) {
-                if (!isset($row[$index])) return '';
-                return trim($row[$index]);
-            };
+            // Διάβασε τα απαραίτητα πεδία
+            $afm = $this->extractAfm($row[1] ?? '');
+            $creatorCode = $this->extractCode($row[21] ?? '');
+            $protocolNum = trim($row[18] ?? '');
+            $protocolDate = $this->convertDate($row[19] ?? '');
+            $state = trim($row[14] ?? '');
             
-            $rawAfm = $getValue(1);
-            $afm = is_string($rawAfm) ? substr($rawAfm, 2, -1) : $rawAfm;
+            if (!$afm || !$creatorCode) continue;
             
-            $creatorCode = $getValue(21);
-            $creatorEntityCode = is_string($creatorCode) ? substr($creatorCode, 2, -1) : $creatorCode;
+            // Grouping key
+            $key = "{$afm}|{$creatorCode}|{$protocolNum}|{$protocolDate}";
             
-            $leaveState = $getValue(14);
-            
-            // Δημιουργία unique key
-            $key = $afm . '|' . $creatorEntityCode . '|' . $getValue(18) . '|' . $this->convertDate($getValue(19));
-            
-            // Αποθήκευση του state για αυτό το key
+            // Αρχικοποίηση group
             if (!isset($groups[$key])) {
-                $groups[$key] = [];
+                $groups[$key] = [
+                    'states' => [],
+                    'has_revoked' => false,
+                    'has_active' => false,
+                ];
             }
-            $groups[$key][] = $leaveState;
+            
+            // Συλλογή states
+            $groups[$key]['states'][] = $state;
+            
+            if ($state === '5-Ανακλήθηκε') {
+                $groups[$key]['has_revoked'] = true;
+            }
+            if (in_array($state, ['2-Υποβλήθηκε', '3-Εγκρίθηκε'])) {
+                $groups[$key]['has_active'] = true;
+            }
         }
         
         fclose($handle);
-        
-        return $groups; // π.χ. ['123456|9999|1234/25|2025-01-15' => ['2-Υποβλήθηκε', '5-Ανακλήθηκε', '3-Εγκρίθηκε']]
+        return $groups;
     }
 
-    private function processCompleteGroup($key, $leavesInGroup)
+    // Helper methods
+    private function extractAfm($raw)
+    {
+        return is_string($raw) ? substr(trim($raw), 2, -1) : trim($raw);
+    }
+
+    private function extractCode($raw)
+    {
+        return is_string($raw) ? substr(trim($raw), 2, -1) : trim($raw);
+    }
+    private function processCompleteGroup($key, $leavesInGroup, $groupInfo)
     {
         DB::beginTransaction();
         try {
-            // ✨ ΒΗΜΑ 1: Βρες παλιά εγγραφή με protocol
             $keyParts = explode('|', $key);
-            $oldLeaveWithProtocol = TeacherLeaves::where('afm', $keyParts[0])
+            
+            // Βρες αν υπάρχει άδεια στη βάση με protocol_number
+            $dbLeaveWithProtocol = TeacherLeaves::where('afm', $keyParts[0])
                 ->where('creator_entity_code', $keyParts[1])
                 ->where('leave_protocol_number', $keyParts[2])
                 ->where('leave_protocol_date', $keyParts[3])
                 ->whereNotNull('protocol_number')
                 ->first();
             
-            $protocolToTransfer = null;
+            // Προσδιορισμός σεναρίου
+            $hasRevoked = $groupInfo['has_revoked'];
+            $hasActive = $groupInfo['has_active'];
             
-            if ($oldLeaveWithProtocol) {
-                // Κράτα τα στοιχεία για μεταφορά
-                $protocolToTransfer = [
-                    'protocol_number' => $oldLeaveWithProtocol->protocol_number,
-                    'protocol_date' => $oldLeaveWithProtocol->protocol_date,
-                    'files_json' => $oldLeaveWithProtocol->files_json,
-                ];
-                
-                // Καθάρισε την παλιά
-                $oldLeaveWithProtocol->protocol_number = null;
-                $oldLeaveWithProtocol->protocol_date = null;
-                $oldLeaveWithProtocol->files_json = null;
-                $oldLeaveWithProtocol->submitted = 0;
-                $oldLeaveWithProtocol->is_visible = 1;
-                $oldLeaveWithProtocol->save();
-            }
-            
-            // ✨ ΒΗΜΑ 2: Δημιουργία όλων των εγγραφών
-            $createdLeaves = [];
-            
-            foreach ($leavesInGroup as $leaveData) {
-                $newLeave = $this->simpleUpdateOrCreate($leaveData);
-                $createdLeaves[] = [
-                    'leave' => $newLeave,
-                    'state' => $leaveData['leave_state']
-                ];
-            }
-            
-            // ✨ ΒΗΜΑ 3: Βρες την τελευταία ενεργή (όχι Ανακλήθηκε)
-            $lastActiveLeave = null;
-            foreach (array_reverse($createdLeaves) as $item) {
-                if ($item['state'] != '5-Ανακλήθηκε') {
-                    $lastActiveLeave = $item['leave'];
-                    break;
-                }
-            }
-            
-            // ✨ ΒΗΜΑ 4: Μεταφορά στην τελευταία ενεργή
-            if ($lastActiveLeave && $protocolToTransfer) {
-                $this->transferToNewLeave($lastActiveLeave, $protocolToTransfer);
+            if ($hasRevoked && $hasActive && $dbLeaveWithProtocol) {
+                // ΣΕΝΑΡΙΟ Β: Ανάκληση + Διόρθωση
+                $this->handleRevokedAndCorrected($leavesInGroup, $dbLeaveWithProtocol);
+            } 
+            elseif ($hasRevoked && !$hasActive && $dbLeaveWithProtocol) {
+                // ΣΕΝΑΡΙΟ Α: Μόνο Ανάκληση
+                $this->handleOnlyRevoked($leavesInGroup, $dbLeaveWithProtocol);
+            } 
+            else {
+                // Κανονική περίπτωση
+                $this->handleNormalCase($leavesInGroup);
             }
             
             DB::commit();
@@ -303,7 +302,220 @@ class LeavesController extends Controller
             throw $e;
         }
     }
+    
+    private function handleOnlyRevoked($leavesInGroup, $dbLeaveWithProtocol)
+    {
+        $revokedLeave = $leavesInGroup[0]; // Μόνο 1 γραμμή
+        
+        // Idempotent check: Αν είναι ήδη "Ανακλήθηκε" → skip
+        if ($dbLeaveWithProtocol->leave_state === '5-Ανακλήθηκε') {
+            return;
+        }
+        
+        // Απλό UPDATE της υπάρχουσας εγγραφής
+        $dbLeaveWithProtocol->fill([
+            'leave_state' => $revokedLeave['leave_state'],
+            'submitted' => 0,
+            'is_visible' => 1,
+            // Όλα τα υπόλοιπα πεδία από το CSV
+            'am' => $revokedLeave['am'],
+            'sex' => $revokedLeave['sex'],
+            'surname' => $revokedLeave['surname'],
+            'name' => $revokedLeave['name'],
+            // ... κλπ (όλα τα πεδία εκτός protocol_number, protocol_date, files_json)
+        ]);
+        
+        // ΔΕΝ πειράζουμε: protocol_number, protocol_date, files_json
+        
+        $dbLeaveWithProtocol->save();
+    }
 
+    private function handleRevokedAndCorrected($leavesInGroup, $dbLeaveWithProtocol)
+    {
+        // Idempotent check: Αν υπάρχουν ήδη ΚΑΙ τα 2 states στη βάση → skip
+        $keyParts = [
+            'afm' => $leavesInGroup[0]['afm'],
+            'creator_entity_code' => $leavesInGroup[0]['creator_entity_code'],
+            'leave_protocol_number' => $leavesInGroup[0]['leave_protocol_number'],
+            'leave_protocol_date' => $leavesInGroup[0]['leave_protocol_date'],
+        ];
+        
+        $existingStates = TeacherLeaves::where($keyParts)
+            ->pluck('leave_state')
+            ->toArray();
+        
+        $hasRevokedInDb = in_array('5-Ανακλήθηκε', $existingStates);
+        $hasActiveInDb = in_array('2-Υποβλήθηκε', $existingStates) || 
+                        in_array('3-Εγκρίθηκε', $existingStates);
+        
+        if ($hasRevokedInDb && $hasActiveInDb) {
+            // Ήδη επεξεργασμένη
+            return;
+        }
+        
+        // Χωρισμός των γραμμών
+        $revokedData = null;
+        $activeData = null;
+        
+        foreach ($leavesInGroup as $leave) {
+            if ($leave['leave_state'] === '5-Ανακλήθηκε') {
+                $revokedData = $leave;
+            } else {
+                $activeData = $leave;
+            }
+        }
+        
+        // Κρατά protocol για μεταφορά
+        $protocolData = [
+            'protocol_number' => $dbLeaveWithProtocol->protocol_number,
+            'protocol_date' => $dbLeaveWithProtocol->protocol_date,
+            'files_json' => $dbLeaveWithProtocol->files_json,
+        ];
+        
+        // ΒΗΜΑ 1: UPDATE την υπάρχουσα σε "Ανακλήθηκε"
+        $dbLeaveWithProtocol->fill(array_merge($revokedData, [
+            'protocol_number' => null,
+            'protocol_date' => null,
+            'files_json' => null,
+            'submitted' => 0,
+            'is_visible' => 1,
+        ]));
+        $dbLeaveWithProtocol->save();
+        
+        // ΒΗΜΑ 2: CREATE νέα με τη διορθωμένη
+        $newActiveLeave = $this->createLeave($activeData);
+        
+        // ΒΗΜΑ 3: Μεταφορά protocol
+        $newActiveLeave->protocol_number = $protocolData['protocol_number'];
+        $newActiveLeave->protocol_date = $protocolData['protocol_date'];
+        $newActiveLeave->submitted = 0;
+        $newActiveLeave->is_visible = 1;
+        
+        // ΒΗΜΑ 4: Μετονομασία και μεταφορά αρχείων
+        if ($protocolData['files_json']) {
+            $newFilesJson = $this->renameFiles(
+                $dbLeaveWithProtocol->id, 
+                $newActiveLeave->id, 
+                $protocolData['files_json']
+            );
+            $newActiveLeave->files_json = $newFilesJson;
+        }
+        
+        $newActiveLeave->save();
+    }
+
+    private function createLeave($leaveData)
+    {
+        return TeacherLeaves::create([
+            'afm' => $leaveData['afm'],
+            'creator_entity_code' => $leaveData['creator_entity_code'],
+            'leave_protocol_number' => $leaveData['leave_protocol_number'],
+            'leave_protocol_date' => $leaveData['leave_protocol_date'],
+            'leave_state' => $leaveData['leave_state'],
+            
+            // Όλα τα υπόλοιπα πεδία
+            'am' => $leaveData['am'],
+            'sex' => $leaveData['sex'],
+            'surname' => $leaveData['surname'],
+            'name' => $leaveData['name'],
+            'fathers_name' => $leaveData['fathers_name'],
+            'specialty_code' => $leaveData['specialty_code'],
+            'specialty' => $leaveData['specialty'],
+            'directorate' => $leaveData['directorate'],
+            'employment_relation' => $leaveData['employment_relation'],
+            'leave_type' => $leaveData['leave_type'],
+            'leave_start_date' => $leaveData['leave_start_date'],
+            'leave_days' => $leaveData['leave_days'],
+            'leave_description' => $leaveData['leave_description'],
+            'creator_entity_name' => $leaveData['creator_entity_name'],
+            'creation_date' => $leaveData['creation_date'],
+            'submission_date' => $leaveData['submission_date'],
+            'approved_days' => $leaveData['approved_days'],
+            'approved_months' => $leaveData['approved_months'],
+            'approved_years' => $leaveData['approved_years'],
+            'approved_protocol_number' => $leaveData['approved_protocol_number'],
+            'approved_protocol_date' => $leaveData['approved_protocol_date'],
+            'approved_description' => $leaveData['approved_description'],
+            'revoke_description' => $leaveData['revoke_description'],
+            'approving_authority_code' => $leaveData['approving_authority_code'],
+            'approving_authority_name' => $leaveData['approving_authority_name'],
+            'last_change_date' => $leaveData['last_change_date'],
+        ]);
+    }
+
+    private function renameFiles($oldLeaveId, $newLeaveId, $filesJson)
+    {
+        $oldFiles = json_decode($filesJson, true);
+        if (!$oldFiles) return null;
+        
+        $newFiles = [];
+        
+        foreach ($oldFiles as $oldServerName => $greekName) {
+            // Παλιό: 34_1.pdf → Νέο: 56_1.pdf
+            $parts = explode('_', $oldServerName);
+            if (count($parts) < 2) continue;
+            
+            $fileNumber = $parts[1]; // '1.pdf'
+            $newServerName = $newLeaveId . '_' . $fileNumber;
+            
+            // Μετονομασία φυσικού αρχείου
+            $oldPath = storage_path("app/teacher_leaves/{$oldServerName}");
+            $newPath = storage_path("app/teacher_leaves/{$newServerName}");
+            
+            if (file_exists($oldPath)) {
+                rename($oldPath, $newPath);
+            }
+            
+            $newFiles[$newServerName] = $greekName;
+        }
+        
+        return json_encode($newFiles);
+    }
+
+    private function handleNormalCase($leavesInGroup)
+    {
+        foreach ($leavesInGroup as $leaveData) {
+            // Κάνε updateOrCreate για κάθε γραμμή
+            $keys = [
+                'afm' => $leaveData['afm'],
+                'creator_entity_code' => $leaveData['creator_entity_code'],
+                'leave_protocol_number' => $leaveData['leave_protocol_number'],
+                'leave_protocol_date' => $leaveData['leave_protocol_date'],
+                'leave_state' => $leaveData['leave_state'],
+            ];
+            
+            $updateData = [
+                'am' => $leaveData['am'],
+                'sex' => $leaveData['sex'],
+                'surname' => $leaveData['surname'],
+                'name' => $leaveData['name'],
+                'fathers_name' => $leaveData['fathers_name'],
+                'specialty_code' => $leaveData['specialty_code'],
+                'specialty' => $leaveData['specialty'],
+                'directorate' => $leaveData['directorate'],
+                'employment_relation' => $leaveData['employment_relation'],
+                'leave_type' => $leaveData['leave_type'],
+                'leave_start_date' => $leaveData['leave_start_date'],
+                'leave_days' => $leaveData['leave_days'],
+                'leave_description' => $leaveData['leave_description'],
+                'creator_entity_name' => $leaveData['creator_entity_name'],
+                'creation_date' => $leaveData['creation_date'],
+                'submission_date' => $leaveData['submission_date'],
+                'approved_days' => $leaveData['approved_days'],
+                'approved_months' => $leaveData['approved_months'],
+                'approved_years' => $leaveData['approved_years'],
+                'approved_protocol_number' => $leaveData['approved_protocol_number'],
+                'approved_protocol_date' => $leaveData['approved_protocol_date'],
+                'approved_description' => $leaveData['approved_description'],
+                'revoke_description' => $leaveData['revoke_description'],
+                'approving_authority_code' => $leaveData['approving_authority_code'],
+                'approving_authority_name' => $leaveData['approving_authority_name'],
+                'last_change_date' => $leaveData['last_change_date'],
+            ];
+            
+            TeacherLeaves::updateOrCreate($keys, $updateData);
+        }
+    }
     private function hasMultipleStates($states)
     {
         // Έχει πολλαπλά states (π.χ. Ανακλήθηκε + Υποβλήθηκε);

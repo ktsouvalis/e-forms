@@ -85,12 +85,12 @@ class LeavesController extends Controller
     }
 
     // ============================================
-    // ΝΕΕΣ ΜΕΘΟΔΟΙ - BATCH PROCESSING
+    // BATCH PROCESSING
     // ============================================
 
     private function processCsvFile($fullPath)
     {
-        // Pass 1: Μάθε τι υπάρχει στο αρχείο
+        // Pass 1: Μάθε τις ομάδες με OR λογική
         $leaveGroups = $this->scanCsvForGroups($fullPath);
         
         // Pass 2: Επεξεργασία
@@ -98,12 +98,24 @@ class LeavesController extends Controller
             throw new \Exception('Αδυναμία ανάγνωσης αρχείου');
         }
         
-        fgetcsv($handle, 0, ';'); // Skip header
+        fgetcsv($handle, 0, ';');
         stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         
-        $groupAccumulator = []; // Συλλέγει γραμμές ανά key
+        $groupAccumulator = [];
         $processedGroups = 0;
         $batchSize = 50;
+        $leaveIndex = 0;
+        
+        // ✅ Δημιουργία mapping από leave data σε group key
+        $leaveToGroupMap = [];
+        foreach ($leaveGroups as $groupKey => $groupData) {
+            foreach ($groupData['leaves'] as $leave) {
+                $leaveSignature = "{$leave['afm']}|{$leave['creator_code']}|" .
+                                "{$leave['protocol_num']}|{$leave['protocol_date']}|" .
+                                "{$leave['start_date']}|{$leave['days']}|{$leave['state']}";
+                $leaveToGroupMap[$leaveSignature] = $groupKey;
+            }
+        }
         
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
             if (empty(array_filter($row))) continue;
@@ -111,35 +123,36 @@ class LeavesController extends Controller
             $leaveData = $this->extractLeaveData($row);
             if (!$leaveData) continue;
             
-            // Grouping key
-            $key = "{$leaveData['afm']}|{$leaveData['creator_entity_code']}|" .
-                   "{$leaveData['leave_protocol_number']}|{$leaveData['leave_protocol_date']}";
+            // ✅ Βρες σε ποια ομάδα ανήκει αυτή η άδεια
+            $leaveSignature = "{$leaveData['afm']}|{$leaveData['creator_entity_code']}|" .
+                            "{$leaveData['leave_protocol_number']}|{$leaveData['leave_protocol_date']}|" .
+                            "{$leaveData['leave_start_date']}|{$leaveData['leave_days']}|{$leaveData['leave_state']}";
             
-            // Πρόσθεσε στον accumulator
-            if (!isset($groupAccumulator[$key])) {
-                $groupAccumulator[$key] = [];
+            $groupKey = $leaveToGroupMap[$leaveSignature] ?? null;
+            
+            if (!$groupKey) continue;
+            
+            if (!isset($groupAccumulator[$groupKey])) {
+                $groupAccumulator[$groupKey] = [];
             }
-            $groupAccumulator[$key][] = $leaveData;
+            $groupAccumulator[$groupKey][] = $leaveData;
             
             // Τσέκαρε αν η ομάδα είναι πλήρης
-            $expectedStates = $leaveGroups[$key]['states'] ?? [];
-            $currentStates = array_map(fn($l) => $l['leave_state'], $groupAccumulator[$key]);
+            $expectedStates = $leaveGroups[$groupKey]['states'] ?? [];
+            $currentStates = array_map(fn($l) => $l['leave_state'], $groupAccumulator[$groupKey]);
             
             if ($this->isGroupComplete($currentStates, $expectedStates)) {
-                // Επεξεργασία ομάδας
-                $this->processCompleteGroup($key, $groupAccumulator[$key], $leaveGroups[$key]);
+                $this->processCompleteGroup($groupKey, $groupAccumulator[$groupKey], $leaveGroups[$groupKey]);
                 
-                unset($groupAccumulator[$key]);
+                unset($groupAccumulator[$groupKey]);
                 $processedGroups++;
                 
-                // Garbage collection ανά batch
                 if ($processedGroups % $batchSize == 0) {
                     gc_collect_cycles();
                 }
             }
         }
         
-        // Επεξεργασία τυχόν υπολειπόμενων
         foreach ($groupAccumulator as $key => $leaves) {
             $this->processCompleteGroup($key, $leaves, $leaveGroups[$key]);
         }
@@ -155,78 +168,194 @@ class LeavesController extends Controller
             throw new \Exception('Αδυναμία ανάγνωσης αρχείου');
         }
         
-        fgetcsv($handle, 0, ';'); // Skip header
+        fgetcsv($handle, 0, ';');
         stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         
-        $groups = [];
+        $groupsByProtocol = []; // Ομαδοποίηση με protocol
+        $groupsByDateDays = []; // Ομαδοποίηση με start_date + days
+        $allLeaves = []; // Όλες οι γραμμές
         
         while (($row = fgetcsv($handle, 0, ';')) !== false) {
             if (empty(array_filter($row))) continue;
             
-            // Διάβασε τα απαραίτητα πεδία
             $afm = $this->extractAfm($row[1] ?? '');
             $creatorCode = $this->extractCode($row[21] ?? '');
             $protocolNum = trim($row[18] ?? '');
             $protocolDate = $this->convertDate($row[19] ?? '');
+            $leaveStartDate = $this->convertDate($row[16] ?? '');
+            $leaveDays = trim($row[17] ?? '');
             $state = trim($row[14] ?? '');
             
             if (!$afm || !$creatorCode) continue;
             
-            // Grouping key
-            $key = "{$afm}|{$creatorCode}|{$protocolNum}|{$protocolDate}";
+            // ✅ Key 1: Protocol-based
+            $keyProtocol = "{$afm}|{$creatorCode}|{$protocolNum}|{$protocolDate}";
             
-            // Αρχικοποίηση group
-            if (!isset($groups[$key])) {
-                $groups[$key] = [
+            // ✅ Key 2: Date+Days-based
+            $keyDateDays = "{$afm}|{$creatorCode}|{$leaveStartDate}|{$leaveDays}";
+            
+            // Αποθήκευση στοιχείων
+            $leaveInfo = [
+                'afm' => $afm,
+                'creator_code' => $creatorCode,
+                'protocol_num' => $protocolNum,
+                'protocol_date' => $protocolDate,
+                'start_date' => $leaveStartDate,
+                'days' => $leaveDays,
+                'state' => $state,
+                'key_protocol' => $keyProtocol,
+                'key_date_days' => $keyDateDays,
+            ];
+            
+            $allLeaves[] = $leaveInfo;
+            
+            // Ομαδοποίηση Protocol
+            if (!isset($groupsByProtocol[$keyProtocol])) {
+                $groupsByProtocol[$keyProtocol] = [
                     'states' => [],
-                    'has_revoked' => false,
-                    'has_active' => false,
+                    'leaves' => [],
                 ];
             }
+            $groupsByProtocol[$keyProtocol]['states'][] = $state;
+            $groupsByProtocol[$keyProtocol]['leaves'][] = $leaveInfo;
             
-            // Συλλογή states
-            $groups[$key]['states'][] = $state;
-            
-            if ($state === '5-Ανακλήθηκε') {
-                $groups[$key]['has_revoked'] = true;
+            // Ομαδοποίηση Date+Days
+            if (!isset($groupsByDateDays[$keyDateDays])) {
+                $groupsByDateDays[$keyDateDays] = [
+                    'states' => [],
+                    'leaves' => [],
+                ];
             }
-            if (in_array($state, ['2-Υποβλήθηκε', '3-Εγκρίθηκε'])) {
-                $groups[$key]['has_active'] = true;
-            }
+            $groupsByDateDays[$keyDateDays]['states'][] = $state;
+            $groupsByDateDays[$keyDateDays]['leaves'][] = $leaveInfo;
         }
         
         fclose($handle);
-        return $groups;
+        
+        // ✅ Merge των groups με κοινά στοιχεία
+        return $this->mergeGroups($groupsByProtocol, $groupsByDateDays, $allLeaves);
+    }
+
+    private function mergeGroups($groupsByProtocol, $groupsByDateDays, $allLeaves)
+    {
+        // Union-Find structure
+        $unionFind = [];
+        
+        foreach ($allLeaves as $index => $leave) {
+            $unionFind[$index] = $index; // Κάθε άδεια είναι αρχικά στη δική της ομάδα
+        }
+        
+        // Find function
+        $find = function($x) use (&$unionFind, &$find) {
+            if ($unionFind[$x] != $x) {
+                $unionFind[$x] = $find($unionFind[$x]);
+            }
+            return $unionFind[$x];
+        };
+        
+        // Union function
+        $union = function($x, $y) use (&$unionFind, &$find) {
+            $rootX = $find($x);
+            $rootY = $find($y);
+            if ($rootX != $rootY) {
+                $unionFind[$rootX] = $rootY;
+            }
+        };
+        
+        // ✅ Ενώνουμε άδειες που έχουν ίδιο protocol
+        foreach ($groupsByProtocol as $key => $group) {
+            $indices = [];
+            foreach ($allLeaves as $index => $leave) {
+                if ($leave['key_protocol'] === $key) {
+                    $indices[] = $index;
+                }
+            }
+            for ($i = 1; $i < count($indices); $i++) {
+                $union($indices[0], $indices[$i]);
+            }
+        }
+        
+        // ✅ Ενώνουμε άδειες που έχουν ίδια start_date + days
+        foreach ($groupsByDateDays as $key => $group) {
+            $indices = [];
+            foreach ($allLeaves as $index => $leave) {
+                if ($leave['key_date_days'] === $key) {
+                    $indices[] = $index;
+                }
+            }
+            for ($i = 1; $i < count($indices); $i++) {
+                $union($indices[0], $indices[$i]);
+            }
+        }
+        
+        // ✅ Δημιουργία τελικών ομάδων
+        $finalGroups = [];
+        
+        foreach ($allLeaves as $index => $leave) {
+            $root = $find($index);
+            
+            // Δημιουργία composite key για αυτή την ομάδα
+            $groupKey = "group_{$root}";
+            
+            if (!isset($finalGroups[$groupKey])) {
+                $finalGroups[$groupKey] = [
+                    'states' => [],
+                    'has_revoked' => false,
+                    'has_active' => false,
+                    'leaves' => [],
+                ];
+            }
+            
+            $finalGroups[$groupKey]['states'][] = $leave['state'];
+            $finalGroups[$groupKey]['leaves'][] = $leave;
+            
+            if ($leave['state'] === '5-Ανακλήθηκε') {
+                $finalGroups[$groupKey]['has_revoked'] = true;
+            }
+            if (in_array($leave['state'], ['2-Υποβλήθηκε', '3-Εγκρίθηκε'])) {
+                $finalGroups[$groupKey]['has_active'] = true;
+            }
+        }
+        
+        return $finalGroups;
     }
 
     private function processCompleteGroup($key, $leavesInGroup, $groupInfo)
     {
         DB::beginTransaction();
         try {
-            $keyParts = explode('|', $key);
+            // ✅ Ψάχνουμε με OR λογική
+            $firstLeave = $leavesInGroup[0];
             
-            // Βρες αν υπάρχει άδεια στη βάση με protocol_number
-            $dbLeaveWithProtocol = TeacherLeaves::where('afm', $keyParts[0])
-                ->where('creator_entity_code', $keyParts[1])
-                ->where('leave_protocol_number', $keyParts[2])
-                ->where('leave_protocol_date', $keyParts[3])
-                ->whereNotNull('protocol_number')
-                ->first();
+            $dbLeaveWithProtocol = TeacherLeaves::where(function($query) use ($firstLeave) {
+                // Protocol-based
+                $query->where(function($q) use ($firstLeave) {
+                    $q->where('afm', $firstLeave['afm'])
+                    ->where('creator_entity_code', $firstLeave['creator_entity_code'])
+                    ->where('leave_protocol_number', $firstLeave['leave_protocol_number'])
+                    ->where('leave_protocol_date', $firstLeave['leave_protocol_date']);
+                })
+                // OR Date+Days-based
+                ->orWhere(function($q) use ($firstLeave) {
+                    $q->where('afm', $firstLeave['afm'])
+                    ->where('creator_entity_code', $firstLeave['creator_entity_code'])
+                    ->where('leave_start_date', $firstLeave['leave_start_date'])
+                    ->where('leave_days', $firstLeave['leave_days']);
+                });
+            })
+            ->whereNotNull('protocol_number')
+            ->first();
             
-            // Προσδιορισμός σεναρίου
             $hasRevoked = $groupInfo['has_revoked'];
             $hasActive = $groupInfo['has_active'];
             
             if ($hasRevoked && $hasActive && $dbLeaveWithProtocol) {
-                // ΣΕΝΑΡΙΟ Β: Ανάκληση + Διόρθωση
                 $this->handleRevokedAndCorrected($leavesInGroup, $dbLeaveWithProtocol);
             } 
             elseif ($hasRevoked && !$hasActive && $dbLeaveWithProtocol) {
-                // ΣΕΝΑΡΙΟ Α: Μόνο Ανάκληση
                 $this->handleOnlyRevoked($leavesInGroup, $dbLeaveWithProtocol);
             } 
             else {
-                // Κανονική περίπτωση
                 $this->handleNormalCase($leavesInGroup);
             }
             
@@ -238,7 +367,6 @@ class LeavesController extends Controller
             throw $e;
         }
     }
-
     private function handleOnlyRevoked($leavesInGroup, $dbLeaveWithProtocol)
     {
         $revokedLeave = $leavesInGroup[0]; // Μόνο 1 γραμμή

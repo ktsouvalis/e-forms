@@ -583,6 +583,17 @@ class LeavesController extends Controller
         $rawAfm = $getValue(1);
         $afm = is_string($rawAfm) ? substr($rawAfm, 2, -1) : $rawAfm;
         
+        // Ignore non-Μόνιμος
+        $employmentRelation = $getValue(13);
+        if ($employmentRelation !== 'Μόνιμος') {
+            return null;
+        }
+
+        // Ignore Απουσία
+        $leaveType = $getValue(15);
+        if ($leaveType === 'Απουσία') {
+            return null;
+        }
         // Validate teacher exists
         if (!$afm || !Teacher::where('afm', $afm)->exists()) {
             return null;

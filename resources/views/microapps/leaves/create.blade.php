@@ -95,6 +95,7 @@
                                     <div class="d-flex gap-3 flex-wrap">
                                         <span class="badge bg-info">09:00</span>
                                         <span class="badge bg-info">10:00</span>
+                                        <span class="badge bg-info">12:00</span>
                                         <span class="badge bg-info">14:00</span>
                                     </div>
                                 </div>

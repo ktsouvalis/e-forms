@@ -90,7 +90,7 @@ class WorkPlanController extends Controller
 
     public function extractWorkPlan($yearWeek) {
         // Πρόσθεσε αυτό στην αρχή της extractWorkPlan
-        
+  
         $user = Auth::guard('consultant')->user(); //check which user is logged in 
         //found and fix date of month to extract
         $year = substr($yearWeek, 0, 4);
@@ -212,16 +212,13 @@ class WorkPlanController extends Controller
             $weekYear = $weekData['year'];
             $weekNumber = $weekData['week'];
             
-            // ΔΙΟΡΘΩΣΗ: Μην κάνεις str_pad εδώ για το query
             $yw = $weekYear . $weekNumber; // ΧΩΡΙΣ str_pad
             
-            // Αλλά κάνε str_pad μόνο για την εμφάνιση των ημερομηνιών
             $week_format = str_pad($weekNumber, 2, '0', STR_PAD_LEFT);
             $monday = date( "d/m/Y", strtotime($weekYear."W".$week_format."1") );
             $friday = date( "d/m/Y", strtotime($weekYear."W".$week_format."5") );
             
             $activeWorksheet->getCell('A'.$row)->setValue($monday." έως ".$friday);
-            // ... υπόλοιπος κώδικας
             
             $advisorsProgramm = $user->workplans()->where('yearWeek', $yw)->first();
             

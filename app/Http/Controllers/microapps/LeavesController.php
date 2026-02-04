@@ -65,6 +65,19 @@ class LeavesController extends Controller
 
     public function import_leaves(Request $request)
     {
+        /******************************************************************
+         * Import αδειών από CSV αρχείο.
+         * 
+         * Η λογική:
+         * 1. Διαβάζουμε το CSV και αγνοούμε Αναπληρωτές και Απουσίες
+         * 2. Η βάση θα είναι mirror του CSV μετά το import με μεταφορά του πρωτοκόλλου και των αρχείων στη νέα άδεια αν απαιτείται
+         * 3. Ομαδοποιούμε τις γραμμές με key: afm | creator_entity_code | leave_protocol_number | leave_protocol_date
+         * 4. Κάθε ομάδα επεξεργάζεται αναλόγως:
+         *    - Κανονική περίπτωση → Βάση: Υποβλήθηκε | CSV: Εγκρίθηκε → Update την εγγραφή με το νέο state
+         *    - Μόνο Ανάκληση → Βάση: Εγκρίθηκε με protocol | CSV: Ανακλήθηκε → Update state, κρατιέται το protocol
+         *    - Ανάκληση + Διόρθωση → Βάση: Εγκρίθηκε με protocol | CSV: Ανακλήθηκε + Υποβλήθηκε → Παλιά γίνεται Ανακλήθηκε, νέα εγγραφή παίρνει το protocol
+         * 4. Τα protocol_number, protocol_date και files_json ΔΕΝ αγγίζονται από το CSV
+         ************************************************************************/
         // Validation
         $request->validate([
             'leaves_file' => 'required|mimes:csv,txt|max:10240'

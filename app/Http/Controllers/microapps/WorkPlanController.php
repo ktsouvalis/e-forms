@@ -89,7 +89,9 @@ class WorkPlanController extends Controller
     }
 
     public function extractWorkPlan($yearWeek) {
-        $user = Auth::guard('consultant')->user(); //check which user is logged in
+        // Πρόσθεσε αυτό στην αρχή της extractWorkPlan
+        
+        $user = Auth::guard('consultant')->user(); //check which user is logged in 
         //found and fix date of month to extract
         $year = substr($yearWeek, 0, 4);
         $week = substr($yearWeek, 4, 2);
@@ -210,37 +212,31 @@ class WorkPlanController extends Controller
             $weekYear = $weekData['year'];
             $weekNumber = $weekData['week'];
             
-            $firstDayOfWeek = Carbon::create()->setISODate($weekYear, $weekNumber, 1);
-            $week_format = str_pad($weekNumber, 2, '0', STR_PAD_LEFT);
-            $yw = $weekYear . $week_format;
-            $monday = date( "d/m/Y", strtotime($year."W".$week_format."1") );
-            $friday = date( "d/m/Y", strtotime($year."W".$week_format."5") );
-            $activeWorksheet->getCell('A'.$row)->setValue($monday." έως ".$friday);
-            $activeWorksheet->getStyle('A'.$row)->getAlignment()->setVertical('center');
-            $activeWorksheet->getStyle('B'.$row.':G'.$row)->getAlignment()->setVertical('top');
-            $activeWorksheet->getRowDimension($row)->setRowHeight(60);
-            $advisorsProgramm = $user->workplans()->where('yearWeek', $yw)->first();
-            if($advisorsProgramm){
-                    
-            $programm = json_decode($advisorsProgramm->programm);
+            // ΔΙΟΡΘΩΣΗ: Μην κάνεις str_pad εδώ για το query
+            $yw = $weekYear . $weekNumber; // ΧΩΡΙΣ str_pad
             
-                if(stripos($programm->mon, "\r\n")){
-                    $activeWorksheet->getCell('B8')->setValue($programm->mon."\n"." Kostas");
-                } else{
-                    $activeWorksheet->getCell('B8')->setValue( $programm->mon);
-                }
-                $activeWorksheet->getCell('B'.$row)->setValue( $programm->mon);
-                $activeWorksheet->getCell('C'.$row)->setValue( $programm->tue);
-                $activeWorksheet->getCell('D'.$row)->setValue( $programm->wed);
-                $activeWorksheet->getCell('E'.$row)->setValue( $programm->thu);
-                $activeWorksheet->getCell('F'.$row)->setValue( $programm->fri);
-                $activeWorksheet->getCell('G'.$row)->setValue( $advisorsProgramm->comments);
+            // Αλλά κάνε str_pad μόνο για την εμφάνιση των ημερομηνιών
+            $week_format = str_pad($weekNumber, 2, '0', STR_PAD_LEFT);
+            $monday = date( "d/m/Y", strtotime($weekYear."W".$week_format."1") );
+            $friday = date( "d/m/Y", strtotime($weekYear."W".$week_format."5") );
+            
+            $activeWorksheet->getCell('A'.$row)->setValue($monday." έως ".$friday);
+            // ... υπόλοιπος κώδικας
+            
+            $advisorsProgramm = $user->workplans()->where('yearWeek', $yw)->first();
+            
+            if($advisorsProgramm){
+                $programm = json_decode($advisorsProgramm->programm);
                 
+                $activeWorksheet->getCell('B'.$row)->setValue($programm->mon);
+                $activeWorksheet->getCell('C'.$row)->setValue($programm->tue);
+                $activeWorksheet->getCell('D'.$row)->setValue($programm->wed);
+                $activeWorksheet->getCell('E'.$row)->setValue($programm->thu);
+                $activeWorksheet->getCell('F'.$row)->setValue($programm->fri);
+                $activeWorksheet->getCell('G'.$row)->setValue($advisorsProgramm->comments);
             }
             $row++;
-           
         }
-            
         $today = Carbon::now();
         $today->format("Y-m-d");  
         $activeWorksheet->getCell('F14')->setValue('Πάτρα, '.$today->format("d-m-Y"));

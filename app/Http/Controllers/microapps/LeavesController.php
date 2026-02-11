@@ -8,12 +8,14 @@ use GuzzleHttp\Client;
 use App\Models\Teacher;
 use App\Models\Microapp;
 use Illuminate\Http\Request;
+use App\Jobs\SubmitCorrectedLeave;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\TeacherLeaves;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Artisan;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Http\Controllers\FilesController;
 use Illuminate\Support\Facades\Validator;
@@ -70,7 +72,8 @@ class LeavesController extends Controller
          * 
          * Η λογική:
          * 1. Διαβάζουμε το CSV και αγνοούμε Αναπληρωτές και Απουσίες
-         * 2. Η βάση θα είναι mirror του CSV μετά το import με μεταφορά του πρωτοκόλλου και των αρχείων στη νέα άδεια αν απαιτείται
+         * 2. Η βάση θα είναι mirror του CSV μετά το import με μεταφορά του πρωτοκόλλου και των αρχείων στη νέα άδεια αν απαιτείται (γραμμές που είναι στη βάση και δεν έχουν καμία σχέση με το αρχείο δε διαγράφονται
+         * και αυτό γίνεται σκόπιμα ώστε να μπορούμε να κάνουμε hardcode περιπτώσεις)
          * 3. Ομαδοποιούμε τις γραμμές με key: afm | creator_entity_code | leave_protocol_number | leave_protocol_date
          * 4. Κάθε ομάδα επεξεργάζεται αναλόγως:
          *    - Κανονική περίπτωση → Βάση: Υποβλήθηκε | CSV: Εγκρίθηκε → Update την εγγραφή με το νέο state
@@ -101,7 +104,7 @@ class LeavesController extends Controller
         { 
             DB::beginTransaction();
             try {
-                // ✨ ΒΗΜΑ 1: Ομαδοποίηση ανά key
+                // ΒΗΜΑ 1: Ομαδοποίηση ανά key
                 $groupedLeaves = [];
                 
                 foreach ($batch as $leaveData) {
@@ -126,7 +129,7 @@ class LeavesController extends Controller
                     $groupedLeaves[$key][] = $leaveData;
                 }
                 
-                // ✨ ΒΗΜΑ 2: Χειρισμός κάθε ομάδας
+                // ΒΗΜΑ 2: Χειρισμός κάθε ομάδας
                 foreach ($groupedLeaves as $key => $leaves) {
                     $this->processLeaveGroup($leaves);
                 }
@@ -197,6 +200,11 @@ class LeavesController extends Controller
         }
         
         fclose($handle);
+        // Τρέχει τα jobs για τις διορθωμένες άδειες
+        Log::channel('files')->info("Starting queue processing for corrected leaves...");
+        Artisan::call('queue:work --stop-when-empty --tries=3 --timeout=180');
+        Log::channel('files')->info("Queue processing completed");
+
         
         return ['updated' => $processedGroups];
     }
@@ -380,7 +388,7 @@ class LeavesController extends Controller
         // ΒΗΜΑ 3: Μεταφορά protocol
         $newActiveLeave->protocol_number = $protocolData['protocol_number'];
         $newActiveLeave->protocol_date   = $protocolData['protocol_date'];
-        $newActiveLeave->submitted       = 0;
+        $newActiveLeave->submitted       = 1;
         $newActiveLeave->is_visible      = 1;
 
         // ΒΗΜΑ 4: Μετονομασία και μεταφορά αρχείων
@@ -393,6 +401,11 @@ class LeavesController extends Controller
         }
 
         $newActiveLeave->save();
+
+        // Ενεργοποίηση του job για αυτόματη υποβολή της νέας άδειας
+        dispatch(new SubmitCorrectedLeave($newActiveLeave->id));
+        Log::channel('files')->info("Queued auto-submit for corrected leave {$newActiveLeave->id}");
+
     }
 
     // Cleaned up με το helper (λογική ίδια)
@@ -545,8 +558,8 @@ class LeavesController extends Controller
         // 1. Μεταφορά protocol
         $newLeave->protocol_number = $protocolData['protocol_number'];
         $newLeave->protocol_date = $protocolData['protocol_date'];
-        $newLeave->submitted = 0; // ✨ Ξεκλείδωτη
-        $newLeave->is_visible = 1; // ✨ Ορατή
+        $newLeave->submitted = 0; // Ξεκλείδωτη
+        $newLeave->is_visible = 1; // Ορατή
         
         // 2. Μεταφορά και μετονομασία αρχείων
         if ($protocolData['files_json']) {
@@ -655,7 +668,7 @@ class LeavesController extends Controller
 
     private function updateOrCreateLeave($leaveData)
     {
-        // ✨ ΠΡΩΤΑ: Ψάξε αν υπάρχει παλιά εγγραφή με protocol
+        // ΠΡΩΤΑ: Ψάξε αν υπάρχει παλιά εγγραφή με protocol
         $oldLeaveWithProtocol = $this->findOldLeaveWithProtocol($leaveData);
         
         // Δημιουργία/ενημέρωση
@@ -674,7 +687,7 @@ class LeavesController extends Controller
         
         $newLeave = TeacherLeaves::updateOrCreate($keys, $updateData);
         
-        // ✨ ΑΝ βρήκαμε παλιά με protocol, μεταφέρουμε
+        // ΑΝ βρήκαμε παλιά με protocol, μεταφέρουμε
         if ($oldLeaveWithProtocol) {
             $this->transferProtocolAndFiles($oldLeaveWithProtocol, $newLeave);
         }

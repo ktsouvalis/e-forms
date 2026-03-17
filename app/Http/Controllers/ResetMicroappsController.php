@@ -15,201 +15,237 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ResetMicroappsController extends Controller
 {
-    //
-    public function reset_microapp(Request $request, Microapp $microapp){
-        return view("reset_microapp", ['microapp' => $microapp]);
+    // =========================================================
+    //  VIEW
+    // =========================================================
+
+    public function reset_microapp(Request $request, Microapp $microapp)
+    {
+        return view('reset_microapp', ['microapp' => $microapp]);
     }
 
-    public function download_files(Request $request, Microapp $microapp){
-        $directory = str_replace("/", "", $microapp->url);
-        $directoryHandler = new FilesController;
-        $files = $directoryHandler->download_directory_as_zip($directory);
+    // =========================================================
+    //  ΒΗΜΑ 1 – Λήψη αρχείων (zip)
+    // =========================================================
 
-        if($files->getStatusCode()=='500'){
-            Log::channel('files')->error(Auth::user()->username." failed to download $directory files: ".json_decode($files->getContent(),true)['error']);
-            return back()->with('failure', json_decode($files->getContent(),true)['error'].'. Επικοινωνήστε με τον διαχειριστή. ');
+    public function download_files(Request $request, Microapp $microapp)
+    {
+        $directory = $this->getDirectory($microapp);
+        $handler   = new FilesController;
+        $response  = $handler->download_directory_as_zip($directory);
+
+        if ($response->getStatusCode() === 500) {
+            $error = json_decode($response->getContent(), true)['error'] ?? 'Άγνωστο σφάλμα';
+            Log::channel('files')->error(Auth::user()->username . " failed to download $directory files: $error");
+            return back()->with('failure', $error . '. Επικοινωνήστε με τον διαχειριστή.');
         }
 
-        Log::channel('files')->info(Auth::user()->username." successfully downloaded $directory files");
-        if (ob_get_length()) {
-            ob_end_clean();
-        }
-        return $files;
+        Log::channel('files')->info(Auth::user()->username . " downloaded $directory files");
+
+        while (ob_get_level()) ob_end_clean();
+
+        return $response;
     }
+
+    // =========================================================
+    //  ΒΗΜΑ 2 – Λήψη Excel από τη ΒΔ
+    // =========================================================
 
     public function download_excel(Request $request, Microapp $microapp)
     {
+        while (ob_get_level()) ob_end_clean();
+
         try {
-            // Remove all output buffering completely
-            while (ob_get_level()) {
-                ob_end_clean();
+            $config = $this->getMicroappConfig($microapp);
+
+            if (!$config) {
+                return response()->json(['error' => 'Δεν βρέθηκε ρύθμιση για τη μικροεφαρμογή.'], 404);
             }
 
-            $model_name = $this->get_modelname($microapp);
-            $modelClass = "App\\Models\\microapps\\" . $model_name;
-
-            if (!class_exists($modelClass)) {
-                return response()->json(['error' => "Model $model_name not found."], 404);
-            }
-            
-            $data = $modelClass::all();
-            
-            if ($data->isEmpty()) {
-                return response()->json(['error' => 'No data found in the table.'], 404);
-            }
-
-            $columns = Schema::getColumnListing((new $modelClass)->getTable());
-            
             $spreadsheet = new Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
+            $isFirstSheet = true;
 
-            // Add header row
-            foreach ($columns as $colIndex => $column) {
-                $sheet->setCellValueByColumnAndRow($colIndex + 1, 1, $column);
-            }
+            foreach ($config['models'] as $modelClass => $sheetLabel) {
+                if (!class_exists($modelClass)) {
+                    Log::channel('throwable_db')->warning("Model $modelClass not found, skipping.");
+                    continue;
+                }
 
-            // Add data rows
-            foreach ($data as $rowIndex => $row) {
-                $rowArray = $row->toArray();
+                $data    = $modelClass::all();
+                $columns = Schema::getColumnListing((new $modelClass)->getTable());
+
+                if ($isFirstSheet) {
+                    $sheet = $spreadsheet->getActiveSheet();
+                    $isFirstSheet = false;
+                } else {
+                    $sheet = $spreadsheet->createSheet();
+                }
+
+                $sheet->setTitle($sheetLabel);
+
+                // Header
                 foreach ($columns as $colIndex => $column) {
-                    $sheet->setCellValueByColumnAndRow($colIndex + 1, $rowIndex + 2, $rowArray[$column] ?? '');
+                    $sheet->setCellValueByColumnAndRow($colIndex + 1, 1, $column);
+                }
+
+                // Data
+                foreach ($data as $rowIndex => $row) {
+                    $rowArray = $row->toArray();
+                    foreach ($columns as $colIndex => $column) {
+                        $sheet->setCellValueByColumnAndRow(
+                            $colIndex + 1,
+                            $rowIndex + 2,
+                            $rowArray[$column] ?? ''
+                        );
+                    }
                 }
             }
-            //dd($data, $columns);
-            // Generate filename
-            $filename = 'export_' . $model_name . '_' . date('Y-m-d_H-i-s') . '.xlsx';
 
-            // Create writer first to catch any potential errors
-            $writer = new Xlsx($spreadsheet);
-            // Save the file to storage/app/exports directory
-            //savePath = storage_path($filename);
-            //dd($savePath, $writer);
-            //$writer->save($savePath);
-            //dd($filename, $writer);
+            $filename = 'export_' . $this->getDirectory($microapp) . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+            $writer   = new Xlsx($spreadsheet);
+
             return response()->streamDownload(
-                function () use ($writer) {
-                    $writer->save('php://output');
-                },
+                fn() => $writer->save('php://output'),
                 $filename,
                 [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
-                    'Pragma' => 'public'
+                    'Content-Type'  => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Cache-Control' => 'no-store, no-cache, must-revalidate',
+                    'Pragma'        => 'public',
                 ]
             );
 
         } catch (\Throwable $e) {
             Log::error('Excel export failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            return response()->json(['error' => 'Failed to export Excel. Please try again.'], 500);
+            return response()->json(['error' => 'Αποτυχία εξαγωγής Excel.'], 500);
         }
     }
 
+    // =========================================================
+    //  ΒΗΜΑ 3 – Διαγραφή αρχείων
+    // =========================================================
 
     public function delete_files(Request $request, Microapp $microapp)
     {
-        //$this->authorize('edit', $microapp);/*****CHECK this IF is needed */
-        $username = Auth::check() ? Auth::user()->username : "API";
-        $error=false;
-        //delete files from disk
-        $directory = str_replace("/", "", $microapp->url);
-        $directoryHandler = new FilesController;
+        $username  = $this->getUsername();
+        $directory = $this->getDirectory($microapp);
+        $handler   = new FilesController;
 
-        $delete_directory = $directoryHandler->delete_directory($directory, 'local');
-        if($delete_directory->getStatusCode() == 500){
-            Log::channel('files')->error($username." ResetMicroapp's directory $directory failed to delete");
-            $error=true;
+        $response = $handler->delete_directory($directory, 'local');
+
+        if ($response->getStatusCode() === 500) {
+            Log::channel('files')->error("$username failed to delete directory $directory");
+            return redirect()->route('reset.view', $microapp)
+                         ->with('failure', "Σφάλμα κατά τη διαγραφή αρχείων του $directory.");
         }
-        else
-            Log::channel('files')->info($username." ResetMicroapp's directory $directory deleted successfully");
-        Log::channel('user_memorable_actions')->info($username." delete_files ".$microapp->url);
-        if(!$error){
-            if (!Storage::exists($directory)) {
-                Storage::makeDirectory($directory);
-            }
-            return redirect(url($microapp->url))->with('success', "Τα αρχεία μέσω του ResetMicroapp $microapp->url διαγράφηκαν");
+
+        Log::channel('files')->info("$username deleted directory $directory");
+        Log::channel('user_memorable_actions')->info("$username delete_files " . $microapp->url);
+
+        // Αναδημιουργία κενού φακέλου
+        if (!Storage::exists($directory)) {
+            Storage::makeDirectory($directory);
         }
-        else{
-            return redirect(url($microapp->url))->with('warning', "Τα αρχεία μέσω του ResetMicroapp $microapp->url διαγράφηκαν με σφάλματα (files)");
-        }
+
+        return redirect()->route('reset.view', $microapp)
+                     ->with('success', "Τα αρχεία της μικροεφαρμογής {$microapp->name} διαγράφηκαν.");
     }
 
-    
-    
+    // =========================================================
+    //  ΒΗΜΑ 4 – Αρχικοποίηση ΒΔ
+    // =========================================================
+
     public function reset_db(Request $request, Microapp $microapp)
-     {
-        //$this->authorize('view', $microapp);/*****CHECK this IF is needed */
-        $username = Auth::check() ? Auth::user()->username : "API";
-        $microapp_name = str_replace("/", "", $microapp->url);
-
-        $tablesToTruncate = $this->getTablesToTruncateFromModelName($microapp_name);
-        if(!$tablesToTruncate){
-            Log::channel('throwable_db')->error($username." failed to get tables to truncate for microapp {$microapp->url}");
-            return redirect(url($microapp->url))->with('failure', "Δεν βρέθηκαν πίνακες για διαγραφή δεδομένων (throwable_db)");
-        }
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        
-        foreach ($tablesToTruncate as $table) {
-            try{
-                DB::table($table)->truncate();
-            } catch(\Exception $e){
-                Log::channel('throwable_db')->error($username." failed to truncate table {$table}: " . $e->getMessage());
-                return redirect(url($microapp->url))->with('failure', "Ο πίνακας {$table} δεν διαγράφηκε (throwable_db)");
-            }
-            Log::channel('throwable_db')->info($username." successfully truncated table {$table}");
-        }
-        
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
-            
-        return redirect(url($microapp->url))->with('success', "Όλα τα δεδομένα της μικροεφαρμογής {$microapp->name} διαγράφηκαν.");
-    }
-
-    private function get_modelname(Microapp $microapp){
-        
-        $input = ltrim($microapp->url, '/');
-
-        // Split by underscore
-        $parts = explode('_', $input);
-
-        // Capitalize each part
-        $parts = array_map('ucfirst', $parts);
-
-        // Join into one string
-        $model_name = implode('', $parts);
-        
-        if (str_ends_with($model_name, 's')) {
-            $model_name = substr($model_name, 0, -1);
-        }
-
-        return $model_name;
-    }
-
-    private function getTablesToTruncateFromModelName($model_name)
     {
-        dd($model_name);
-        switch ($model_name) {
-            
-            case 'All_day_school':
-                return ['all_day_school'];
-            break;
-            case 'outings':
-                return ['outings_sections', 'outings'];
-            break;
-            case 'work_planning':
-                return ['work_plans'];
-            break;
-            default:
-                // Assuming the model name corresponds to a table with the same name
-                $tableName = strtolower($model_name);
-                if (Schema::hasTable($tableName)) {
-                    return [$tableName];
-                } else {
-                    Log::channel('throwable_db')->error("Table {$tableName} does not exist for model {$model_name}");
-                    return null; // or throw an exception
-                }
-            break;
-            // Add more cases for other models if needed
-        }
-    }
-        
+        $username  = $this->getUsername();
+        $directory = $this->getDirectory($microapp);
+        $config    = $this->getMicroappConfig($microapp);
 
+        if (!$config) {
+            Log::channel('throwable_db')->error("$username: no config found for {$microapp->url}");
+            return redirect()->route('reset.view', $microapp)
+                         ->with('failure', 'Δεν βρέθηκε ρύθμιση για τη μικροεφαρμογή.');
+        }
+
+        $tables = $config['tables'];
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+        foreach ($tables as $table) {
+            try {
+                DB::table($table)->truncate();
+                Log::channel('throwable_db')->info("$username truncated table $table");
+            } catch (\Exception $e) {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1');
+                Log::channel('throwable_db')->error("$username failed to truncate $table: " . $e->getMessage());
+                return redirect()->route('reset.view', $microapp)
+                     ->with('failure', "Σφάλμα κατά τη διαγραφή του πίνακα $table.");
+            }
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        Log::channel('user_memorable_actions')->info("$username reset_db " . $microapp->url);
+
+        return back()->with('success', "Η βάση δεδομένων της μικροεφαρμογής {$microapp->name} αρχικοποιήθηκε.");
+    }
+
+    // =========================================================
+    //  HELPERS
+    // =========================================================
+
+    /**
+     * Επιστρέφει το όνομα του directory (χωρίς /) για μια μικροεφαρμογή.
+     */
+    private function getDirectory(Microapp $microapp): string
+    {
+        return ltrim($microapp->url, '/');
+    }
+
+    /**
+     * Επιστρέφει το username του συνδεδεμένου χρήστη.
+     */
+    private function getUsername(): string
+    {
+        return Auth::check() ? Auth::user()->username : 'API';
+    }
+
+    /**
+     * Κεντρική ρύθμιση ανά μικροεφαρμογή.
+     *
+     * tables  → πίνακες προς truncate (σειρά: child πρώτα λόγω FK)
+     * models  → [ModelClass => 'Ετικέτα sheet'] για το Excel export
+     *
+     * Για κάθε νέα μικροεφαρμογή προσθέτεις ένα case εδώ.
+     */
+    private function getMicroappConfig(Microapp $microapp): ?array
+    {
+        $directory = $this->getDirectory($microapp);
+
+        $configs = [
+
+            'enrollments' => [
+                'tables' => [
+                    'enrollments_classes',  // child – πρώτα
+                    'enrollments',          // parent
+                ],
+                'models' => [
+                    \App\Models\microapps\Enrollment::class          => 'Εγγραφές',
+                    \App\Models\microapps\EnrollmentsClasses::class  => 'Τμήματα',
+                ],
+            ],
+
+            'outings' => [
+                'tables' => ['outings_sections', 'outings'],
+                'models' => [
+                    \App\Models\microapps\Outing::class         => 'Εκδρομές',
+                    \App\Models\microapps\OutingSection::class  => 'Τμήματα',
+                ],
+            ],
+
+            // ➕ Πρόσθεσε εδώ τις υπόλοιπες μικροεφαρμογές...
+
+        ];
+
+        return $configs[$directory] ?? null;
+    }
 }

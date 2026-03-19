@@ -103,13 +103,15 @@
                         </td>
                         <td>
                             @if($school->primary == 1)
-                                <form action="{{route('enrollments.download_file', ['file' => '1_enrollments_primary_school.xlsx', 'download_file_name' => 'Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file', ['file' => '1_enrollments_primary_school.xlsx', 'download_file_name' => 'Εγγραφέντες.xlsx'])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 {{-- {{url("/$appname/1_enrollments_primary_school.xlsx/Εγγραφέντες.xlsx")}} --}}
                             @else
-                                <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_nursery_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
+                                <form action="{{route('enrollments.download_file', ['file' => '1_enrollments_nursery_school.xlsx', 'download_file_name' => 'Εγγραφέντες.xlsx'])}}" method="get"class="container-fluid">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-p
+                                    
+                                    lacement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
                                 </form>
                             @endif  
                             </form>

@@ -6,6 +6,7 @@
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; 
         $app_name = $microapp->name;
+        $school_year = config('enrollments.schoolYear');
         if($school->enrollments){
             $old_data = $school->enrollments;
             $required ='';
@@ -22,7 +23,7 @@
     <div class="container px-5">
         <div class="alert alert-info text-center">
             Στην καρτέλα αυτή θα δηλωθούν τα στοιχεία <strong>εγγραφέντων</strong> μαθητών 
-            <br>καθώς και τα στοιχεία για τον προγραμματισμό λειτουργίας του σχ. Έτους {{config('enrollments.schoolYear')}}.
+            <br>καθώς και τα στοιχεία για τον προγραμματισμό λειτουργίας του σχ. Έτους {{$school_year}}.
         </div>
         @if(config('enrollments.nextYearPlanningActive') == "1")
         <div class="alert text-center">
@@ -55,7 +56,7 @@
                 <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Συνολικός αριθμός μαθητών που πρόκειται να φοιτήσουν το σχ. έτος {{config('enrollments.schoolYear')}}</th>
+                        <th>Συνολικός αριθμός μαθητών που πρόκειται να φοιτήσουν το σχ. έτος {{$school_year}}</th>
                     </tr>
                 </thead>
                 <form action="{{route("enrollments.save", ['select'=>'total_students'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
@@ -102,7 +103,7 @@
                         </td>
                         <td>
                             @if($school->primary == 1)
-                                <form action="{{route('enrollments.download_file', ['file' => "1_enrollments_primary_school.xlsx", 'download_file_name' => "Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file', ['file' => '1_enrollments_primary_school.xlsx', 'download_file_name' => 'Εγγραφέντες.xlsx"])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 {{-- {{url("/$appname/1_enrollments_primary_school.xlsx/Εγγραφέντες.xlsx")}} --}}
@@ -117,7 +118,7 @@
                     <tr>
                         <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                             @csrf
-                        <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  {{config('enrollments.schoolYear')}}</td>
+                        <td>Αριθμός εγγεγραμμένων @if($school->primary == 1)  μαθητών Α' Τάξης @else Νηπίων / Προνηπίων @endif  {{$school_year}}</td>
                         </form>
                         <form action="{{route("enrollments.save", ['select'=>'enrolled'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                             @csrf
@@ -184,7 +185,7 @@
             @endphp
                 
                 <table class="table table-bordered">
-                    <thead><tr><th></th><th colspan="{{$nextYearLeitourgikotita}}"><h4>Στοιχεία προγραμματισμού λειτουργίας του σχ. έτους {{config('enrollments.schoolYear')}}</h4><th></tr>
+                    <thead><tr><th></th><th colspan="{{$nextYearLeitourgikotita}}"><h4>Στοιχεία προγραμματισμού λειτουργίας του σχ. έτους {{$school_year}}</h4><th></tr>
                         </tr></thead>
                     <tbody>
                         <tr>
@@ -368,31 +369,34 @@
                         <td> 
                             @if($school->primary == 1)
                                 @if($school->has_extended_all_day == 1)
-                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_ext_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2025_26.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>'2_enrollments_primary_ext_all_day_school.xlsx', 'download_file_name' => 'Ολοήμερο_'.$school_year.'.xlsx'])}}" method="get" class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @else
-                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_primary_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_2025_26.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>'2_enrollments_primary_all_day_school.xlsx', 'download_file_name' => 'Ολοήμερο_'.$school_year.'.xlsx'])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας </button>
                                 </form>
                                 @endif
-                            @else
+           
+           
+                                @else
                                 @if($school->has_extended_all_day == 1)
-                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_nursery_ext_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο.xlsx"])}}" method="get"class="container-fluid">
-                                    <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
+                                <form action="{{route('enrollments.download_file',['file'=>'2_enrollments_nursery_ext_all_day_school.xlsx', 'download_file_name' => 'Ολοήμερο_'.$school_year.'.xlsx'])}}" method="get"class="container-fluid">
+                                    <button class="btn btn-secondary bi bi-box-arrow-down" 
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
                                 </form>
                                 @else
-                                <form action="{{route('enrollments.download_file',['file'=>"2_enrollments_nursery_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο.xlsx"])}}" method="get"class="container-fluid">
+                                <form action="{{route('enrollments.download_file',['file'=>'2_enrollments_nursery_all_day_school.xlsx', 'download_file_name' => 'Ολοήμερο_'.$school_year.'.xlsx'])}}" method="get"class="container-fluid">
                                     <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title="Μπορείτε να χρησιμοποιήσετε οποιοδήποτε πρότυπο"> Πίνακας Δ/νσης</button>
                                 </form>
                                 @endif
                             @endif
                         </td>
                     </tr>
-                    <form action="{{route("enrollments.save", ['select'=>'all_day'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
+                    <form action="{{route('enrollments.save', ['select'=>'all_day'])}}" method="post" enctype="multipart/form-data" class="container-fluid">
                         @csrf
                     <tr>
-                        <td>Αριθμός εγγεγραμμένων  @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο {{config('enrollments.schoolYear')}}</td>
+                        <td>Αριθμός εγγεγραμμένων  @if($school->primary == 1) μαθητών @else Νηπίων / Προνηπίων @endif στο Ολοήμερο {{$school_year}}</td>
                         <td>
                             <input name="nr_of_students1_all_day1" id="nr_of_students1_all_day1" type="number" class="form-control input-sm" required value="@if($old_data){{$old_data->nr_of_students1_all_day1}}@endif">
                         </td>
@@ -447,8 +451,9 @@
                         </td>
                         <td> 
                             Αρχέιο Α1 & Α2 του ΥΠΑΙΘΑ
-                            <form action="{{route('enrollments.download_file',['file'=>"5_next_year_planning_all_day_school.xlsx", 'download_file_name' => "Ολοήμερο_Προγραμματισμός_2025_26.xlsx"])}}" method="get"class="container-fluid">
+                            <form action="{{route('enrollments.download_file',['file'=>'5_next_year_planning_all_day_school.xlsx', 'download_file_name' => 'Ολοήμερο_Προγραμματισμός_'.$school_year.'.xlsx'])}}" method="get"class="container-fluid">
                                 <button class="btn btn-secondary bi bi-box-arrow-down" data-bs-toggle="tooltip" data-bs-placement="top" title=""> Πίνακας </button>
+                                
                             </form>
                             Σημείωση: <small><em>Κατά τη συμπλήρωση του αρχείου, το πεδίο <strong> Σύνολο Μαθητών Ολοήμερου</strong> συμπληρώνεται από το άθροισμα των μαθητών που αποχωρούν, στις επόμενες στήλες.</em></small>
                         </td>
@@ -505,7 +510,7 @@
                     @endphp
                     <thead>
                     <tr>
-                        <th>Στοιχεία προγραμματισμού λειτουργίας Ολοήμερου Προγράμματος για το σχ. έτους {{config('enrollments.schoolYear')}}</td>
+                        <th>Στοιχεία προγραμματισμού λειτουργίας Ολοήμερου Προγράμματος για το σχ. έτους {{$school_year}}</td>
                         <th>Πρόωρη Υποδοχή</td>
                         <th>Ολοήμερο Πρόγραμμα (έως 16:00)</td>
                         <th>Διευρυμένο Ολοήμερο (έως 17:30)</td>

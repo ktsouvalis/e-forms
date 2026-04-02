@@ -803,7 +803,8 @@ class LeavesController extends Controller
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της άδειας.');
         }
         $request->validate([ //Έλεγξε τον τύπο των αρχείων και το μέγεθός τους
-            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png',
+            // 'files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
         $files = $request->file('files');
         

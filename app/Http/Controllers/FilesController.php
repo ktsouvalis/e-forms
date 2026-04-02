@@ -11,23 +11,43 @@ use Illuminate\Support\Facades\Response;
 class FilesController extends Controller
 {
     //
-
     public function upload_file($directory, $file, $driver, $desiredFilename = null){
         $filename = $file->getClientOriginalName();
         if($desiredFilename){
-            if(strpos(substr($desiredFilename, -6), ".")){//if there is an extension to given filename
+            if(strpos(substr($desiredFilename, -6), ".")){
                 $filename = $desiredFilename;
-            } else {//find the extension and add it to the given filename
+            } else {
                 $extension = $file->extension();
                 $filename = $desiredFilename.$extension;
             }
         }
+
+        // Auto-compress PDFs larger than 2MB
+        $compressedPath = null;
+        if($file->getClientMimeType() === 'application/pdf' && $file->getSize() > 2 * 1024 * 1024){
+            try {
+                $compressedPath = $this->compress_pdf($file);
+                $fileToStore = new \Illuminate\Http\File($compressedPath);
+            } catch(\Exception $e) {
+                return response()->json(['error' => 'PDF compression failed: ' . $e->getMessage()], 500);
+            }
+        } else {
+            $fileToStore = $file;
+        }
+
         try{
-            Storage::disk($driver)->putFileAs($directory, $file, $filename);
+            Storage::disk($driver)->putFileAs($directory, $fileToStore, $filename);
         }
         catch(\Exception $e){
             return response()->json(['error'=>$e->getMessage()], 500);
         }
+        finally{
+            // Always clean up the temp file if it was created
+            if($compressedPath && file_exists($compressedPath)){
+                unlink($compressedPath);
+            }
+        }
+
         return response()->json(['success'=>'File uploaded successfully'], 200);
     }
 
@@ -106,5 +126,30 @@ class FilesController extends Controller
         catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-    }     
+    }
+    
+    private function compress_pdf($file, $targetSizeKB = 2048)
+    {
+        $inputPath = $file->getRealPath();
+        $outputPath = sys_get_temp_dir() . '/' . uniqid('compressed_', true) . '.pdf';
+
+        // Ghostscript compression settings (screen = aggressive, ebook = balanced)
+        $gsSettings = 'ebook';
+
+        $command = sprintf(
+            'gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/%s ' .
+            '-dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s 2>&1',
+            $gsSettings,
+            escapeshellarg($outputPath),
+            escapeshellarg($inputPath)
+        );
+
+        shell_exec($command);
+
+        if (!file_exists($outputPath) || filesize($outputPath) === 0) {
+            throw new Exception('PDF compression failed.');
+        }
+
+        return $outputPath; // returns path to the compressed temp file
+    }
 }

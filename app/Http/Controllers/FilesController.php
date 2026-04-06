@@ -130,10 +130,15 @@ class FilesController extends Controller
     
     private function compress_pdf($file, $targetSizeKB = 2048)
     {
+        // Check if Ghostscript is available
+        $gsPath = trim(shell_exec('which gs'));
+        if(empty($gsPath)){
+            throw new Exception('Ghostscript is not installed on this server.');
+        }
+
         $inputPath = $file->getRealPath();
         $outputPath = sys_get_temp_dir() . '/' . uniqid('compressed_', true) . '.pdf';
 
-        // Ghostscript compression settings (screen = aggressive, ebook = balanced)
         $gsSettings = 'ebook';
 
         $command = sprintf(
@@ -150,6 +155,6 @@ class FilesController extends Controller
             throw new Exception('PDF compression failed.');
         }
 
-        return $outputPath; // returns path to the compressed temp file
+        return $outputPath;
     }
 }

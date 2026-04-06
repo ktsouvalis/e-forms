@@ -829,6 +829,7 @@ class LeavesController extends Controller
             $uploaded = $fileHandler->upload_file($directory, $file, 'local', $serverFileName);
             
             if($uploaded->getStatusCode() == 500){
+                $teacherAfm = $teacherAfm ?? 'Didnt find Ghostscript';
                 Log::channel('files')->error($teacherAfm." Files failed to upload");
                 return back()->with('failure', 'Αποτυχία στην υποβολή των αρχείων. Δοκιμάστε ξανά');
             }

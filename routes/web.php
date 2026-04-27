@@ -568,6 +568,8 @@ Route::group(['prefix' => 'filecollects'], function () {
     Route::post("/extract_xlsx_file/{filecollect}", [FilecollectController::class, 'extract_xlsx_file'])->middleware('boss');
 
     Route::post("/send_personal_message", [FilecollectController::class, 'send_personal_message']); //the stakeholder goes to the backenmd through a hidden input
+
+    Route::post("/submit_blank/{filecollect}", [FilecollectController::class, 'submit_blank'])->middleware('can:view,filecollect');
 });
 
 // FILESHARES ROUTES

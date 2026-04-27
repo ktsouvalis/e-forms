@@ -400,6 +400,16 @@
                                 <i class="bi bi-upload me-2"></i>Υποβολή Αρχείων
                             </button>
                         </form>
+                        @if($accepts)
+                            <hr class="my-3">
+                            <form action="{{ url("/filecollects/submit_blank/$filecollect->id") }}" method="post">
+                                @csrf
+                                <!-- <button type="submit" class="btn btn-warning w-100" onclick="return confirm('Θέλετε να δηλώσετε ότι δεν έχετε αρχείο προς υποβολή;')"> -->
+                                    <button type="submit" class="btn btn-warning w-100">
+                                    <i class="bi bi-slash-circle me-2"></i>Δεν έχω να δηλώσω τίποτα (υποβολή κενής δήλωσης)
+                                </button>
+                            </form>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -423,52 +433,70 @@
                     </div>
 
                     <div class="mb-3">
-                        @foreach(json_decode($old_data->file, true) as $file)
-                            @php
-                                $icon = "bi-download";
-                                $iconClass = "";
-                                $filename = $file['original_filename'];
-                                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-                                
-                                switch($extension) {
-                                    case 'docx':
-                                        $icon = "bi-file-word";
-                                        $iconClass = "docx";
-                                        break;
-                                    case 'xlsx':
-                                        $icon = "bi-file-excel";
-                                        $iconClass = "xlsx";
-                                        break;
-                                    case 'pdf':
-                                        $icon = "bi-file-pdf";
-                                        $iconClass = "pdf";
-                                        break;
-                                }
-                            @endphp
-                            <div class="d-flex align-items-center mb-2">
-                                <div class="file-icon {{$iconClass}}">
-                                    <i class="bi {{$icon}}"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="fw-semibold">{{$filename}}</div>
-                                </div>
-                                <form action="{{url("/filecollects/download_stake_file/$old_data->id/$filename")}}" method="get" class="ms-2">
-                                    @csrf
-                                    <button class="btn btn-outline-success btn-sm" title="Λήψη αρχείου">
-                                        <i class="bi bi-download"></i>
-                                    </button>
-                                </form>
+                        @php
+                            $submittedFiles = json_decode($old_data->file, true);
+                            $isBlank = count($submittedFiles) === 1 && isset($submittedFiles[0]['blank']);
+                        @endphp
+                        @if($isBlank)
+                            <div class="alert alert-secondary text-center">
+                                <i class="bi bi-slash-circle me-2"></i>
+                                <strong>Δηλώθηκε μη ύπαρξη αρχείου</strong>
                             </div>
-                        @endforeach
+                        @else
+                            @foreach($submittedFiles as $file)
+                                @php
+                                    $icon = "bi-download";
+                                    $iconClass = "";
+                                    $filename = $file['original_filename'];
+                                    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                                    
+                                    switch($extension) {
+                                        case 'docx':
+                                            $icon = "bi-file-word";
+                                            $iconClass = "docx";
+                                            break;
+                                        case 'xlsx':
+                                            $icon = "bi-file-excel";
+                                            $iconClass = "xlsx";
+                                            break;
+                                        case 'pdf':
+                                            $icon = "bi-file-pdf";
+                                            $iconClass = "pdf";
+                                            break;
+                                    }
+                                @endphp
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="file-icon {{$iconClass}}">
+                                        <i class="bi {{$icon}}"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold">{{$filename}}</div>
+                                    </div>
+                                    <form action="{{url("/filecollects/download_stake_file/$old_data->id/$filename")}}" method="get" class="ms-2">
+                                        @csrf
+                                        <button class="btn btn-outline-success btn-sm" title="Λήψη αρχείου">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
 
-                    <form action="{{url("/filecollects/delete_stake_file/$old_data->id")}}" method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger btn-sm w-100" 
-                                onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφούν ΟΛΑ τα αρχεία σας και θα μπορείτε να ανεβάσετε νέο μόνο αν η εφαρμογή δέχεται υποβολές')">
-                            <i class="bi bi-trash me-2"></i>Διαγραφή Αρχείων
-                        </button>
-                    </form>
+                    @php
+                          $isBlank = $old_data->file && 
+                                    (json_decode($old_data->file, true)[0]['blank'] ?? false);
+                    @endphp
+
+                    @if(!$isBlank)
+                        <form action="{{url("/filecollects/delete_stake_file/$old_data->id")}}" method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100" 
+                                    onclick="return confirm('ΠΡΟΣΟΧΗ! Θα διαγραφούν ΟΛΑ τα αρχεία σας...')">
+                                <i class="bi bi-trash me-2"></i>Διαγραφή Αρχείων
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
             @endif

@@ -614,4 +614,43 @@ class FilecollectController extends Controller
         else 
             return back()->with('failure', 'Το αρχείο δεν υπάρχει.');  
     }
+
+    public function submit_blank(Request $request, Filecollect $filecollect)
+    {
+        if (!$filecollect->visible || !$filecollect->accepts) {
+            abort(403);
+        }
+
+        $record_to_update = null;
+
+        if (Auth::guard('school')->check()) {
+            $record_to_update = Auth::guard('school')->user()
+                ->filecollects->where('filecollect_id', $filecollect->id)->first();
+            $identifier = Auth::guard('school')->user()->code;
+        } elseif (Auth::guard('teacher')->check()) {
+            $record_to_update = Auth::guard('teacher')->user()
+                ->filecollects->where('filecollect_id', $filecollect->id)->first();
+            $identifier = Auth::guard('teacher')->user()->afm;
+        }
+
+        if (!$record_to_update) {
+            abort(403);
+        }
+
+        $record_to_update->file = json_encode([['blank' => true]], JSON_UNESCAPED_UNICODE);
+        $record_to_update->uploaded_at = Carbon::now();
+        $record_to_update->checked = false;
+
+        try {
+            $record_to_update->save();
+        } catch (Exception $e) {
+            Log::channel('throwable_db')->error(
+                $identifier . ' blank submission failed for filecollect ' . $filecollect->id . ' ' . $e->getMessage()
+            );
+            return back()->with('failure', 'Η ενέργεια απέτυχε. Επικοινωνήστε με τον διαχειριστή.');
+        }
+
+        Log::channel('files')->info($identifier . ' blank submission for filecollect ' . $filecollect->id);
+        return back()->with('success', 'Η δήλωση καταχωρήθηκε επιτυχώς.');
+    }
 }

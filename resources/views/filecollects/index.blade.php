@@ -84,7 +84,19 @@
                                 </form>
                             </td>
                             <td>
-                                {{$one_filecollect->stakeholders->whereNotNull('file')->count()}}/{{$one_filecollect->stakeholders->count()}} 
+                                @php
+                                    $submitted = $one_filecollect->stakeholders->whereNotNull('file');
+                                    $blanks = $submitted->filter(fn($s) => 
+                                        json_decode($s->file, true)[0]['blank'] ?? false
+                                    )->count();
+                                    $real = $submitted->count() - $blanks;
+                                @endphp
+                                {{ $real + $blanks }}/{{ $one_filecollect->stakeholders->count() }}
+                                @if($blanks > 0)
+                                    <span class="badge bg-secondary ms-1" title="Δηλώσεις μη ύπαρξης αρχείου">
+                                        {{ $blanks }} κενές
+                                    </span>
+                                @endif
                             </td>
                             <td>
                                 <form action="{{url("/filecollects/$one_filecollect->id")}}" method="post">

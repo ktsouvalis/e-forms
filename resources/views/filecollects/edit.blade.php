@@ -409,6 +409,12 @@
                         <td>   
                             <div class="vstack gap-2">
                                 @foreach(json_decode($one_stakeholder->file, true) as $file)
+                                    @if(isset($file['blank']))
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-slash-circle me-1"></i>Δήλωση μη ύπαρξης αρχείου
+                                        </span>
+                                        @continue
+                                    @endif
                                     @php
                                         $icon = "bi bi-box-arrow-down";
                                         $filename = $file['original_filename'];

@@ -950,7 +950,7 @@ class LeavesController extends Controller
             ['name' => 'Days', 'contents' => $leave->leave_days ],
             ['name' => 'SchoolProtocol', 'contents' => $schoolProtocol ],
         ];
-       
+        
         if($leave->files_json){
             $fileNames = json_decode($leave->files_json, true);
             foreach($fileNames as $serverFileName => $databaseFileName){
@@ -1082,7 +1082,7 @@ class LeavesController extends Controller
         }
         
         // Έλεγχος ότι δεν είναι ανακληθείσα
-        if ($leave->leave_state === 'Ανακλήθηκε') {
+        if ($leave->leave_state === '5-Ανακλήθηκε') {
             return redirect()->back()->with('error', 'Δεν μπορείτε να αποκρύψετε μια ανακληθείσα άδεια.');
         }
         

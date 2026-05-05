@@ -78,7 +78,9 @@
                     {{-- Submit to Directorate Button --}}
                     @if($leave->files_json)
                         <div class="col-12">
-                            <form action="{{ route('leaves.submit', ['leave' => $leave->id]) }}" method="post">
+                            <form action="{{ route('leaves.submit', ['leave' => $leave->id]) }}" 
+                                method="post"
+                                data-leave-id="{{ $leave->id }}">
                                 @csrf
                                 <button type="submit" class="btn btn-info btn-sm w-100">
                                     <i class="bi bi-send-fill"></i> 

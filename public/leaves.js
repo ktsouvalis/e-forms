@@ -38,7 +38,90 @@ function showLeaveProcedure(leaveType, leaveDays, isDirector, isPermanent) {
 
 }
 
-$(document).ready(function() {                
+$(document).ready(function() {
+    const HOSP_LEAVE_TYPES = [
+        'ΑΝΑΡΡΩΤΙΚΗ - με Ιατρική Γνωμάτευση',
+        'ΑΝΑΡΡΩΤΙΚΗ - με Γνωμάτευση Νοσοκομείου (ν.3528/2007 άρ.56, παρ.3)'
+    ];
+    const HOSP_DAY_THRESHOLD = 8;
+    
+    function isHospWarning(leave) {
+        return HOSP_LEAVE_TYPES.includes(leave.leave_type) && leave.leave_days > HOSP_DAY_THRESHOLD;
+    }
+
+    // ── 1. Page load: banner for any problematic leaves ──────────────────────
+    var problematic = leaves.filter(l => isHospWarning(l));
+    if (problematic.length > 0) {
+        problematic.forEach(function(leave) {
+            var $form = $('form[data-leave-id="' + leave.id + '"]');
+            var warning = `
+                <div class="col-12 mt-1">
+                    <div class="alert alert-danger mb-0 py-2">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        <strong>Προσοχή: Πιθανά λάθος τύπος άδειας!</strong>
+                        Οι <strong>${leave.leave_days} ημέρες</strong> υπερβαίνουν το όριο των ${HOSP_DAY_THRESHOLD} ημερών αναρρωτικής. <br>
+                        Ο σωστός τύπος πιθανότατα είναι: <em>Γνωμάτευση Α/βάθμιας Υγειονομικής Επιτροπής</em>.<br>
+                        Επικοινωνήστε με το γραφείο Αδειών ή διορθώστε τον τύπο στο mySchool. <br>
+                        Αν είστε απόλυτα βέβαιοι μπορείτε να συνεχίσετε.
+                    </div>
+                </div>`;
+            $form.closest('.col-md-5').append(warning);
+        });
+    }
+
+    // ── 2. Submit interception ────────────────────────────────────────────────
+    // $(document).on('submit', 'form[data-leave-id]', function(e) {
+    //     var leaveId = $(this).data('leave-id');
+    //     var leave   = leaves.find(l => l.id == leaveId);
+
+    //     if (!leave || !isHospWarning(leave)) return; // no issue, submit normally
+
+    //     e.preventDefault();
+    //     var $form = $(this);
+
+    //     // Populate infoModal with the warning
+    //     $('#infoModal .modal-header')
+    //         .removeClass('bg-warning')
+    //         .addClass('bg-danger');
+    //     $('#infoModal .modal-header .modal-title')
+    //         .text('Προσοχή: Πιθανά Λάθος Τύπος Άδειας');
+    //     $('#infoModal .modal-body p:eq(0)')
+    //         .text('Εκπαιδευτικός: ' + leave.surname + ' ' + leave.name);
+    //     $('#infoModal .modal-body p:eq(1)')
+    //         .html('Ημέρες άδειας: <strong>' + leave.leave_days + '</strong> — υπερβαίνουν το όριο των ' + HOSP_DAY_THRESHOLD + ' ημερών.');
+    //     $('#infoModal .modal-body p:eq(2)')
+    //         .html('Ο καταχωρημένος τύπος <strong>Γνωμάτευση Νοσοκομείου</strong> ισχύει μόνο έως ' + HOSP_DAY_THRESHOLD + ' ημέρες.');
+    //     $('#infoModal .modal-body p:eq(3)')
+    //         .html('Ο σωστός τύπος είναι:<br><em>ΑΝΑΡΡΩΤΙΚΗ - με Γνωμάτευση Α/βάθμιας Υγειονομικής Επιτροπής (όχι Επαπειλούμενης Κύησης)</em>.<br><strong>Παρακαλείστε να διορθώσετε τον τύπο στο mySchool πριν την υποβολή.</strong>');
+    //     $('#infoModal .modal-body p:eq(4)').text('');
+    //     $('#infoModal .modal-body p:eq(5)').text('');
+
+    //     // Swap footer buttons
+    //     $('#infoModal .modal-footer').html(`
+    //         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+    //             <i class="bi bi-arrow-left me-1"></i> Πίσω (Διόρθωση)
+    //         </button>
+    //         <button type="button" class="btn btn-danger" id="hospConfirmSubmit">
+    //             <i class="bi bi-send-fill me-1"></i> Υποβολή παρόλα αυτά
+    //         </button>
+    //     `);
+
+    //     // Confirm button actually submits the form
+    //     $('#hospConfirmSubmit').on('click', function() {
+    //         $('#infoModal').modal('hide');
+    //         $form[0].submit();
+    //     });
+
+    //     // Reset modal to normal state when closed without submitting
+    //     $('#infoModal').one('hidden.bs.modal', function() {
+    //         $('#infoModal .modal-header').removeClass('bg-danger').addClass('bg-warning');
+    //         $('#infoModal .modal-footer').html(
+    //             '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>'
+    //         );
+    //     });
+
+    //     $('#infoModal').modal('show');
+    // });              
     $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
         var leaves
         event.preventDefault();

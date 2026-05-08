@@ -310,6 +310,17 @@
         </div>
     </div>
 
+    @if($pendingLeavesCount > 0)
+        <div class="alert alert-warning d-flex align-items-center gap-2 mb-4">
+            <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
+            <div>
+                {{ $pendingLeavesCount === 1 ? 'Υπάρχει' : 'Υπάρχουν' }} <strong>{{ $pendingLeavesCount }} {{ $pendingLeavesCount === 1 ? 'άδεια' : 'άδειες' }} τον τελευταίο μήνα </strong>
+                που <strong>δεν {{ $pendingLeavesCount === 1 ? 'έχει' : 'έχουν' }} Υποβληθεί</strong> στη Διεύθυνση για πρωτοκόλληση.
+                <br>
+                Παρακαλούμε να υποβληθούν όλες οι άδειες πατώντας το κουμπί "Υποβολή στη Διεύθυνση".
+            </div>
+        </div>
+    @endif
     {{-- Table Header --}}
     <div class="row">
         <div class="col-md-2"><strong>Επώνυμο</strong></div>

@@ -133,9 +133,22 @@
                                 $resource = substr($one_microapp->microapp->url, 1);
                                 $submissionExists = false; // Assuming no submission exists for no deadline microapps
                                 $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
+                                $pendingLeavesCount = $school->leavesIncludingRevoked()
+                                ->whereIn('leave_state', ['2-Υποβλήθηκε', '3-Εγκρίθηκε'])
+                                ->where('creation_date', '>=', \Carbon\Carbon::now()->subMonth()->startOfDay())
+                                ->where('submitted', 0)
+                                ->count();
+                                
                             @endphp
                             <div class="card-hover">
                                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 compact-card relative overflow-hidden">
+                                    {{-- Pending leaves badge --}}
+                                    @if($one_microapp->microapp->url === '/leaves' && isset($pendingLeavesCount) && $pendingLeavesCount > 0)
+                                        <div class="absolute top-2 right-2 flex items-center gap-1 bg-amber-400 text-white rounded-full px-2 py-0.5 text-xs font-bold shadow z-10">
+                                            <i class="bi bi-exclamation-triangle-fill text-xs"></i>
+                                            {{ $pendingLeavesCount }} {{ $pendingLeavesCount === 1 ? 'εκκρεμεί' : 'εκκρεμούν' }} 
+                                        </div>
+                                    @endif
                                     <a href="{{route("$resource.create")}}" class="block h-full">
                                         <div class="p-4 h-full flex flex-col">
                                             <!-- Icon and Title Section -->
@@ -149,6 +162,7 @@
                                                 <h2 class="text-xl font-semibold text-gray-800 mb-2 hover:text-blue-600 transition-colors">
                                                     {{$one_microapp->microapp->name}}
                                                 </h2>
+                                               
                                             </div>
                                         </div>
                                     </a>

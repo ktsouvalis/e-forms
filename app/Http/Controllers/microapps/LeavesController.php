@@ -56,12 +56,20 @@ class LeavesController extends Controller
         
         // Ελέγχουμε αν υπάρχουν αποκρυμμένες άδειες (is_visible = 0)
         $hasHiddenLeaves = $school->leaves()->where('is_visible', 0)->exists();
-        
+
+        // Ελέγχουμε αν υπάρχουν άδειες που δεν έχουν υποβληθεί 
+        $pendingLeavesCount = $school->leavesIncludingRevoked()
+        ->whereIn('leave_state', ['2-Υποβλήθηκε', '3-Εγκρίθηκε'])
+        ->where('creation_date', '>=', \Carbon\Carbon::now()->subMonth()->startOfDay())
+        ->where('submitted', 0)
+        ->count();
+
         return view('microapps.leaves.create', [
             'appname' => 'leaves',
             'microapp' => $microapp,
             'leaves' => $leavesExceptRevoked,
             'showHiddenLeavesLink' => $hasHiddenLeaves,
+            'pendingLeavesCount'   => $pendingLeavesCount,
         ]);
     }
 

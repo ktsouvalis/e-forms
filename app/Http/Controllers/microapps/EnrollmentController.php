@@ -289,7 +289,7 @@ class EnrollmentController extends Controller
         }
         //store
         if($this->microapp->accepts || config('enrollments.nextYearPlanningAccepts') == 1){
-            //dd($values);
+            $values['updated_at'] = now();
             try{
                 Enrollment::updateOrCreate(
                     [

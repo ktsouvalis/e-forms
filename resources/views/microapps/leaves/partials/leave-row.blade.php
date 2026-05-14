@@ -31,6 +31,7 @@
     </div>
     
     @if($leave->am != null)
+        
         @if($isRevokedWithProtocol)
             {{-- Revoked Leave Alert --}}
             <div class="col-md-6">
@@ -59,6 +60,7 @@
 
                     {{-- Upload Form --}}
                     <div class="col-12">
+                        
                         <form action="{{ route('leaves.upload_files', ['teacher_leave' => $leave->id]) }}" 
                               method="post" 
                               enctype="multipart/form-data" 
@@ -121,15 +123,23 @@
             @else
                 {{-- Action Buttons for Submitted Leaves --}}
                 <div class="d-flex flex-column gap-1">
-                    {{-- Unlock Button --}}
-                    <form action="{{ route('leaves.leave_unlock', ['teacher_leave' => $leave->id]) }}" 
-                          method="post">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-warning btn-sm w-100">
-                            <i class="bi bi-unlock"></i>
-                            <small class="d-block">Διόρθωση</small>
-                        </button>
-                    </form>
+                    {{-- Unlock Button OR approved leave --}}
+                    @if($leavesStatus[$leave->protocol_number . "_" . $leave->protocol_date->format('Y')] === 'Εγκρίθηκε')
+                        <div class="text-center text-success small px-1">
+                            <i class="bi bi-patch-check-fill fs-5"></i>
+                            <small class="d-block fw-semibold">Έγκεκριμένη από ΔΙΠΕ</small>
+                            <small class="d-block text-muted" style="font-size: 0.7rem;">Δεν επιτρέπεται τροποποίηση</small>
+                        </div>
+                    @else
+                        <form action="{{ route('leaves.leave_unlock', ['teacher_leave' => $leave->id]) }}" 
+                            method="post">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-warning btn-sm w-100">
+                                <i class="bi bi-unlock"></i>
+                                <small class="d-block">Διόρθωση</small>
+                            </button>
+                        </form>
+                    @endif
                     
                     {{-- Hide Leave Button --}}
                     <form action="{{ route('leaves.hide', ['teacher_leave' => $leave->id]) }}" 

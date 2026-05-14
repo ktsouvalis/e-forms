@@ -64,12 +64,16 @@ class LeavesController extends Controller
         ->where('submitted', 0)
         ->count();
 
+         // Check external state for submitted leaves
+        $leavesStatus = $this->checkLeavesState($leavesExceptRevoked);
+        
         return view('microapps.leaves.create', [
             'appname' => 'leaves',
             'microapp' => $microapp,
             'leaves' => $leavesExceptRevoked,
             'showHiddenLeavesLink' => $hasHiddenLeaves,
             'pendingLeavesCount'   => $pendingLeavesCount,
+            'leavesStatus'     => $leavesStatus,
         ]);
     }
 
@@ -1004,6 +1008,65 @@ class LeavesController extends Controller
         } else {
             //dd($body);
             return ['success' => true, 'message' => $body];
+        }
+    }
+
+    private function checkLeavesState($leaves)
+    {
+        // Only check leaves that have been submitted to protocol
+        $submittedLeaves = $leaves->filter(fn($l) => !empty($l->protocol_number) && !empty($l->protocol_date));
+
+        if ($submittedLeaves->isEmpty()) {
+            return [];
+        }
+
+        // Build payload: [{"protocolNum":1234, "protocolYear":2026}, ...]
+        $payload = $submittedLeaves->map(fn($l) => [
+            'protocolNum'  => (int) $l->protocol_number,
+            'protocolYear' => (int) \Carbon\Carbon::parse($l->protocol_date)->format('Y'),
+        ])->values()->toArray();
+
+        try {
+            $client = new Client();
+
+            $response = $client->request('GET', env('E_DIRECTORATE') . '/leaves/status', [
+                'headers' => [
+                    'X-API-Key'    => env('API_KEY'),
+                    'Content-Type' => 'application/json',
+                    'Accept'       => 'application/json',
+                ],
+                'json' => $payload,
+                'timeout' => 10,
+            ]);
+            
+            Log::channel('files')->warning('checkLeavesState: unexpected status ' . $response->getStatusCode());
+            if ($response->getStatusCode() !== 200) {
+                Log::channel('files')->warning('checkLeavesState: unexpected status ' . $response->getStatusCode());
+                return [];
+            }
+
+            $result = json_decode($response->getBody()->getContents(), true);
+
+            if (!is_array($result)) {
+                Log::channel('files')->warning('checkLeavesState: invalid response format');
+                return [];
+            }
+            
+            // Index by "protocolNum_protocolYear" for easy lookup in the view
+            // e.g. $stateMap['1234_2026'] = 'Submitted'
+            $stateMap = [];
+            foreach ($result as $item) {
+                if (isset($item['protocolNum'], $item['protocolYear'], $item['status'])) {
+                    $key = $item['protocolNum'] . '_' . $item['protocolYear'];
+                    $stateMap[$key] = $item['status'];
+                }
+            }
+            
+            return $stateMap;
+
+        } catch (\Exception $e) {
+            Log::channel('files')->error('checkLeavesState failed: ' . $e->getMessage());
+            return []; // Graceful degradation — don't break the page
         }
     }
 

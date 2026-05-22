@@ -12,7 +12,7 @@
         <script src="{{ asset('datatable_init.js') }}"></script>
     @endpush
     @push('title')
-        <title>Αριθμητικά Στοιχεία Δημοτικών για Προγραμματισμό 2024-25</title>
+        <title>Αριθμητικά Στοιχεία Δημοτικών για Προγραμματισμό 2026-27</title>
     @endpush
     @php
         // $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
@@ -25,7 +25,7 @@
         $schoolCount = 0;
     @endphp
     <div class="h4">
-        Αριθμητικά Στοιχεία Δημοτικών για Προγραμματισμό 2024-25
+        Αριθμητικά Στοιχεία Δημοτικών για Προγραμματισμό 2026-27
     </div>
     <div class="table-responsive">
     <table id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">

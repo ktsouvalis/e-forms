@@ -13,7 +13,7 @@
         <script src="{{ asset('datatable_init.js') }}"></script>
     @endpush
     @push('title')
-        <title>Εγγραφές 2024-25 Ιδιωτικής Εκπαίδευσης</title>
+        <title>Εγγραφές 2026-27 Ιδιωτικής Εκπαίδευσης</title>
     @endpush
         @php
             $microapp = App\Models\Microapp::where('url', '/enrollments')->first();
@@ -21,7 +21,7 @@
             $schoolIds = $private_schools->pluck('id');
             $enrollments = $microapp->stakeholders->whereIn('stakeholder_id', $schoolIds);
         @endphp
-        <div class="h4">Εγγραφές 2024-25 Ιδιωτικής Εκπαίδευσης</div>
+        <div class="h4">Εγγραφές 2026-27 Ιδιωτικής Εκπαίδευσης</div>
         <div class="table-responsive py-2" style="align-self:flex-start">
             <table  id="dataTable" class="small text-center display table table-sm table-striped table-bordered table-hover">
             <thead>

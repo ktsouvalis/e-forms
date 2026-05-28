@@ -242,6 +242,13 @@ class ResetMicroappsController extends Controller
                 ],
             ],
 
+            'building_problems' => [
+                'tables' => ['building_problems'],
+                'models' => [
+                    \App\Models\microapps\BuildingProblems::class => 'Κτιριολογικά Προβλήματα',
+                ],
+            ],
+
             // ➕ Πρόσθεσε εδώ τις υπόλοιπες μικροεφαρμογές...
 
         ];

@@ -12,7 +12,7 @@
         <script src="{{ asset('datatable_init.js') }}"></script>
     @endpush
     @push('title')
-        <title>Προγραμματισμός 2024-25</title>
+        <title>Προγραμματισμός 2026-27</title>
     @endpush
     @php
         $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();

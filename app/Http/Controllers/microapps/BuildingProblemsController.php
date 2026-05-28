@@ -101,6 +101,10 @@ class BuildingProblemsController extends Controller
         if($buildingProblem->severity == 0 && $buildingProblem->files_json == null){
             return back()->with('success', 'Δεν υπάρχουν προβλήματα κτιρίου προς πρωτοκόλληση. Η αποθήκευση των στοιχείων ολοκληρώθηκε με επιτυχία.');
         }
+ 
+        if($buildingProblem->files_json == null){
+            return back()->with('warning', 'Η καταχώρηση αποθηκεύτηκε επιτυχώς, αλλά δεν στάλθηκε για πρωτοκόλληση καθώς δεν έχουν επισυναφθεί αρχεία.');
+}
         try{
             $protocol_response = $this->sendBuildingProblemsToProtocol($buildingProblem);
             $protocol_response = explode(" - ", $protocol_response);

@@ -95,39 +95,53 @@ class FilesController extends Controller
         return response()->json(['success'=>'Directory deleted successfully'], 200);   
     }
 
-    public function download_directory_as_zip($directory){
-        set_time_limit(0);//maximum execution of the script unlimited
-        $tempZipFile = tempnam(sys_get_temp_dir(), 'dir_zip_');
-        $zip = new ZipArchive();
-        if ($zip->open($tempZipFile, ZipArchive::CREATE) !== true) {
-            abort(500, 'Failed to create zip archive');
+    public function download_directory_as_zip($directory) {
+        set_time_limit(0);
+        ini_set('max_execution_time', 0);
+
+        // ✅ Generate path but DON'T let tempnam create the file
+        $tempZipFile = storage_path('app/tmp/' . 'dir_zip_' . Str::random(10) . '.zip');
+
+        // ✅ Ensure the tmp directory exists
+        if (!file_exists(storage_path('app/tmp'))) {
+            mkdir(storage_path('app/tmp'), 0755, true);
         }
 
-        ini_set('max_execution_time', 0);//maximum execution time to php configuration unlimited (for large archives)
+        $zip = new ZipArchive();
+        if ($zip->open($tempZipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            return response()->json(['error' => 'Failed to create zip archive'], 500);
+        }
+
         $files = Storage::allFiles($directory);
         foreach ($files as $file) {
-            $relativePath = str_replace($directory . '/', '', $file); // Remove the directory prefix
+            $relativePath = str_replace($directory . '/', '', $file);
             $zip->addFile(Storage::path($file), $relativePath);
         }
         $zip->close();
 
+        // ✅ Verify zip was actually created
+        if (!file_exists($tempZipFile)) {
+            return response()->json(['error' => 'Zip file was not created'], 500);
+        }
+
         ini_restore('max_execution_time');
+
         $zipFileName = $directory === '/' ? 'root_directory' : basename($directory);
 
         $headers = [
-            'Content-Type' => 'application/zip',
+            'Content-Type'        => 'application/zip',
             'Content-Disposition' => 'attachment; filename="' . $zipFileName . '.zip"',
         ];
 
-        ob_end_clean();
+        while (ob_get_level()) ob_end_clean();
+
         try {
-            return Response::download($tempZipFile, $zipFileName . '.zip', $headers)->deleteFileAfterSend(true);
-        } 
-        catch (\Exception $e) {
+            return Response::download($tempZipFile, $zipFileName . '.zip', $headers)
+                ->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-    }
-    
+    } 
     private function compress_pdf($file, $targetSizeKB = 2048)
     {
         // Check if Ghostscript is available

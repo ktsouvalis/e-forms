@@ -609,8 +609,8 @@ class TeacherController extends Controller
         $error=0;
         $rowSumValue="1";
         $validationDate = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(38, 1)->getValue();
-        if($validationDate !== "Εκπαιδευτική Υπηρεσία μέχρι και 31/8/2025 Έτη"){
-            $messg = 'Η ημερομηνία υπολογισμού της προϋπηρεσίας είναι "'.$validationDate.'" αντί για 31/8/2025';
+        if($validationDate !== "Εκπαιδευτική Υπηρεσία μέχρι και 31/8/2026 Έτη"){
+            $messg = 'Η ημερομηνία υπολογισμού της προϋπηρεσίας είναι "'.$validationDate.'" αντί για 31/8/2026';
             return back()->with('failure', $messg);
         }
        

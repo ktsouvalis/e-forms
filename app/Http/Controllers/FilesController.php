@@ -100,11 +100,11 @@ class FilesController extends Controller
         set_time_limit(0);
         ini_set('max_execution_time', 0);
 
-        // ✅ Generate path but DON'T let tempnam create the file
+        // Generate path but DON'T let tempnam create the file
         $tempZipName = 'dir_zip_' . Str::random(10) . '.zip';
         $tempZipFile = storage_path('app/tmp/' . $tempZipName);
 
-        // ✅ Ensure the tmp directory exists
+        // Ensure the tmp directory exists
         if (!file_exists(storage_path('app/tmp'))) {
             mkdir(storage_path('app/tmp'), 0755, true);
         }
@@ -121,7 +121,7 @@ class FilesController extends Controller
         }
         $zip->close();
 
-        // ✅ Verify zip was actually created
+        // Verify zip was actually created
         if (!file_exists($tempZipFile)) {
             return response()->json(['error' => 'Zip file was not created'], 500);
         }

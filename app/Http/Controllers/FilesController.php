@@ -101,7 +101,8 @@ class FilesController extends Controller
         ini_set('max_execution_time', 0);
 
         // ✅ Generate path but DON'T let tempnam create the file
-        $tempZipFile = storage_path('app/tmp/' . 'dir_zip_' . Illuminate\Support\Str::random(10) . '.zip');
+        $tempZipName = 'dir_zip_' . Str::random(10) . '.zip';
+        $tempZipFile = storage_path('app/tmp/' . $tempZipName);
 
         // ✅ Ensure the tmp directory exists
         if (!file_exists(storage_path('app/tmp'))) {

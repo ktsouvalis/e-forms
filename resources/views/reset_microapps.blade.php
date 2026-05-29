@@ -17,7 +17,7 @@
         <td >{{$microapp->id}}</td> 
         <td >{{$microapp->name}}</td>
         <td>
-            <form action="{{ url('/reset_microapp/' . $microapp->id)}}" method="POST">
+            <form action="{{ route('reset.view', $microapp) }}" method="GET">
                 @csrf
                 <button type="submit">Διαδικασία Αρχικοποίησης</button>
             </form>
@@ -27,5 +27,6 @@
 @endforeach
 </table>
 17/03/2026 - Ολοκληρώθηκε και λειτουργεί η αρχικοποίηση "Εγγραφές και προγραμματισμός"
+29/05/2026 - Λειτουργούν Κτιριολογικά Προβλήματα, Αποσπάσεις εντός ΠΥΣΠΕ.
 </x-layout>
     

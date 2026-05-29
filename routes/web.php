@@ -276,15 +276,15 @@ Route::group(['prefix' =>'operations'], function(){
 Route::view('/reset_microapps', 'reset_microapps');
 
 ///// RESET MICROAPPS /////
-Route::post('/reset_microapp/{microapp}', [ResetMicroappsController::class, 'reset_microapp'])->name('reset_microapp');
+// Route::post('/reset_microapp/{microapp}', [ResetMicroappsController::class, 'reset_microapp'])->name('reset_microapp');
 
-Route::get('/download_files/{microapp}', [ResetMicroappsController::class, 'download_files'])->name('download_files');
+// Route::get('/download_files/{microapp}', [ResetMicroappsController::class, 'download_files'])->name('download_files');
 
-Route::get('/download_excel/{microapp}', [ResetMicroappsController::class, 'download_excel'])->name('download_excel');
+// Route::get('/download_excel/{microapp}', [ResetMicroappsController::class, 'download_excel'])->name('download_excel');
 
-Route::get('/delete_files/{microapp}', [ResetMicroappsController::class, 'delete_files'])->name('delete_files');
+// Route::get('/delete_files/{microapp}', [ResetMicroappsController::class, 'delete_files'])->name('delete_files');
 
-Route::get('/reset_db/{microapp}', [ResetMicroappsController::class, 'reset_db'])->name('reset_db');
+// Route::get('/reset_db/{microapp}', [ResetMicroappsController::class, 'reset_db'])->name('reset_db');
 
 Route::prefix('reset')->name('reset.')->middleware('boss')->group(function () {
     Route::get('/{microapp}',          [ResetMicroappsController::class, 'reset_microapp'])->name('view');
@@ -293,6 +293,7 @@ Route::prefix('reset')->name('reset.')->middleware('boss')->group(function () {
     Route::delete('/{microapp}/files', [ResetMicroappsController::class, 'delete_files'])->name('delete_files');
     Route::delete('/{microapp}/db',    [ResetMicroappsController::class, 'reset_db'])->name('reset_db');
 });
+
 //////// MANAGING MICROAPPS ROUTES
 Route::resource('microapps', MicroappController::class)->middleware('auth');
 

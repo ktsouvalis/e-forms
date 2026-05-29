@@ -31,6 +31,7 @@ class ResetMicroappsController extends Controller
     public function download_files(Request $request, Microapp $microapp)
     {
         $directory = $this->getDirectory($microapp);
+        
         $handler   = new FilesController;
         $response  = $handler->download_directory_as_zip($directory);
 
@@ -246,6 +247,13 @@ class ResetMicroappsController extends Controller
                 'tables' => ['building_problems'],
                 'models' => [
                     \App\Models\microapps\BuildingProblems::class => 'Κτιριολογικά Προβλήματα',
+                ],
+            ],
+            
+             'secondments' => [
+                'tables' => ['secondments'],
+                'models' => [
+                    \App\Models\microapps\Secondment::class => 'Αποσπάσεις εντός ΠΥΣΠΕ',
                 ],
             ],
 

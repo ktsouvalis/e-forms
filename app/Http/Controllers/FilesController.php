@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use ZipArchive;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use ZipArchive;
 
 class FilesController extends Controller
 {

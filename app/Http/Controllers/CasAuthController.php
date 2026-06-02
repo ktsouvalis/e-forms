@@ -162,6 +162,10 @@ class CasAuthController extends Controller
                 ]);
                 return redirect(url('/index_school'))->with('success',"$school->name καλωσήρθατε!");
             } catch(\Exception $e) {
+                if(!isset($school)) {
+                    return redirect()->route('index')->withErrors(['error' => 'Παρακαλούμε συνδεθείτε με Λογαριασμό Εκπαιδευτικού!!!.']);
+                }
+
                 Log::channel('login_as')->error('School login failed with MySchool credentials', [
                     'school_code' => $school->code,
                     'school_name' => $school->name,

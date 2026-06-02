@@ -91,7 +91,7 @@
     @endif
     @if($secondment->submitted == 1)
         <div class="alert alert-info alert-dismissible fade show" role="alert">
-            Η αίτηση έχει υποβληθεί οριστικά και δε μπορεί να τροποποιηθεί. Σε αυτή τη φάση επιτρέπεται τροποποίηση μόνο για εκπαιδευτικούς κλάδου ΠΕ60 κ ΠΕ60.50.
+            Η αίτηση έχει υποβληθεί οριστικά και δε μπορεί να τροποποιηθεί.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif

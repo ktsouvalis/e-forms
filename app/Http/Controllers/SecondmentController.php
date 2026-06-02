@@ -33,11 +33,11 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
-        // Τροποποίηση μόνο για Νηπιαγωγούς - Προσωρινός κώδικας - 2 αλλαγές στον controller και 1 στο view
+        // Τροποποίηση μόνο για Νηπιαγωγούς ΜΗ ΕΝΕΡΓΗ - ΣΧΟΛΙΑΣΜΕΝΗ - Προσωρινός κώδικας - 2 αλλαγές στον controller και 1 στο view
         //dd(Auth::guard('teacher')->user()->klados);
-        if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
-            return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
-        }
+        // if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
+        //     return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
+        // }
         if($request->input()['criteriaOrPreferences'] == 1){        //Αποθήκευση μοριοδοτούμενων κριτηρίων
             if($request->input('action') == "submit"){ //Ζητάει οριστική υποβολή κριτηρίων
                 // Αποθήκευσε την αίτηση
@@ -204,11 +204,11 @@ class SecondmentController extends Controller
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
-        // Τροποποίηση μόνο για Νηπιαγωγούς - Προσωρινός κώδικας - 2 αλλαγές στον controller και 1 στο view
+        // Τροποποίηση μόνο για Νηπιαγωγούς ΜΗ ΕΝΕΡΓΗ - ΣΧΟΛΙΑΣΜΕΝΗ - Προσωρινός κώδικας - 2 αλλαγές στον controller και 1 στο view Γραμμή 94 Μήνυμα τροποποίησης, προσθήκη "επιτρέπεται μόνο για Νηπιαγωγούς" και σχολιασμός της γραμμής 95 που απαγορεύει την τροποποίηση για τους μη Νηπιαγωγούς
         //dd(Auth::guard('teacher')->user()->klados);
-        if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
-            return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
-        }
+        // if(!(Auth::guard('teacher')->user()->klados == "ΠΕ60" || Auth::guard('teacher')->user()->klados == "ΠΕ60.50")){
+        //     return back()->with('failure', 'Τροποποιήσεις επιτρέπονται μόνο για Νηπιαγωγούς σε αυτή τη φάση.');
+        // }
         $secondment->submitted = 0;
         $secondment->save();
         return back()->with('success', 'Η δήλωση σχολείων ενεργοποιήθηκε για τροποποίηση. Μπορείτε να την επεξεργαστείτε και να την υποβάλλετε ξανά.');

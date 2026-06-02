@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="form-check form-switch"> 
                                     <input type="checkbox" class="form-check-input" id="application_for_reposition" name="application_for_reposition" @if($secondment->application_for_reposition==1) checked @endif disabled>
-                                    <label for="application_for_reposition" class="form-check-label" >Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης το 2026</label>
+                                    <label for="application_for_reposition" class="form-check-label" >Έχω υποβάλλει αίτηση βελτίωσης θέσης / οριστικής τοποθέτησης τον Οκτώβριο του 2025</label>
                                 </div>
                             </div>
                         </div>

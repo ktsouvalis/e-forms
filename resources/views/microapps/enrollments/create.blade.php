@@ -329,7 +329,12 @@
 
                                 <tr>
                                     <td>
-                                        Αριθμός Μαθητών για Παράλληλη Στήριξη <br> <small><em>Δηλώστε τους μαθητές ανά Τάξη αν υπάρχουν αλλιώς κενό ή 0</em></small>
+                                        <span><div style="font-weight: 500; font-size: 1rem; color: #832727; margin-bottom: 6px;">
+                                            Αριθμός Μαθητών για Παράλληλη Στήριξη <br> <div style="font-size: 0.875rem; color: #777;">
+                                        </div></span>
+                                        <div style="font-size: 0.875rem; color: #777;">
+                                        (Συμπληρώστε τον αριθμό μαθητών που θα φοιτήσουν με Παράλληλη Στήριξη για κάθε τάξη. Αν δεν υπάρχει μαθητής με ανάγκη παράλληλης στήριξης αφήστε κενό ή συμπληρώστε με 0.)
+                                        </div>
                                     </td>
                                     @if($nextYearLeitourgikotita >= 6)
                                         @for($i=1; $i<=$max_class_numbers; $i++)

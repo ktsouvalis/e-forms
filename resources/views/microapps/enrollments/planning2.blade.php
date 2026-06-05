@@ -70,16 +70,21 @@
 
                     {{-- 5-16: Grades A through ΣΤ --}}
                     @php
-                        $grade_classes = json_decode($plan->grade_classes ?? '[]');
+                        $comments_text = '';
+                        $morning_classes = json_decode($plan->morning_classes ?? '[]');
+                        for($i = 0; $i < 6; $i++){
+                            if(isset($morning_classes[$i]->nr_of_students)){
+                                echo '<td>'.$morning_classes[$i]->nr_of_students.'</td><td>'.$morning_classes[$i]->nr_of_sections.'</td>';
+                            } else {
+                                echo '<td></td><td></td>';
+                            }
+                            if(isset($morning_classes[$i]->comment) && trim($morning_classes[$i]->comment) != '')
+                                $comments_text .= '<strong>'.['Α','Β','Γ','Δ','Ε','ΣΤ'][$i].':</strong> '.$morning_classes[$i]->comment.'<br>';
+                        }
                     @endphp
-                    @for ($i = 0; $i < 6; $i++)
-                        <td>{{ $grade_classes[$i]->nr_of_students ?? '' }}</td>
-                        <td>{{ $grade_classes[$i]->nr_of_sections ?? '' }}</td>
-                    @endfor
 
                     {{-- 17: Παρατηρήσεις Πρωινού --}}
-                    <td class="text-start">{!! $plan->comments ?: '—' !!}</td>
-
+                    <td class="text-start">{!! $comments_text ?: '—' !!}</td>
                     {{-- 18-19: Πρωινή Ζώνη --}}
                     @php
                         $morning = json_decode($plan->morning_zone_classes ?? '[]');

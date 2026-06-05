@@ -33,6 +33,7 @@ class EnrollmentController extends Controller
     }
 
     public function create(){
+        $this->recalculateMorningClasses();
         return view('microapps.enrollments.create', ['appname' => 'enrollments']);
     }
 
@@ -374,7 +375,7 @@ class EnrollmentController extends Controller
                     return 5;
             } else { // Είναι 6θέσιο και άνω --}}
                 return $leitourgikotita;
-            } 
+            }
         } else { //Νηπιαγωγείο
             if($total_students_nr <= 25) //Θα λειτουργήσει 1θέσιο
                 return 1;
@@ -394,36 +395,20 @@ class EnrollmentController extends Controller
             if($leitourgikotita <= 6 )
                 return 1;
             if($leitourgikotita > 6){
-                switch ($students_nr) {
-                    case $students_nr == 0:
-                        return 0;
-                    case $students_nr > 0 && $students_nr <= 25:
-                        return 1;
-                    case $students_nr > 25 && $students_nr <= 50:
-                        return 2;
-                    case $students_nr >= 50 && $students_nr <= 75:
-                        return 3;
-                    case $students_nr > 75 && $students_nr <= 100:
-                        return 4;
-                    case $students_nr > 100 && $students_nr <= 125:
-                        return 5;
-                }
+                if ($students_nr === 0)                              return 0;
+                elseif ($students_nr <= 25)                          return 1;
+                elseif ($students_nr <= 50)                          return 2;
+                elseif ($students_nr <= 75)                          return 3;
+                elseif ($students_nr <= 100)                         return 4;
+                elseif ($students_nr <= 125)                         return 5;
             }
         } else {
-            switch ($students_nr) {
-                case $students_nr == 0:
-                    return 0;
-                case $students_nr > 0 && $students_nr <= 25:
-                    return 1;
-                case $students_nr > 25 && $students_nr <= 50:
-                    return 2;
-                case $students_nr >= 50 && $students_nr <= 75:
-                    return 3;
-                case $students_nr > 75 && $students_nr <= 100:
-                    return 4;
-                case $students_nr > 100 && $students_nr <= 125:
-                    return 5;
-            }
+            if ($students_nr === 0)                              return 0;
+            elseif ($students_nr <= 25)                          return 1;
+            elseif ($students_nr <= 50)                          return 2;
+            elseif ($students_nr <= 75)                          return 3;
+            elseif ($students_nr <= 100)                         return 4;
+            elseif ($students_nr <= 125)                         return 5;
         }
     }
 
@@ -530,5 +515,69 @@ class EnrollmentController extends Controller
             return back()->with('failure', 'Η εγγραφή δεν αποθηκεύτηκε. Προσπαθήστε ξανά');
         }
         return $check;
+    }
+
+    public function recalculateMorningClasses(){
+        $school = Auth::guard('school')->user();
+        
+        if(!$school->enrollments) 
+            return;
+        
+        $enrollment = $school->enrollments;
+        $leitourgikotita = $school->leitourgikotita;
+        $primary = $school->primary;
+        
+        $total_st_number = ($primary == 1) ? $enrollment->total_students_nr : $enrollment->nr_of_students1;
+        
+        if(!$total_st_number) 
+            return;
+        
+        $nextYearLeitourgikotita = self::nextYearsLeitourgikotita($primary, $leitourgikotita, $total_st_number);
+        
+        // Special case overrides
+        if(in_array($school->code, ['9060295', '9060336', '9060406']))
+            $nextYearLeitourgikotita = 4;
+        
+        $max_class_numbers = ($nextYearLeitourgikotita >= 6) ? 6 : $nextYearLeitourgikotita;
+        
+        $enrollments_classes = EnrollmentsClasses::where('enrollment_id', $enrollment->id)->first();
+        
+        if(!$enrollments_classes) 
+            return;
+        
+        $morning_classes = json_decode($enrollments_classes->morning_classes);
+        
+        if(!$morning_classes) 
+            return;
+        
+        $sections = [];
+        for($i = 1; $i <= $max_class_numbers; $i++){
+            $section = [];
+            
+            // Get stored nr_of_students or fall back to enrollment data
+            if(isset($morning_classes[$i-1]->nr_of_students) && $morning_classes[$i-1]->nr_of_students > 0){
+                $section['nr_of_students'] = $morning_classes[$i-1]->nr_of_students;
+            } else {
+                if($nextYearLeitourgikotita >= 6){
+                    $section['nr_of_students'] = ($i == 1) ? $enrollment->nr_of_students1 : 0;
+                } else {
+                    $section['nr_of_students'] = ($nextYearLeitourgikotita == 1) ? $total_st_number : 0;
+                }
+            }
+            
+            // Recalculate sections
+            if($school->special_needs == 0)
+                $section['nr_of_sections'] = $this->countNrOfSections($primary, $leitourgikotita, $section['nr_of_students']);
+            else
+                $section['nr_of_sections'] = $morning_classes[$i-1]->nr_of_sections ?? 1;
+            
+            // Preserve existing comment
+            $section['comment'] = $morning_classes[$i-1]->comment ?? '';
+            
+            $sections[] = $section;
+        }
+        
+        $enrollments_classes->morning_classes = json_encode($sections);
+        $enrollments_classes->save();
     }
 }

@@ -318,18 +318,38 @@
                         <tr>
                             <td>
                                 Παρατήρηση <br><small>(π.χ. αίτημα για επιπλέον τμήμα)</small>
-
                             </td>
                             @for($i=1; $i<=$max_class_numbers; $i++)
                                 @php 
-                                    if(isset($morning_classes[$i-1]->comment)){ $com = $morning_classes[$i-1]->comment; }
-                                    else { $com = ''; }
+                                    $com = isset($morning_classes[$i-1]->comment) ? $morning_classes[$i-1]->comment : '';
                                 @endphp
                                 <td>
-                                    <input name="comment{{$i}}" id="comment{{$i}}" type="text" class="form-control input-sm" value="{{$com}}" >
+                                    <input name="comment{{$i}}" id="comment{{$i}}" type="text" class="form-control input-sm" value="{{$com}}">
                                 </td>
                             @endfor
                         </tr>
+                        @if(collect(range(1, $max_class_numbers))->first(fn($i) => !empty($morning_classes[$i-1]->comment ?? '')))
+                        <tr class="table-info">
+                            <td>
+                                <i class="bi bi-chat-left-text"></i> Καταχωρημένες Παρατηρήσεις
+                                <br><small class="fst-italic">Τα παρακάτω κείμενα έχουν αποθηκευτεί</small>
+                            </td>
+                            @for($i=1; $i<=$max_class_numbers; $i++)
+                                @php 
+                                    $com = isset($morning_classes[$i-1]->comment) ? $morning_classes[$i-1]->comment : '';
+                                @endphp
+                                <td>
+                                    @if($com)
+                                        <p class="mb-0 fst-italic text-primary">
+                                            <i class="bi bi-quote"></i> {{$com}}
+                                        </p>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                            @endfor
+                        </tr>
+                        @endif
                         @endif
                         <tr><td colspan="5">
                             @if(config('enrollments.nextYearPlanningAccepts') == 0 || !$old_data)

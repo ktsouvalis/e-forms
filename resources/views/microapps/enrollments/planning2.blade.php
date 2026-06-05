@@ -47,6 +47,7 @@
                 <th>Τμ. Ε</th>
                 <th>Μαθ. ΣΤ</th>
                 <th>Τμ. ΣΤ</th>
+                <th>Παρατηρήσεις Πρωινού</th>
                 <th id="">Μαθητές Πρωινής Ζώνης</th>
                 <th id="">Τμήματα Πρωινής ζώνης</th>
                 <th id="">Μαθητές Ολοήμερου Ζ1</th>
@@ -61,56 +62,39 @@
             @foreach ($plans as $plan)
             {{-- @if($plan->enrollment->school->primary) --}}
                 <tr>
-                    <td>{{ $plan->enrollment->school->code }} </td>
-                    <td>{{ $plan->enrollment->school->name }} </td>
+                    {{-- 1-4 --}}
+                    <td>{{ $plan->enrollment->school->code }}</td>
+                    <td>{{ $plan->enrollment->school->name }}</td>
                     <td>{{ $plan->enrollment->school->organikotita }}</td>
                     <td>{{ $plan->enrollment->school->leitourgikotita }}</td>
+
+                    {{-- 5-16: Grades A through ΣΤ --}}
                     @php
-                        $morning_classes_json = $plan->morning_classes;
-                       
-                        if($morning_classes_json){
-                            $morning_classes = json_decode($morning_classes_json);
-                                for($i=0; $i<6; $i++){
-                                    if(isset($morning_classes[$i]->nr_of_students)){
-                                        echo '<td>'.$morning_classes[$i]->nr_of_students.'</td><td>'.$morning_classes[$i]->nr_of_sections.'</td>';
-                                    } else {
-                                        echo '<td></td><td></td>';
-                                    }
-                                }
-                        }
-                        else{
-                            echo '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
-                        }
+                        $grade_classes = json_decode($plan->grade_classes ?? '[]');
                     @endphp
-                    
+                    @for ($i = 0; $i < 6; $i++)
+                        <td>{{ $grade_classes[$i]->nr_of_students ?? '' }}</td>
+                        <td>{{ $grade_classes[$i]->nr_of_sections ?? '' }}</td>
+                    @endfor
+
+                    {{-- 17: Παρατηρήσεις Πρωινού --}}
+                    <td class="text-start">{!! $plan->comments ?: '—' !!}</td>
+
+                    {{-- 18-19: Πρωινή Ζώνη --}}
                     @php
-                        $morning_zone_classes_json = $plan->morning_zone_classes;
-                        if($morning_zone_classes_json){
-                            $morning_zone_classes = json_decode($morning_zone_classes_json);
-                            echo '<td>'.$morning_zone_classes[0]->nr_of_students.'</td><td>'.$morning_zone_classes[0]->nr_of_sections.'</td>';        
-                        } else {
-                            echo '<td></td><td></td>';
-                        }
+                        $morning = json_decode($plan->morning_zone_classes ?? '[]');
                     @endphp
-                    {{-- Ολοήμερο --}}
+                    <td>{{ $morning[0]->nr_of_students ?? '' }}</td>
+                    <td>{{ $morning[0]->nr_of_sections ?? '' }}</td>
+
+                    {{-- 20-25: Ολοήμερο Ζ1, Ζ2, Ζ3 --}}
                     @php
-                    $all_day_school_classes_json = $plan->all_day_school_classes;
-                    if($all_day_school_classes_json){
-                        $all_day_school_classes = json_decode($all_day_school_classes_json);
-                        for($i=0; $i<3; $i++){
-                            if(isset($all_day_school_classes[$i]->nr_of_students)){
-                                echo '<td>'.$all_day_school_classes[$i]->nr_of_students.'</td><td>'.$all_day_school_classes[$i]->nr_of_sections.'</td>';
-                            } else {
-                                echo '<td></td><td></td>';
-                            }
-                            
-                        }
-                       
-                    }
-                    else{
-                        echo '<td></td><td></td><td></td><td></td><td></td><td></td>';
-                    }
+                        $allday = json_decode($plan->all_day_school_classes ?? '[]');
                     @endphp
+                    @for ($i = 0; $i < 3; $i++)
+                        <td>{{ $allday[$i]->nr_of_students ?? '' }}</td>
+                        <td>{{ $allday[$i]->nr_of_sections ?? '' }}</td>
+                    @endfor
                 </tr> 
             {{-- @endif   --}}
             @endforeach

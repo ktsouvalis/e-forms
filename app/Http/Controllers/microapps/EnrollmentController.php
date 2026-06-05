@@ -215,39 +215,47 @@ class EnrollmentController extends Controller
                 return back()->with('success', 'Οι παράμετροι αποθηκεύτηκαν');
             break;
             case 'nextYearNumbers':     //Καταχώρηση Αριθμού Μαθητών για το επόμενο σχ. έτος
+                // dd($request->input());
                 if(!$school->enrollments)
                     return back()->with('failure', 'Πρέπει πρώτα να καταχωρήσετε τον αριθμό των μαθητών που εγγράφηκαν');
                 //dd($request->input());
-                    $sections = [];
+                $sections = [];
                 for($i=1; $i<=6; $i++){
                     $section = [];
                     // if($request->input('leitourgikotita'.$i) !== null)
                     //     $section['leitourgikotita'] = $request->input('leitourgikotita'.$i);
                     if($request->input('nr_of_students'.$i) !== null)
                         $section['nr_of_students'] = $request->input('nr_of_students'.$i);
-                    // υπολόγισε τον αριθμό των τμημάτων - αν είναι ολιγοθέσιο 1 αλλιώς ανάλογα με τον αριθμό των μαθητών
                     if($school->special_needs == 0)
                         $section['nr_of_sections'] = $this->countNrOfSections($school->primary, $school->leitourgikotita, $request->input('nr_of_students'.$i));
                     else
                         $section['nr_of_sections'] = $request->input('nr_of_sections'.$i);
                     if($request->input('comment'.$i) !== null)
                         $section['comment'] = $request->input('comment'.$i);
-                    $sections[] = $section;
+                    if($request->input('parallel_support_students'.$i) !== null)
+                        $section['parallel_support_students'] = $request->input('parallel_support_students'.$i);
+                    $sections[] = $section; // <-- moved to last
                 }
                 
                 $sections = array_filter($sections, function ($section) {
                     return !empty($section);
                 });
                 $sections_json = json_encode($sections);
+                // dd($sections_json);
                 try{
-                   EnrollmentsClasses::updateOrCreate(
-                        [
-                            'enrollment_id' => $school->enrollments->id
-                        ],
-                        [
-                            'morning_classes' => $sections_json
-                        ]
-                    );       
+                   $enrollmentsClasses = EnrollmentsClasses::where('enrollment_id', $school->enrollments->id)->first();
+                    if($enrollmentsClasses){
+                        $enrollmentsClasses->morning_classes = $sections_json;
+                        $enrollmentsClasses->integration_class_students = $request->input('integration_class_students');
+                        $enrollmentsClasses->save();
+                        // dd($enrollmentsClasses->morning_classes);
+                    } else {
+                        EnrollmentsClasses::create([
+                            'enrollment_id' => $school->enrollments->id,
+                            'morning_classes' => $sections_json,
+                            'integration_class_students' => $request->input('integration_class_students')
+                        ]);
+                    }
                 } catch(Throwable $e){
                     try{
                         Log::channel('throwable_db')->error(Auth::guard('school')->user()->name.' create enrollments db error '.$e->getMessage());
@@ -573,7 +581,7 @@ class EnrollmentController extends Controller
             
             // Preserve existing comment
             $section['comment'] = $morning_classes[$i-1]->comment ?? '';
-            
+            $section['parallel_support_students'] = $morning_classes[$i-1]->parallel_support_students ?? '';
             $sections[] = $section;
         }
         

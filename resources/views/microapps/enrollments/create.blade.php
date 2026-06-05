@@ -15,9 +15,23 @@
             $required = 'required';
         }
     @endphp
+
     
     @push('title')
         <title>{{$app_name}}</title>
+    @endpush
+       @push('styles')
+    <style>
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
     @endpush
 <div class="container">
     <div class="container px-5">
@@ -247,7 +261,17 @@
                             <input name="nr_of_students1" id="nr_of_students1" type="text" class="form-control input-sm" required value="{{$nr_of_st}}" pattern="\d*" >
                             @if($nextYearLeitourgikotita == 1 && !$enrollments_classes)
                                 
-                            <small>Παρακαλούμε πατήστε πάλι Υποβολή για επιβεβαίωση και για να υπολογιστεί το Τμήμα από το Σύστημα.</small>
+                            <small style="display: block; font-size: 1rem; font-weight: bold; text-align: center; background-color: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px 16px; margin: 16px 0; color: #856404; animation: pulse 1.5s ease infinite; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            ⚠️ Παρακαλούμε <span style="color: #dc3545; font-size: 1.05rem;">πατήστε πάλι</span> Υποβολή!!! Είναι απαραίτητο για τον υπολογισμό του Τμήματος / των Τμημάτων. ⚠️
+                            </small>
+
+                            <style>
+                            @keyframes pulse {
+                            0% { background-color: #fff3cd; border-color: #ffc107; }
+                            50% { background-color: #ffe69b; border-color: #ffc107; transform: scale(1.01); }
+                            100% { background-color: #fff3cd; border-color: #ffc107; }
+                            }
+                            </style>
                             @endif
                         </td>
                         @for($i=2; $i<=$max_class_numbers; $i++)
@@ -288,6 +312,36 @@
                                         </td>
                                     @endfor
                                 @endif
+
+                                <tr>
+                                    <td>
+                                        <span><div style="font-weight: 500; font-size: 1rem; color: #832727; margin-bottom: 6px;">
+                                         Αριθμός Μαθητών για Τμήμα Ένταξης
+                                        </div></span>
+                                        <div style="font-size: 0.875rem; color: #777;">
+                                        (Συμπληρώστε τον αριθμό μαθητών που θα φοιτήσουν στο Τμήμα Ένταξης. Αν δεν υπάρχει Τμήμα Ένταξης αφήστε κενό ή συμπληρώστε με 0.)
+                                        </div>
+                                    </td>
+                                    <td colspan="{{$max_class_numbers}}">
+                                        <input name="integration_class_students" id="integration_class_students" type="number" class="form-control input-sm" value="@if(isset($enrollments_classes->integration_class_students)){{$enrollments_classes->integration_class_students}}@endif" min="0">
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        Αριθμός Μαθητών για Παράλληλη Στήριξη
+                                    </td>
+                                    @if($nextYearLeitourgikotita >= 6)
+                                        @for($i=1; $i<=$max_class_numbers; $i++)
+                                            @php $par = isset($morning_classes[$i-1]->parallel_support_students) ? $morning_classes[$i-1]->parallel_support_students : ''; @endphp
+                                            <td><input name="parallel_support_students{{$i}}" type="text" class="form-control input-sm" value="{{$par}}" pattern="\d*"></td>
+                                        @endfor
+                                    @else
+                                        <td colspan="{{$max_class_numbers}}">
+                                            <input name="parallel_support_students1" type="text" class="form-control input-sm" value="@if(isset($morning_classes[0]->parallel_support_students)){{$morning_classes[0]->parallel_support_students}}@endif" pattern="\d*">
+                                        </td>
+                                    @endif
+                                </tr>
                             @else {{-- Αν είναι Ειδικό Σχολείο --}}
                                 <td>
                                     Αριθμός τμημάτων για Ειδικό Σχολείο<br>                        
@@ -723,4 +777,6 @@
 </nav>
 </div>    
 </div>
+
+ 
 </x-layout_school>

@@ -295,6 +295,7 @@
                         <tr>
                             <td>
                                 <div style="font-weight: 500; font-size: 1rem; color: #832727;">Αριθμός Μαθητών για Παράλληλη Στήριξη</div>
+                                <div class="text-muted" style="font-size: 0.8rem;">(Αλλιώς αφήστε κενό ή 0 - Δεν αφορά τις ιδιωτικές παράλληλες)</div>
                             </td>
                             @if($nextYearLeitourgikotita >= 6)
                                 @for($i=1; $i<=$max_class_numbers; $i++)

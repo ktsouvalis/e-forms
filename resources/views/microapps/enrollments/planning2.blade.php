@@ -15,7 +15,6 @@
         <title>Αριθμητικά Στοιχεία Δημοτικών για Προγραμματισμό 2026-27</title>
     @endpush
     @php
-        // $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
          $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')
             ->whereHas('enrollment.school', function ($query) {
                 $query->where('primary', 1);
@@ -47,7 +46,9 @@
                 <th>Τμ. Ε</th>
                 <th>Μαθ. ΣΤ</th>
                 <th>Τμ. ΣΤ</th>
-                <th>Παρατηρήσεις Πρωινού</th>
+                <th>Μαθ. Τμ. Ένταξης</th>
+                <th>Παράλληλη Στήριξη (Ανά Τάξη)</th>
+                <th id="">Παρατηρήσεις Πρωινού</th>
                 <th id="">Μαθητές Πρωινής Ζώνης</th>
                 <th id="">Τμήματα Πρωινής ζώνης</th>
                 <th id="">Μαθητές Ολοήμερου Ζ1</th>
@@ -60,39 +61,49 @@
         </thead>
         <tbody>
             @foreach ($plans as $plan)
-            {{-- @if($plan->enrollment->school->primary) --}}
                 <tr>
-                    {{-- 1-4 --}}
                     <td>{{ $plan->enrollment->school->code }}</td>
                     <td>{{ $plan->enrollment->school->name }}</td>
                     <td>{{ $plan->enrollment->school->organikotita }}</td>
                     <td>{{ $plan->enrollment->school->leitourgikotita }}</td>
 
-                    {{-- 5-16: Grades A through ΣΤ --}}
                     @php
                         $comments_text = '';
+                        $parallel_text = '';
                         $morning_classes = json_decode($plan->morning_classes ?? '[]');
+                        
                         for($i = 0; $i < 6; $i++){
                             if(isset($morning_classes[$i]->nr_of_students)){
                                 echo '<td>'.$morning_classes[$i]->nr_of_students.'</td><td>'.$morning_classes[$i]->nr_of_sections.'</td>';
                             } else {
                                 echo '<td></td><td></td>';
                             }
-                            if(isset($morning_classes[$i]->comment) && trim($morning_classes[$i]->comment) != '')
+                            
+                            if(isset($morning_classes[$i]->parallel_support_students) && trim($morning_classes[$i]->parallel_support_students) != '' && $morning_classes[$i]->parallel_support_students > 0) {
+                                $parallel_text .= '<strong>'.['Α','Β','Γ','Δ','Ε','ΣΤ'][$i].':</strong> '.$morning_classes[$i]->parallel_support_students.'<br>';
+                            }
+
+                            if(isset($morning_classes[$i]->comment) && trim($morning_classes[$i]->comment) != '') {
                                 $comments_text .= '<strong>'.['Α','Β','Γ','Δ','Ε','ΣΤ'][$i].':</strong> '.$morning_classes[$i]->comment.'<br>';
+                            }
                         }
                     @endphp
 
-                    {{-- 17: Παρατηρήσεις Πρωινού --}}
+                    {{-- Τμήμα Ένταξης --}}
+                    <td>{{ $plan->integration_class_students ?? '—' }}</td>
+                    
+                    {{-- Παράλληλη Στήριξη --}}
+                    <td class="text-start">{!! $parallel_text ?: '—' !!}</td>
+
+                    {{-- Παρατηρήσεις Πρωινού --}}
                     <td class="text-start">{!! $comments_text ?: '—' !!}</td>
-                    {{-- 18-19: Πρωινή Ζώνη --}}
+
                     @php
                         $morning = json_decode($plan->morning_zone_classes ?? '[]');
                     @endphp
                     <td>{{ $morning[0]->nr_of_students ?? '' }}</td>
                     <td>{{ $morning[0]->nr_of_sections ?? '' }}</td>
 
-                    {{-- 20-25: Ολοήμερο Ζ1, Ζ2, Ζ3 --}}
                     @php
                         $allday = json_decode($plan->all_day_school_classes ?? '[]');
                     @endphp
@@ -101,12 +112,10 @@
                         <td>{{ $allday[$i]->nr_of_sections ?? '' }}</td>
                     @endfor
                 </tr> 
-            {{-- @endif   --}}
             @endforeach
         </tbody>
     </table>
     </div>
-
 
     <div class="my-3"><div class="h5">Σχολεία που δεν έχουν υποβάλλει</div>
     <div class="table-responsive">

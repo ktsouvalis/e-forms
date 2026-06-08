@@ -16,9 +16,8 @@
     @endpush
     @php
         $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
-    
         $schools_not_having_planning = App\Models\School::whereDoesntHave('enrollments.enrollmentClasses')->get();
-    $schoolCount = 0;
+        $schoolCount = 0;
     @endphp
     
     <div class="table-responsive">
@@ -30,6 +29,8 @@
                 <th id="search">Λειτουργικότητα</th>
                 <th id="">Νέα Λειτουργικότητα</th>
                 <th id="">Τμήματα</th>
+                <th>Μαθ. Τμ. Ένταξης</th>
+                <th>Παράλληλη Στήριξη</th>
                 <th id="">Τμήματα Πρωινής ζώνης</th>
                 <th id="">Ολοήμερο Ζ1</th>
                 <th id="">Ολοήμερο Ζ2</th>
@@ -51,27 +52,33 @@
                     <td>{{ $plan->enrollment->school->leitourgikotita }}</td>
                     @php
                         $morning_classes_string = '';
+                        $parallel_text = '';
                         $morning_classes_json = $plan->morning_classes;
                         $total_sections_number = 0;
+
                         if($morning_classes_json){
                             $morning_classes = json_decode($morning_classes_json);
                             if($plan->enrollment->school->leitourgikotita >= 6){
-                                
-                                $morning_classes_string = 'A:'.$morning_classes[0]->nr_of_students.' <strong>'.$morning_classes[0]->nr_of_sections.'</strong> '.optional($morning_classes[0])->comment.'<br>';
-                                $morning_classes_string .= 'B:'.$morning_classes[1]->nr_of_students.' <strong>'.$morning_classes[1]->nr_of_sections.'</strong> '.optional($morning_classes[1])->comment.'<br>';
-                                $morning_classes_string .= 'Γ:'.$morning_classes[2]->nr_of_students.' <strong>'.$morning_classes[2]->nr_of_sections.'</strong> '.optional($morning_classes[2])->comment.'<br>';
-                                $morning_classes_string .= 'Δ:'.$morning_classes[3]->nr_of_students.' <strong>'.$morning_classes[3]->nr_of_sections.'</strong> '.optional($morning_classes[3])->comment.'<br>';
-                                $morning_classes_string .= 'Ε:'.$morning_classes[4]->nr_of_students.' <strong>'.$morning_classes[4]->nr_of_sections.'</strong> '.optional($morning_classes[4])->comment.'<br>';
-                                $morning_classes_string .= 'ΣΤ:'.$morning_classes[5]->nr_of_students.' <strong>'.$morning_classes[5]->nr_of_sections.'</strong> '.optional($morning_classes[5])->comment.'<br>';
-                                $total_sections_number = $morning_classes[0]->nr_of_sections + $morning_classes[1]->nr_of_sections + $morning_classes[2]->nr_of_sections + $morning_classes[3]->nr_of_sections + $morning_classes[4]->nr_of_sections + $morning_classes[5]->nr_of_sections;
+                                $labels = ['A', 'B', 'Γ', 'Δ', 'Ε', 'ΣΤ'];
+                                for($i = 0; $i < 6; $i++) {
+                                    $morning_classes_string .= $labels[$i].':'.$morning_classes[$i]->nr_of_students.' <strong>'.$morning_classes[$i]->nr_of_sections.'</strong> '.optional($morning_classes[$i])->comment.'<br>';
+                                    $total_sections_number += $morning_classes[$i]->nr_of_sections;
+
+                                    if(isset($morning_classes[$i]->parallel_support_students) && trim($morning_classes[$i]->parallel_support_students) != '' && $morning_classes[$i]->parallel_support_students > 0) {
+                                        $parallel_text .= '<strong>'.$labels[$i].':</strong> '.$morning_classes[$i]->parallel_support_students.'<br>';
+                                    }
+                                }
                             }
                             else{
-                                for($i=0; $i<count($morning_classes)-1; $i++){
+                                for($i=0; $i<count($morning_classes); $i++){
                                     if(isset($morning_classes[$i]->nr_of_students)){
+                                        $morning_classes_string .= 'Τμ.'.($i+1).': '.$morning_classes[$i]->nr_of_students.' <strong>'.$morning_classes[$i]->nr_of_sections.'</strong> '.optional($morning_classes[$i])->comment.'<br>';
+                                        $total_sections_number += $morning_classes[$i]->nr_of_sections;
 
-                                    $morning_classes_string .= 'Τμ.'.($i+1).': '.$morning_classes[$i]->nr_of_students.' <strong>'.$morning_classes[$i]->nr_of_sections.'</strong> '.optional($morning_classes[$i])->comment.'<br>';
-                                    $total_sections_number += $morning_classes[$i]->nr_of_sections;
-                                }
+                                        if(isset($morning_classes[$i]->parallel_support_students) && trim($morning_classes[$i]->parallel_support_students) != '' && $morning_classes[$i]->parallel_support_students > 0) {
+                                            $parallel_text .= '<strong>Τμ.'.($i+1).':</strong> '.$morning_classes[$i]->parallel_support_students.'<br>';
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -81,7 +88,15 @@
                     @endphp
                     <td>{{ $total_sections_number }}</td>
                     <td>{!! $morning_classes_string !!}</td>
+                    
+                    {{-- Τμήμα Ένταξης --}}
+                    <td>{{ $plan->integration_class_students ?? '—' }}</td>
+
+                    {{-- Παράλληλη Στήριξη --}}
+                    <td class="text-start">{!! $parallel_text ?: '—' !!}</td>
+
                     @php
+                        $morning_zone_classes_string = '';
                         $morning_zone_classes_json = $plan->morning_zone_classes;
                         if($morning_zone_classes_json){
                             $morning_zone_classes = json_decode($morning_zone_classes_json);
@@ -129,7 +144,11 @@
                             }
                             else{
                                $all_day_school_classes = json_decode($all_day_school_classes_json);
-                                $all_day_school_classes_string_z3 = $all_day_school_classes[1]->nr_of_students.' <strong> '.$all_day_school_classes[1]->nr_of_sections.'</strong>';
+                                if(isset($all_day_school_classes[1])) {
+                                    $all_day_school_classes_string_z3 = $all_day_school_classes[1]->nr_of_students.' <strong> '.$all_day_school_classes[1]->nr_of_sections.'</strong>';
+                                } else {
+                                    $all_day_school_classes_string_z3 = '-';
+                                }
                             }
                         }
                         else{
@@ -144,10 +163,9 @@
     </table>
     </div>
 
-
     <h3>Σχολεία που δεν έχουν υποβάλλει:</h3>
     <div class="table-responsive">
-        <table>
+        <table class="table table-bordered">
             <tr>
                 <th>AA</th>
                 <th id="search">Σχολείο</th>

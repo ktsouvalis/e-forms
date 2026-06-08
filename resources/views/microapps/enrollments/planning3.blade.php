@@ -15,7 +15,6 @@
         <title>Αριθμητικά Στοιχεία Νηπιαγωγείων για Προγραμματισμό 2026-27</title>
     @endpush
     @php
-        // $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')->get();
         $plans = App\Models\microapps\EnrollmentsClasses::with('enrollment', 'enrollment.school')
             ->whereHas('enrollment.school', function ($query) {
                 $query->where('primary', 0);
@@ -43,6 +42,9 @@
                 <th>Τμ. 3</th>
                 <th>Μαθ. 4</th>
                 <th>Τμ. 4</th>
+                <th>Μαθ. Τμ. Ένταξης</th>
+                <th>Παράλληλη Στήριξη</th>
+                <th>Παρατηρήσεις Πρωινού</th>
                 <th id="">Μαθητές Πρωινής Ζώνης</th>
                 <th id="">Τμήματα Πρωινής ζώνης</th>
                 <th id="">Μαθητές Ολοήμερου Ζ1</th>
@@ -53,15 +55,16 @@
         </thead>
         <tbody>
             @foreach ($plans as $plan)
-            {{-- @if(!$plan->enrollment->school->primary) --}}
                 <tr>
                     <td>{{ $plan->enrollment->school->code }} </td>
                     <td>{{ $plan->enrollment->school->name }} </td>
                     <td>{{ $plan->enrollment->school->organikotita }}</td>
                     <td>{{ $plan->enrollment->school->leitourgikotita }}</td>
                     @php
-                        $morning_classes_string = '';
+                        $comments_text = '';
+                        $parallel_text = '';
                         $morning_classes_json = $plan->morning_classes;
+                        
                         if($morning_classes_json){
                             $morning_classes = json_decode($morning_classes_json);
                             for($i=0; $i<4; $i++){
@@ -70,12 +73,29 @@
                                 } else {
                                     echo '<td></td><td></td>';
                                 }  
+                                
+                                if(isset($morning_classes[$i]->parallel_support_students) && trim($morning_classes[$i]->parallel_support_students) != '' && $morning_classes[$i]->parallel_support_students > 0) {
+                                    $parallel_text .= '<strong>Τμ. '.($i+1).':</strong> '.$morning_classes[$i]->parallel_support_students.'<br>';
+                                }
+
+                                if(isset($morning_classes[$i]->comment) && trim($morning_classes[$i]->comment) != ''){
+                                    $comments_text .= '<strong>Τμ. '.($i+1).':</strong> '.$morning_classes[$i]->comment.'<br>';
+                                }
                             }
                         } 
                         else {
-                            echo '<td ></td><td ></td><td ></td><td ></td><td ></td><td ></td><td ></td><td ></td>';
+                            echo '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
                         }
                     @endphp
+                    
+                    {{-- Τμήμα Ένταξης --}}
+                    <td>{{ $plan->integration_class_students ?? '—' }}</td>
+
+                    {{-- Παράλληλη Στήριξη --}}
+                    <td class="text-start">{!! $parallel_text ?: '—' !!}</td>
+
+                    {{-- Παρατηρήσεις Πρωινού --}}
+                    <td class="text-start">{!! $comments_text ?: '—' !!}</td>
                     
                     @php
                         $morning_zone_classes_json = $plan->morning_zone_classes;
@@ -86,6 +106,7 @@
                             echo '<td></td><td></td>';
                         }
                     @endphp
+
                     {{-- Ολοήμερο --}}
                     @php
                     $all_day_school_classes_json = $plan->all_day_school_classes;
@@ -100,16 +121,14 @@
                         }
                     }
                     else{
-                        echo '<td ></td><td ></td><td ></td><td ></td>';
+                        echo '<td></td><td></td><td></td><td></td>';
                     }
                     @endphp
                 </tr> 
-            {{-- @endif   --}}
             @endforeach
         </tbody>
     </table>
     </div>
-
 
     <div class="my-3"><div class="h5">Σχολεία που δεν έχουν υποβάλλει</div>
     <div class="table-responsive">

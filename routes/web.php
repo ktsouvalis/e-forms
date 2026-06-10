@@ -588,6 +588,8 @@ Route::group(['prefix' => 'fileshares'], function(){
     Route::post('/inform_my_teachers/{fileshare}', [FileshareController::class, 'school_informs_teachers']);
 
     Route::post('/allow_schools/{fileshare}', [FileshareController::class, 'allow_schools']);
+
+    Route::post('/batch_upload/{fileshare}', [FileshareController::class, 'batch_upload'])->middleware('can:view,fileshare');
 });
 
 // WHOCAN Routes

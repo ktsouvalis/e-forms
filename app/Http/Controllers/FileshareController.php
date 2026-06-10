@@ -448,4 +448,61 @@ class FileshareController extends Controller
         Log::channel('user_memorable_actions')->info(Auth::user()." updated fileshare $fileshare->id comment");
         return back()->with('success', 'Το σχόλιο αποθηκεύτηκε');
     }
+
+    /**
+     * Accept a batch of files (up to BATCH_SIZE at a time) for a fileshare.
+     * Called repeatedly by the JS uploader until all files are sent.
+     *
+     * POST /fileshares/batch_upload/{fileshare}
+     *
+     * Request params:
+     *   file_type  – "common" | "personal"
+     *   files[]    – the batch of files
+     *
+     * Response JSON:
+     *   { uploaded: int, errors: string[] }   HTTP 200
+     *   { message: string }                   HTTP 422 / 500
+     */
+    public function batch_upload(Request $request, Fileshare $fileshare)
+    {
+        $this->authorize('view', $fileshare);
+    
+        $request->validate([
+            'file_type' => 'required|in:common,personal',
+            'files'     => 'required|array|min:1',   // hard cap per batch
+            'files.*'   => 'required|file|max:102400',       // 100 MB per file
+        ]);
+    
+        $type      = $request->input('file_type');
+        $directory = $type === 'personal'
+            ? 'fileshare' . $fileshare->id . '/personal_files'
+            : 'fileshare' . $fileshare->id;
+    
+        $fileHandler = new FilesController();
+        $uploaded    = 0;
+        $errors      = [];
+    
+        foreach ($request->file('files') as $file) {
+            $filename = $file->getClientOriginalName();
+            $result   = $fileHandler->upload_file($directory, $file, 'local');
+    
+            if ($result->getStatusCode() === 500) {
+                $errors[] = "Αποτυχία: $filename";
+                Log::channel('files')->error(
+                    Auth::user()->username . " batch_upload failed: $filename (fileshare {$fileshare->id})"
+                );
+            } else {
+                $uploaded++;
+                Log::channel('files')->info(
+                    Auth::user()->username . " batch_upload ok: $filename (fileshare {$fileshare->id}, type=$type)"
+                );
+            }
+        }
+    
+        return response()->json([
+            'uploaded' => $uploaded,
+            'errors'   => $errors,
+        ]);
+    }
+
 }

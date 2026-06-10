@@ -127,21 +127,62 @@
                         <span class="input-group-text w-25" id="basic-addon2">Τίτλος</span>
                         <input name="name" type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon2" required value="{{$fileshare->name}}"><br>
                     </div>
-                    <div class="input-group">
-    <span class="input-group-text w-25" id="basic-addon2">Κοινά αρχεία</span>
-    <input name="fileshare_common_files[]" type="file" class="form-control" multiple>
-    <div id="common-progress" class="progress mt-2 w-100">
-        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-    </div>
-</div>
+                    {{-- ── Common files ──────────────────────────────────────────────── --}}
+                    <div class="input-group flex-column mb-2">
+                        <div class="d-flex w-100">
+                            <span class="input-group-text w-25">Κοινά αρχεία</span>
+                            <label for="fileshare_common_files"
+                                class="form-control d-flex align-items-center gap-2"
+                                style="cursor:pointer; background:var(--bs-body-bg);"
+                                id="common-drop-zone">
+                                <i class="bi bi-cloud-upload"></i>
+                                <span id="common-file-label">Επιλογή ή σύρσιμο αρχείων (300+)</span>
+                            </label>
+                            <input id="fileshare_common_files"
+                                name="fileshare_common_files[]"
+                                type="file" multiple
+                                class="d-none"
+                                onchange="handleFileSelect(this, 'common')">
+                        </div>
+                        <div class="w-100 mt-1" id="common-progress-wrap" style="display:none!important">
+                            <div class="progress" style="height:8px;">
+                                <div id="common-progress-bar"
+                                    class="progress-bar progress-bar-striped progress-bar-animated"
+                                    role="progressbar" style="width:0%"></div>
+                            </div>
+                            <small id="common-progress-label" class="text-muted"></small>
+                        </div>
+                        <div id="common-result" class="mt-1"></div>
+                    </div>
 
-<div class="input-group">
-    <span class="input-group-text w-25" id="basic-addon2">Προσωπικά αρχεία</span>
-    <input name="fileshare_personal_files[]" type="file" class="form-control" multiple>
-    <div id="personal-progress" class="progress mt-2 w-100">
-        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-    </div>
-</div>
+                    {{-- ── Personal files ────────────────────────────────────────────── --}}
+                    <div class="input-group flex-column mb-2">
+                        <div class="d-flex w-100">
+                            <span class="input-group-text w-25">Προσωπικά αρχεία</span>
+                            <label for="fileshare_personal_files"
+                                class="form-control d-flex align-items-center gap-2"
+                                style="cursor:pointer; background:var(--bs-body-bg);"
+                                id="personal-drop-zone">
+                                <i class="bi bi-cloud-upload"></i>
+                                <span id="personal-file-label">Επιλογή ή σύρσιμο αρχείων (300+)</span>
+                            </label>
+                            <input id="fileshare_personal_files"
+                                name="fileshare_personal_files[]"
+                                type="file" multiple
+                                class="d-none"
+                                onchange="handleFileSelect(this, 'personal')">
+                        </div>
+                        <div class="w-100 mt-1" id="personal-progress-wrap" style="display:none!important">
+                            <div class="progress" style="height:8px;">
+                                <div id="personal-progress-bar"
+                                    class="progress-bar progress-bar-striped progress-bar-animated"
+                                    role="progressbar" style="width:0%"></div>
+                            </div>
+                            <small id="personal-progress-label" class="text-muted"></small>
+                        </div>
+                        <div id="personal-result" class="mt-1"></div>
+                    </div>
+
                     <div class="input-group">
                         <span class="w-25"></span>
                         <button type="submit" class="btn btn-primary bi bi-save m-2"> Αποθήκευση αλλαγών</button>
@@ -391,5 +432,150 @@
             </table>
         @endif
     </div>
+
+    {{-- ── Batch-upload script ───────────────────────────────────────── --}}
+    @push('scripts')
+    <script>
+    function buildBatches(files, maxBytes = 6 * 1024 * 1024) { // 6 MB cap, safely under 8 MB
+        const batches = [];
+        let current = [], currentSize = 0;
+        for (const f of files) {
+            if (current.length && currentSize + f.size > maxBytes) {
+                batches.push(current);
+                current = [];
+                currentSize = 0;
+            }
+            current.push(f);
+            currentSize += f.size;
+        }
+        if (current.length) batches.push(current);
+        return batches;
+    }
+    const UPLOAD_URL    = '{{ url("/fileshares/batch_upload/$fileshare->id") }}';
+    const CSRF_TOKEN    = '{{ csrf_token() }}';
+    
+    /* Drag-and-drop wiring */
+    ['common','personal'].forEach(type => {
+        const zone = document.getElementById(type + '-drop-zone');
+        zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('border-primary'); });
+        zone.addEventListener('dragleave', ()  => zone.classList.remove('border-primary'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('border-primary');
+            const input = document.getElementById('fileshare_' + type + '_files');
+            /* DataTransfer → FileList shim */
+            const dt = e.dataTransfer;
+            input._files = Array.from(dt.files);
+            handleFileSelect(input, type);
+        });
+    });
+    
+    function handleFileSelect(input, type) {
+        const files = input._files || Array.from(input.files);
+        if (!files.length) return;
+    
+        const label  = document.getElementById(type + '-file-label');
+        label.textContent = files.length + ' αρχεία επιλέχθηκαν – κάντε κλικ στο Αποθήκευση για αποστολή';
+    
+        /* Store on the input element so the save button can access them */
+        input._pendingFiles = files;
+        input._type = type;
+    }
+    
+    /* Called by the save button – see the modified form below */
+    async function uploadPendingFiles(type) {
+        const input  = document.getElementById('fileshare_' + type + '_files');
+        const files  = input._pendingFiles;
+        if (!files || !files.length) return { ok: true, skipped: true };
+    
+        const batchList = buildBatches(files);   // array of arrays
+        const batches   = batchList.length;
+        const wrap     = document.getElementById(type + '-progress-wrap');
+        const bar      = document.getElementById(type + '-progress-bar');
+        const lbl      = document.getElementById(type + '-progress-label');
+        const resultEl = document.getElementById(type + '-result');
+    
+        wrap.style.display = '';   /* override the !important hide */
+        wrap.removeAttribute('style');
+        wrap.style.display = 'block';
+    
+        let uploaded = 0, errors = [];
+    
+        for (let b = 0; b < batches; b++) {
+            const batch = batchList[b];
+            const fd    = new FormData();
+            fd.append('_token', CSRF_TOKEN);
+            fd.append('file_type', type);
+            batch.forEach(f => fd.append('files[]', f));
+    
+            lbl.textContent = `Τα αρχεία χωρίζονται σε ομάδες και ανεβαίνουν τμηματικά. Ομάδα ${b + 1} / ${batches}  ( Συνολικά: ${uploaded} / ${files.length} αρχεία)`;
+            bar.style.width = Math.round((b / batches) * 100) + '%';
+    
+            try {
+                const resp = await fetch(UPLOAD_URL, { method: 'POST', body: fd });
+                const data = await resp.json();
+    
+                if (!resp.ok) {
+                    errors.push(`Batch ${b + 1}: ${data.message || 'Άγνωστο σφάλμα'}`);
+                } else {
+                    uploaded += data.uploaded ?? batch.length;
+                    if (data.errors && data.errors.length) {
+                        errors.push(...data.errors);
+                    }
+                }
+            } catch (err) {
+                errors.push(`Batch ${b + 1}: δικτυακό σφάλμα`);
+            }
+        }
+    
+        bar.style.width = '100%';
+        bar.classList.remove('progress-bar-animated', 'progress-bar-striped');
+        bar.classList.add(errors.length ? 'bg-warning' : 'bg-success');
+        lbl.textContent = `Ολοκληρώθηκε: ${uploaded} / ${files.length} αρχεία`;
+    
+        if (errors.length) {
+            resultEl.innerHTML =
+                `<div class="alert alert-warning py-1 mt-1" style="font-size:.85rem">` +
+                errors.map(e => `<div>${e}</div>`).join('') +
+                `</div>`;
+        }
+    
+        return { ok: errors.length === 0, uploaded, errors };
+    }
+    
+    /* Intercept the main form submit to run file uploads first */
+    document.addEventListener('DOMContentLoaded', () => {
+        const mainForm = document.querySelector('form[action*="fileshares/"][method="post"]');
+        if (!mainForm) return;
+    
+        mainForm.addEventListener('submit', async function (e) {
+            const commonPending  = document.getElementById('fileshare_common_files')._pendingFiles?.length   > 0;
+            const personalPending= document.getElementById('fileshare_personal_files')._pendingFiles?.length > 0;
+    
+            if (!commonPending && !personalPending) return; /* let the form submit normally */
+    
+            e.preventDefault();
+    
+            /* Disable submit button while uploading */
+            const btn = mainForm.querySelector('[type=submit]');
+            const origText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Αποστολή αρχείων...';
+    
+            await uploadPendingFiles('common');
+            await uploadPendingFiles('personal');
+    
+            btn.disabled = false;
+            btn.innerHTML = origText;
+    
+            /* Now submit the rest of the form (name change etc.) without files */
+            document.getElementById('fileshare_common_files').value   = '';
+            document.getElementById('fileshare_personal_files').value = '';
+            mainForm.submit();
+        });
+    });
+    </script>
+    @endpush
+
        
 </x-layout>

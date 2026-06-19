@@ -435,7 +435,6 @@ class SecondmentController extends Controller
                     'name'     => 'Files',
                     'contents' => fopen(storage_path("app/secondments/$serverFileName"), 'r'),
                 ];
-                fclose(storage_path("app/secondments/$serverFileName"));
             }
         }
                                 
@@ -466,10 +465,7 @@ class SecondmentController extends Controller
         // print_r(json_encode($data));
         // dd($data);
         // dd("test");
-        $client = new Client([
-            'timeout' => 120,        // total request timeout in seconds
-            'connect_timeout' => 10,
-        ]);
+        $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [
                 'X-API-Key' => env('API_KEY'),

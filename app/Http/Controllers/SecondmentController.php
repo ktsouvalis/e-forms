@@ -497,11 +497,8 @@ class SecondmentController extends Controller
             ]);
         } catch(\Exception $e) {
             dd(
-                get_class($e),
-                $e->getMessage(),
-                $e->getFile(),
-                $e->getLine(),
-                $e->getTraceAsString()
+                $e->getResponse()->getStatusCode(),
+                $e->getResponse()->getBody()->getContents()
             );
         }
         

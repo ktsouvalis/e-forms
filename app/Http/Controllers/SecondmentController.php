@@ -169,6 +169,8 @@ class SecondmentController extends Controller
             $criteriaOrPreferences = 1;
         }
         if($criteriaOrPreferences == 1){
+            $canEdit = $microapp->accepts || in_array($secondment->teacher->am, $this->allowedAMs);
+            // dd($canEdit);
             return view('microapps.secondments.edit_criteria', 
                 ['secondment' => $secondment,
                  'canEdit' => $microapp->accepts || in_array($secondment->teacher->am, $this->allowedAMs),

@@ -125,6 +125,7 @@
     @endif
     <h2 class="text-center">Αίτηση Απόσπασης εντός ΠΥΣΠΕ Αχαΐας</h2>
     <h5 class="text-center"> Βήμα 1 - Δήλωση Μοριοδοτούμενων Κριτηρίων</h5>
+    
     @include('microapps.secondments.inc_personal_data')
     {{-- Μοριοδοτούμενα Κριτήρια - Α Τμήμα Αίτησης --}}
     <div class="modal" tabindex="-1" id="uploadModal"> {{-- Modal START --}}
@@ -132,7 +133,6 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Υποβολή Δικαιολογητικών</h5>
-              
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Κλείσιμο"></button>
             </div>
             <div class="modal-body">
@@ -265,7 +265,7 @@
                                 <div class="input-group mb-2">
                                     <div class="px-2 input-group-text">Δήμος Οικογενειακής Μερίδας:</div>
                                     <select name="civil_status_municipality" id="civil_status_municipality" class="form-select"
-                                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                         <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                         @foreach($municipalities as $municipality)
                                             <option value="{{$municipality->id}}" @if($secondment->civil_status_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -283,7 +283,7 @@
                                 <div class="input-group mb-2">
                                     <div class="px-2 input-group-text">Δήμος Εντοπιότητας:</div>
                                     <select name="living_municipality" id="living_municipality" class="form-select"
-                                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                         <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                         @foreach($municipalities as $municipality)
                                             <option value="{{$municipality->id}}" @if($secondment->living_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -299,7 +299,7 @@
                                 <div class="input-group mb-2">
                                     <div class="px-2 input-group-text">Δήμος Συνυπηρέτησης:</div>
                                         <select name="partner_working_municipality" id="partner_working_municipality" class="form-select"
-                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                             <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                             @foreach($municipalities as $municipality)
                                                 <option value="{{$municipality->id}}" @if($secondment->partner_working_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -321,7 +321,7 @@
                         <div class="form-group">
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Λόγοι Υγείας ιδίου, συζύγου ή τέκνων:</div>
-                                <select name="health_issues" id="health_issues" class="form-select" @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                <select name="health_issues" id="health_issues" class="form-select" @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                     <option value="0" @if($secondment->health_issues == 0) selected @endif></option>
                                     <option value="1" @if($secondment->health_issues == 1) selected @endif>Αναπηρία 50% - 66%</option>
                                     <option value="2" @if($secondment->health_issues == 2) selected @endif>Αναπηρία 67% - 79%</option>
@@ -337,7 +337,7 @@
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Λόγοι Υγείας γονέων:</div>
                                 <select name="parents_health_issues" id="parents_health_issues" class="form-select" 
-                                @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                     <option value="0" @if($secondment->parents_health_issues == 0) selected @endif></option>
                                     <option value="1" @if($secondment->parents_health_issues == 1) selected @endif>Αναπηρία 50% - 67%</option>
                                     <option value="2" @if($secondment->parents_health_issues == 2) selected @endif>Αναπηρία >67%</option>
@@ -350,7 +350,7 @@
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Δήμος Γονέων:</div>
                                     <select name="parents_municipality" id="parents_municipality" class="form-select" 
-                                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                         <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                         @foreach($municipalities as $municipality)
                                             <option value="{{$municipality->id}}" @if($secondment->parents_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -366,7 +366,7 @@
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Λόγοι Υγείας αδελφών <span class="text-muted">(με απόφαση επιμέλειας)</span>:</div>
                                 <select name="siblings_health_issues" id="siblings_health_issues" class="form-select" 
-                                @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                     <option value="0" @if($secondment->siblings_health_issues == 0) selected @endif></option>
                                     <option value="1" @if($secondment->siblings_health_issues == 1) selected @endif>Αναπηρία >67%</option>
                                 </select>
@@ -378,7 +378,7 @@
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Δήμος Αδελφών:</div>
                                 <select name="siblings_municipality" id="siblings_municipality" class="form-select"
-                                @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                     <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                     @foreach($municipalities as $municipality)
                                         <option value="{{$municipality->id}}" @if($secondment->siblings_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -394,7 +394,7 @@
                                     <div class="form-check form-switch">
                                         <input type="hidden" name="IVF" value="0">
                                         <input class="form-check-input" type="checkbox" name="IVF" value="1" id="IVF_checked" @if($secondment->IVF==1) checked @endif
-                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                         <label class="form-check-label" for="IVF">Θεραπεία για εξωσωματική γονιμοποίηση</label>
                                     </div>
                                 </div>
@@ -417,7 +417,7 @@
                                         <input type="hidden" name="post_graduate_studies" value="0">
                                         <input class="form-check-input" type="checkbox" name="post_graduate_studies" value="1" id="post_graduate_studies_checked" 
                                         @if($secondment->post_graduate_studies==1) checked @endif
-                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                         <label class="form-check-label" for="post_graduate_studies">Φοίτηση σε Μεταπτυχιακό Πρόγραμμα ή άλλο Τίτλο ΑΕΙ (τα προγράμματα του ΕΑΠ δεν μοριοδοτούνται)</label>
                                     </div>
                                 </div>
@@ -429,7 +429,7 @@
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Δήμος Σπουδών:</div>
                                 <select name="studies_municipality" id="studies_municipality" class="form-select"
-                                @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                     <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                     @foreach($municipalities as $municipality)
                                         <option value="{{$municipality->id}}" @if($secondment->studies_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -448,18 +448,18 @@
                     <div class="input-group mb-2">
                         <div class="px-2 input-group-text">Σχόλιο-Επισήμανση-Παρατήρηση:</div>
                         <textarea class="form-control" name="comments" id="comments" rows="4" 
-                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >{{$secondment->comments}}</textarea>
+                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >{{$secondment->comments}}</textarea>
                     </div>
                 </div>
                 <div class="text-center">
                     <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square"
-                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif > Αποθήκευση</button>
+                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif > Αποθήκευση</button>
                     {{-- Το κουμπί Οριστική Υποβολή ενεργοποιεί javascript στο αρχείο spinner.js που ζηταει confirmation --}}
                     <button type="submit" id="criteriaFinalSubmit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill"
-                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif data-export> Οριστική Υποβολή</button>
+                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif data-export> Οριστική Υποβολή</button>
                     {{-- Αν ο χρήστης πατήσει ΟΚ η υποβολή γίνεται με javascript με click() στο hiddenButton --}}
                     <button type="submit" name="action" id="hiddenButton" value="submit" style="display: none;">
-                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif data-export></button>
+                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif data-export></button>
                 </div>
             </form>
             @if($secondment->criteria_submitted == 1)
@@ -509,9 +509,9 @@
                     <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" method="post" class="container-fluid" enctype="multipart/form-data">
                         @csrf
                         <div class="text-center">
-                            <input  type="file" id="files" name="files[]" multiple required @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || ($microapp->accepts == 0 && $secondment->extra_files_allowed == 0)) disabled @endif>
+                            <input  type="file" id="files" name="files[]" multiple required @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || (!$canEdit && $secondment->extra_files_allowed == 0)) disabled @endif>
                             <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
-                            @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || ($microapp->accepts == 0 && $secondment->extra_files_allowed == 0)) disabled @endif >
+                            @if(($secondment->criteria_submitted == 1 && $secondment->extra_files_allowed == 0) || (!$canEdit && $secondment->extra_files_allowed == 0)) disabled @endif >
                         </div>
                     </form>
                   
@@ -534,7 +534,7 @@
                                 </form>
                                 <form action="{{route('secondments.delete_file', [ 'secondment' => $secondment, 'serverFileName' => $serverFileName ])}}" method="get">
                                     <input type="submit" class="btn btn-danger btn-block rounded-3" value="Διαγραφή" 
-                                    @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                    @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                 </form>
                             </div>
                             @php $count++; @endphp

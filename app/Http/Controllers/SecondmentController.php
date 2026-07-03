@@ -487,7 +487,7 @@ class SecondmentController extends Controller
         //print_r($data);
         // print_r(json_encode($data));
         
-        dd("Πραγματοποιήση δοκιμών για την επίλυση προβλήματος αποστολής στο Πρωτόκολλο. Δοκιμάστε πάλι μετά τις 13¨00");
+        
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [
@@ -495,7 +495,7 @@ class SecondmentController extends Controller
             ],
             'multipart' => $data,
         ]);
-        
+        dd("Πραγματοποιήση δοκιμών για την επίλυση προβλήματος αποστολής στο Πρωτόκολλο. Δοκιμάστε πάλι μετά τις 13¨00");
         // Get the response body
         $status = $response->getStatusCode();
         $body = $response->getBody();

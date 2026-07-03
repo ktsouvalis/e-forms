@@ -145,7 +145,8 @@ class SecondmentController extends Controller
     {
         $teacher = Auth::guard('teacher')->user();
         $microapp = DB::table('microapps')->where('url', '/secondments')->first();
-        $canCreate = $microapp->accepts && in_array($teacher->am, $this->allowedAMs);
+        $canCreate = $microapp->accepts || in_array($teacher->am, $this->allowedAMs);
+        // dd(in_array($teacher->am, $this->allowedAMs));
         if($teacher->secondment()){
             $secondment = $teacher->secondment();
             return redirect(route('secondments.edit', ['secondment' => $secondment->id, 'criteriaOrPreferences' => 1]));
@@ -170,7 +171,7 @@ class SecondmentController extends Controller
         if($criteriaOrPreferences == 1){
             return view('microapps.secondments.edit_criteria', 
                 ['secondment' => $secondment,
-                 'canEdit' => $microapp->accepts && in_array($secondment->teacher->am, $this->allowedAMs),
+                 'canEdit' => $microapp->accepts || in_array($secondment->teacher->am, $this->allowedAMs),
                 ]);
         } else if ($criteriaOrPreferences == 2){
             if($secondment->criteria_submitted == 0){

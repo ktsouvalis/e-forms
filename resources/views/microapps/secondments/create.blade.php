@@ -2,9 +2,7 @@
     @php
         //check which teacher is logged in
         $teacher = Auth::guard('teacher')->user();
-        $microapp = App\Models\Microapp::where('url', '/secondments')->first();
-       // $accepts = $microapp->accepts; //fetch microapp 'accepts' field
-       // $outings = $school->outings;
+        
     @endphp
     @push('links')
         <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
@@ -21,7 +19,7 @@
         <title>Αποσπάσεις</title>
     @endpush
 <div class="container">
-    @if($microapp->accepts == 0)
+    @if(!$canCreate)
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -61,7 +59,7 @@
                     </div>
                 </div>  
                 <div class="text-center">
-                    <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2" @if($microapp->accepts == 0) disabled @endif>
+                    <input type="submit" value="Υποβολή" class="btn btn-info btn-block rounded-2 py-2" @if(!$canCreate) disabled @endif>
                 </div>
             </form>
             </div>

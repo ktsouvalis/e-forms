@@ -17,9 +17,10 @@ use App\Http\Controllers\FilesController;
 
 class SecondmentController extends Controller
 {
-    //
+    private array $allowedAMs;
     public function __construct()
     {
+        $this->allowedAMs = [736866, 723975, 736467, 748519, 714484, 745624, 731379, 715512, 611871, 748573, 718064, 731358, 725375, 725851, 732434, 736421, 725493, 611653, 724624, 614451, 574158, 594620, 728436, 606655, 732396, 724925, 719066, 736790, 588118, 723938, 735810, 602726, 725961, 741136, 728623, 700544, 620986, 572646, 714545, 737048, 608540, 595498, 723983, 725053, 714388, 203046, 587013, 619484, 606170, 716920, 219060, 602864, 598801, 727623, 732183, 740136, 715272, 724930, 724689, 700064, 725047, 613326, 601876, 719051, 719080, 728941, 724663, 741142, 714296, 731395, 719097, 731649, 620314, 713991, 724464, 575442, 618967, 725288, 743302, 619158, 577717, 590419, 735826, 736547, 622252, 600474, 608637, 727646, 736485, 622629, 622399, 604743, 726395, 718945, 621082, 608631, 737041, 743258, 736247, 741131, 717763, 727846, 743492, 727698, 708916, 728551, 740837, 588065, 743527, 741383, 736970, 620570, 582942];
         $this->middleware('auth')->only(['index', 'allow_extra_files']);
         $this->middleware('isTeacher')->only(['create','edit','modify','revoke', 'update', 'store', 'upload_files', 'delete_file', 'download_file']);
     }
@@ -142,15 +143,22 @@ class SecondmentController extends Controller
 
     public function create() 
     {
-        if(Auth::guard('teacher')->user()->secondment()){
-            $secondment = Auth::guard('teacher')->user()->secondment();
+        $teacher = Auth::guard('teacher')->user();
+        $microapp = DB::table('microapps')->where('url', '/secondments')->first();
+        $canCreate = $microapp->accepts && in_array($teacher->am, $this->allowedAMs);
+        if($teacher->secondment()){
+            $secondment = $teacher->secondment();
             return redirect(route('secondments.edit', ['secondment' => $secondment->id, 'criteriaOrPreferences' => 1]));
         }
         
-        return view('microapps.secondments.create');
+        return view('microapps.secondments.create', [
+            'microapp' => $microapp,
+            'canCreate' => $canCreate,
+        ]);
     }
     //Επεξεργασία αίτησης
     public function edit(Secondment $secondment, Request $request){
+        $microapp = DB::table('microapps')->where('url', '/secondments')->first();
         if(Auth::guard('teacher')->user()->id != $secondment->teacher_id){
             return back()->with('failure', 'Δεν έχετε δικαίωμα επεξεργασίας αυτής της αίτησης.');
         }
@@ -160,7 +168,10 @@ class SecondmentController extends Controller
             $criteriaOrPreferences = 1;
         }
         if($criteriaOrPreferences == 1){
-            return view('microapps.secondments.edit_criteria', ['secondment' => $secondment]);
+            return view('microapps.secondments.edit_criteria', 
+                ['secondment' => $secondment,
+                 'canEdit' => $microapp->accepts && in_array($secondment->teacher->am, $this->allowedAMs),
+                ]);
         } else if ($criteriaOrPreferences == 2){
             if($secondment->criteria_submitted == 0){
                 return back()->with('failure', 'Πρέπει πρώτα να οριστικοποιήσετε τα μοριοδοτούμενα κριτήρια πριν προχωρήσετε στις προτιμήσεις.');
@@ -168,12 +179,21 @@ class SecondmentController extends Controller
             if(!in_array($secondment->teacher->klados, ["ΠΕ70", "ΠΕ60", "ΠΕ71", "ΠΕ70.50", "ΠΕ60.50"])){
                 return back()->with('failure', 'Η δήλωση Σχολείων για Εκπαιδευτικούς ειδικοτήτων θα πραγματοποιηθεί μετά την ανακοίνωση των Σχολείων.');
             }
-            return view('microapps.secondments.edit_preferences', ['secondment' => $secondment]);
+            
+            return view('microapps.secondments.edit_preferences', 
+            ['secondment' => $secondment,
+             'canEdit' => $microapp->accepts && in_array($secondment->teacher->am, $this->allowedAMs),
+            ]);
         }
     }
     //Δημιουργία πρώτης αίτησης
     public function store(Request $request)
     {
+        $teacher = Auth::guard('teacher')->user();
+
+        if (!in_array($teacher->am, $this->allowedAMs)) {
+            return back()->with('failure', 'Δεν έχετε δικαίωμα δημιουργίας αίτησης.');
+        }
         //Αν έχει επιλέξει την υπεύθυνη δήλωση Δημιούργησε την αίτηση
         if(!isset($request->statement_of_declaration))
         {

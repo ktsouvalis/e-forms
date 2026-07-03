@@ -118,7 +118,7 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
-                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                        @if($secondment->submitted == 1 || !$canEdit) disabled @endif >
             </form>
             </div>
           </div>
@@ -190,16 +190,16 @@
                         @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif >{{$secondment->preferences_comments}}</textarea>
                     </div>
                 </div>
-                @if($secondment->submitted == 0 && $microapp->accepts == 1)
+                @if($secondment->submitted == 0 && $canEdit)
                     <div class="text-center">
                         <button type="submit" name="action" value="update" class="btn btn-primary m-2 bi bi-pencil-square" onclick="getSelectedInOrder();"> Αποθήκευση</button>
                         <button type="submit" name="action" value="preview" class="btn btn-primary m-2 bi bi-eye-fill" onclick="getSelectedInOrder();" target="_blank"> Προεπισκόπηση</button>
                         {{-- Το κουμπί Οριστική Υποβολή ενεργοποιεί javascript στο αρχείο spinner.js που ζηταει confirmation --}}
                         <button type="submit" id="preferencesFinalSubmit" class="btn btn-danger m-2 bi bi-file-earmark-lock-fill"
-                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif data-export onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
+                        @if($secondment->submitted == 1 || !$canEdit) disabled @endif data-export onclick="getSelectedInOrder();"> Οριστική Υποβολή</button>
                         {{-- Αν ο χρήστης πατήσει ΟΚ η υποβολή γίνεται με javascript με click() στο hiddenButton --}}
                         <button type="submit" name="action" id="hiddenButton" value="submit" style="display: none;"
-                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif data-export onclick="getSelectedInOrder();"></button>
+                        @if($secondment->submitted == 1 || !$canEdit) disabled @endif data-export onclick="getSelectedInOrder();"></button>
                     </div>
                 </form>
                 @else
@@ -229,7 +229,7 @@
                             
                                     <form action="{{route('secondments.modify', ['secondment'=>$secondment])}}" method="post">
                                     @csrf
-                                        <button class="btn btn-info bi bi-arrow-counterclockwise" title="modify" @if($microapp->accepts == 0) disabled @endif >Τροποποίηση</button>
+                                        <button class="btn btn-info bi bi-arrow-counterclockwise" title="modify" @if(!$canEdit) disabled @endif >Τροποποίηση</button>
                                     </form>
                                     {{-- <a href="{{route('secondments.revoke', ['secondment'=>$secondment])}}" class="btn btn-danger bi bi-arrow-counterclockwise" title="revoke">Ανάκληση</a> --}}
                                     Πατώντας τροποποίηση, η αίτηση θα ενεργοποιηθεί εκ νέου για Δήλωση Σχολείων.

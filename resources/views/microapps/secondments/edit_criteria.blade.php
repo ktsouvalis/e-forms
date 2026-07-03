@@ -110,7 +110,7 @@
         <title>Αποσπάσεις</title>
     @endpush
 <div class="container">
-    @if($microapp->accepts == 0)
+    @if(!$canEdit)
     
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
@@ -140,13 +140,13 @@
                 <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" id="uploadFilesModalForm" method="post" class="container-fluid" enctype="multipart/form-data" data-export>
                     @csrf
                     <div class="text-center">
-                        <input  type="file" id="files" name="files[]" multiple required @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                        <input  type="file" id="files" name="files[]" multiple required @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif>
                     </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
               <input type="submit" value="Ανέβασμα" class="btn btn-info btn-block rounded-2 py-2"
-                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
             </form>
             </div>
           </div>
@@ -180,7 +180,7 @@
                                         <input type="hidden" name="special_category" value="0">
                                         <input class="form-check-input" type="checkbox" name="special_category" value="1" id="special_category_checked" 
                                         @if($secondment->special_category==1) checked @endif
-                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif>
                                         <label class="form-check-label" for="special_category">Επιθυμώ να υπαχθώ σε ειδική κατηγορία αποσπάσεων</label>
                                     </div>
                                 </div>
@@ -203,7 +203,7 @@
                                         <input type="hidden" name="priority_secondment" value="0">
                                         <input class="form-check-input" type="checkbox" name="priority_secondment" value="1" id="priority_secondment" 
                                         @if($secondment->priority_municipality <> null) checked @endif
-                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif>
                                         <label class="form-check-label" for="special_category">Επιθυμώ να υπαχθώ σε απόσπαση κατά προτεραιότητα</label>
                                     </div>
                                 </div>
@@ -214,7 +214,7 @@
                                 <div class="input-group mb-2">
                                     <div class="px-2 input-group-text">Δήμος για κατα προτεραιότητα απόσπαση:</div>
                                         <select name="priority_municipality" id="priority_municipality" class="form-select"
-                                        @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                        @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                                             <option value="">Μοριοδοτούνται μόνο οι δήμοι της Δνσης Π.Ε. Αχαΐας</option>
                                                 @foreach($municipalities as $municipality)
                                                     <option value="{{$municipality->id}}" @if($secondment->priority_municipality == $municipality->id) selected @endif>{{$municipality->name}}</option>
@@ -238,7 +238,7 @@
                             <div class="input-group mb-2">
                                 <div class="px-2 input-group-text">Οικογενειακή Κατάσταση:</div>
                                 <select name="marital_status" id="marital_status" class="form-select" 
-                                @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                                @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif>
                                     <option value="0" @if($secondment->marital_status == 0) selected @endif >Δηλώστε μόνο σε περίπτωση που ζητάτε να μοριοδοτηθείτε</option>
                                     <option value="1" @if($secondment->marital_status == 1) selected @endif >Άγαμος</option>
                                     <option value="2" @if($secondment->marital_status == 2) selected @endif >Έγγαμος - Σύμφωνο συμβίωσης</option>
@@ -254,7 +254,7 @@
                         <div class="input-group mb-2">
                             <div class="px-2 form-label input-group-text">Αριθμός τέκνων ( αφορά ανήλικα ή σπουδάζοντα τέκνα):</div>
                                 <input type="number" min="0" max="11" name="nr_of_children" id="nr_of_children" value="{{ $secondment->nr_of_children }}"
-                                @if($secondment->criteria_submitted == 1 || $microapp->accepts == 0) disabled @endif >
+                                @if($secondment->criteria_submitted == 1 || !$canEdit) disabled @endif >
                             </div>
                         </div>
                     </div>

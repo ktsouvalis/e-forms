@@ -429,8 +429,9 @@ class SecondmentController extends Controller
             $organicDirectorateCode = '9906101';
             $organicSchoolCode = $secondment->teacher->organiki->code;
         } else {
-            $organicDirectorateCode = '9906101';
+            
             $organicDirectorateCode = $secondment->teacher->organiki->code;
+            $organicDirectorateCode = '9906101';
             $organicSchoolCode = '';
         }
         $data = [
@@ -486,7 +487,7 @@ class SecondmentController extends Controller
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
         
-        dd($data);
+        // dd($data);
         
         try{
             $client = new Client();
@@ -503,7 +504,7 @@ class SecondmentController extends Controller
             );
         }
         
-        dd("Πραγματοποιήση δοκιμών για την επίλυση προβλήματος αποστολής στο Πρωτόκολλο. Δοκιμάστε πάλι μετά τις 13¨00");
+        // dd("Πραγματοποιήση δοκιμών για την επίλυση προβλήματος αποστολής στο Πρωτόκολλο. Δοκιμάστε πάλι μετά τις 13¨00");
         // Get the response body
         $status = $response->getStatusCode();
         $body = $response->getBody();

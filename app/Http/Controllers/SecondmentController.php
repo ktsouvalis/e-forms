@@ -487,14 +487,24 @@ class SecondmentController extends Controller
         //print_r($data);
         // print_r(json_encode($data));
         
+        try{
+            $client = new Client();
+            $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
+                'headers' => [
+                    'X-API-Key' => env('API_KEY'),
+                ],
+                'multipart' => $data,
+            ]);
+        } catch(\Exception $e) {
+            dd(
+                get_class($e),
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTraceAsString()
+            );
+        }
         
-        $client = new Client();
-        $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
-            'headers' => [
-                'X-API-Key' => env('API_KEY'),
-            ],
-            'multipart' => $data,
-        ]);
         dd("Πραγματοποιήση δοκιμών για την επίλυση προβλήματος αποστολής στο Πρωτόκολλο. Δοκιμάστε πάλι μετά τις 13¨00");
         // Get the response body
         $status = $response->getStatusCode();

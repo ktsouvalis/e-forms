@@ -182,10 +182,10 @@ class SecondmentController extends Controller
             if(!in_array($secondment->teacher->klados, ["ΠΕ70", "ΠΕ60", "ΠΕ71", "ΠΕ70.50", "ΠΕ60.50"])){
                 return back()->with('failure', 'Η δήλωση Σχολείων για Εκπαιδευτικούς ειδικοτήτων θα πραγματοποιηθεί μετά την ανακοίνωση των Σχολείων.');
             }
-            
+            $canEdit = $microapp->accepts || in_array($secondment->teacher->am, $this->allowedAMs);
             return view('microapps.secondments.edit_preferences', 
             ['secondment' => $secondment,
-             'canEdit' => $microapp->accepts && in_array($secondment->teacher->am, $this->allowedAMs),
+             'canEdit' => $canEdit,
             ]);
         }
     }

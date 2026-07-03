@@ -2,9 +2,7 @@
     @php
         $teacher = Auth::guard('teacher')->user(); //check which teacher is logged in
         $microapp = App\Models\Microapp::where('url', '/secondments')->first();
-        if($teacher->am == 725364){
-            $microapp->accepts = 1;
-        }
+   
        // $accepts = $microapp->accepts; //fetch microapp 'accepts' field    
        $organiki_school_code = $teacher->organiki->code;                                       
     @endphp
@@ -66,7 +64,7 @@
                     $('#schools-select').multiSelect('refresh');
                 }
                 //if secondment application is submitted, disable the school choices
-                var isSubmitted = {!! json_encode($secondment->submitted || $microapp->accepts == 0) !!};
+                var isSubmitted = {!! json_encode($secondment->submitted || $canEdit == 0) !!};
                 if (isSubmitted == 1) {
                     $('#schools-select option').prop('disabled', true);
                     $('#schools-select').multiSelect('refresh');
@@ -83,7 +81,7 @@
         <title>Αποσπάσεις</title>
     @endpush
 <div class="container">
-    @if($microapp->accepts == 0)
+    @if(!$canEdit)
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             Η υποβολή αιτήσεων δεν είναι ενεργή αυτή τη στιγμή.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -110,7 +108,7 @@
                 <form action="{{route('secondments.upload_files', ['secondment' => $secondment])}}" id="uploadFilesModalForm" method="post" class="container-fluid" enctype="multipart/form-data" data-export>
                     @csrf
                     <div class="text-center">
-                        <input  type="file" id="files" name="files[]" multiple required @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif>
+                        <input  type="file" id="files" name="files[]" multiple required @if($secondment->submitted == 1 || !$canEdit) disabled @endif>
                         
                     </div>
                 
@@ -187,7 +185,7 @@
                     <div class="input-group mb-2">
                         <div class="px-2 input-group-text">Επισήμανση για τα Σχολεία Προτίμησης:</div>
                         <textarea class="form-control" name="preferences_comments" id="preferences_comments" rows="4"
-                        @if($secondment->submitted == 1 || $microapp->accepts == 0) disabled @endif >{{$secondment->preferences_comments}}</textarea>
+                        @if($secondment->submitted == 1 || $canEdit == 0) disabled @endif >{{$secondment->preferences_comments}}</textarea>
                     </div>
                 </div>
                 @if($secondment->submitted == 0 && $canEdit)

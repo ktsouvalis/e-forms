@@ -486,7 +486,7 @@ class SecondmentController extends Controller
         if($secondment->partner_working_municipality)
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
         
-        dd(json_encode($data));
+        dd($data);
         
         try{
             $client = new Client();

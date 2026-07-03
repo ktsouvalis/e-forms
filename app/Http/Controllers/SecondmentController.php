@@ -486,8 +486,8 @@ class SecondmentController extends Controller
            $data[] = ['name' => 'PartnerWorkingMunicipality', 'contents' => $secondment->partner_working_municipality];
         //print_r($data);
         // print_r(json_encode($data));
-        // dd($data);
-        // dd("test");
+        
+        dd("Πραγματοποιήση δοκιμών για την επίλυση προβλήματος αποστολής στο Πρωτόκολλο. Δοκιμάστε πάλι μετά τις 13¨00");
         $client = new Client();
         $response = $client->request('POST', env('E_DIRECTORATE').'/application/secondment', [
             'headers' => [

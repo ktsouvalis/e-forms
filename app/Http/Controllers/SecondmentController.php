@@ -194,10 +194,12 @@ class SecondmentController extends Controller
     public function store(Request $request)
     {
         $teacher = Auth::guard('teacher')->user();
-
-        if (!in_array($teacher->am, $this->allowedAMs)) {
-            return back()->with('failure', 'Δεν έχετε δικαίωμα δημιουργίας αίτησης.');
+        if(sizeof($this->allowedAMs) !== 0){
+            if (!in_array($teacher->am, $this->allowedAMs)) {
+                return back()->with('failure', 'Δεν έχετε δικαίωμα δημιουργίας αίτησης.');
+            }
         }
+        
         //Αν έχει επιλέξει την υπεύθυνη δήλωση Δημιούργησε την αίτηση
         if(!isset($request->statement_of_declaration))
         {

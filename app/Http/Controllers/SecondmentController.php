@@ -180,7 +180,7 @@ class SecondmentController extends Controller
             if($secondment->criteria_submitted == 0){
                 return back()->with('failure', 'Πρέπει πρώτα να οριστικοποιήσετε τα μοριοδοτούμενα κριτήρια πριν προχωρήσετε στις προτιμήσεις.');
             }
-            if(!in_array($secondment->teacher->klados, ["ΠΕ70", "ΠΕ60", "ΠΕ71", "ΠΕ70.50", "ΠΕ60.50"])){
+            if(!in_array($secondment->teacher->klados, ["ΠΕ70", "ΠΕ60", "ΠΕ71", "ΠΕ70.50", "ΠΕ60.50","ΠΕ61" ])){
                 return back()->with('failure', 'Η δήλωση Σχολείων για Εκπαιδευτικούς ειδικοτήτων θα πραγματοποιηθεί μετά την ανακοίνωση των Σχολείων.');
             }
             $canEdit = $microapp->accepts || in_array($secondment->teacher->am, $this->allowedAMs);

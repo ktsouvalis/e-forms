@@ -547,7 +547,7 @@
             </div>
         </div>
     </div>
-    @if(in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ60.50', 'ΠΕ70.50', 'ΠΕ71', 'ΠΕ61'])) ]))
+    @if(in_array($teacher->klados, ['ΠΕ60', 'ΠΕ70', 'ΠΕ60.50', 'ΠΕ70.50', 'ΠΕ71', 'ΠΕ61']))
     <div class="col-12 col-md-8 col-lg-8 pb-5">
         <div class="card border-primary rounded-0">
             <div class="card-header p-0">

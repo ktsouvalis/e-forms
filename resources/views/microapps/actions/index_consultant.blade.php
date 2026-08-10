@@ -15,15 +15,21 @@
                 transition:transform .15s ease, box-shadow .15s ease;
             }
             .stat-tile:hover{ transform:translateY(-2px); box-shadow:0 .35rem .75rem rgba(0,0,0,.07); }
-            .stat-tile .stat-icon{ font-size:1rem; }
+            .stat-tile .stat-icon{ font-size:1rem; display:flex; align-items:center; justify-content:space-between; }
             .stat-tile .stat-value{ font-size:1.55rem; font-weight:700; line-height:1.2; }
             .stat-tile .stat-label{ font-size:.74rem; color:#6c757d; }
+            .stat-tile .stat-sub{ font-size:.68rem; color:#98a1ac; }
+            .stat-info-icon{ font-size:.75rem; color:#adb5bd; cursor:help; }
+            .stat-info-icon:hover{ color:#0d6efd; }
             .stat-primary{ border-left-color:#0d6efd; } .stat-primary .stat-icon,.stat-primary .stat-value{ color:#0d6efd; }
             .stat-success{ border-left-color:#198754; } .stat-success .stat-icon,.stat-success .stat-value{ color:#198754; }
             .stat-info{ border-left-color:#0dcaf0; }    .stat-info .stat-icon,.stat-info .stat-value{ color:#0aa2c0; }
             .stat-warning{ border-left-color:#ffc107; } .stat-warning .stat-icon,.stat-warning .stat-value{ color:#b78a00; }
 
             .legend-dot{ width:.6rem; height:.6rem; border-radius:50%; display:inline-block; margin-right:.3rem; }
+
+            .th-info-icon{ font-size:.72rem; color:#8a93a0; cursor:help; }
+            .th-info-icon:hover{ color:#0d6efd; }
 
             /* ---------- Πίνακας σχολείων ---------- */
             #schoolsTable .school-name-cell{ cursor:pointer; min-width:260px; }
@@ -60,7 +66,7 @@
     @endpush
 
     @php
-        $user = Auth::guard('consultant')->user(); // ποιος χρήστης είναι συνδεδεμένος
+        $user = Auth::guard('consultant')->user();
         $schools = App\Models\School::whereIn('id', $user->schregion->schools->pluck('id'))->get();
         $schoolIds = $schools->pluck('id')->toArray();
         $is_supervisor = isset($is_supervisor) ? $is_supervisor : false;
@@ -69,13 +75,12 @@
             $actions = App\Models\microapps\Action::whereIn('school_id', $schoolIds)->get();
         } else {
             $actions = App\Models\microapps\Action::get();
-            // Ο επόπτης βλέπει όλα τα σχολεία που έχουν δράσεις
             $schools = App\Models\School::whereIn('id', $actions->pluck('school_id')->unique())->get();
         }
 
         // ---------- Γενικά στατιστικά ----------
         $totalActions    = $actions->count();
-        $totalTeachers   = (int) $actions->sum('number_of_teachers');
+        $totalTeachers   = (int) $actions->sum('number_of_teachers'); // ΣΥΜΜΕΤΟΧΕΣ, όχι μοναδικά άτομα
         $actionsByType   = $actions->groupBy('actiontype_id');
         $actionsByStatus = $actions->groupBy('status');
 
@@ -85,6 +90,22 @@
         $completedCount = $actionsByStatus->get('completed', collect())->count();
 
         $completionRate = $totalActions > 0 ? round(100 * $completedCount / $totalActions) : 0;
+
+        // ---------- Εκτίμηση μοναδικών εκπαιδευτικών από το πεδίο ονομάτων ----------
+        // (προαιρετική ένδειξη — αν το πεδίο teachers είναι κενό, δεν εμφανίζεται)
+        $uniqueTeacherNames = collect();
+        foreach ($actions as $action) {
+            if (!empty($action->teachers)) {
+                $names = preg_split('/[,;·|]+|\r\n|\n|\r/u', $action->teachers);
+                foreach ($names as $name) {
+                    $name = trim($name);
+                    if ($name !== '') {
+                        $uniqueTeacherNames->push(mb_strtolower($name, 'UTF-8'));
+                    }
+                }
+            }
+        }
+        $uniqueTeacherCount = $uniqueTeacherNames->unique()->count();
 
         // ---------- Στατιστικά ανά σχολείο ----------
         $schoolStats = $schools->map(function ($school) use ($actions) {
@@ -96,7 +117,7 @@
                 'school'    => $school,
                 'actions'   => $schoolActions,
                 'total'     => $total,
-                'teachers'  => (int) $schoolActions->sum('number_of_teachers'),
+                'teachers'  => (int) $schoolActions->sum('number_of_teachers'), // συμμετοχές ανά σχολείο
                 'pending'   => $schoolActions->where('status', 'pending')->count(),
                 'approved'  => $schoolActions->where('status', 'approved')->count(),
                 'completed' => $completed,
@@ -149,13 +170,31 @@
                                     <div class="stat-label">Συνολικές Δράσεις</div>
                                 </div>
                             </div>
+
+                            {{--
+                                Σημείωση: Το παρακάτω tile μετράει ΣΥΜΜΕΤΟΧΕΣ εκπαιδευτικών
+                                (ένας εκπαιδευτικός σε 3 δράσεις μετράει 3 φορές).
+                                Αν προτιμάτε να αφαιρεθεί εντελώς, διαγράψτε ολόκληρο
+                                αυτό το <div class="col-6">...</div> block.
+                            --}}
                             <div class="col-6">
                                 <div class="stat-tile stat-success">
-                                    <div class="stat-icon"><i class="bi bi-people"></i></div>
+                                    <div class="stat-icon">
+                                        <i class="bi bi-people"></i>
+                                        <i class="bi bi-info-circle stat-info-icon"
+                                           data-bs-toggle="tooltip" data-bs-placement="top"
+                                           title="Πρόκειται για το σύνολο των συμμετοχών: ένας εκπαιδευτικός που συμμετέχει σε περισσότερες από μία δράσεις μετράται μία φορά σε κάθε δράση."></i>
+                                    </div>
                                     <div class="stat-value">{{ $totalTeachers }}</div>
-                                    <div class="stat-label">Συμμετέχοντες Εκπαιδευτικοί</div>
+                                    <div class="stat-label">Συμμετοχές Εκπαιδευτικών</div>
+                                    @if($uniqueTeacherCount > 0)
+                                        <div class="stat-sub">
+                                            <i class="bi bi-person-check me-1"></i>≈ {{ $uniqueTeacherCount }} μοναδικοί εκπαιδευτικοί
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
+
                             <div class="col-6">
                                 <div class="stat-tile stat-info">
                                     <div class="stat-icon"><i class="bi bi-buildings"></i></div>
@@ -248,7 +287,12 @@
                             <tr>
                                 <th>Σχολείο</th>
                                 <th class="text-center">Δράσεις</th>
-                                <th class="text-center">Εκπαιδευτικοί</th>
+                                <th class="text-center">
+                                    Συμμετοχές Εκπ/κών
+                                    <i class="bi bi-info-circle th-info-icon ms-1"
+                                       data-bs-toggle="tooltip" data-bs-placement="top"
+                                       title="Σύνολο συμμετοχών εκπαιδευτικών στις δράσεις του σχολείου. Ένας εκπαιδευτικός που συμμετέχει σε πολλαπλές δράσεις μετράται μία φορά σε κάθε δράση."></i>
+                                </th>
                                 <th class="text-center">Εκκρεμείς</th>
                                 <th class="text-center">Εγκεκριμένες</th>
                                 <th class="text-center">Ολοκληρωμένες</th>

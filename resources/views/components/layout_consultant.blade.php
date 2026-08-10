@@ -47,10 +47,10 @@
   </div>
     @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
       <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
-        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#CCCCFF; text-align:center;">
+        <!-- <div class="badge text-wrap py-2" style="width: 10rem; background-color:#CCCCFF; text-align:center;">
           <div class="text-dark fa-solid fa-star"></div> 
             <a href="{{url("/evaluation/create")}}" style=" text-decoration:none;" class="text-dark"> Αξιολόγηση</a>
-        </div>
+        </div> -->
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
           <div class="text-dark fa-solid fa-file-signature"></div> 
             <a href="{{route("internal_rules.create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
@@ -59,6 +59,12 @@
           <div class="text-dark fa-solid fa-map"></div> 
             <a href="{{route("work_planning.create")}}" style=" text-decoration:none;" class="text-dark"> Προγραμματισμός Έργου</a>
         </div>
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#ffd044; text-align:center;">
+          <div class="text-dark h5 bi bi-person-lines-fill"></div>
+          <a href="{{ url('/actions') }}" class="text-dark" style="text-decoration:none;">
+              Δράσεις Σχολείων
+          </a>
+      </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
           <div class="text-dark fa-solid fa-school"></div> 
             <a href="{{url("/consultant_schools")}}" style=" text-decoration:none;" class="text-dark"> Σχολεία</a>

@@ -8,7 +8,7 @@
         <script src="{{asset('DataTables-1.13.4/js/dataTables.bootstrap5.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
-        <script src="{{asset('datatable_init.js')}}"></script>
+        <!-- <script src="{{asset('datatable_init.js')}}"></script> -->
         <script src="{{asset('toggle_actions.js')}}"></script>
         <script src="{{asset('datatable_init_actions.js')}}"></script>
         <script>
@@ -30,8 +30,8 @@
             $actions = App\Models\microapps\Action::whereIn('school_id', $schoolIds)->get();
         } else {
             $actions = App\Models\microapps\Action::get();
+            $myActions = App\Models\microapps\Action::whereIn('school_id', $schoolIds)->get();
         }
-        
         
         //dd($is_supervisor);
         // Calculate statistics
@@ -102,94 +102,173 @@
             <div class="card-header bg-light">
                 <h5 class="mb-0">Λίστα Δράσεων</h5>
             </div>
+            @if($is_supervisor ?? false)
+            <ul class="nav nav-tabs" id="actionsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-actions" type="button" role="tab">Όλες οι Δράσεις</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="mine-tab" data-bs-toggle="tab" data-bs-target="#my-actions" type="button" role="tab">Τα Σχολεία μου</button>
+                </li>
+            </ul>
+            @endif
             <div class="card-body">
-                <table id="dataTable" class="small display align-middle table table-sm table-secondary table-striped table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th id="search">Σχολείο</th>
-                            <th id="search">Τίτλος Δράσης</th>
-                            <th id="search">Τύπος Δράσης</th>
-                            <th id="search">Υπεύθυνη Αρχή</th>
-                            <th id="search">Εκπαιδευτικοί</th>
-                            <th id="">Αρχεία</th>
-                            <th id="search">Κατάσταση</th>
-                            <th>Ενέργειες</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($actions as $action)
-                            <tr>
-                                <td>{{ App\Models\School::find($action->school_id)->name ?? 'Άγνωστο' }}</td>
-                                <td>{{ $action->title }}</td>
-                                <td>{{ App\Models\microapps\ActionType::find($action->actiontype_id)->name ?? 'Άγνωστο' }}</td>
-                                <td>{{ $action->implementing_authority }}</td>
-                                <td>
-                                    <span class="badge bg-info">{{ $action->number_of_teachers }}</span>
-                                    @if($action->teachers)
-                                        <button type="button" class="btn btn-sm btn-outline-info ms-2" 
-                                                data-bs-toggle="tooltip" data-bs-placement="top" 
-                                                title="{{ $action->teachers }}">
-                                            <i class="bi bi-info-circle"></i>
-                                        </button>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($action->records)
-                                        @php
-                                            $records = explode(',', $action->records);
-                                        @endphp
-                                        @foreach($records as $record)
-                                            <a href="{{ asset('storage/actions/records/' . trim($record)) }}" 
-                                               class="btn btn-sm btn-outline-primary mb-1" target="_blank">
-                                                <i class="bi bi-file-earmark"></i> {{ basename(trim($record)) }}
-                                            </a><br>
-                                        @endforeach
-                                    @else
-                                        <span class="text-muted">Δεν υπάρχουν αρχεία</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @php
-                                        $statusBadge = match($action->status) {
-                                            'pending' => 'warning',
-                                            'approved' => 'success',
-                                            'rejected' => 'danger',
-                                            'completed' => 'primary',
-                                            default => 'secondary'
-                                        };
+                <div class="tab-content" id="actionsTabContent">
+                    <div class="tab-pane fade show active" id="all-actions" role="tabpanel">        
+                        <table id="dataTable" class="small display align-middle table table-sm table-secondary table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th id="search">Σχολείο</th>
+                                    <th id="search">Τίτλος Δράσης</th>
+                                    <th id="search">Τύπος Δράσης</th>
+                                    <th id="search">Υπεύθυνη Αρχή</th>
+                                    <th id="search">Εκπαιδευτικοί</th>
+                                    <th id="">Αρχεία</th>
+                                    <th id="search">Κατάσταση</th>
+                                    <th>Ενέργειες</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($actions as $action)
+                                    <tr>
+                                        <td>{{ App\Models\School::find($action->school_id)->name ?? 'Άγνωστο' }}</td>
+                                        <td>{{ $action->title }}</td>
+                                        <td>{{ App\Models\microapps\ActionType::find($action->actiontype_id)->name ?? 'Άγνωστο' }}</td>
+                                        <td>{{ $action->implementing_authority }}</td>
+                                        <td>
+                                            <span class="badge bg-info">{{ $action->number_of_teachers }}</span>
+                                            @if($action->teachers)
+                                                <button type="button" class="btn btn-sm btn-outline-info ms-2" 
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                        title="{{ $action->teachers }}">
+                                                    <i class="bi bi-info-circle"></i>
+                                                </button>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($action->records)
+                                                @php
+                                                    $records = explode(',', $action->records);
+                                                @endphp
+                                                @foreach($records as $record)
+                                                    <a href="{{ asset('storage/actions/records/' . trim($record)) }}" 
+                                                    class="btn btn-sm btn-outline-primary mb-1" target="_blank">
+                                                        <i class="bi bi-file-earmark"></i> {{ basename(trim($record)) }}
+                                                    </a><br>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">Δεν υπάρχουν αρχεία</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @php
+                                                $statusBadge = match($action->status) {
+                                                    'pending' => 'warning',
+                                                    'approved' => 'success',
+                                                    'rejected' => 'danger',
+                                                    'completed' => 'primary',
+                                                    default => 'secondary'
+                                                };
+                                                
+                                                $statusText = match($action->status) {
+                                                    'pending' => 'Εκκρεμεί',
+                                                    'approved' => 'Εγκρίθηκε',
+                                                    'rejected' => 'Απορρίφθηκε',
+                                                    'completed' => 'Ολοκληρώθηκε',
+                                                    default => 'Δεν ορίστηκε'
+                                                };
+                                            @endphp
+                                            <span class="badge bg-{{ $statusBadge }}">{{ $statusText }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                
+                                                    <i class="bi bi-eye"></i>
+                                                <!-- </a> -->
+                                                <a href="{{ route('actions.edit', $action->id) }}" class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-success action-status-toggle"
+                                                        data-action-id="{{ $action->id }}" data-status="approved">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div> 
+                    @if($is_supervisor ?? false)
+                    <div class="tab-pane fade" id="my-actions" role="tabpanel">
+                        <table id="dataTableMyActions" class="small display align-middle table table-sm table-secondary table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th id="search">Σχολείο</th>
+                                    <th id="search">Τίτλος Δράσης</th>
+                                    <th id="search">Τύπος Δράσης</th>
+                                    <th id="search">Υπεύθυνη Αρχή</th>
+                                    <th id="search">Εκπαιδευτικοί</th>
+                                    <th id="">Αρχεία</th>
+                                    <th id="search">Κατάσταση</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($myActions as $action)
+                                    <tr>
+                                        <td>{{ App\Models\School::find($action->school_id)->name ?? 'Άγνωστο' }}</td>
+                                        <td>{{ $action->title }}</td>
+                                        <td>{{ App\Models\microapps\ActionType::find($action->actiontype_id)->name ?? 'Άγνωστο' }}</td>
+                                        <td>{{ $action->implementing_authority }}</td>
+                                        <td>
+                                            <span class="badge bg-info">{{ $action->number_of_teachers }}</span>
+                                            @if($action->teachers)
+                                                <button type="button" class="btn btn-sm btn-outline-info ms-2" 
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                        title="{{ $action->teachers }}">
+                                                    <i class="bi bi-info-circle"></i>
+                                                </button>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($action->records)
+                                                @php
+                                                    $records = explode(',', $action->records);
+                                                @endphp
+                                                @foreach($records as $record)
+                                                    <a href="{{ asset('storage/actions/records/' . trim($record)) }}" 
+                                                    class="btn btn-sm btn-outline-primary mb-1" target="_blank">    
+                                                        <i class="bi bi-file-earmark"></i> {{ basename(trim($record)) }}
+                                                    </a><br>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">Δεν υπάρχουν αρχεία</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @php
+                                                $statusBadge = match($action->status) {
+                                                    'pending' => 'warning',
+                                                    'approved' => 'success',
+                                                    'rejected' => 'danger',
+                                                    'completed' => 'primary',
+                                                    default => 'secondary'
+                                                };
+                                            @endphp
+                                            <span class="badge bg-{{ $statusBadge }}">{{ ucfirst($action->status) }}</span>
+                                        </td>
                                         
-                                        $statusText = match($action->status) {
-                                            'pending' => 'Εκκρεμεί',
-                                            'approved' => 'Εγκρίθηκε',
-                                            'rejected' => 'Απορρίφθηκε',
-                                            'completed' => 'Ολοκληρώθηκε',
-                                            default => 'Δεν ορίστηκε'
-                                        };
-                                    @endphp
-                                    <span class="badge bg-{{ $statusBadge }}">{{ $statusText }}</span>
-                                </td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{{ route('actions.show', $action->id) }}" class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a href="{{ route('actions.edit', $action->id) }}" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-sm btn-success action-status-toggle"
-                                                data-action-id="{{ $action->id }}" data-status="approved">
-                                            <i class="bi bi-check-lg"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
-    
+</div>
     <!-- Chart.js Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>

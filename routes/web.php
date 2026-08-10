@@ -457,15 +457,16 @@ Route::group(['prefix' => 'outings', 'middleware' => 'canViewMicroapp'], functio
 
 // ACTIONS ROUTES
 
-Route::resource('actions', ActionsController::class);//->middleware('canViewMicroapp');
+Route::resource('actions', ActionsController::class)->except(['show']);//->middleware('canViewMicroapp');
 
-Route::group(['prefix' => 'actions', 'middleware' => 'canViewMicroapp'], function () {
+Route::group(['prefix' => 'actions'], function () {
     // Calls Show method of ActionsController
     Route::get('/index_school', [ActionsController::class, 'index_school'])->name('actions.index_school');
 
     Route::get('actions/consultants_supervisor', [ActionsController::class, 'indexForConsultantsSupervisor'])->name('actions.consultants_supervisor');
 
     Route::get('/check', [ActionsController::class, 'check'])->name('actions.check');
+
 });
 
 
@@ -536,7 +537,7 @@ Route::group(['prefix' => 'work_planning', 'middleware'=>'canViewMicroapp'], fun
 
 // INVOICES ROUTES
 
-Route::resource('invoices', InvoicesController::class);//->middleware('canViewMicroapp');
+// Route::resource('invoices', InvoicesController::class);//->middleware('canViewMicroapp');
 
 // FILECOLLECTS ROUTES
 Route::resource('filecollects', FilecollectController::class);

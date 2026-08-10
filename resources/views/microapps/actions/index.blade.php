@@ -44,7 +44,7 @@
                         <td>{{$action->description}}</td>
                         <td>
                         <a href="{{route('actions.edit', $action->id)}}" class="btn btn-primary">Επεξεργασία</a>
-                        <form action="{{route('actions.destroy', $action_type->id)}}" method="POST" style="display: inline-block;">
+                        <form action="{{route('actions.destroy', $action->id)}}" method="POST" style="display: inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Διαγραφή</button>

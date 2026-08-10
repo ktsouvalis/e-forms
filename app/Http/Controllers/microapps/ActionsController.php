@@ -46,14 +46,9 @@ class ActionsController extends Controller
         } 
     }
 
-    public function show(Request $request)
+    public function index_school(Request $request)
     {
         return view('microapps.actions.index_school', compact('request'));
-    }
-    public function index_school()
-    {
-        dd('index_school');
-        //return view('microapps.actions.index_school');
     }
     
     public function create()
@@ -112,10 +107,11 @@ class ActionsController extends Controller
     public function destroy($id)
     {
         $actionType = Action::find($id);
+
+        // Detach this action from any outings before deleting
+        $actionType->outings()->detach();
+
         $actionType->delete();
-        
-        // Update the outings table to set action_id to 0 where action_id matches $id
-        DB::table('outings')->where('action_id', $id)->update(['action_id' => 0]);
 
         return redirect()->route('actions.index_school');
     }

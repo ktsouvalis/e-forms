@@ -93,8 +93,18 @@
                                 <div>Προγραμματισμός Έργου</div>
                                 </a> 
                             </div>
-                        </div> 
+                        </div>
+                        <div class="col-md-4 py-2" style="max-width:15rem">
+                            <div class="card py-5" style="background-color:#ffd044; text-align:center;">
+                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/actions")}}">
+                                <div class="h5 card-title bi bi-person-lines-fill"></div>
+                                <div>Δράσεις Σχολείων </div>
+                                </a>
+                            </div>
+                        </div>
+                        
                         <hr>
+                     
                         @if($consultant->isSupervisor())
                         <h4>Επόπτης Ποιότητας Εκπαίδευσης</h4>
                         <div class="col-md-4 py-2" style="max-width:15rem">
@@ -105,14 +115,7 @@
                                 </a> 
                             </div>
                         </div>
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:#ffd044; text-align:center;">
-                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/actions")}}">
-                                <div class="h5 card-title bi bi-person-lines-fill"></div>
-                                <div>Εκπαιδευτικές Δράσεις </div>
-                                </a> 
-                            </div>
-                        </div>
+                        
                         @endif
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:Gainsboro; text-decoration:none; text-align:center;">

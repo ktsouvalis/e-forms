@@ -387,6 +387,7 @@ class SecondmentController extends Controller
         switch($klados){
             case "ΠΕ60":
             case "ΠΕ60.50":
+            case "ΠΕ61":
                 if($org_eae == 0){
                     $schools = School::where('primary', '=', 0)->where('special_needs', '=', 0)->
                     where('public', '=', 1)->orderBy('municipality_id', 'asc')->orderBy('name', 'asc')->get();          

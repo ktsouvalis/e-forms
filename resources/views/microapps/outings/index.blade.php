@@ -68,7 +68,11 @@
                             {{$outing->school->telephone}}
                             </div>
                         </td>
-                        <td>{{$outing->id}}/{{$outing->type->description}}</td>
+                        <td>{{$outing->id}}/{{$outing->type->description}}
+                            @if($outing->is_late)
+                                <br><span class="badge bg-warning text-dark" title="Εκπρόθεσμη υποβολή">Εκπρόθεσμη Υποβολή</span>
+                            @endif
+                        </td>
                         @php
                             $text = $outing->checked ? 'Ελέγχθηκε' : 'Προς έλεγχο';
                         @endphp

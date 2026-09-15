@@ -15,7 +15,17 @@
                         @csrf
                         <div class="input-group">
                             <span class="input-group-text w-25"></span>
-                            <span class="input-group-text w-75"><strong>Επεξεργασία στοιχείων εκδρομής</strong></span>
+                            <span class="input-group-text w-75"><strong>Επεξεργασία στοιχείων εκδρομής</strong>
+                                
+                                @if($outing->is_late)
+                                    <div class="input-group">
+                                        <span class="input-group-text w-25"></span>
+                                        <span class="input-group-text w-75 text-warning">
+                                            <i class="bi bi-exclamation-triangle"></i> - Εκπρόθεσμη υποβολή
+                                        </span>
+                                    </div>
+                                @endif
+                            </span>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon4">Τύπος Εκδρομής</span>

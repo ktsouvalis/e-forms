@@ -31,4 +31,19 @@ class Outing extends Model
     public function actions(){
         return $this->belongsToMany(Action::class, 'action_outing');
     }
+
+    public function getIsLateAttribute()
+    {
+        if ($this->outingtype_id == 2 || $this->outingtype_id == 3) {
+            $daysBefore = 5; // Πολύωρη
+        } elseif ($this->outingtype_id == 1) {
+            $daysBefore = 3; // Ολιγόωρη
+        } else {
+            return false; // 
+        }
+
+        $deadline = \Illuminate\Support\Carbon::parse($this->outing_date)->subDays($daysBefore)->startOfDay();
+
+        return $this->created_at->greaterThan($deadline);
+    }
 }

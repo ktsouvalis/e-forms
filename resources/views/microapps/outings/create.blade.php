@@ -26,7 +26,7 @@
                     
                     <p class="mb-3 text-dark lh-base">
                         Στην ενότητα αυτή καταχωρούνται οι εκπαιδευτικές επισκέψεις και εκδρομές που απαιτούν μετακίνηση εκτός της σχολικής μονάδας. 
-                        <br><span class="fst-italic">(Δεν καταχωρούνται οι Ενδοσχολικές Δραστηριότητες ούτε οι Εκπαιδευτικές Δράσεις που αναλαμβάνει το Σχολείο)</span>.
+                        <br><span class="fst-italic">ΠΡΟΣΟΧΗ: Οι εκπαιδευτικές δράσεις που αναλαμβάνει το Σχολείο δεν καταχωρούνται σε αυτή την ενότητα.</span>
                     </p>
                     
                     <p class="text-dark lh-base">
@@ -175,7 +175,11 @@
                                 $action = null;
                         @endphp
                         <tr>
-                            <td>{{$outing->type->description}}</td>
+                            <td>{{$outing->type->description}}
+                                @if($outing->is_late)
+                                    <br><span class="badge bg-warning text-dark" title="Εκπρόθεσμη υποβολή">Εκπρόθεσμη Υποβολή</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($outing->planning == 'no')
                                     Όχι

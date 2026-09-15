@@ -15,128 +15,30 @@
         <script src="{{asset('Responsive-2.4.1/js/dataTables.responsive.js')}}"></script>
         <script src="{{asset('Responsive-2.4.1/js/responsive.bootstrap5.js')}}"></script>
         <script src="{{asset('datatable_init.js')}}"></script>
-        <script>// Script to handle the modal for delete request
-            $(document).ready(function() {
-                $(document).on('mousedown', 'a[data-toggle="modal"]', function (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    var baseUrl = "{{ route('outings.send_delete_request', ['outing' => 'OUTING_ID_PLACEHOLDER']) }}";
-                    var outingId = $(this).data('outing-id');
-                    
-                    $('#outingId').val(outingId);
-
-                    var actionUrl = baseUrl.replace('OUTING_ID_PLACEHOLDER', outingId);
-                    $('#deleteRequestForm').attr('action', actionUrl); 
-
-                    setTimeout(function() {
-                        $('#deleteRequestModal').modal('show');
-                    }, 50);
-
-                    $('#deleteRequestModal').on('shown.bs.modal', function() {
-                        $('#delete_request').focus();
-                    });
-                });
-            });
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                function handleCheckboxChange(event) {
-                    if (event.target.checked) {
-                        const checkboxId = event.target.id; // Get the checkbox ID
-                        //alert('Checkbox with ID ' + checkboxId + ' is checked!'); // Display the ID in an alert
-                        fetch('{{ route('actions.index_school') }}?checkboxId=' + checkboxId)
-                            .then(response => response.text())
-                            .then(html => {
-                                const newWindow = window.open('', '_blank', 'width=750,height=550');
-                                newWindow.document.write(html);
-                                newWindow.document.close();
-                            })
-                            .catch(error => console.error('Error:', error));
-                    }
-                }
-
-                // Single Checkbox Outside the Table
-                const singleCheckbox = document.getElementById('openActionCheckbox');
-                if (singleCheckbox) {
-                    singleCheckbox.addEventListener('change', handleCheckboxChange);
-                }
-
-                // Multiple Checkboxes in the Table
-                document.querySelectorAll('.openActionCheckbox').forEach(checkbox => {
-                    checkbox.addEventListener('change', handleCheckboxChange);
-                });
-            });
-                // Listen for messages from the action window
-                window.addEventListener('message', function(event) {
-        if (event.data.type === 'ACTION_SELECTED') {
-            const actionData = event.data.data;
-            console.log("Received action data:", actionData);
-
-            // For new outing creation
-            if (actionData.oldOuting === "False") {
-                const targetDiv = document.getElementById('action-title'); 
-                const targetInput = document.getElementById('action-title-input');
-                
-                if (targetDiv && actionData.actions.length > 0) {
-                    // Join all selected action titles with comma
-                    targetDiv.textContent = actionData.actions.map(a => a.title).join(', ');
-                }
-                if (targetInput && actionData.actions.length > 0) {
-                    // Store action IDs as comma-separated string
-                    targetInput.value = actionData.actions.map(a => a.actionId).join(',');
-                }
-            } 
-            // For existing outing
-            else {
-                actionData.actions.forEach(action => {
-                    const targetElement = document.getElementById('outing-action-title-' + actionData.outingId);
-                    if (targetElement) {
-                        // Update with all action titles
-                        targetElement.textContent = actionData.actions.map(a => a.title).join(', ');
-                        
-                        // If you have a hidden input for actions, update it too
-                        const actionInput = document.getElementById('outing-action-input-' + actionData.outingId);
-                        if (actionInput) {
-                            actionInput.value = actionData.actions.map(a => a.actionId).join(',');
-                        }
-                    }
-                });
-            }
-        }
-    });
-        </script>
     @endpush
     @push('title')
-        <title>Εκδρομές</title>
+        <title>Επισκέψεις - Εκδρομές</title>
     @endpush
         <div class="py-3">
             <div class="container">
                 <div class="instruction-container p-4 border rounded shadow-sm bg-light">
-                    <h5 class="text-primary mb-3 fw-semibold">Διαχείριση Εγκεκριμένων Δράσεων</h5>
+                    <h5 class="text-primary mb-3 fw-semibold">Καταχώρηση Επισκέψεων - Εκδρομών ΕΚΤΟΣ Σχολικής Μονάδας</h5>
                     
                     <p class="mb-3 text-dark lh-base">
-                        1) Προσθέστε εγκεκριμένες Δράσεις που υλοποιούνται στη σχολική σας μονάδα και εντάσσονται στο πλαίσιο επίσημων προγραμμάτων από αναγνωρισμένους Φορείς 
-                        <span class="fst-italic">(Υπουργείο Παιδείας, ΙΕΠ, Διεύθυνση Πρωτοβάθμιας Εκπαίδευσης Αχαΐας, κ.ά.)</span> μέσα από την επιλογή <span class="btn text-success"> "Δημιουργία - Διαχείριση Δράσεων"</span>.
+                        Στην ενότητα αυτή καταχωρούνται οι εκπαιδευτικές επισκέψεις και εκδρομές που απαιτούν μετακίνηση εκτός της σχολικής μονάδας. 
+                        <br><span class="fst-italic">(Δεν καταχωρούνται οι Ενδοσχολικές Δραστηριότητες ούτε οι Εκπαιδευτικές Δράσεις που αναλαμβάνει το Σχολείο)</span>.
                     </p>
                     
                     <p class="text-dark lh-base">
-                        2) Μετά την καταχώρηση των Δράσεων, μπορείτε να δηλώνετε και να κατηγοριοποιείτε κάθε ενδοσχολική δραστηριότητα ή εκπαιδευτική επίσκεψη που πραγματοποιείται στη σχολική σας μονάδα, συσχετίζοντάς την με μία ή περισσότερες Εκπαιδευτικές Δράσεις.
+                        ΣΗΜΕΙΩΣΗ: Για τις εκπαιδευτικές δράσεις θα υπάρξει ενημέρωση σχετικά με τον τρόπο που θα κοινοποιούνται στους Συμβούλους Εκπαίδευσης.
                     </p>
                     <p class="text-dark lh-base">
                         
                     </p>
                 </div>
-                <div class="hstack gap-2">
-                    <h4 class="my-5">Διαχείριση Δράσεων Σχολείου: </h4>
-                    @if($accepts)
-                        <a href="{{route('actions.index_school')}}" class="btn btn-success no-spinner" target="_blank" onclick="window.open(this.href, '_blank', 'width=600,height=500'); return false;">Δημιουργία - Διαχείριση Δράσεων</a>
-                    @else
-                        {{-- <a href="{{route('outings.index')}}" class="btn btn-success">Επιστροφή στην Καταχώρηση Εκδρομών (Δε δέχεται υποβολές)</a> --}}
-                    @endif
-                </div>
+                
                 <div class="alert alert-info text-center my-2">
-                    <strong> <i class="bi bi-info-circle"> </i> Σημείωση: Μπορείτε να εντάξετε σε Δράσεις τόσο τις νέες όσο και τις παλαιότερες εκδρομές ή ενδοσχολικές δραστηριότητες. </strong>
+                    <strong> <i class="bi bi-info-circle"> </i> Σημείωση: Καταχωρήστε μόνο Επισκέψεις - Εκδρομές ΕΚΤΟΣ Σχολικής Μονάδας. </strong>
                 </div>
             </div>
             <nav class="navbar navbar-light bg-light">
@@ -161,10 +63,14 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text w-25">Εντάσσεται σε Δράση: </span>
-                            <input class="form-check-input" role="switch" type="checkbox" id="openActionCheckbox">
+                            <span class="input-group-text w-25">Εντάσσεται στον Προγραμματισμό: </span>
+                            <select class="form-select" name="planning" aria-label="Default select example">
+                                <option value="no">Όχι</option>
+                                <option value="annual">Ναι, στον Ετήσιο Προγραμματισμό</option>
+                                <option value="quarterly">Ναι, σε Τριμηνιαίο Προγραμματισμό</option>
+                            </select>
                             <input type="hidden" id="action-title-input" name="action_id" value="">
-                            <div id='action-title'></div> 
+                            <div id='action-title'></div>
                         </div>
                         <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Ημερομηνία</span>
@@ -247,6 +153,7 @@
                 <thead>
                     <tr>
                         <th id="search">Τύπος</th>
+                        <th id="search">Προγραμματισμός</th>
                         <th id="">Ημερομηνία <p class="text-muted">(Ε/Μ/Η)</p></th>
                         <th id="">Προορισμός - Δραστηριότητα</th>
                         <th id="">Πρακτικό</th>
@@ -254,7 +161,6 @@
                         <th id="">Τμήματα</th>
                         <th>Επεξεργασία μελλοντικής εκδρομής</th>
                         <th>Διαγραφή μελλοντικής εκδρομής</th>
-                        <th id="search">Εκπ/κή Δράση</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -269,7 +175,16 @@
                                 $action = null;
                         @endphp
                         <tr>
-                            <td>{{$outing->type->description}}</td> 
+                            <td>{{$outing->type->description}}</td>
+                            <td>
+                                @if($outing->planning == 'no')
+                                    Όχι
+                                @elseif($outing->planning == 'annual')
+                                    Ετήσιος
+                                @elseif($outing->planning == 'quarterly')
+                                    Τριμηνιαίος
+                                @endif
+                            </td>
                             <td>{{$my_date->year}}/{{$my_date->month}}/{{$my_date->day}} </td>
                             <td>{{$outing->destination}}</td>
                             <td>{{$outing->record}}</td>
@@ -307,14 +222,6 @@
                                 </a>
                             </td>
                             @endif
-                            <td>
-                                <input class="form-check-input openActionCheckbox" role="switch" type="checkbox" id="{{ $outing->id }}">
-                                <div id="outing-action-title-{{ $outing->id }}">
-                                    @foreach($outing->actions as $action)
-                                        {{ $action->title }}@if(!$loop->last), @endif
-                                    @endforeach
-                                </div>
-                            </td>
                         </tr> 
                     @endforeach   
                 </tbody>  

@@ -31,12 +31,28 @@
                             </select>
                         </div>
                         <div class="input-group">
+                            <span class="input-group-text w-25" id="basic-addon2">Εντάσσεται στον προγραμματισμό</span>
+                            <select name="planning" class="form-select" aria-label="Default select example">
+                                @php
+                                    $planning_options = ['no'=>'Όχι', 'annual'=>'Ναι, στον Ετήσιο Προγραμματισμό', 'quarterly'=>'Ναι, σε Τριμηνιαίο Προγραμματισμό'];
+                                @endphp
+                                @foreach($planning_options as $key=>$value)
+                                @php
+                                    $selected="";
+                                    if($key==$outing->planning)
+                                        $selected="selected";   
+                                @endphp
+                                <option {{$selected}} value="{{$key}}">{{$value}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="input-group">
                             <span class="input-group-text w-25" id="basic-addon2">Νέα Ημερομηνία</span>
                             <input name="outing_date" type="date" class="form-control"  aria-label="outing_date" aria-describedby="basic-addon1">
                             <label class="form-control text-muted">{{$my_date->day}}/{{$my_date->month}}/{{$my_date->year}}</label>
                         </div>
                         <div class="input-group">
-                            <span class="input-group-text w-25 text-wrap">Δράση: </span>
+                            <span class="input-group-text w-25 text-wrap">Δραστηριότητα - Προορισμός: </span>
                             <input name="destination" id="destination" type="text" class="form-control" placeholder="π.χ. Πάρκο Κυκλοφοριακής Αγωγής" aria-label="Δράση" aria-describedby="basic-addon2" value="{{$outing->destination}}" required><br>
                         </div>
                         <div class="input-group">

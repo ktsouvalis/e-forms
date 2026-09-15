@@ -62,6 +62,7 @@ class OutingsController extends Controller
         $outing_record = $request->input('record');
         $outing_file = $file->getClientOriginalName();
         $outing_date = $request->input('outing_date');
+        $planning = $request->input('planning');
 
         $action_ids = explode(',', $request->input('action_id')); // Convert comma seperated to array
         
@@ -73,6 +74,7 @@ class OutingsController extends Controller
                 'destination' => $outing_destination,
                 'record' => $outing_record,
                 'file' => $outing_file,
+                'planning' => $planning,
                 'checked' => 0
             ]);
             
@@ -181,6 +183,7 @@ class OutingsController extends Controller
         $outing->outingtype_id = $request->input('type');
         $outing->destination = $request->input('destination');
         $outing->record = $request->input('record');
+        $outing->planning = $request->input('planning');
         $outing->checked = 0;
     
         if ($request->file('record_file')) {

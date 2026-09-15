@@ -43,8 +43,10 @@ class LeavesController extends Controller
         // Φέρνουμε τις άδειες του σχολείου που:
         // 1. ΔΕΝ είναι σε κατάσταση "Ανακλήθηκε" ΚΑΙ είναι ορατές
         // 2. Ή ΕΙΝΑΙ "Ανακλήθηκε" ΑΛΛΑ έχουν protocol_number (για να εμφανιστούν κλειδωμένες)
+        // 3. Επίσης, αγνοούμε τις άδειες που δημιουργήθηκαν από τον κωδικό 9906101 (Διεύθυνση Π.Ε. Αχαΐας)
         $leavesExceptRevoked = $school->leavesIncludingRevoked()
         ->where('is_visible', 1)
+        ->where('creator_entity_code', '!=', 9906101)
         ->where(function($query) {
             $query->where('leave_state', '!=', '5-Ανακλήθηκε')
                 ->orWhere(function($q) {

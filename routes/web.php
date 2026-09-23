@@ -58,6 +58,7 @@ use App\Http\Controllers\microapps\TimetablesController;
 use App\Http\Controllers\microapps\ActionTypesController;
 use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
+use App\Http\Controllers\microapps\ActionPlanningController;
 use App\Http\Controllers\microapps\BuildingProblemsController;
 use App\Http\Controllers\microapps\DailyAbsenceReportController;
 
@@ -345,6 +346,16 @@ Route::resource('building_problems', BuildingProblemsController::class)->middlew
 Route::group(['prefix' => 'building_problems', 'middleware' => 'canViewMicroapp'], function () {
     Route::get('/download_file/{serverFileName}/{databaseFileName}', [BuildingProblemsController::class, 'download_file'])->name('building_problems.download_file');
     Route::get('/delete_file/{buildingProblems}/{serverFileName}', [BuildingProblemsController::class, 'delete_file'])->name('building_problems.delete_file');
+
+});
+
+// ACTION PLANNING ROUTES
+
+Route::resource('action_planning', ActionPlanningController::class);//->middleware('canViewMicroapp');
+
+Route::group(['prefix' => 'action_planning', 'middleware' => 'canViewMicroapp'], function () {
+    Route::get('/download_file/{serverFileName}/{databaseFileName}', [ActionPlanningController::class, 'download_file'])->name('action_planning.download_file');
+    Route::get('/delete_file/{actionPlanning}/{serverFileName}', [ActionPlanningController::class, 'delete_file'])->name('action_planning.delete_file');
 
 });
 

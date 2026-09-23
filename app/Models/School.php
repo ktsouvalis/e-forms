@@ -20,6 +20,7 @@ use App\Models\microapps\InternalRule;
 use App\Models\microapps\Defibrillator;
 use App\Models\microapps\TeacherLeaves;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\microapps\ActionPlanning;
 use Illuminate\Notifications\Notifiable;
 use App\Models\microapps\BuildingProblems;
 use App\Models\microapps\DailyAbsenceReport;
@@ -168,6 +169,11 @@ class School extends Authenticatable
     public function buildingProblems()
     {
         return $this->hasOne(BuildingProblems::class);
+    }
+
+    public function actionPlanning()
+    {
+        return $this->hasOne(ActionPlanning::class);
     }
 
     public function dailyAbsenceReport()

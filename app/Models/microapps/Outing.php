@@ -35,9 +35,9 @@ class Outing extends Model
     public function getIsLateAttribute()
     {
         if ($this->outingtype_id == 2 || $this->outingtype_id == 3) {
-            $daysBefore = 5; // Πολύωρη
+            $daysBefore = 4; // Πολύωρη
         } elseif ($this->outingtype_id == 1) {
-            $daysBefore = 3; // Ολιγόωρη
+            $daysBefore = 2; // Ολιγόωρη
         } else {
             return false; // 
         }

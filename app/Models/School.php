@@ -173,7 +173,7 @@ class School extends Authenticatable
 
     public function actionPlanning()
     {
-        return $this->hasOne(ActionPlanning::class);
+        return $this->hasOne(ActionPlanning::class, 'school_id', 'id');
     }
 
     public function dailyAbsenceReport()

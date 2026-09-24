@@ -351,13 +351,28 @@ Route::group(['prefix' => 'building_problems', 'middleware' => 'canViewMicroapp'
 
 // ACTION PLANNING ROUTES
 
-Route::resource('action_planning', ActionPlanningController::class);//->middleware('canViewMicroapp');
+Route::resource('action_planning', ActionPlanningController::class)->middleware('canViewMicroapp');
 
 Route::group(['prefix' => 'action_planning', 'middleware' => 'canViewMicroapp'], function () {
     Route::get('/download_file/{serverFileName}/{databaseFileName}', [ActionPlanningController::class, 'download_file'])->name('action_planning.download_file');
-    Route::get('/delete_file/{actionPlanning}/{serverFileName}', [ActionPlanningController::class, 'delete_file'])->name('action_planning.delete_file');
+    Route::delete('/delete_file/{actionPlanning}/{serverFileName}', [ActionPlanningController::class, 'delete_file'])
+        ->name('action_planning.delete_file')
+        ->where('serverFileName', '.*');
+    Route::post('/select_cycle', [ActionPlanningController::class, 'select_cycle'])->name('action_planning.select_cycle');
 
 });
+
+Route::middleware('isConsultant')->group(function () {
+    Route::get('/action_planning_review', [ActionPlanningController::class, 'consultant_index'])
+        ->name('consultant.action_planning.index');
+
+    Route::get('/action_planning_review/download_file/{serverFileName}/{databaseFileName}',
+        [ActionPlanningController::class, 'download_file'])
+        ->name('consultant.action_planning.download_file');
+});
+
+Route::post('/action_planning/{actionPlanning}/mark-seen', [App\Http\Controllers\microapps\ActionPlanningController::class, 'mark_seen'])
+    ->name('consultant.action_planning.mark_seen');
 
 //DESKS ROUTES
 Route::resource('desks', DesksController::class)->middleware('canViewMicroapp');

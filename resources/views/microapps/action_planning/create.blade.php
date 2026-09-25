@@ -25,7 +25,9 @@
                 <form action="{{ route('action_planning.select_cycle') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Επιλέξτε τον τύπο προγραμματισμού που θα υποβάλετε:</label>
+                        <label class="form-label fw-bold">Επιλέξτε τον τύπο προγραμματισμού που θα υποβάλετε για ενημέρωση του Συμβούλου Εκπαίδευσης:</label>
+                        <p> ΠΡΟΣΟΧΗ: Δεν υπάρχει δυνατότητα αλλαγής από ετήσιο σε τριμηνιαίο ή αντίστροφα μετά την αποθήκευση. </p>
+                        <br>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="planning_cycle" id="cycle_annual" value="Ετήσιος" required>
                             <label class="form-check-label" for="cycle_annual">
@@ -33,6 +35,7 @@
                                 <small class="text-muted">(1 αρχείο για όλη τη χρονιά)</small>
                             </label>
                         </div>
+                        <br>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="planning_cycle" id="cycle_quarterly" value="Τριμηνιαίος" required>
                             <label class="form-check-label" for="cycle_quarterly">

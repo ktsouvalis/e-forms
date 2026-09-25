@@ -97,6 +97,19 @@
                 <div class="mt-4">
                     <h5 class="text-center fw-bold mb-3">Αρχεία που έχουν υποβληθεί</h5>
 
+                    {{-- Ένδειξη "έλαβε γνώση" από τον σύμβουλο (όχι έλεγχος/έγκριση) --}}
+                    @if($plan && $plan->checked)
+                        <div class="alert alert-success d-flex align-items-center gap-2 py-2">
+                            <i class="bi bi-eye-fill"></i>
+                            <span>Ο σύμβουλος έλαβε γνώση του προγραμματισμού που υποβάλατε.</span>
+                        </div>
+                    @else
+                        <div class="alert alert-light border text-muted d-flex align-items-center gap-2 py-2">
+                            <i class="bi bi-eye-slash"></i>
+                            <span>Εδώ θα εμφανιστεί ένδειξη όταν ο σύμβουλος λάβει γνώση του προγραμματισμού.</span>
+                        </div>
+                    @endif
+
                     @if($selectedCycle === 'Ετήσιος')
                         {{-- Λίστα Ετήσιου --}}
                         @if(!empty($filesJson['annual']))

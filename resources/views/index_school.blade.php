@@ -187,7 +187,6 @@
                                 $resource = substr($one_microapp->microapp->url, 1);
                                 $submissionExists = App\Http\Controllers\SchoolController::getSubmissionExists($one_microapp->microapp, $school);
                                 $status = App\Http\Controllers\SchoolController::getSubmissionStatus($one_microapp->microapp, $submissionExists);
-                                //dd($school->internal_rule);
                             @endphp
                             <div class="card-hover h-100">
                                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 h-full relative overflow-hidden">

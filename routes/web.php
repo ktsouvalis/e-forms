@@ -247,6 +247,9 @@ Route::view('/consultant_schools','consultant_schools')->middleware('isConsultan
 
 Route::view('/consultant_teachers','consultant_teachers')->middleware('isConsultant');
 
+Route::get('/consultant_my_teachers', [ConsultantController::class, 'my_teachers'])
+    ->middleware('isConsultant');
+
 Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 
 Route::get('/clogout', [ConsultantController::class, 'logout']);

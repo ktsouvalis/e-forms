@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use GuzzleHttp\Client;
+use App\Models\School;
+use App\Models\Teacher;
 use App\Models\Consultant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -117,5 +119,36 @@ class ConsultantController extends Controller
         } else {
             return $body;
         }
+    }
+
+    public function my_teachers()
+    {
+        $consultant = Auth::guard('consultant')->user();
+        
+        $teachers = Teacher::with([
+                'ypiretisi',
+                'organiki',
+                'sxesi_ergasias',
+                'work_experience',
+            ])
+            ->whereHasMorph(
+                'ypiretisi',
+                [\App\Models\School::class],
+                function ($query) use ($consultant) {
+                    $query->where('schregion_id', $consultant->schregion->id);
+                }
+            )
+            ->where('active', true)
+            ->get()
+            ->sort(function ($a, $b) use ($collator) {
+                return $collator->compare((string) $a->ypiretisi?->name, (string) $b->ypiretisi?->name)
+                    ?: $collator->compare((string) $a->klados, (string) $b->klados)
+                    ?: $collator->compare((string) $a->surname, (string) $b->surname);
+            })
+            ->values();
+        $t = $teachers->first();
+        dd($t->getAttributes(), $t->ypiretisi->getAttributes(), $t->getRelations());
+
+        return view('consultant_my_teachers', compact('teachers'));
     }
 }

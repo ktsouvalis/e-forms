@@ -353,7 +353,7 @@
                             @if($totalFiles > 1)
                                 <div class="alert alert-info mb-3">
                                     <i class="bi bi-info-circle me-2"></i>
-                                    <small>Τα αρχεία υποβάλλονται όλα μαζί</small>
+                                    <small>Τα αρχεία υποβάλλονται όλα μαζί. Μπορείτε πάντα να υποβάλετε ένα κενό αρχείο προκειμένου να προχωρήσει η υποβολή.</small>
                                 </div>
                             @endif
 

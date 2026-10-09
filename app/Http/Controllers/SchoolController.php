@@ -596,6 +596,14 @@ private function removeDuplicateDeputyDirectors($directors_array) {
                         return false;
                     }
                 }
+
+                if($microapp->url == '/action_planning'){
+                    if($school->actionPlanning){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             } else { // Handle Filecollects
                 $stakeHolder = $microappOrFilecollect;
 

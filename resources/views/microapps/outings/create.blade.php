@@ -159,6 +159,7 @@
                         <th id="">Πρακτικό</th>
                         <th id="">Αρχείο</th>
                         <th id="">Τμήματα</th>
+                        <th>Δ/νση Εκπ/σης</th>
                         <th>Επεξεργασία μελλοντικής εκδρομής</th>
                         <th>Διαγραφή μελλοντικής εκδρομής</th>
                     </tr>
@@ -206,7 +207,18 @@
                                     {{$out_section->section->name}}<br>
                                 @endforeach
                             </td>
-                            
+                            <td>
+                                @if($outing->checked)
+                                    <span class="badge bg-success" title="Η Διεύθυνση έλαβε γνώση">Ελήφθη</span>
+                                @else
+                                    <span class="badge bg-secondary">Σε αναμονή</span>
+                                @endif
+
+                                @if($outing->remarks)
+                                    <div class="text-dark small text-start mt-1" style="white-space: pre-line;"><strong>Παρατηρήσεις:</strong>
+                            {{$outing->remarks}}</div>
+                                @endif
+                            </td>
                             @if(Illuminate\Support\Carbon::parse($outing->outing_date)->startOfDay()>=Illuminate\Support\Carbon::now()->startOfDay() and $accepts)
                             {{-- <td><a href="{{url("/outings/$outing->id/edit")}}" class="btn btn-primary bi bi-pencil-square "> </a></td> --}}
                             <td><a href="{{route('outings.edit', ['outing'=>$outing->id])}}" class="btn btn-primary bi bi-pencil-square "> </a></td>

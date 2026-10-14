@@ -7,15 +7,16 @@ use App\Models\School;
 use App\Models\Microapp;
 use App\Models\MicroappUser;
 use Illuminate\Http\Request;
+use App\Mail\OutingRemarked;
 use App\Models\microapps\Outing;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\microapps\OutingSection;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
 class OutingsController extends Controller
 {
     //
@@ -169,6 +170,30 @@ class OutingsController extends Controller
             return response()->json(['message' => 'Outing updated successfully: '.$outing->checked]);
         }
         abort(403, 'Unauthorized action.');
+    }
+
+    public function add_remark(Request $request, Outing $outing){
+        if(!(Auth::check() && (Auth::user()->microapps->where('microapp_id', $this->microapp->id)->count() or Auth::user()->isAdmin())))
+            abort(403, 'Unauthorized action.');
+
+        $request->validate(['remark' => 'required|string|max:2000']);
+
+        $line = '[' . now()->format('d/m/Y H:i') . '] ' . trim($request->input('remark'));
+        $outing->remarks = $outing->remarks ? $outing->remarks . "\n" . $line : $line;
+        $outing->remarks_at = now();
+        $outing->save();
+
+                $mail_sent = false;
+        if ($outing->school->mail) {
+            try {
+                Mail::to($outing->school->mail)->send(new OutingRemarked($outing, $line));
+                $mail_sent = true;
+            } catch (Throwable $e) {
+                Log::channel('stakeholders_microapps')->error('Outing ' . $outing->id . ' remark mail error ' . $e->getMessage());
+            }
+        }
+
+        return response()->json(['message' => 'ok', 'remarks' => $outing->remarks, 'mail_sent' => $mail_sent]);
     }
 
     public function update(Request $request, Outing $outing){

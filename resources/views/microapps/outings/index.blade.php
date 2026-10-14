@@ -18,10 +18,12 @@
             var checkOutingUrl = '{{ route("outings.check", ["outing" =>"mpla"]) }}';
             var deleteOutingUrl = '{{ route("outings.destroy", ["outing" =>"mpla"]) }}';
             var countSectionsUrl ='{{ route("outings.count_sections", ["outing" =>"mpla"]) }}'
+            var addRemarkUrl = '{{ route("outings.add_remark", ["outing" => "mpla"]) }}';
         </script>
         <script src="{{asset('check_outing.js')}}"></script>
         <script src="{{asset('delete_outing.js')}}"></script>
         <script src="{{asset('count_outing_sections.js')}}"></script>
+        <script src="{{asset('add_remark.js')}}"></script>
     @endpush
     @push('title')
         <title>Εκδρομές</title> 
@@ -42,6 +44,7 @@
                     <th id="">Αρχείο</th>
                     <th id="search">ID/Τύπος</th>
                     <th id="search">Έλεγχος</th>
+                    <th>Παρατηρήσεις</th>
                     <th id="">Τμήματα (πλήθος εκδρομών)</th>
                     <th id="search">Προορισμός/Δραστηριότητα</th>
                     <th id="search">Ημερομηνία Υποβολής</th>
@@ -81,6 +84,12 @@
                             <div class="check_td_{{$outing->id}}"> {{$text}}</div>
                         </td>
                         <td>
+                            <button class="btn btn-outline-primary bi bi-chat-left-text outing-remark-btn"
+                                    data-outing-id="{{$outing->id}}" data-bs-toggle="modal" data-bs-target="#remarkModal"></button>
+                            <span id="remark_badge_{{$outing->id}}" class="badge bg-info {{ $outing->remarks ? '' : 'd-none' }}">{{ substr($outing->remarks, 0 , 27) }}</span>
+                            <div id="remarks_{{$outing->id}}" class="d-none">{{$outing->remarks}}</div>
+                        </td>
+                        <td>
                             <button id= "calc_button-{{$outing->id}}" class="bi bi-arrow-bar-down btn btn-primary outing-calcbox" data-outing-id="{{ $outing->id }}"> </button>
                             <div id="calc_td_{{$outing->id}}"> </div>
                             <button id= "hide_button-{{$outing->id}}" class="bi bi-arrow-bar-up btn btn-primary outing-hidebox hide-button" data-outing-id="{{ $outing->id }}" > </button>
@@ -100,6 +109,26 @@
                     </tr> 
                 @endforeach   
             </tbody>  
-            </table>  
+            </table>
+            <div class="modal fade" id="remarkModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="remarkModalTitle"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="remarkForm">
+                    <div class="modal-body bg-light">
+                    <div id="remarkHistory" class="border rounded p-2 mb-2 small" style="white-space: pre-line;"></div>
+                    <textarea class="form-control" id="remarkText" placeholder="Νέα παρατήρηση..." required></textarea>
+                    </div>
+                    <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Κλείσιμο</button>
+                    <button type="submit" class="btn btn-primary bi bi-send"> Υποβολή</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
         </div>
 </x-layout>

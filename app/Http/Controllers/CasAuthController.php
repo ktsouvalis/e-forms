@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\School;
 use App\Models\Teacher;
+use App\Models\Consultant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -41,8 +42,19 @@ class CasAuthController extends Controller
             // If user is not authenticated, redirect to login page
             return redirect()->route('index')->withErrors(['error' => 'Αποτυχία ταυτοποίησης.']);
         }
-        // Check if user is a teacher
+        // Check if user is a consultant or teacher.
         if (isset($attributes['employeenumber'])) {
+            $en = $attributes['employeenumber'];
+            $field = strlen($en) == 6 ? 'am' : (strlen($en) == 9 ? 'afm' : null);
+
+            if ($field) {
+                $consultant = Consultant::where($field, $en)->first();
+                if ($consultant) {
+                    Auth::guard('consultant')->login($consultant);
+                    session()->regenerate();
+                    return redirect(url('/index_consultant'))->with('success', "$consultant->name καλωσήρθατε!");
+                }
+            }
 	
             if(strlen($attributes['employeenumber']) == 6) { // 6-digit ΑΜ
                 try{

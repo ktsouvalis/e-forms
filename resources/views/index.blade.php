@@ -138,10 +138,16 @@
                             </a>
                         </div> -->
                         <div class="btn-toolbar mb-2 px-1 mb-md-0">
+                            <a href="{{url('/sch_sso_login')}}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-user-tie"></i> Σύνδεση Συμβούλου Εκπαίδευσης
+                            </a>
+                        </div>
+                        <div class="btn-toolbar mb-2 px-1 mb-md-0">
                             <a href="{{url('/index_user')}}" class="btn btn-sm btn-outline-secondary">
                                 <i class="fas fa-sign-in-alt"></i> Σύνδεση Υπαλλήλου Διεύθυνσης
                             </a>
                         </div>
+
                     </div>
                     
                 </div>

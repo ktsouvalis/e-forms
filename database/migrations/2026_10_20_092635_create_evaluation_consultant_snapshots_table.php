@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('evaluation_consultant_snapshots', function (Blueprint $table) {
             $table->id();
             $table->foreignId('consultant_id')->unique()->constrained()->cascadeOnDelete();
-            $table->json('data');
+            $table->longText('data');
             $table->timestamps();
         });
     }

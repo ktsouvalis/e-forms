@@ -47,10 +47,7 @@
   </div>
     @if(Illuminate\Support\Facades\Request::path()!='index_consultant')
       <nav class="navbar navbar-light justify-content-auto py-2 p-2" style="background-color: rgb(13, 37, 54);">
-        <!-- <div class="badge text-wrap py-2" style="width: 10rem; background-color:#CCCCFF; text-align:center;">
-          <div class="text-dark fa-solid fa-star"></div> 
-            <a href="{{url("/evaluation/create")}}" style=" text-decoration:none;" class="text-dark"> Αξιολόγηση</a>
-        </div> -->
+        @if($user->isLocal())
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:#f1948a; text-align:center;">
           <div class="text-dark fa-solid fa-file-signature"></div> 
             <a href="{{route("internal_rules.create")}}" style=" text-decoration:none;" class="text-dark"> Εσωτερικός Κανονισμός</a>
@@ -65,14 +62,21 @@
               Δράσεις Σχολείων
           </a>
       </div>
+        @endif
+        <div class="badge text-wrap py-2" style="width: 10rem; background-color:#ffd044; text-align:center;">
+          <div class="text-dark fa-solid fa-clipboard-check"></div> 
+            <a href="{{ route('consultants.teacher_evaluation.index') }}" style=" text-decoration:none;" class="text-dark"> Αξιολόγηση Εκπαιδευτικών</a>
+        </div>
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:mediumaquamarine; text-align:center;">
           <div class="text-dark fa-solid fa-school"></div> 
             <a href="{{url("/consultant_schools")}}" style=" text-decoration:none;" class="text-dark"> Σχολεία</a>
         </div>
+        @if($user->isLocal())
         <div class="badge text-wrap py-2" style="width: 10rem; background-color:skyblue; text-align:center;">
           <div class="text-dark fa-solid fa-signature"></div> 
             <a href="{{url("/consultant_teachers")}}" style=" text-decoration:none;" class="text-dark"> Εκπαιδευτικοί</a>
         </div>
+        @endif
       </nav>
       @else
           @push('app-icon')

@@ -17,11 +17,17 @@ class Consultant extends Authenticatable
 
     protected $casts = [
         'is_supervisor' => 'boolean',
+        'is_local' => 'boolean',
     ];
 
     public function isSupervisor(): bool
     {
         return $this->is_supervisor;
+    }
+
+    public function isLocal(): bool
+    {
+        return $this->is_local;
     }
 
     public function schregion()

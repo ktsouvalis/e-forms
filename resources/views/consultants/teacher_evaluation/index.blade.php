@@ -39,13 +39,23 @@
                 <small class="text-muted">Τελευταία επίσκεψη: {{ $lastVisit->format('d/m/Y H:i') }}</small>
             @endif
         </div>
-
+        {{-- Εισαγωγικό κείμενο --}}
+        <div class="alert alert-light border-start border-4 border-primary py-2 px-3 mb-3 small shadow-sm">
+            Εδώ βλέπετε <strong>σε πραγματικό χρόνο</strong> τις ζευγοποιήσεις των εκπαιδευτικών
+            που συμμετέχουν στη διαδικασία αξιολόγησης, σε πλήρη συγχρονισμό με τα στοιχεία της Διεύθυνσης.
+        </div>
         {{-- Αλλαγές --}}
         @if($lastVisit)
             @if($added || $changed || $removed)
                 <div class="card border-warning mb-3">
                     <div class="card-header py-1 small fw-bold bg-warning-subtle">
                         Αλλαγές από την τελευταία επίσκεψη
+                    </div>
+                    <div class="px-3 py-2 small border-bottom bg-body-tertiary">
+                        <strong>Σημείωση:</strong> Οι αλλαγές προκύπτουν από τη σύγκριση με την κατάσταση της προηγούμενης
+                        επίσκεψής σας και εμφανίζονται <strong>μόνο μία φορά</strong>. Με την επόμενη ανανέωση της σελίδας
+                        θα πάψουν να εμφανίζονται, καθώς δεν τηρείται πλήρες ιστορικό μεταβολών.
+                        Αν θέλετε να τις διατηρήσετε, σημειώστε τις ή αποθηκεύστε ένα στιγμιότυπο οθόνης (print screen).
                     </div>
                     <ul class="list-group list-group-flush small">
                         @foreach($added as $id)

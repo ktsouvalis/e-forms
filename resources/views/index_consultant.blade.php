@@ -61,39 +61,42 @@
                                 </a> 
                             </div>
                         </div> 
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:skyblue; text-align:center;">
-                                <a  class="text-dark" style="text-decoration:none;" href="{{url("/consultant_teachers")}}">
-                                <div class="h5 card-title fa-solid fa-signature"></div>
-                                <div>Εκπαιδευτικοί</div>
-                                </a> 
+                        
+                        @if($consultant->isLocal())
+                            <div class="col-md-4 py-2" style="max-width:15rem">
+                                <div class="card py-5" style="background-color:skyblue; text-align:center;">
+                                    <a  class="text-dark" style="text-decoration:none;" href="{{url("/consultant_teachers")}}">
+                                    <div class="h5 card-title fa-solid fa-signature"></div>
+                                    <div>Εκπαιδευτικοί</div>
+                                    </a> 
+                                </div>
                             </div>
-                        </div>
-                        <hr>
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:#CCCCFF; text-align:center;">
-                                <a  class="text-dark" style="text-decoration:none;" href="{{route("consultant.action_planning.index")}}">
-                                <div class="h5 card-title bi bi-person-lines-fill"></div>
-                                <div>Προγραμματισμός Δράσεων Σχ. Μονάδων</div>
-                                </a> 
+                            <hr>
+                            <div class="col-md-4 py-2" style="max-width:15rem">
+                                <div class="card py-5" style="background-color:#CCCCFF; text-align:center;">
+                                    <a  class="text-dark" style="text-decoration:none;" href="{{route("consultant.action_planning.index")}}">
+                                    <div class="h5 card-title bi bi-person-lines-fill"></div>
+                                    <div>Προγραμματισμός Δράσεων Σχ. Μονάδων</div>
+                                    </a> 
+                                </div>
+                            </div> 
+                            <div class="col-md-4 py-2" style="max-width:15rem">
+                                <div class="card py-5" style="background-color:#f1948a; text-align:center;">
+                                    <a  class="text-dark" style="text-decoration:none;" href="{{route("internal_rules.create")}}">
+                                    <div class="h5 card-title fa-solid fa-file-signature"></div>
+                                    <div>Εσωτερικός Κανονισμός</div>
+                                    </a> 
+                                </div>
+                            </div> 
+                            <div class="col-md-4 py-2" style="max-width:15rem">
+                                <div class="card py-5" style="background-color:#ff8f00; text-align:center;">
+                                    <a  class="text-dark" style="text-decoration:none;" href="{{route("work_planning.create")}}">
+                                    <div class="h5 card-title fa-solid fa-map"></div>
+                                    <div>Προγραμματισμός Έργου</div>
+                                    </a> 
+                                </div>
                             </div>
-                        </div> 
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:#f1948a; text-align:center;">
-                                <a  class="text-dark" style="text-decoration:none;" href="{{route("internal_rules.create")}}">
-                                <div class="h5 card-title fa-solid fa-file-signature"></div>
-                                <div>Εσωτερικός Κανονισμός</div>
-                                </a> 
-                            </div>
-                        </div> 
-                        <div class="col-md-4 py-2" style="max-width:15rem">
-                            <div class="card py-5" style="background-color:#ff8f00; text-align:center;">
-                                <a  class="text-dark" style="text-decoration:none;" href="{{route("work_planning.create")}}">
-                                <div class="h5 card-title fa-solid fa-map"></div>
-                                <div>Προγραμματισμός Έργου</div>
-                                </a> 
-                            </div>
-                        </div>
+                        @endif
                         <div class="col-md-4 py-2" style="max-width:15rem">
                             <div class="card py-5" style="background-color:#ffd044; text-align:center;">
                                 <a class="text-dark" style="text-decoration:none;" href="{{ route('consultants.teacher_evaluation.index') }}">

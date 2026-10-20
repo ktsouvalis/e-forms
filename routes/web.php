@@ -51,7 +51,6 @@ use App\Http\Controllers\microapps\SwimmingController;
 use App\Http\Controllers\microapps\TwoFilesController;
 use App\Http\Controllers\microapps\WorkPlanController;
 use App\Http\Controllers\microapps\EnrollmentController;
-use App\Http\Controllers\microapps\EvaluationController;
 use App\Http\Controllers\microapps\ImmigrantsController;
 use App\Http\Controllers\microapps\SchoolAreaController;
 use App\Http\Controllers\microapps\TimetablesController;
@@ -60,6 +59,7 @@ use App\Http\Controllers\microapps\AllDaySchoolController;
 use App\Http\Controllers\microapps\InternalRulesController;
 use App\Http\Controllers\microapps\ActionPlanningController;
 use App\Http\Controllers\microapps\BuildingProblemsController;
+use App\Http\Controllers\microapps\TeacherEvaluationController;
 use App\Http\Controllers\microapps\DailyAbsenceReportController;
 
 /*
@@ -255,13 +255,12 @@ Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 Route::get('/clogout', [ConsultantController::class, 'logout']);
 
 /// EVALUATION ROUTES
-Route::resource('/evaluation', EvaluationController::class);
-
-Route::get('/evaluation/download_file/{filename}', [EvaluationController::class, 'download_file'])->name('evaluation.download_file'); 
-
-Route::view('/evaluation_differences', 'evaluation_differences');
-
-Route::post('/evaluation/upload_file/{whoIs}', [EvaluationController::class, 'upload_file'])->name('evaluation.upload_file');
+Route::middleware('auth:consultant')
+    ->prefix('consultants_teacher_evaluation')
+    ->name('consultants.teacher_evaluation.')
+    ->group(function () {
+        Route::get('/', [TeacherEvaluationController::class, 'index'])->name('index');
+    });
 
 //PRIVATE EDUCATION ROUTES
 Route::view('/private_education', 'private_education')->middleware('can:viewPrivateEducation,' . Operation::class);

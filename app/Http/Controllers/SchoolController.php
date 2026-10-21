@@ -325,6 +325,7 @@ private function extractSchoolDataFromCsv(array $data): array
         // Tell PHP this file is Windows-1253 encoded
         stream_filter_append($handle, 'convert.iconv.Windows-1253/UTF-8');
         while (($data = fgetcsv($handle, 0, ";")) !== FALSE && $row < 10000) {
+            
             // Check if row is empty
             if (empty(array_filter($data))) {
                 break;
@@ -332,8 +333,8 @@ private function extractSchoolDataFromCsv(array $data): array
             
             $check = array();
             
-            // Get AFM from column 14 (index 13)
-            $afm = $data[13] ?? null;
+            // Get AFM from column 16 (index 15)
+            $afm = $data[15] ?? null;
 
             if ($afm && str_contains($afm, "=")) {
                 $check['afm'] = substr($afm, 2, -1);
@@ -354,7 +355,7 @@ private function extractSchoolDataFromCsv(array $data): array
         }
         fclose($handle);
     }
-    
+
     session(['directors_array' => $directors_array]);
     session(['subdirectors_array' => $subdirectors_array]);
  

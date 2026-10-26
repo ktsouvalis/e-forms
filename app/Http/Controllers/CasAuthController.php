@@ -42,11 +42,20 @@ class CasAuthController extends Controller
             // If user is not authenticated, redirect to login page
             return redirect()->route('index')->withErrors(['error' => 'Αποτυχία ταυτοποίησης.']);
         }
+        Log::channel('login_as')->info('Step 0 - Return from School Network', [
+            'user' => $user,
+            'attributes' => $attributes,
+            'time' => now(),
+        ]);
         // Check if user is a consultant or teacher.
         if (isset($attributes['employeenumber'])) {
             $en = $attributes['employeenumber'];
             $field = strlen($en) == 6 ? 'am' : (strlen($en) == 9 ? 'afm' : null);
-
+            Log::channel('login_as')->info('Step 1 - Consultant or Teacher login attempt', [
+                'employeenumber' => $en,
+                'field' => $field,
+                'time' => now(),
+            ]);
             if ($field) {
                 $consultant = Consultant::where($field, $en)->first();
                 if ($consultant) {

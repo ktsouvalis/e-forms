@@ -102,7 +102,7 @@
                         <div class="text-center">
                             <input type="file" id="files" name="files[]" multiple required >
                             <input type="submit" value="Υποβολή (για Νέα Αρχεία)" class="btn btn-info btn-block rounded-2 py-2"
-                            <!-- @if($microapp->accepts == 0 || $lockNewFileSubmission == true) disabled @endif > -->
+                         
                             @if($microapp->accepts == 0) disabled @endif >
                             <small class="d-block mt-1">(Για νέα αρχεία ωρολογίου προγράμματος)</small>
                         </div>

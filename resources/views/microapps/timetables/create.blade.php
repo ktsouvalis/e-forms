@@ -16,14 +16,14 @@
     }
     //$timetable = $timetables->first(); //fetch first timetable
     $timetableFiles = $timetable?$timetable->files:''; //fetch timetable's files
-    $lockNewFileSubmission = false;
+    <!-- $lockNewFileSubmission = false;
     if($timetableFiles){
         foreach($timetableFiles as $timetableFile){//Αν υπάρχει έστω και ένα πρόγραμμα που είναι σε αναμονή διορθώσεων κλείδωσε την υποβολή νέου αρχείου
             if($timetableFile->status == 1){
                 $lockNewFileSubmission = true;
             }
         }
-    }
+    } -->
     @endphp
 @push('links')
     <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>
@@ -102,7 +102,8 @@
                         <div class="text-center">
                             <input type="file" id="files" name="files[]" multiple required >
                             <input type="submit" value="Υποβολή (για Νέα Αρχεία)" class="btn btn-info btn-block rounded-2 py-2"
-                            @if($microapp->accepts == 0 || $lockNewFileSubmission == true) disabled @endif >
+                            <!-- @if($microapp->accepts == 0 || $lockNewFileSubmission == true) disabled @endif > -->
+                            @if($microapp->accepts == 0) disabled @endif >
                             <small class="d-block mt-1">(Για νέα αρχεία ωρολογίου προγράμματος)</small>
                         </div>
                     </form>   

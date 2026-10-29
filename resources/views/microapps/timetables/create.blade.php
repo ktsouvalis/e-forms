@@ -16,14 +16,7 @@
     }
     //$timetable = $timetables->first(); //fetch first timetable
     $timetableFiles = $timetable?$timetable->files:''; //fetch timetable's files
-    <!-- $lockNewFileSubmission = false;
-    if($timetableFiles){
-        foreach($timetableFiles as $timetableFile){//Αν υπάρχει έστω και ένα πρόγραμμα που είναι σε αναμονή διορθώσεων κλείδωσε την υποβολή νέου αρχείου
-            if($timetableFile->status == 1){
-                $lockNewFileSubmission = true;
-            }
-        }
-    } -->
+
     @endphp
 @push('links')
     <link href="{{asset('DataTables-1.13.4/css/dataTables.bootstrap5.css')}}" rel="stylesheet"/>

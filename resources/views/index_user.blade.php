@@ -204,7 +204,7 @@
                             </div>
                         @endif
                     @endforeach
-                    @if($user->department_id == 8 || $user->department_id == 9 || $user->department_id == 10)
+                    @if($user->department_id == 7 ||$user->department_id == 8 || $user->department_id == 9 || $user->department_id == 10)
                         <div class="col-md-4 py-3" style="max-width:15rem">
                             <div class="card" style="background-color:MediumAquamarine; font-size:small">
                                 <div class="py-3" style="text-align:center">

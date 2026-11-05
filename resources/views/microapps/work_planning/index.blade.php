@@ -60,7 +60,7 @@
     @endforeach
 
     @php
-        $workplanUsers = App\Models\User::whereIn('department_id', [8, 9, 10])->get();
+        $workplanUsers = App\Models\User::whereIn('department_id', [7, 8, 9, 10])->get();
     @endphp
 
     <hr>

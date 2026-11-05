@@ -95,7 +95,7 @@ class User extends Authenticatable
 
     public function canAccessWorkPlan(): bool
     {
-        return in_array($this->department_id, [8, 9, 10]);
+        return in_array($this->department_id, [7,8, 9, 10]);
     }
 
     public function workplans()

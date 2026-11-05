@@ -30,7 +30,31 @@ class AllDaySchoolController extends Controller
     }
 
     public function create(){
-        return view('microapps.all_day_school.create', ['appname' => 'all_day_school']);
+        $school = Auth::guard('school')->user(); //check which school is logged in
+        $microapp = Microapp::where('url', '/all_day_school')->first();
+        $active_month = Month::getActiveMonth();
+        $vmonth = $school->vmonth;
+        $accepts = $microapp->accepts; 
+        $name = $microapp->name;
+        if(!$school->vmonth or $school->vmonth->vmonth == 0){
+            $month_to_store = $active_month->id;
+        }
+        else{
+            $month_to_store = $vmonth->vmonth;
+        }
+        $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first(); 
+        return view('microapps.all_day_school.create', 
+            [
+                'appname' => 'all_day_school', 
+                'school' => $school, 
+                'microapp' => $microapp, 
+                'active_month' => $active_month, 
+                'vmonth' => $vmonth, 
+                'accepts' => $accepts, 
+                'name' => $name, 
+                'month_to_store' => $month_to_store, 
+                'old_data' => $old_data
+             ]);
     }
 
     public function store(Request $request){

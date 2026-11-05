@@ -31,7 +31,7 @@ class TeacherEvaluationController extends Controller
             })
             ->values()
             ->all();
-        dd($evaluations);
+        // dd($evaluations);
         $consultant = auth('consultant')->user();
         $snapshot   = EvaluationConsultantSnapshot::firstWhere('consultant_id', $consultant->id);
         $lastVisit  = $snapshot?->updated_at;

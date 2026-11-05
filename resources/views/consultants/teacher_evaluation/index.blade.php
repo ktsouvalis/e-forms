@@ -143,12 +143,16 @@
                                                data-details="{{ json_encode($details) }}">
                                                 {{ $row['LastName'] }}
                                             </a>
+                                            @if(!empty($row['OrgEAE']))
+                                                <span class="badge bg-info text-dark ms-1" title="Ειδική Αγωγή">ΕΑΕ</span>
+                                            @endif
                                         </td>
                                         <td>{{ $row['FirstName'] }}</td>
                                         <td>{{ $row['Branch'] }}</td>
                                         <td>
                                             <span class="d-inline-block text-truncate align-bottom" style="max-width: 220px;" title="{{ $row['ServiceSchoolName'] }}">
                                                 {{ $row['ServiceSchoolName'] }}
+                                             
                                             </span>
                                         </td>
                                         <td>

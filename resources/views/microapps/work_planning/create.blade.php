@@ -1,6 +1,5 @@
-<x-layout_consultant>
+   <x-dynamic-component :component="$layout">
     @php
-        $user = Auth::guard('consultant')->user(); //check which user is logged in
         if(request()->has('date')){
             $selected_day = Carbon\CarbonImmutable::parse(request()->input('date'));
         }else{
@@ -11,7 +10,10 @@
         $yearWeek=$year.$week;
     @endphp
     <div class="container">
-        <div class="h4">Προγραμματισμός και υλοποίηση έργου Συμβούλου Εκπαίδευσης</div>
+        <div class="h4">
+            Προγραμματισμός και υλοποίηση έργου
+            @if($isConsultant) Συμβούλου Εκπαίδευσης @endif
+        </div>
         <div class="row">
             <div class="col">
                 <span class="" id="basic-addon2">Ημερομηνία</span>
@@ -89,4 +91,4 @@
     </form> 
   
     @endforeach 
-</x-layout_consultant>
+   </x-dynamic-component>

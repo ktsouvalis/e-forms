@@ -34,6 +34,9 @@ class CanViewMicroapp
             if($user->microapps->where('microapp_id', $microapp->id)->count()){
                 return $next($request);
             }
+            if($microapp->url == "/work_planning" && $user->canAccessWorkPlan()){
+                return $next($request);
+            }
             abort(403, "Μη εξουσιοδοτημένη ενέργεια (no access)");
         }
 

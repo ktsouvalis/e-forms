@@ -8,6 +8,7 @@ use App\Models\MicroappUser;
 use App\Models\FilecollectUser;
 use App\Models\UsersOperations;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\microapps\WorkPlan; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -90,5 +91,15 @@ class User extends Authenticatable
     public function addedbys()
     {
         return $this->morphMany(FileshareStakeholder::class, 'addedby');
+    }
+
+    public function canAccessWorkPlan(): bool
+    {
+        return in_array($this->department_id, [8, 9, 10]);
+    }
+
+    public function workplans()
+    {
+        return $this->hasMany(WorkPlan::class, 'user_id');
     }
 }

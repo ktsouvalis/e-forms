@@ -1,6 +1,6 @@
 <x-layout>
     @php
-        $consultants = App\Models\Consultant::all();
+        $consultants = App\Models\Consultant::where('is_local', true)->get();
         
         $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
         $accepts = $microapp->accepts; //fetch microapp 'accepts' field
@@ -53,44 +53,21 @@
         </div>
        
     </div>
-@foreach($consultants as $user)
-@if($user->id!==11)
-@php
-    $workplan = $user->workplans()->where('yearWeek', $yearWeek)->first();
-    if($workplan)
-        $programm = json_decode($workplan->programm);
-@endphp
+    @foreach($consultants as $user)
+        @if($user->id!==11)
+            @include('microapps.work_planning._row', ['user' => $user])
+        @endif
+    @endforeach
+
+    @php
+        $workplanUsers = App\Models\User::whereIn('department_id', [8, 9, 10])->get();
+    @endphp
+
     <hr>
-    <div class="row">
-        <div class="col">
-            <span class="fw-bold">{{$user->name}}  {{$user->surname}}</span>
-            @if($workplan)
-                    <br>Δημ.: {{$workplan->created_at}} <br>
-                    Αναν.:{{$workplan->updated_at}}
-                @endif
-        </div>
-        <div class="col">
-            <div><textarea name="mon" id="mon" @if($workplan) rows="10" @endif>@if($workplan){{$programm->mon}}@endif</textarea></div>
-        </div>
-        <div class="col">
-            <div><textarea name="tue" id="tue" @if($workplan) rows="10" @endif>@if($workplan){{$programm->tue}}@endif</textarea></div>
-        </div>
-        <div class="col">
-            <div><textarea name="wed" id="wed" @if($workplan) rows="10" @endif>@if($workplan){{$programm->wed}}@endif</textarea></div>
-        </div>
-        <div class="col">
-            <div><textarea name="thu" id="thu" @if($workplan) rows="10" @endif>@if($workplan){{$programm->thu}}@endif</textarea></div>
-        </div>
-        <div class="col">
-            <div><textarea name="fri" id="fri" @if($workplan) rows="10" @endif>@if($workplan){{$programm->fri}}@endif</textarea></div>
-        </div>
-        <div class="col">
-            <div>
-                <textarea name="comments" @if($workplan) rows="10" @endif>@if($workplan){{$workplan->comments}}@endif</textarea>
-            </div>
-        </div>
-    </div>
-@endif
-@endforeach
+    <div class="row h5 mt-4">Υπάλληλοι</div>
+
+    @foreach($workplanUsers as $wpUser)
+        @include('microapps.work_planning._row', ['user' => $wpUser])
+    @endforeach
 </div>
 </x-layout>

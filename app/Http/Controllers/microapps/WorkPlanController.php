@@ -18,7 +18,7 @@ class WorkPlanController extends Controller
 
     public function __construct(){
         // $this->middleware('auth')->only(['index']);
-        $this->middleware('isConsultant')->only(['create']);
+        $this->middleware('canUseWorkPlan')->only(['create']);
         $this->microapp = Microapp::where('url', '/work_planning')->first();
     }
 
@@ -32,15 +32,30 @@ class WorkPlanController extends Controller
                 abort(403, 'Unauthorized action.');
         }
         if(Auth::check()){
-            
-            return view('microapps.work_planning.index', ['appname' => 'work_planning']);
+            $user = Auth::guard('web')->user();
+
+            $isManager = $user->isAdmin()
+                || $user->microapps->where('microapp_id', $this->microapp->id)->count();
+
+            if($isManager)
+                return view('microapps.work_planning.index', ['appname' => 'work_planning']);
+
+            if($user->canAccessWorkPlan())
+                return redirect()->route('work_planning.create');
         }
         
         abort(403, 'Unauthorized action.');
     }
 
     public function create(){
-        return view('microapps.work_planning.create', ['appname' => 'work_planning']);
+        $isConsultant = Auth::guard('consultant')->check();
+        
+        return view('microapps.work_planning.create', [
+            'appname' => 'work_planning',
+            'user'    => $this->currentOwner(),
+            'layout'  => $isConsultant ? 'layout_consultant' : 'layout',
+            'isConsultant' => $isConsultant,
+        ]);
     }
 
     public function saveWorkPlan($yearWeek, Request $request){
@@ -52,15 +67,14 @@ class WorkPlanController extends Controller
                     'thu'=> $request->all()['thu'],
                     'fri'=> $request->all()['fri'])
             );
-            // dd($programm);
-            WorkPlan::updateOrCreate([
-                'yearWeek' => $yearWeek,
-                'consultant_id' => Auth::guard('consultant')->id()
-            ],
-            [
-                'comments' => $request->all()['comments'],
-                'programm' => $programm,
-            ]);
+            // dd($programm); Laravel will use automatically the current user to fill the user_id field in the work_plans table
+            $this->currentOwner()->workplans()->updateOrCreate(
+                ['yearWeek' => $yearWeek],
+                [
+                    'comments' => $request->all()['comments'],
+                    'programm' => $programm,
+                ]
+            );
 
             return back()->with('success', 'Ενημερώθηκε το πρόγραμμα');
         }
@@ -91,7 +105,9 @@ class WorkPlanController extends Controller
     public function extractWorkPlan($yearWeek) {
         // Πρόσθεσε αυτό στην αρχή της extractWorkPlan
   
-        $user = Auth::guard('consultant')->user(); //check which user is logged in 
+        $user = $this->currentOwner();
+        $isConsultant = Auth::guard('consultant')->check();
+        $roleLabel = $isConsultant ? 'Σύμβουλος Εκπαίδευσης' : 'Υπάλληλος';
         //found and fix date of month to extract
         $year = substr($yearWeek, 0, 4);
         $week = substr($yearWeek, 4, 2);
@@ -131,7 +147,7 @@ class WorkPlanController extends Controller
         // Setting font size to 12
         $spreadsheet->getDefaultStyle()->getFont()->setSize(12);
         //Setting description, creator and title
-        $spreadsheet ->getProperties()->setTitle("Πρόγραμμα Συμβούλου Εκπαίδευσης");
+        $spreadsheet->getProperties()->setTitle("Προγραμματισμός Έργου - ".$roleLabel);
         $spreadsheet ->getProperties()->setCreator("ΔΠΕ Αχαΐας");
         $spreadsheet ->getProperties()->setDescription("Αρχείο αυτόματα δημιουργημένο από Φόρμα Υποβολής Στοιχείων");
         
@@ -146,7 +162,7 @@ class WorkPlanController extends Controller
         ///to implement NOT WORKING
         // $text = $user->schRegion()->name." - Προγραμματισμός και υλοποίηση έργου";
         // $activeWorksheet->getCell('A2')->setValue($text);
-        $text = "Σύμβουλος Εκπαίδευσης: ".$user->surname." ".$user->name.".";
+        $text = $roleLabel.": ".$user->surname." ".$user->name.".";
         $activeWorksheet->mergeCells('A3:G3');
         $activeWorksheet->getCell('A3')->setValue($text);
         $styleArray = [
@@ -237,7 +253,7 @@ class WorkPlanController extends Controller
         $today = Carbon::now();
         $today->format("Y-m-d");  
         $activeWorksheet->getCell('F14')->setValue('Πάτρα, '.$today->format("d-m-Y"));
-        $activeWorksheet->getCell('F15')->setValue('Ο/Η Σύμβουλος Εκπαίδευσης,');
+        $activeWorksheet->getCell('F15')->setValue('Ο/Η '.$roleLabel.',');
         $activeWorksheet->getCell('F18')->setValue($user->surname." ".$user->name);
         // size the rows and columns
         $activeWorksheet->getRowDimension($row)->setRowHeight(-1);
@@ -282,5 +298,13 @@ class WorkPlanController extends Controller
             return response()->download($fileName, 'Προγραμματισμός_Έργου_'.$selected_day->format('Y').'_'.$selected_day->format('m').'.xlsx');
         }
         return;
+    }
+
+    private function currentOwner()
+    {
+        if(Auth::guard('consultant')->check())
+            return Auth::guard('consultant')->user();
+
+        return Auth::guard('web')->user();
     }
 }

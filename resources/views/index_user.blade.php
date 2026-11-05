@@ -173,37 +173,49 @@
                     </div>
                     
                     @foreach ($microapps as $microapp)
-                    @php
-                        if(!$super_admin){
-                            $one_microapp = $microapp->microapp;
-                        }
-                        else{
-                            $one_microapp = $microapp;
-                        }
-                    @endphp
-                    @if($one_microapp->active)
-                        <div class="col-md-4 py-3" style="max-width:15rem">
-                            <div class="card" style="background-color:{{ $one_microapp->color }}; font-size:small">
-                                <div style="width: 16px; height: 16px;">
-                                @if ($user->microapps->where('microapp_id', $one_microapp->id)->where('can_edit', 1)->first() || $user->isAdmin())
-                                {{-- <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/manage/microapps/".$one_microapp->id."/edit") }}"></a> --}}
-                                <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ route('microapps.edit', $one_microapp->id) }}"></a>
-                                @endif
+                        @php
+                            if(!$super_admin){
+                                $one_microapp = $microapp->microapp;
+                            }
+                            else{
+                                $one_microapp = $microapp;
+                            }
+                        @endphp
+                        @if($one_microapp->active)
+                            <div class="col-md-4 py-3" style="max-width:15rem">
+                                <div class="card" style="background-color:{{ $one_microapp->color }}; font-size:small">
+                                    <div style="width: 16px; height: 16px;">
+                                    @if ($user->microapps->where('microapp_id', $one_microapp->id)->where('can_edit', 1)->first() || $user->isAdmin())
+                                    {{-- <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ url("/manage/microapps/".$one_microapp->id."/edit") }}"></a> --}}
+                                    <a class="text-dark bi bi-pencil px-1" style="text-decoration:none;" href="{{ route('microapps.edit', $one_microapp->id) }}"></a>
+                                    @endif
+                                    </div>
+                                    <div class="py-2" style="text-align:center">
+                                        @php $resource = substr($one_microapp->url, 1); @endphp
+                                        {{-- <a class="text-dark" style="text-decoration:none;" href="{{ url($one_microapp->url) }}"> --}}
+                                        {{-- <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}"> --}}
+                                        <a class="text-dark" style="text-decoration:none;" href="{{ Route::has("$resource.index") ? route("$resource.index") : '#' }}">
+                                            {{-- <div class="h5 card-title {{ $one_microapp->icon }}"></div> --}}
+                                            <div class="h5 card-title {{ $one_microapp->icon }}"></div>
+                                            <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>
+                                        </a>
+                                    </div>
                                 </div>
-                                <div class="py-2" style="text-align:center">
-                                    @php $resource = substr($one_microapp->url, 1); @endphp
-                                    {{-- <a class="text-dark" style="text-decoration:none;" href="{{ url($one_microapp->url) }}"> --}}
-                                    {{-- <a class="text-dark" style="text-decoration:none;" href="{{ route("$resource.index") }}"> --}}
-                                    <a class="text-dark" style="text-decoration:none;" href="{{ Route::has("$resource.index") ? route("$resource.index") : '#' }}">
-                                        {{-- <div class="h5 card-title {{ $one_microapp->icon }}"></div> --}}
-                                        <div class="h5 card-title {{ $one_microapp->icon }}"></div>
-                                        <div @if (!$one_microapp->active) style="color:red" @endif>{{ $one_microapp->name }}</div>
+                            </div>
+                        @endif
+                    @endforeach
+                    @if($user->department_id == 8 || $user->department_id == 9 || $user->department_id == 10)
+                        <div class="col-md-4 py-3" style="max-width:15rem">
+                            <div class="card" style="background-color:MediumAquamarine; font-size:small">
+                                <div class="py-3" style="text-align:center">
+                                    <a class="text-dark" style="text-decoration:none;" href="{{ route('work_planning.index') }}">
+                                        <div class="h5 card-title fa-solid fa-calendar-days"></div>
+                                        <div>Προγραμματισμός Έργου</div>
                                     </a>
                                 </div>
                             </div>
                         </div>
                     @endif
-                    @endforeach
                 </div>
             </div>
         @else
@@ -275,38 +287,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="row justify-content-md-center">
-            <div class="col">
-                    
-            </div>
-            <div class="col p-3">
-                    <img src="{{asset("favicon/android-chrome-512x512.png")}}" width="200" height="200" alt="forms">
-            </div>
-            <div class="col p-3">
-                <form action="{{url("/login")}}" method="post">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Όνομα Χρήστη</label>
-                        <div class="">
-                            <input type="text" value="{{old('username')}}" name="username" class="form-control">
-                            @error('username')
-                                {{$message}}
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Συνθηματικό</label>
-                        <div class="">
-                            <input type="password" name="password" class="form-control">
-                            @error('password')
-                                {{$message}}
-                            @enderror
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Είσοδος</button>
-                </form>
-            </div>
-            <div class="col"></div> -->
         @endauth
         </div>
         </div>

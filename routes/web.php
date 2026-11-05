@@ -764,7 +764,7 @@ Route::group(['middleware' => 'can:changeActiveMonth,'.Operation::class], functi
 
 Route::group(['middleware' => 'can:changeVirtualMonth,'.Operation::class], function () {
 
-    Route::view('/virtual_month','virtual_month');
+    Route::get('/virtual_month', [MonthController::class,'virtualMonth']);
 
     Route::post('/set_vmonth/{school}', [MonthController::class,'setVirtualMonth']);
 

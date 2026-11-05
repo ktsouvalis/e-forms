@@ -26,7 +26,14 @@ class AllDaySchoolController extends Controller
     }
 
     public function index(){
-        return view('microapps.all_day_school.index', ['appname' => 'all_day_school']);
+        $microapp = Microapp::where('url', '/all_day_school')->first();
+        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
+        return view('microapps.all_day_school.index', 
+            [
+                'appname' => 'all_day_school',
+                'microapp' => $microapp,
+                'accepts' => $accepts,
+            ]);
     }
 
     public function create(){
@@ -42,6 +49,7 @@ class AllDaySchoolController extends Controller
         else{
             $month_to_store = $vmonth->vmonth;
         }
+        $month_name = Month::find($month_to_store)->name;
         $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first(); 
         return view('microapps.all_day_school.create', 
             [
@@ -53,6 +61,7 @@ class AllDaySchoolController extends Controller
                 'accepts' => $accepts, 
                 'name' => $name, 
                 'month_to_store' => $month_to_store, 
+                'month_name' => $month_name,
                 'old_data' => $old_data
              ]);
     }

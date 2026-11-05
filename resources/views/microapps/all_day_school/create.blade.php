@@ -21,7 +21,7 @@
                     <form action="{{route("all_day_school.store")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        <span class="input-group-text w-100"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{App\Models\Month::find($month_to_store)->name}}</my_text></strong></span>
+                        <span class="input-group-text w-100"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{$month_name}}</my_text></strong></span>
                     </div>
                     @if($school->primary)
                         <div class="input-group">

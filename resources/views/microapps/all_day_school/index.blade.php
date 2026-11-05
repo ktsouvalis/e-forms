@@ -15,10 +15,7 @@
     @push('title')
         <title>Ολοήμερο και Πρωινή Υποδοχή</title>
     @endpush
-    @php
-        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
-        $accepts = $microapp->accepts; //fetch microapp 'accepts' field
-    @endphp
+    
     @include('microapps.microapps_admin_before') {{-- Visibility and acceptability buttons and messages --}}
         @if(Auth::user()->isAdmin())      
         <nav class="navbar navbar-light bg-light">

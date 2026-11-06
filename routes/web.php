@@ -207,7 +207,7 @@ Route::get('/slogout', [SchoolController::class, 'logout']);
 
 Route::get('/import_teachers_from_file', [TeacherController::class, 'updateTeachersFromFile']);
 
-Route::view('/teachers','teachers')->middleware('can:viewAny, '.Teacher::class);
+Route::get('/teachers', [TeacherController::class, 'index'])->middleware('can:viewAny, '.Teacher::class);
 
 Route::view('/import_teachers', 'import-teachers')->middleware("can:upload, ".Teacher::class);
 
@@ -245,10 +245,7 @@ Route::get('/consultant/{md5}', [ConsultantController::class, 'login']);
 
 Route::view('/consultant_schools','consultant_schools')->middleware('isConsultant');
 
-Route::view('/consultant_teachers','consultant_teachers')->middleware('isConsultant');
-
-Route::get('/consultant_my_teachers', [ConsultantController::class, 'my_teachers'])
-    ->middleware('isConsultant');
+Route::get('/consultant_teachers', [TeacherController::class, 'consultantIndex'])->middleware('isConsultant');
 
 Route::view('/index_consultant', 'index_consultant'); // auth checking in view
 

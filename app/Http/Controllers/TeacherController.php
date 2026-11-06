@@ -44,6 +44,26 @@ class TeacherController extends Controller
         return redirect(url('/'))->with('success', 'Αποσυνδεθήκατε');
     }
 
+    public function index(){
+        $all_teachers = Teacher::with('work_experience', 'ypiretisi', 'organiki', 'sxesi_ergasias')->get();
+        return view('teachers', ['all_teachers' => $all_teachers]);
+    }
+
+    public function consultantIndex(){
+
+        $all_teachers = Teacher::with('work_experience', 'ypiretisi', 'organiki', 'sxesi_ergasias')->get();
+        $schregion_id = Auth::guard('consultant')->user()->schregion?->id;
+        $my_teachers = $all_teachers->filter(fn ($t) => $t->ypiretisi_type === School::class && $t->ypiretisi?->schregion_id == $schregion_id)
+        ->pluck('id')->flip()->toArray();
+        
+        return view('consultant_teachers', 
+            [
+                'consultant' => Auth::guard('consultant')->user(),
+                'all_teachers' => $all_teachers,
+                'my_teachers' => $my_teachers,
+            ]);
+    }
+
     /**
      * Import teacher assignment data (didaskalia or apousia) one at a time
      *

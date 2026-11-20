@@ -1,6 +1,8 @@
 {{-- Check if this is a revoked leave with protocol --}}
 @php
     $isRevokedWithProtocol = ($leave->leave_state == '5-Ανακλήθηκε' && $leave->protocol_number);
+    $leaveKey = $leave->protocol_number . '_' . optional($leave->protocol_date)->format('Y');
+    $leaveStatus = ($leavesStatus ?? [])[$leaveKey] ?? null;
 @endphp
 
 <div class="row align-items-center mb-3">
@@ -124,14 +126,14 @@
                 {{-- Action Buttons for Submitted Leaves --}}
                 <div class="d-flex flex-column gap-1">
                     {{-- Unlock Button OR approved leave --}}
-                    @if($leavesStatus[$leave->protocol_number . "_" . $leave->protocol_date->format('Y')] === 'Εγκρίθηκε')
+                    @if($leaveStatus === 'Εγκρίθηκε')
                         <div class="text-center text-success small px-1">
                             <i class="bi bi-patch-check-fill fs-5"></i>
                             <small class="d-block fw-semibold">Έγκεκριμένη από ΔΙΠΕ</small>
                             <small class="d-block text-muted" style="font-size: 0.7rem;">Δεν επιτρέπεται τροποποίηση</small>
                             
                         </div>
-                    @elseif($leavesStatus[$leave->protocol_number . "_" . $leave->protocol_date->format('Y')] === 'Εκτυπώθηκε' || $leavesStatus[$leave->protocol_number . "_" . $leave->protocol_date->format('Y')] === 'Απορρίφθηκε')
+                    @elseif($leaveStatus === 'Εκτυπώθηκε' || $leaveStatus === 'Απορρίφθηκε')
                         <div class="text-center text-dark small px-1">
                             <i class="bi bi-check-square-fill fs-5"></i>
                             <small class="d-block fw-semibold">Ολοκλήρωση επεξεργασίας από ΔΙΠΕ</small>

@@ -129,6 +129,13 @@
                             <i class="bi bi-patch-check-fill fs-5"></i>
                             <small class="d-block fw-semibold">Έγκεκριμένη από ΔΙΠΕ</small>
                             <small class="d-block text-muted" style="font-size: 0.7rem;">Δεν επιτρέπεται τροποποίηση</small>
+                            
+                        </div>
+                    @elseif($leavesStatus[$leave->protocol_number . "_" . $leave->protocol_date->format('Y')] === 'Εκτυπώθηκε' || $leavesStatus[$leave->protocol_number . "_" . $leave->protocol_date->format('Y')] === 'Απορρίφθηκε')
+                        <div class="text-center text-dark small px-1">
+                            <i class="bi bi-check-square-fill fs-5"></i>
+                            <small class="d-block fw-semibold">Ολοκλήρωση επεξεργασίας από ΔΙΠΕ</small>
+                            <small class="d-block text-muted" style="font-size: 0.7rem;">Δεν επιτρέπεται τροποποίηση</small>
                         </div>
                     @else
                         <form action="{{ route('leaves.leave_unlock', ['teacher_leave' => $leave->id]) }}" 

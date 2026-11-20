@@ -91,9 +91,10 @@ class LeavesController extends Controller
          * 3. Ομαδοποιούμε τις γραμμές με key: afm | creator_entity_code | leave_protocol_number | leave_protocol_date
          * 4. Κάθε ομάδα επεξεργάζεται αναλόγως:
          *    - Κανονική περίπτωση → Βάση: Υποβλήθηκε | CSV: Εγκρίθηκε → Update την εγγραφή με το νέο state
+         *    - Εξαίρεση: Δύο άδειες με το ίδιο πρωτόκολλο σχολείου, ίδια κατάσταση και διαφορετικές ημερομηνίες → 2 εγγραφές στη βάση με διαφορετικές ημερομηνίες.
          *    - Μόνο Ανάκληση → Βάση: Εγκρίθηκε με protocol | CSV: Ανακλήθηκε → Update state, κρατιέται το protocol
          *    - Ανάκληση + Διόρθωση → Βάση: Εγκρίθηκε με protocol | CSV: Ανακλήθηκε + Υποβλήθηκε → Παλιά γίνεται Ανακλήθηκε, νέα εγγραφή παίρνει το protocol
-         * 4. Τα protocol_number, protocol_date και files_json ΔΕΝ αγγίζονται από το CSV
+         * 5. Τα protocol_number, protocol_date και files_json ΔΕΝ αγγίζονται από το CSV
          ************************************************************************/
         // Validation
         $request->validate([

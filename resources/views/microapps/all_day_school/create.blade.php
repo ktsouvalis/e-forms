@@ -1,20 +1,4 @@
 <x-layout_school>
-    @php
-        $school = Auth::guard('school')->user(); //check which school is logged in
-        $microapp = App\Models\Microapp::where('url', '/'.$appname)->first();
-        $active_month = App\Models\Month::getActiveMonth();
-        $vmonth = $school->vmonth;
-        $accepts = $microapp->accepts; 
-        $name = $microapp->name;
-        if(!$school->vmonth or $school->vmonth->vmonth == 0){
-            $month_to_store = $active_month->id;
-        }
-        else{
-            $month_to_store = $vmonth->vmonth;
-        }
-        $old_data = $school->all_day_schools->where('month_id', $month_to_store)->first(); 
-    @endphp
-    
     @push('title')
         <title>{{$name}}</title>
     @endpush
@@ -37,7 +21,7 @@
                     <form action="{{route("all_day_school.store")}}" method="post" enctype="multipart/form-data" class="container-fluid">
                     @csrf
                     <div class="input-group">
-                        <span class="input-group-text w-100"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{App\Models\Month::find($month_to_store)->name}}</my_text></strong></span>
+                        <span class="input-group-text w-100"><strong>Καταχώρηση στοιχείων για το Ολοήμερο Πρόγραμμα για τον Μήνα <my_text class="text-success">{{$month_name}}</my_text></strong></span>
                     </div>
                     @if($school->primary)
                         <div class="input-group">

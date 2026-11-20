@@ -78,4 +78,16 @@ class MonthController extends Controller
         Log::channel('user_memorable_actions')->info(Auth::user()->username." reset virtual month of $school->name");
         return back()->with('success',"Έγινε επαναφορά για το $school->name");
     }
+
+    public function virtualMonth(){
+        $schools = School::with('vmonth', 'director')->get();
+        $active_month = Month::getActiveMonth();
+        $month_names = Month::pluck('name','number')->toArray();
+        return view('virtual_month', 
+            [
+                'schools'=>$schools, 
+                'active_month'=>$active_month, 
+                'month_names'=>$month_names
+            ]);
+    }
 }

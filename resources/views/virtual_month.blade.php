@@ -14,9 +14,7 @@
     @push('title')
         <title>Εικονικός Μήνας</title>
     @endpush
-    @php
-        $schools = App\Models\School::all();
-    @endphp
+
         <div class="table-responsive">
             <table  id="dataTable" class="align-middle table table-sm table-striped table-bordered table-hover" style="font-size: small;" >
                 <thead>
@@ -41,13 +39,13 @@
                         @endif --}}
                         <td>{{optional($school->director)->surname}} {{optional($school->director)->name}}</td>
                         @if($school->vmonth and $school->vmonth->vmonth != 0)
-                        <td style="color:red"><strong>{{App\Models\Month::where('number',$school->vmonth->vmonth)->first()->name}}</strong></td>
+                        <td style="color:red"><strong>{{$month_names[$school->vmonth->vmonth]}}</strong></td>
                         @else
-                        <td>{{App\Models\Month::getActiveMonth()->name}}</td>
+                        <td>{{$active_month->name}}</td>
                         @endif
                         @php
                             $months = [];
-                            $number = App\Models\Month::getActiveMonth()->number;
+                            $number = $active_month->number;
                             $i=$number-1;
                             if($number >=9){
                                 for($i; $i>=9; $i--)
@@ -65,10 +63,7 @@
                             <input name="month" id="month" type="text" class="form-control" placeholder="Επιλέξτε Μήνα" aria-label="Μήνας" aria-describedby="basic-addon2" required list="monthOptions">
                             <datalist id="monthOptions">
                                 @foreach($months as $month)
-                                    @php
-                                        $show = App\Models\Month::where('number', $month)->first()->name;
-                                    @endphp
-                                    <option value="{{ $show }}">{{ $show }}</option>
+                                    <option value="{{ $month_names[$month] }}">{{ $month_names[$month] }}</option>
                                 @endforeach
                             </datalist>
                             <button type="submit" class="btn btn-warning m-2"><div class="fa-regular fa-calendar-plus"></div> </button>
